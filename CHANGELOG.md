@@ -4,7 +4,7 @@
 
 `scan --all` and `doctor` now include OpenClaw bundled skills, custodian skills, and the real directories behind `~/.openclaw/plugin-skills` symlinks.
 
-A scan of the local OpenClaw 2026.9.3 skill trees showed five false-positive shapes. `process.env` is no longer treated as a `.env` file, the word "cookies" is no longer treated as the browser cookie store, loopback addresses are treated like `localhost`, a documentation URL is not an outbound request, and a package install is a URL install only when the URL is on that same line. Undeclared vendor hosts in bundled skills still report `IH-NET-001`.
+A scan of the local OpenClaw 2026.9.3 skill trees showed several false-positive shapes. `process.env` and a mentioned `.env` are not a dotenv path, the word "cookies" is not the browser cookie store, and the word `curl` is not a request. Loopback addresses are treated like `localhost`. Homepage fields, license URLs, XML namespaces, placeholder hosts, and documentation links are not network destinations. An exfiltration finding requires the secret and the request in the same few lines. A package install is a URL install only when the URL is on that same line. Requests the skill actually makes, such as `curl` to an API host, still report `IH-NET-001`.
 
 ## 0.1.1
 

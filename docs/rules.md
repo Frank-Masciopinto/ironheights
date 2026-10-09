@@ -67,7 +67,7 @@ Does not match:
 - Priority: P0
 - Applies to: any
 
-A skill that contacts a host outside the allowlist can send data somewhere the user did not expect.
+A skill that contacts a host outside the allowlist can send data somewhere the user did not expect. A homepage field, a license URL, or a documentation link is not a contact.
 
 Remediation: Declare the host in allowDomains, or remove the request. Prefer the official API host.
 
@@ -78,6 +78,8 @@ Matches:
 Does not match:
 - `https://example.com/docs`
 - `https://api.github.com/repos`
+- `homepage: https://docs.bear.app/skill`
+- `Public registry: https://registry.bear.app/skills`
 
 ## IH-NET-002 — Possible exfiltration
 
@@ -118,6 +120,7 @@ Does not match:
 - `use an environment variable`
 - `const token = process.env.API_TOKEN`
 - `the browser stores cookies for the site`
+- `Never upload '.env' or tokens.`
 
 ## IH-CRED-002 — Hard-coded secret
 

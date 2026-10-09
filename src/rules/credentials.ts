@@ -36,6 +36,7 @@ export const cred001: Rule = {
       'use an environment variable',
       'const token = process.env.API_TOKEN',
       'the browser stores cookies for the site',
+      'Never upload `.env` or tokens.',
     ],
   },
   check(file) {
