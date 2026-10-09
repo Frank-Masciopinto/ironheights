@@ -38,6 +38,8 @@ Matches:
 Does not match:
 - `npm install zod`
 - `Optional reading: https://example.com/guide`
+- `brew install widget
+Source: https://github.com/example/widget`
 
 ## IH-EXEC-003 — Dynamic code execution
 
@@ -94,6 +96,7 @@ Matches:
 Does not match:
 - `curl https://example.com/health`
 - `read the local notes file`
+- `See openclaw.json and https://example.com/docs`
 
 ## IH-CRED-001 — Access to a sensitive path
 
@@ -113,6 +116,8 @@ Matches:
 Does not match:
 - `write notes to notes/today.md`
 - `use an environment variable`
+- `const token = process.env.API_TOKEN`
+- `the browser stores cookies for the site`
 
 ## IH-CRED-002 — Hard-coded secret
 

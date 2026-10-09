@@ -96,7 +96,7 @@ Ironheights reads `ironheights.config.json` from the current directory, then `~/
 }
 ```
 
-An allowlist entry matches that host and its subdomains. The built-in list includes `example.com`, `example.org`, `example.net`, `localhost`, GitHub, npm, PyPI, and `openclaw.ai`.
+An allowlist entry matches that host and its subdomains. The built-in list includes `example.com`, `example.org`, `example.net`, `localhost`, the loopback addresses `127.0.0.1` and `::1`, GitHub, npm, PyPI, and `openclaw.ai`.
 
 ## JSON output
 
@@ -105,7 +105,7 @@ An allowlist entry matches that host and its subdomains. The built-in list inclu
 ```json
 {
   "schemaVersion": 1,
-  "tool": { "name": "ironheights", "version": "0.1.1" },
+  "tool": { "name": "ironheights", "version": "0.1.2" },
   "scannedAt": "2026-10-09T00:00:00.000Z",
   "verdict": "no-findings",
   "skills": []
@@ -133,13 +133,16 @@ Verified against the OpenClaw docs for the 2026.9.3 line:
 | Personal agent skills | `~/.agents/skills`                                     |
 | Managed skills        | `~/.openclaw/skills`                                   |
 | Workshop skills       | `~/.openclaw/agents/<agent>/agent/workshop-skills`     |
+| Bundled skills        | `<openclaw package>/skills`                            |
+| Custodian skills      | `<openclaw package>/custodian-skills`                  |
+| Plugin skills         | real paths linked from `~/.openclaw/plugin-skills`     |
 | Extra directories     | `skills.load.extraDirs` in `~/.openclaw/openclaw.json` |
 
 The default workspace is `~/.openclaw/workspace`. Config is `$OPENCLAW_CONFIG_PATH` or `~/.openclaw/openclaw.json`. State moves when `OPENCLAW_STATE_DIR` is set.
 
 Watched agent files default to `AGENTS.md`, `SOUL.md`, `IDENTITY.md`, `USER.md`, `TOOLS.md`, `BOOTSTRAP.md`, `MEMORY.md`, the `memory/` directory, `openclaw.json`, `credentials/`, and `.env` under the OpenClaw state directory. Change the list with `agentFiles`.
 
-`TODO(verify)`: bundled skills live inside the OpenClaw install and are not scanned unless you add that directory to `skillDirs`. Plugin skills were observed at `~/.openclaw/plugin-skills` on one machine; the docs name them as a load source without one portable path. `doctor` marks that directory as unverified.
+Bundled skills are the `skills/` directory in the OpenClaw package. Ironheights finds that package from `OPENCLAW_BUNDLED_SKILLS_DIR`, from the `~/.openclaw/bin/openclaw` wrapper, from `~/.openclaw/tools/node-v*/lib/node_modules/openclaw`, or from the usual global `node_modules/openclaw` locations. Custodian skills are the sibling `custodian-skills/` directory. Plugin skills are the directories linked from `~/.openclaw/plugin-skills`. `doctor` says when the bundled directory was not found.
 
 `SKILL.md` needs YAML frontmatter with `name` and `description`. Optional fields include `metadata.openclaw`, `homepage`, `user-invocable`, `disable-model-invocation`, and the `command-dispatch` keys.
 
