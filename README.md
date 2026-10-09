@@ -6,7 +6,9 @@ It does not call the network, does not send telemetry, and does not run the file
 
 ## Install
 
-OpenClaw 2026.9.3 requires Node.js `>=24.16.0 <25 || >=26.1.0`. Use that runtime.
+Ironheights requires Node.js 20 or newer.
+
+OpenClaw 2026.9.3 requires Node.js `>=24.16.0 <25 || >=26.1.0`. `ironheights doctor` prints whether the current runtime is inside that range.
 
 ```bash
 npx ironheights scan ./path/to/skill

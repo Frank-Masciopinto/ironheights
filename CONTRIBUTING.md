@@ -16,6 +16,8 @@ A finding needs a rule id, severity, confidence, file, evidence under 200 charac
 
 ## Local checks
 
+Node.js 20 or newer. `.nvmrc` is `20`.
+
 ```bash
 npm install
 npm run lint
