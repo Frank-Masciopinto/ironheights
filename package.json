@@ -2,11 +2,19 @@
   "name": "ironheights",
   "version": "0.1.0",
   "description": "Local-first security scanner and integrity monitor for OpenClaw skills.",
+  "homepage": "https://ironheights.dev",
+  "bugs": {
+    "url": "https://github.com/Frank-Masciopinto/ironheights/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Frank-Masciopinto/ironheights.git"
+  },
   "type": "module",
   "license": "Apache-2.0",
   "bin": {
-    "ironheights": "./dist/cli/index.js",
-    "ih": "./dist/cli/index.js"
+    "ironheights": "dist/cli/index.js",
+    "ih": "dist/cli/index.js"
   },
   "files": [
     "dist",
