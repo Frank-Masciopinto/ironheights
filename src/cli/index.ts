@@ -1,5 +1,7 @@
 import { Command, CommanderError } from 'commander';
-import { pathToFileURL } from 'node:url';
+import { realpathSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import { runBaseline, runVerify } from './commands/baseline.ts';
 import { runBenchCommand } from './commands/bench.ts';
 import { runDoctor } from './commands/doctor.ts';
@@ -119,9 +121,34 @@ export async function main(argv: string[]): Promise<number> {
   return typeof code === 'number' ? code : 0;
 }
 
-const invokedDirectly =
-  process.argv[1] !== undefined && import.meta.url === pathToFileURL(process.argv[1]).href;
-if (invokedDirectly) {
+/**
+ * True when this file is the process entry point.
+ *
+ * Unix package bins and npx are symlinks, so process.argv[1] is the link
+ * while import.meta.url is the real file. Windows bins are cmd shims that
+ * pass a relative path containing "..", sometimes with different drive-letter
+ * casing. realpathSync.native canonicalizes both. If that call cannot resolve
+ * the path, fall back to a normalized path compare so a direct node invocation
+ * still runs.
+ */
+export function isDirectInvocation(moduleUrl: string, entryPath: string | undefined): boolean {
+  if (entryPath === undefined || entryPath.length === 0) return false;
+  let modulePath: string;
+  try {
+    modulePath = fileURLToPath(moduleUrl);
+  } catch {
+    return false;
+  }
+  try {
+    return realpathSync.native(entryPath) === realpathSync.native(modulePath);
+  } catch {
+    return (
+      resolve(entryPath) === resolve(modulePath) || pathToFileURL(entryPath).href === moduleUrl
+    );
+  }
+}
+
+if (isDirectInvocation(import.meta.url, process.argv[1])) {
   main(process.argv.slice(2))
     .then((code) => {
       process.exit(code);

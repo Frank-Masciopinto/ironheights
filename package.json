@@ -1,8 +1,8 @@
 {
   "name": "ironheights",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Local-first security scanner and integrity monitor for OpenClaw skills.",
-  "homepage": "https://ironheights.dev",
+  "homepage": "https://github.com/Frank-Masciopinto/ironheights#readme",
   "bugs": {
     "url": "https://github.com/Frank-Masciopinto/ironheights/issues"
   },
@@ -31,6 +31,7 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "vitest run --coverage",
+    "test:packed": "node scripts/test-packed-cli.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "docs:rules": "tsup scripts/generate-rules-doc.ts --no-config --format esm --target node20 --out-dir dist-scripts --clean --silent && node dist-scripts/generate-rules-doc.js"

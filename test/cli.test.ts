@@ -1,9 +1,10 @@
-import { mkdtemp, mkdir, readFile, writeFile } from 'node:fs/promises';
+import { mkdtemp, mkdir, readFile, rm, symlink, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { pathToFileURL } from 'node:url';
 import AjvDraft04 from 'ajv-draft-04';
 import { describe, expect, it } from 'vitest';
-import { main } from '../src/cli/index.ts';
+import { isDirectInvocation, main } from '../src/cli/index.ts';
 import { nodeMeetsOpenClaw, runDoctor } from '../src/cli/commands/doctor.ts';
 import { renderSarif } from '../src/cli/output/sarif.ts';
 import { locateOpenClaw, parseJson5 } from '../src/openclaw/locate.ts';
@@ -14,6 +15,32 @@ const SarifAjv = AjvDraft04 as unknown as new (options: {
 }) => {
   compile: (schema: object) => ((data: unknown) => boolean) & { errors?: unknown };
 };
+
+describe('direct invocation', () => {
+  it('recognizes a bin symlink and a relative shim path', async () => {
+    const dir = await mkdtemp(join(tmpdir(), 'ih-entry-'));
+    try {
+      const file = join(dir, 'index.js');
+      await writeFile(file, '');
+      const link = join(dir, 'ironheights');
+      await symlink(file, link);
+      const bin = join(dir, 'bin');
+      await mkdir(bin);
+      const moduleUrl = pathToFileURL(file).href;
+      expect(isDirectInvocation(moduleUrl, file)).toBe(true);
+      expect(isDirectInvocation(moduleUrl, link)).toBe(true);
+      expect(isDirectInvocation(moduleUrl, join(bin, '..', 'index.js'))).toBe(true);
+      expect(isDirectInvocation(moduleUrl, undefined)).toBe(false);
+      expect(isDirectInvocation(moduleUrl, '')).toBe(false);
+      expect(isDirectInvocation(moduleUrl, join(dir, 'missing.js'))).toBe(false);
+      await writeFile(join(dir, 'other.js'), '');
+      expect(isDirectInvocation(moduleUrl, join(dir, 'other.js'))).toBe(false);
+      expect(isDirectInvocation('not-a-url', file)).toBe(false);
+    } finally {
+      await rm(dir, { recursive: true, force: true });
+    }
+  });
+});
 
 describe('cli', () => {
   it('scans a benign folder and returns exit code 0', async () => {
