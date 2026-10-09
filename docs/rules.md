@@ -38,6 +38,8 @@ Matches:
 Does not match:
 - `npm install zod`
 - `Optional reading: https://example.com/guide`
+- `brew install widget
+Source: https://github.com/example/widget`
 
 ## IH-EXEC-003 — Dynamic code execution
 
@@ -65,7 +67,7 @@ Does not match:
 - Priority: P0
 - Applies to: any
 
-A skill that contacts a host outside the allowlist can send data somewhere the user did not expect.
+A skill that contacts a host outside the allowlist can send data somewhere the user did not expect. A homepage field, a license URL, or a documentation link is not a contact.
 
 Remediation: Declare the host in allowDomains, or remove the request. Prefer the official API host.
 
@@ -76,6 +78,8 @@ Matches:
 Does not match:
 - `https://example.com/docs`
 - `https://api.github.com/repos`
+- `homepage: https://docs.bear.app/skill`
+- `Public registry: https://registry.bear.app/skills`
 
 ## IH-NET-002 — Possible exfiltration
 
@@ -94,6 +98,7 @@ Matches:
 Does not match:
 - `curl https://example.com/health`
 - `read the local notes file`
+- `See openclaw.json and https://example.com/docs`
 
 ## IH-CRED-001 — Access to a sensitive path
 
@@ -113,6 +118,9 @@ Matches:
 Does not match:
 - `write notes to notes/today.md`
 - `use an environment variable`
+- `const token = process.env.API_TOKEN`
+- `the browser stores cookies for the site`
+- `Never upload '.env' or tokens.`
 
 ## IH-CRED-002 — Hard-coded secret
 

@@ -31,7 +31,13 @@ export const cred001: Rule = {
   appliesTo: ['any'],
   examples: {
     matches: ['cat ~/.ssh/id_rsa', 'open ~/.aws/credentials'],
-    nonMatches: ['write notes to notes/today.md', 'use an environment variable'],
+    nonMatches: [
+      'write notes to notes/today.md',
+      'use an environment variable',
+      'const token = process.env.API_TOKEN',
+      'the browser stores cookies for the site',
+      'Never upload `.env` or tokens.',
+    ],
   },
   check(file) {
     const findings: Finding[] = [];

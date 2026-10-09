@@ -1,4 +1,4 @@
-import { mkdtemp, mkdir, readFile, rm, symlink, writeFile } from 'node:fs/promises';
+import { mkdtemp, mkdir, readFile, realpath, rm, symlink, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
@@ -121,6 +121,56 @@ describe('doctor and locate', () => {
     expect(nodeMeetsOpenClaw('v26.1.0')).toBe(true);
     expect(nodeMeetsOpenClaw('v25.0.0')).toBe(false);
     expect(parseJson5('{a:1,}')).toEqual({ a: 1 });
+  });
+
+  it('resolves bundled skills and plugin skill symlink targets', async () => {
+    const dir = await mkdtemp(join(tmpdir(), 'ih-roots-'));
+    const state = join(dir, 'state');
+    const pluginReal = join(
+      dir,
+      'openclaw',
+      'dist',
+      'extensions',
+      'browser',
+      'skills',
+      'browser-automation',
+    );
+    await mkdir(pluginReal, { recursive: true });
+    await mkdir(join(state, 'bin'), { recursive: true });
+    await mkdir(join(state, 'plugin-skills'), { recursive: true });
+    const skill = '---\nname: demo\ndescription: Demo.\n---\nhello\n';
+    await writeFile(
+      join(pluginReal, 'SKILL.md'),
+      skill.replace('name: demo', 'name: browser-automation'),
+    );
+    const packageRoot = join(dir, 'pkg', 'node_modules', 'openclaw');
+    await mkdir(join(packageRoot, 'dist'), { recursive: true });
+    await mkdir(join(packageRoot, 'skills', 'demo'), { recursive: true });
+    await mkdir(join(packageRoot, 'custodian-skills', 'diagnose'), { recursive: true });
+    await writeFile(join(packageRoot, 'skills', 'demo', 'SKILL.md'), skill);
+    await writeFile(join(packageRoot, 'custodian-skills', 'diagnose', 'SKILL.md'), skill);
+    await writeFile(
+      join(state, 'bin', 'openclaw'),
+      `#!/bin/sh\nexec node "${packageRoot}/dist/entry.js" "$@"\n`,
+    );
+    await symlink(pluginReal, join(state, 'plugin-skills', 'browser-automation'));
+
+    const located = await locateOpenClaw({ OPENCLAW_STATE_DIR: state });
+    expect(
+      located.skillDirs.some(
+        (item) => item.source === 'bundled skills' && item.path.endsWith('/skills') && item.exists,
+      ),
+    ).toBe(true);
+    expect(
+      located.skillDirs.some((item) => item.source === 'custodian skills' && item.exists),
+    ).toBe(true);
+    const pluginResolved = await realpath(pluginReal);
+    expect(
+      located.skillDirs.some(
+        (item) => item.source === 'plugin skills' && item.path === pluginResolved && item.exists,
+      ),
+    ).toBe(true);
+    expect(located.notes.some((note) => note.includes('TODO'))).toBe(false);
   });
 });
 

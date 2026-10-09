@@ -2,18 +2,23 @@ import { readdir, readFile, stat } from 'node:fs/promises';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
 import { BUILTIN_ALLOW_DOMAINS } from '../core/domains.ts';
+import {
+  custodianSkillsDir,
+  looksLikeSkillsDir,
+  resolveBundledSkillsDir,
+  resolvePluginSkillDirs,
+} from './bundled.ts';
 
 /**
  * OpenClaw locations verified against:
  * https://docs.openclaw.ai/tools/skills
+ * https://docs.openclaw.ai/tools/custodian-skills
  * https://docs.openclaw.ai/concepts/agent-workspace (workspace default)
  * https://docs.openclaw.ai/gateway/security/secrets-and-storage
  * https://docs.openclaw.ai/install/node-compatibility
- *
- * TODO(verify): the bundled skill directory is install-specific and is not scanned
- * unless the user adds it to skillDirs.
- * TODO(verify): plugin skill files were observed at ~/.openclaw/plugin-skills on this
- * machine; the docs name them as a load source without a single portable path.
+ * OpenClaw 2026.9.3: bundled skills are `<package>/skills`, custodian skills are
+ * the sibling `custodian-skills/` directory, and plugin skills are symlinks in
+ * `<state>/plugin-skills` that point at each plugin's real skill directory.
  */
 
 export const BOOTSTRAP_FILES = [
@@ -93,8 +98,27 @@ export async function locateOpenClaw(
     { path: join(workspace, '.agents', 'skills'), source: 'project agent skills' },
     { path: join(homedir(), '.agents', 'skills'), source: 'personal agent skills' },
     { path: join(stateDir, 'skills'), source: 'managed skills' },
-    { path: join(stateDir, 'plugin-skills'), source: 'plugin skills (TODO verify path)' },
   ];
+
+  const bundled = await resolveBundledSkillsDir(env, stateDir);
+  if (bundled) {
+    candidates.push({ path: bundled, source: 'bundled skills' });
+    const custodian = custodianSkillsDir(bundled);
+    if (await looksLikeSkillsDir(custodian)) {
+      candidates.push({ path: custodian, source: 'custodian skills' });
+    }
+  } else {
+    notes.push(
+      'Bundled skills were not found. Set OPENCLAW_BUNDLED_SKILLS_DIR to the OpenClaw package skills directory.',
+    );
+  }
+
+  const pluginDirs = await resolvePluginSkillDirs(stateDir);
+  if (pluginDirs.length === 0) {
+    candidates.push({ path: join(stateDir, 'plugin-skills'), source: 'plugin skills' });
+  } else {
+    for (const dir of pluginDirs) candidates.push({ path: dir, source: 'plugin skills' });
+  }
 
   const workshop = await workshopDirs(stateDir);
   for (const dir of workshop) candidates.push({ path: dir, source: 'workshop skills' });
@@ -119,10 +143,6 @@ export async function locateOpenClaw(
     join(stateDir, 'credentials'),
     join(stateDir, '.env'),
   ];
-
-  notes.push(
-    'Bundled skills ship inside the OpenClaw install and are not scanned unless configured.',
-  );
 
   return {
     stateDir,

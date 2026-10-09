@@ -1,5 +1,5 @@
 export const TOOL_NAME = 'ironheights';
-export const TOOL_VERSION = '0.1.1';
+export const TOOL_VERSION = '0.1.2';
 export const SCHEMA_VERSION = 1;
 
 export const SAFETY_REMINDER = 'Absence of findings is not proof of safety.';
