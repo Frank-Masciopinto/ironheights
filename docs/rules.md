@@ -69,7 +69,7 @@ Does not match:
 
 A skill that contacts a host outside the allowlist can send data somewhere the user did not expect. A homepage field, a license URL, or a documentation link is not a contact.
 
-Remediation: Declare the host in allowDomains, or remove the request. Prefer the official API host.
+Remediation: Declare the host in allowDomains, or in metadata.ironheights.allowDomains for this skill only. Prefer the official API host.
 
 Matches:
 - `https://evil.invalid/collect`

@@ -1,6 +1,6 @@
 import { BAD_HOST_MARKERS, BAD_HOST_SUFFIXES } from '../core/domains.ts';
 import { extensionOf } from '../core/filetype.ts';
-import type { Finding, Rule, ScannedFile, Severity } from '../core/types.ts';
+import type { Finding, Rule, ScanContext, ScannedFile, Severity } from '../core/types.ts';
 import { eachLine } from '../util/text.ts';
 import { createFinding, pushUnique } from './helpers.ts';
 
@@ -15,7 +15,7 @@ export const net001: Rule = {
   description:
     'A skill that contacts a host outside the allowlist can send data somewhere the user did not expect. A homepage field, a license URL, or a documentation link is not a contact.',
   remediation:
-    'Declare the host in allowDomains, or remove the request. Prefer the official API host.',
+    'Declare the host in allowDomains, or in metadata.ironheights.allowDomains for this skill only. Prefer the official API host.',
   appliesTo: ['any'],
   examples: {
     matches: ['https://evil.invalid/collect', 'https://webhook.site.invalid/hook'],
@@ -111,13 +111,14 @@ export function badHost(host: string, raw: string): boolean {
   return false;
 }
 
-function checkNet001(file: ScannedFile, ctx: { config: { allowDomains: string[] } }): Finding[] {
+function checkNet001(file: ScannedFile, ctx: ScanContext): Finding[] {
   const findings: Finding[] = [];
   const lines = file.text.split(/\r?\n/);
   const markdown = isMarkdownPath(file.relativePath);
   const license = isLicensePath(file.relativePath);
+  const allow = [...ctx.config.allowDomains, ...ctx.skillAllowDomains];
   for (const url of extractUrls(file.text)) {
-    if (hostAllowed(url.host, ctx.config.allowDomains)) continue;
+    if (hostAllowed(url.host, allow)) continue;
     const line = lines[url.line - 1] ?? '';
     const previous = previousNonEmpty(lines, url.line - 1);
     if (ignoredDestination(url, line, previous, markdown, license)) continue;

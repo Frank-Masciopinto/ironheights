@@ -15,7 +15,7 @@ exports[`output snapshots > renders human, json, and sarif 2`] = `
   "schemaVersion": 1,
   "tool": {
     "name": "ironheights",
-    "version": "0.1.2"
+    "version": "0.1.3"
   },
   "scannedAt": "2026-10-09T00:00:00.000Z",
   "verdict": "review",
@@ -54,7 +54,7 @@ exports[`output snapshots > renders human, json, and sarif 3`] = `
       "tool": {
         "driver": {
           "name": "ironheights",
-          "version": "0.1.2",
+          "version": "0.1.3",
           "informationUri": "https://github.com/ironheights/ironheights",
           "rules": [
             {

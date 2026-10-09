@@ -7,7 +7,7 @@ export function context(
   config: ResolvedConfig = emptyConfig(),
   skillDirName = 'benign',
 ): ScanContext {
-  return { config, root: '/tmp/skill', skillDirName };
+  return { config, root: '/tmp/skill', skillDirName, skillAllowDomains: [] };
 }
 
 export async function scannedFromFile(path: string, relativePath: string): Promise<ScannedFile> {
