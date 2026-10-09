@@ -26,6 +26,16 @@ export default tseslint.config(
     rules: { 'no-console': 'off' },
   },
   {
+    files: ['scripts/**/*.mjs'],
+    languageOptions: {
+      globals: {
+        console: 'readonly',
+        process: 'readonly',
+      },
+    },
+    rules: { 'no-console': 'off' },
+  },
+  {
     files: ['test/**/*.ts', 'bench/**/*.ts', 'vitest.config.ts', 'tsup.config.ts'],
     rules: { 'no-console': 'off' },
   },
