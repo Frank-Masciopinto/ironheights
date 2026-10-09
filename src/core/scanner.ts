@@ -1,6 +1,6 @@
 import { readdir, readFile, stat } from 'node:fs/promises';
 import { basename, join, resolve } from 'node:path';
-import { parseSkillMarkdown } from '../openclaw/skill.ts';
+import { parseSkillMarkdown, type SkillFrontmatter } from '../openclaw/skill.ts';
 import { allContentRules } from '../rules/index.ts';
 import type { Finding, ResolvedConfig, ScanContext, ScannedFile, SkillReport } from './types.ts';
 import { scoreFindings, verdictFor, worstVerdict } from './verdict.ts';
@@ -76,8 +76,14 @@ async function hasSkillFile(dir: string): Promise<boolean> {
 
 export async function scanSkill(root: string, config: ResolvedConfig): Promise<SkillReport> {
   const walked = await walkSkill(root, config.limits, config.ignoreGlobs);
-  const skillName = await skillNameFor(root, walked.files);
-  const ctx: ScanContext = { config, root, skillDirName: basename(root) };
+  const frontmatter = await readSkillFrontmatter(root, walked.files);
+  const skillName = frontmatter?.name ?? basename(root);
+  const ctx: ScanContext = {
+    config,
+    root,
+    skillDirName: basename(root),
+    skillAllowDomains: frontmatter?.allowDomains ?? [],
+  };
   const findings: Finding[] = [];
   for (const file of walked.files) {
     findings.push(...scanFile(file, ctx));
@@ -115,22 +121,19 @@ function ruleApplies(appliesTo: string[], file: ScannedFile, ruleId: string): bo
   return appliesTo.includes(file.kind);
 }
 
-async function skillNameFor(root: string, files: ScannedFile[]): Promise<string> {
+async function readSkillFrontmatter(
+  root: string,
+  files: ScannedFile[],
+): Promise<SkillFrontmatter | undefined> {
   const skill = files.find(
     (file) => file.relativePath === 'SKILL.md' || file.relativePath.endsWith('/SKILL.md'),
   );
-  if (skill && skill.relativePath === 'SKILL.md') {
-    const parsed = parseSkillMarkdown(skill.text);
-    if (parsed.name) return parsed.name;
-  }
+  if (skill && skill.relativePath === 'SKILL.md') return parseSkillMarkdown(skill.text);
   try {
-    const text = await readFile(join(root, 'SKILL.md'), 'utf8');
-    const parsed = parseSkillMarkdown(text);
-    if (parsed.name) return parsed.name;
+    return parseSkillMarkdown(await readFile(join(root, 'SKILL.md'), 'utf8'));
   } catch {
-    // The directory may not be a skill yet.
+    return undefined;
   }
-  return basename(root);
 }
 
 function compareFindings(a: Finding, b: Finding): number {

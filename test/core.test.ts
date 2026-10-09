@@ -9,6 +9,7 @@ import { exitCodeFor, scoreFindings, verdictFor } from '../src/core/verdict.ts';
 import { renderHuman } from '../src/cli/output/human.ts';
 import { renderJson } from '../src/cli/output/json.ts';
 import { renderSarif } from '../src/cli/output/sarif.ts';
+import { parseSkillMarkdown } from '../src/openclaw/skill.ts';
 import { SAFETY_REMINDER } from '../src/version.ts';
 import type { Finding } from '../src/core/types.ts';
 
@@ -90,6 +91,31 @@ describe('scanner', () => {
       schemaVersion: number;
     };
     expect(json.schemaVersion).toBe(1);
+  });
+
+  it('applies metadata.ironheights.allowDomains to that skill only', async () => {
+    const result = await scanPath(
+      join(process.cwd(), 'test/fixtures/allow-domains'),
+      emptyConfig(),
+    );
+    const declared = result.skills.find((skill) => skill.skillName === 'declared');
+    const undeclared = result.skills.find((skill) => skill.skillName === 'undeclared');
+    expect(declared?.filesScanned).toBeGreaterThan(1);
+    expect(declared?.findings.filter((item) => item.ruleId === 'IH-NET-001')).toEqual([]);
+    expect(undeclared?.findings.some((item) => item.ruleId === 'IH-NET-001')).toBe(true);
+    expect(undeclared?.findings.some((item) => item.evidence.includes('api.acme.test'))).toBe(true);
+  });
+
+  it('reads skill allow domains from frontmatter', () => {
+    const parsed = parseSkillMarkdown(
+      '---\nname: demo\ndescription: Demo.\nmetadata:\n  ironheights:\n    allowDomains:\n      - API.Acme.Test.\n      - files.api.acme.test\n      - https://evil.invalid/x\n      - 12\n---\n',
+    );
+    expect(parsed.allowDomains).toEqual(['api.acme.test', 'files.api.acme.test']);
+    expect(
+      parseSkillMarkdown('---\nname: demo\nmetadata:\n  ironheights:\n    allowDomains: no\n---\n')
+        .allowDomains,
+    ).toEqual([]);
+    expect(parseSkillMarkdown('no frontmatter').allowDomains).toEqual([]);
   });
 
   it('scans the advisory skill with no findings', async () => {

@@ -105,7 +105,7 @@ An allowlist entry matches that host and its subdomains. The built-in list inclu
 ```json
 {
   "schemaVersion": 1,
-  "tool": { "name": "ironheights", "version": "0.1.2" },
+  "tool": { "name": "ironheights", "version": "0.1.3" },
   "scannedAt": "2026-10-09T00:00:00.000Z",
   "verdict": "no-findings",
   "skills": []
@@ -145,6 +145,8 @@ Watched agent files default to `AGENTS.md`, `SOUL.md`, `IDENTITY.md`, `USER.md`,
 Bundled skills are the `skills/` directory in the OpenClaw package. Ironheights finds that package from `OPENCLAW_BUNDLED_SKILLS_DIR`, from the `~/.openclaw/bin/openclaw` wrapper, from `~/.openclaw/tools/node-v*/lib/node_modules/openclaw`, or from the usual global `node_modules/openclaw` locations. Custodian skills are the sibling `custodian-skills/` directory. Plugin skills are the directories linked from `~/.openclaw/plugin-skills`. `doctor` says when the bundled directory was not found.
 
 `SKILL.md` needs YAML frontmatter with `name` and `description`. Optional fields include `metadata.openclaw`, `homepage`, `user-invocable`, `disable-model-invocation`, and the `command-dispatch` keys.
+
+`metadata.ironheights.allowDomains` is a list of hosts that this skill is allowed to contact. `IH-NET-001` skips those hosts and their subdomains for that skill only. Another skill that calls the same host still reports. The bundled OpenClaw skills do not declare their hosts, so `scan --all` on a stock install still reports their API hosts.
 
 ## Integrity
 

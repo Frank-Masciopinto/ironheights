@@ -35,6 +35,8 @@ export interface ScanContext {
   config: ResolvedConfig;
   root: string;
   skillDirName: string;
+  /** Hosts from this skill's `metadata.ironheights.allowDomains`. */
+  skillAllowDomains: string[];
 }
 
 export interface RuleExamples {
