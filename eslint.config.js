@@ -5,6 +5,7 @@ export default tseslint.config(
   {
     ignores: [
       'dist/**',
+      'dist-scripts/**',
       'dist-types/**',
       'coverage/**',
       'bench/results/**',
