@@ -1,0 +1,4 @@
+dist/
+coverage/
+bench/results/
+docs/rules.md

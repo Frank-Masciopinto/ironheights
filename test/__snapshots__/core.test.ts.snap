@@ -1,0 +1,117 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`output snapshots > renders human, json, and sarif 1`] = `
+"demo
+  [high] IH-CRED-001 SKILL.md:1
+    example
+    fix it
+
+Verdict: review
+Absence of findings is not proof of safety."
+`;
+
+exports[`output snapshots > renders human, json, and sarif 2`] = `
+"{
+  "schemaVersion": 1,
+  "tool": {
+    "name": "ironheights",
+    "version": "0.1.0"
+  },
+  "scannedAt": "2026-10-09T00:00:00.000Z",
+  "verdict": "review",
+  "skills": [
+    {
+      "skillName": "demo",
+      "root": "/tmp/demo",
+      "filesScanned": 1,
+      "filesSkipped": [],
+      "findings": [
+        {
+          "ruleId": "IH-CRED-001",
+          "severity": "high",
+          "confidence": "high",
+          "file": "SKILL.md",
+          "line": 1,
+          "evidence": "example",
+          "message": "example",
+          "remediation": "fix it"
+        }
+      ],
+      "score": 40,
+      "verdict": "review"
+    }
+  ]
+}
+"
+`;
+
+exports[`output snapshots > renders human, json, and sarif 3`] = `
+"{
+  "$schema": "https://raw.githubusercontent.com/oasis-tcs/sarif-spec/main/sarif-2.1/schema/sarif-schema-2.1.0.json",
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "ironheights",
+          "version": "0.1.0",
+          "informationUri": "https://github.com/ironheights/ironheights",
+          "rules": [
+            {
+              "id": "IH-CRED-001",
+              "shortDescription": {
+                "text": "Access to a sensitive path"
+              },
+              "fullDescription": {
+                "text": "References to keys, browser stores, wallets, shell history, or OpenClaw auth files expose credentials."
+              },
+              "help": {
+                "text": "Do not read these paths from a skill. Use a scoped environment variable or the platform secret store."
+              },
+              "defaultConfiguration": {
+                "level": "error"
+              },
+              "properties": {
+                "category": "credentials",
+                "priority": "P0",
+                "tags": [
+                  "credentials"
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "results": [
+        {
+          "ruleId": "IH-CRED-001",
+          "level": "error",
+          "message": {
+            "text": "example"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "SKILL.md",
+                  "uriBaseId": "%SRCROOT%"
+                },
+                "region": {
+                  "startLine": 1,
+                  "startColumn": 1
+                }
+              }
+            }
+          ],
+          "properties": {
+            "confidence": "high",
+            "evidence": "example",
+            "remediation": "fix it"
+          }
+        }
+      ]
+    }
+  ]
+}
+"
+`;

@@ -1,0 +1,124 @@
+{
+  "skills": [
+    {
+      "path": "benign/meeting-notes",
+      "label": "benign",
+      "family": "benign",
+      "notes": "synthetic"
+    },
+    {
+      "path": "benign/unit-converter",
+      "label": "benign",
+      "family": "benign",
+      "notes": "synthetic"
+    },
+    {
+      "path": "benign/standup",
+      "label": "benign",
+      "family": "benign",
+      "notes": "synthetic"
+    },
+    {
+      "path": "benign/glossary",
+      "label": "benign",
+      "family": "benign",
+      "notes": "synthetic"
+    },
+    {
+      "path": "benign/agenda",
+      "label": "benign",
+      "family": "benign",
+      "notes": "synthetic"
+    },
+    {
+      "path": "benign/recipe-scaler",
+      "label": "benign",
+      "family": "benign",
+      "notes": "synthetic"
+    },
+    {
+      "path": "benign/markdown-toc",
+      "label": "benign",
+      "family": "benign",
+      "notes": "synthetic"
+    },
+    {
+      "path": "benign/timezone-helper",
+      "label": "benign",
+      "family": "benign",
+      "notes": "synthetic"
+    },
+    {
+      "path": "benign/writing-style",
+      "label": "benign",
+      "family": "benign",
+      "notes": "synthetic"
+    },
+    {
+      "path": "benign/changelog-notes",
+      "label": "benign",
+      "family": "benign",
+      "notes": "synthetic"
+    },
+    {
+      "path": "malicious/pipe-installer",
+      "label": "malicious",
+      "family": "exec",
+      "notes": "synthetic text only"
+    },
+    {
+      "path": "malicious/prereq-install",
+      "label": "malicious",
+      "family": "exec",
+      "notes": "synthetic text only"
+    },
+    {
+      "path": "malicious/webhook",
+      "label": "malicious",
+      "family": "network",
+      "notes": "synthetic text only"
+    },
+    {
+      "path": "malicious/ssh-read",
+      "label": "malicious",
+      "family": "credentials",
+      "notes": "synthetic text only"
+    },
+    {
+      "path": "malicious/hardcoded-key",
+      "label": "malicious",
+      "family": "credentials",
+      "notes": "synthetic text only"
+    },
+    {
+      "path": "malicious/override",
+      "label": "malicious",
+      "family": "injection",
+      "notes": "synthetic text only"
+    },
+    {
+      "path": "malicious/hidden",
+      "label": "malicious",
+      "family": "injection",
+      "notes": "synthetic text only"
+    },
+    {
+      "path": "malicious/crontab",
+      "label": "malicious",
+      "family": "persistence",
+      "notes": "synthetic text only"
+    },
+    {
+      "path": "malicious/dynamic-eval",
+      "label": "malicious",
+      "family": "exec",
+      "notes": "synthetic text only"
+    },
+    {
+      "path": "malicious/sudo-chmod",
+      "label": "malicious",
+      "family": "privilege",
+      "notes": "synthetic text only"
+    }
+  ]
+}

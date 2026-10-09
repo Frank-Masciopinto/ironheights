@@ -1,0 +1,8 @@
+node_modules/
+dist/
+dist-types/
+coverage/
+bench/results/*
+!bench/results/.gitkeep
+*.tsbuildinfo
+.DS_Store
