@@ -234,6 +234,10 @@ async function prepareCall(
   return { call, loaded: { ...loaded, policy } };
 }
 
+function isResolvedAbsolute(value: string): boolean {
+  return value.startsWith('/') || /^[A-Za-z]:\//.test(value);
+}
+
 function linkTargets(call: ToolCall, policy: LoadedGuard['policy']): string[] {
   const extra: string[] = [];
   const seeds = [
@@ -243,7 +247,7 @@ function linkTargets(call: ToolCall, policy: LoadedGuard['policy']): string[] {
   ];
   for (const seed of seeds.slice(0, 32)) {
     const resolved = resolveToolPath(seed, policy);
-    if (!resolved.startsWith('/')) continue;
+    if (!isResolvedAbsolute(resolved)) continue;
     try {
       const real = realpathSync.native(resolved);
       if (real && real !== resolved && !extra.includes(real)) extra.push(real);

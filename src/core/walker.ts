@@ -152,7 +152,12 @@ export async function walkSkill(
     }
     const classified = classifyFile(portable, head);
     const binary = classified.kind === 'binary';
-    const text = link.forceEmpty || binary ? '' : decodeText(await readAll(abs, size));
+    const bytes = link.forceEmpty || binary ? new Uint8Array() : await readAll(abs, size);
+    if (!bytes) {
+      skipped.push({ file: portable, reason: 'unreadable file' });
+      return;
+    }
+    const text = link.forceEmpty || binary ? '' : decodeText(bytes);
     const base = portable.split('/').pop() ?? portable;
     files.push({
       relativePath: portable,
@@ -189,14 +194,18 @@ async function readHead(abs: string, size: number): Promise<Uint8Array | undefin
   }
 }
 
-async function readAll(abs: string, size: number): Promise<Uint8Array> {
-  const handle = await open(abs, 'r');
+async function readAll(abs: string, size: number): Promise<Uint8Array | undefined> {
   try {
-    const buf = Buffer.alloc(size);
-    await handle.read(buf, 0, size, 0);
-    return buf;
-  } finally {
-    await handle.close();
+    const handle = await open(abs, 'r');
+    try {
+      const buf = Buffer.alloc(size);
+      await handle.read(buf, 0, size, 0);
+      return buf;
+    } finally {
+      await handle.close();
+    }
+  } catch {
+    return undefined;
   }
 }
 

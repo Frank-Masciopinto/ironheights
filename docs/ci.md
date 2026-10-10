@@ -1,6 +1,6 @@
 # Use Ironheights in CI
 
-The scanner does not use the network. The GitHub Action below is the piece that downloads a pinned npm release so the job can run it. It does not take a token or any other secret. SARIF upload uses the workflow's `GITHUB_TOKEN` only when you set `upload-sarif: true`, and the workflow must grant `security-events: write`.
+The scanner does not use the network. The GitHub Action below is the piece that downloads a pinned npm release so the job can run it. `npx` runs in a temporary directory, so a checkout whose own package is also named `ironheights` does not shadow that pin. It does not take a token or any other secret. SARIF upload uses the workflow's `GITHUB_TOKEN` only when you set `upload-sarif: true`, and the workflow must grant `security-events: write`.
 
 Exit codes are the scanner's:
 

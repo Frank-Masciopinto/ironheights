@@ -81,7 +81,13 @@ runs:
             exit 0
             ;;
         esac
-        args=(scan "$IH_PATH" --no-color)
+        to_abs() {
+          case "$1" in
+            /*|[A-Za-z]:*|[A-Za-z]:\\*) printf '%s' "$1" ;;
+            *) printf '%s/%s' "${GITHUB_WORKSPACE}" "$1" ;;
+          esac
+        }
+        args=(scan "$(to_abs "$IH_PATH")" --no-color)
         if [[ -n "$IH_FAIL_ON" ]]; then
           args+=(--fail-on "$IH_FAIL_ON")
         fi
@@ -89,17 +95,21 @@ runs:
           args+=(--allow-skipped)
         fi
         if [[ -n "$IH_CONFIG" ]]; then
-          args+=(--config "$IH_CONFIG")
+          args+=(--config "$(to_abs "$IH_CONFIG")")
         fi
         sarif=""
         if [[ "$IH_UPLOAD" == "true" || -n "$IH_SARIF_FILE" ]]; then
-          sarif="${IH_SARIF_FILE:-ironheights.sarif}"
+          sarif="$(to_abs "${IH_SARIF_FILE:-ironheights.sarif}")"
           args+=(--sarif "$sarif")
         fi
+        # Run outside this checkout. A package.json named ironheights makes
+        # npx execute the local (often unbuilt) bin instead of the pin.
+        work="$(mktemp -d)"
         set +e
-        npx --yes "ironheights@${IH_VERSION}" "${args[@]}"
+        (cd "$work" && npx --yes "ironheights@${IH_VERSION}" "${args[@]}")
         code=$?
         set -e
+        rm -rf "$work"
         record "$code" "$sarif"
     - name: Upload SARIF
       if: inputs.upload-sarif == 'true'

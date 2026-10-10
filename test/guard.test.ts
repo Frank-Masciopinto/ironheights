@@ -324,7 +324,8 @@ describe('guard audit log', () => {
       expect(text).not.toContain('abcdefghijklmnopqrstuvwxyz');
       expect(text).toContain('IH-GUARD-EXEC');
       const mode = (await lstat(path)).mode & 0o777;
-      expect(mode).toBe(0o600);
+      if (process.platform === 'win32') expect(mode & 0o200).toBe(0o200);
+      else expect(mode).toBe(0o600);
       for (let i = 0; i < 6; i += 1) {
         await appendAuditEvent(
           {

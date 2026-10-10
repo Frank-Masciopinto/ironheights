@@ -88,9 +88,7 @@ describe('doctor and locate', () => {
     await mkdir(join(state, 'agents', 'main', 'agent'), { recursive: true });
     await writeFile(
       join(state, 'openclaw.json'),
-      '{ /* comment */ agents: { defaults: { workspace: "' +
-        workspace +
-        '", }, }, skills: { load: { extraDirs: [], }, }, }\n',
+      `{ /* comment */ agents: { defaults: { workspace: ${JSON.stringify(workspace)}, }, }, skills: { load: { extraDirs: [], }, }, }\n`,
     );
     const located = await locateOpenClaw({
       OPENCLAW_STATE_DIR: state,
