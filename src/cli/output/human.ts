@@ -8,9 +8,12 @@ import {
 import type { ScanMode } from '../../core/grade.ts';
 import type { AdvisoryFeedNote, Finding, SkillReport, Verdict } from '../../core/types.ts';
 import { compareSeverity } from '../../core/verdict.ts';
+import { LLM_RULE_ID } from '../../llm/constants.ts';
+import type { LlmReviewReport } from '../../llm/review.ts';
 import { clip } from '../../util/text.ts';
 import { paint } from '../../util/terminal.ts';
 import { NO_FINDINGS_LABEL, SAFETY_REMINDER } from '../../version.ts';
+import { llmStatusLines } from './llm-status.ts';
 
 const SEVERITY_COLOR: Record<Finding['severity'], string> = {
   critical: '31',
@@ -26,6 +29,7 @@ export function renderHuman(
   color: boolean,
   scanMode: ScanMode = 'directory',
   advisory?: AdvisoryFeedNote,
+  llmReview?: LlmReviewReport,
 ): string {
   const lines: string[] = [];
   if (scanMode === 'text') lines.push(TEXT_SCAN_LIMIT, '');
@@ -77,6 +81,7 @@ export function renderHuman(
   }
   lines.push(`Verdict: ${verdict}`);
   lines.push(`Grade: ${formatGrade(grade)}`);
+  lines.push(...llmStatusLines(skills, llmReview));
   lines.push(SAFETY_REMINDER);
   lines.push(renderSummary(summaryInput));
   lines.push(`Badge: ${renderBadge(summaryInput)}`);
@@ -85,11 +90,13 @@ export function renderHuman(
 
 function findingLines(finding: Finding, color: boolean): string[] {
   const label = paint(color, SEVERITY_COLOR[finding.severity], `[${finding.severity}]`);
-  return [
+  const lines = [
     `  ${label} ${finding.ruleId} ${where(finding)}`,
     `    ${clip(finding.evidence)}`,
-    `    ${finding.remediation}`,
   ];
+  if (finding.ruleId === LLM_RULE_ID) lines.push(`    ${finding.message}`);
+  lines.push(`    ${finding.remediation}`);
+  return lines;
 }
 
 function where(item: { file: string; line?: number }): string {

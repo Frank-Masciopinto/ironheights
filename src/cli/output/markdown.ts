@@ -1,14 +1,22 @@
-import { formatGrade, gradeFromSkills, renderSummary, TEXT_SCAN_LIMIT } from '../../core/grade.ts';
+import {
+  formatGrade,
+  gradeFromSkills,
+  renderSummary,
+  TEXT_SCAN_LIMIT,
+} from '../../core/grade.ts';
 import type { ScanMode } from '../../core/grade.ts';
 import type { AdvisoryFeedNote, SkillReport, Verdict } from '../../core/types.ts';
+import type { LlmReviewReport } from '../../llm/review.ts';
 import { referenceTags } from '../../rules/references.ts';
 import { NO_FINDINGS_LABEL, SAFETY_REMINDER } from '../../version.ts';
+import { llmStatusLines } from './llm-status.ts';
 
 export function renderMarkdown(
   skills: SkillReport[],
   verdict: Verdict,
   scanMode: ScanMode = 'directory',
   advisory?: AdvisoryFeedNote,
+  llmReview?: LlmReviewReport,
 ): string {
   const grade = gradeFromSkills(skills);
   const lines = ['# Ironheights scan', ''];
@@ -74,6 +82,6 @@ export function renderMarkdown(
     }
     lines.push('');
   }
-  lines.push(SAFETY_REMINDER, '');
+  for (const line of llmStatusLines(skills, llmReview)) lines.push(line, '');
   return lines.join('\n');
 }

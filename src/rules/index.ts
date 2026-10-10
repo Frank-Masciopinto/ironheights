@@ -7,6 +7,7 @@ import { exec001, exec002, exec003 } from './exec.ts';
 import { fs001 } from './filesystem.ts';
 import { inj001, inj002, inj003 } from './injection.ts';
 import { integrityRules } from './integrity.ts';
+import { llm001 } from './llm.ts';
 import { mcp001, mcp002, mcp003 } from './mcp.ts';
 import { meta001 } from './meta.ts';
 import { net001, net002 } from './network.ts';
@@ -42,7 +43,7 @@ export function allContentRules(): Rule[] {
 }
 
 export function allRules(): Rule[] {
-  return [...contentRules, ...integrityRules, ...advisoryRules, ...configRules];
+  return [...contentRules, ...integrityRules, ...advisoryRules, ...configRules, llm001];
 }
 
 export function ruleById(id: string): Rule | undefined {

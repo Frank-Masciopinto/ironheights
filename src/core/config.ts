@@ -3,9 +3,15 @@ import { isAbsolute, join, resolve, win32 } from 'node:path';
 import { expandUserPath, homeDirectory } from '../util/paths.ts';
 import { z } from 'zod';
 import { UsageError } from './errors.ts';
-import type { ResolvedConfig, Severity } from './types.ts';
+import type { ResolvedConfig, ResolvedLlmConfig, Severity } from './types.ts';
 import { BUILTIN_ALLOW_DOMAINS } from './domains.ts';
 import { discoverDefaultPaths } from '../openclaw/locate.ts';
+import {
+  LLM_DEFAULT_MAX_INPUT_CHARS,
+  LLM_DEFAULT_MODEL,
+  LLM_DEFAULT_TIMEOUT_MS,
+  LLM_DEFAULT_URL,
+} from '../llm/constants.ts';
 
 const severitySchema = z.enum(['info', 'low', 'medium', 'high', 'critical']);
 
@@ -53,6 +59,16 @@ export const ConfigSchema = z
       .object({
         block: z.number().nonnegative().optional(),
         review: z.number().nonnegative().optional(),
+      })
+      .strict()
+      .optional(),
+    llm: z
+      .object({
+        url: z.string().min(1).max(2000).optional(),
+        model: z.string().min(1).max(200).optional(),
+        api: z.enum(['ollama', 'openai']).optional(),
+        timeoutMs: z.number().int().min(1000).max(120_000).optional(),
+        maxInputChars: z.number().int().min(1000).max(100_000).optional(),
       })
       .strict()
       .optional(),
@@ -120,7 +136,18 @@ export async function loadConfig(options: LoadConfigOptions = {}): Promise<Resol
       block: input.thresholds?.block ?? DEFAULT_THRESHOLDS.block,
       review: input.thresholds?.review ?? DEFAULT_THRESHOLDS.review,
     },
+    llm: resolveLlmConfig(input.llm),
     ...(discovered ? { configPath: discovered } : {}),
+  };
+}
+
+export function resolveLlmConfig(input: ConfigInput['llm']): ResolvedLlmConfig {
+  return {
+    url: input?.url ?? LLM_DEFAULT_URL,
+    model: input?.model ?? LLM_DEFAULT_MODEL,
+    ...(input?.api ? { api: input.api } : {}),
+    timeoutMs: input?.timeoutMs ?? LLM_DEFAULT_TIMEOUT_MS,
+    maxInputChars: input?.maxInputChars ?? LLM_DEFAULT_MAX_INPUT_CHARS,
   };
 }
 
@@ -136,6 +163,7 @@ export function emptyConfig(overrides: Partial<ResolvedConfig> = {}): ResolvedCo
     suppressIntegrity: false,
     limits: { ...DEFAULT_LIMITS },
     thresholds: { ...DEFAULT_THRESHOLDS },
+    llm: resolveLlmConfig(undefined),
     ...overrides,
   };
 }

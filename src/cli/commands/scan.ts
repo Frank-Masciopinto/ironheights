@@ -2,7 +2,7 @@ import { stat, writeFile } from 'node:fs/promises';
 import { annotateSkillReports } from '../../advisories/match.ts';
 import { readAdvisoryCache } from '../../advisories/cache.ts';
 import { pinnedAdvisoryPublicKey } from '../../advisories/pinned-key.ts';
-import type { AdvisoryFeedNote } from '../../core/types.ts';
+import type { AdvisoryFeedNote, Finding, SkillReport, Verdict } from '../../core/types.ts';
 import { UsageError, NetworkError } from '../../core/errors.ts';
 import { ironheightsHome, loadConfig } from '../../core/config.ts';
 import { TEXT_SCAN_LIMIT } from '../../core/grade.ts';
@@ -10,8 +10,11 @@ import type { ScanMode } from '../../core/grade.ts';
 import { scanPath, scanText } from '../../core/scanner.ts';
 import { applySinceBaseline } from '../../core/since-baseline.ts';
 import { exitCodeFor, worstVerdict } from '../../core/verdict.ts';
-import type { SkillReport, Verdict } from '../../core/types.ts';
 import { baselinePath } from '../../integrity/baseline.ts';
+import { LLM_RULE_ID, skipNote } from '../../llm/constants.ts';
+import type { PostOptions, PostResult } from '../../llm/client.ts';
+import { parseLlmApi } from '../../llm/endpoint.ts';
+import { reviewSkills, type LlmReviewReport, type LlmSkillReview } from '../../llm/review.ts';
 import { parseFailOn } from '../options.ts';
 import { colorEnabled } from '../../util/terminal.ts';
 import { renderHtml } from '../output/html.ts';
@@ -36,9 +39,18 @@ export interface ScanFlags {
   stdin?: boolean;
   stdinText?: string;
   text?: string;
+  llm?: boolean;
+  llmUrl?: string;
+  llmModel?: string;
+  llmApi?: string;
+  llmConsent?: boolean;
+  dryRun?: boolean;
   paths: string[];
   env?: NodeJS.ProcessEnv;
   stdout?: (text: string) => void;
+  stderr?: (text: string) => void;
+  /** Test seam. Production uses the built-in HTTP client. */
+  post?: (options: PostOptions) => Promise<PostResult>;
   now?: Date;
   /** Test hook. The CLI does not accept an alternate advisory key. */
   advisoryPublicKey?: Uint8Array | null;
@@ -57,6 +69,10 @@ export async function runScan(flags: ScanFlags): Promise<number> {
 }
 
 export async function executeScan(flags: ScanFlags): Promise<ScanExecution> {
+  const api = parseLlmApi(flags.llmApi);
+  if (flags.dryRun && !flags.llm) {
+    throw new UsageError('--dry-run requires --llm or the review command');
+  }
   const env = flags.env ?? process.env;
   const config = await loadConfig({
     ...(flags.config ? { explicitPath: flags.config } : {}),
@@ -113,40 +129,85 @@ export async function executeScan(flags: ScanFlags): Promise<ScanExecution> {
   const verdict = worstVerdict(skills.map((skill) => skill.verdict));
   const limitNote = scanMode === 'text' ? TEXT_SCAN_LIMIT : undefined;
   const write = flags.stdout ?? ((text: string) => process.stdout.write(text));
+  const emitNotice = flags.stderr ?? ((text: string) => process.stderr.write(text));
+  let reported = skills;
+  let llmReport: LlmReviewReport | undefined;
+  if (flags.llm) {
+    if (flags.dryRun) {
+      write(`Deterministic verdict: ${verdict}\nDry-run did not contact the model server.\n\n`);
+    }
+    if (scanMode === 'text') {
+      const reason = 'a text scan has no skill directory to send';
+      (flags.dryRun ? write : emitNotice)(`${skipNote(reason)}\n`);
+      llmReport = {
+        enabled: true,
+        advisory: true,
+        status: 'skipped',
+        reviews: skills.map((skill) => textSkip(skill.skillName, reason)),
+      };
+    } else {
+      const reviewed = await reviewSkills({
+        skills,
+        config,
+        ...(flags.llmUrl ? { url: flags.llmUrl } : {}),
+        ...(flags.llmModel ? { model: flags.llmModel } : {}),
+        ...(api ? { api } : {}),
+        consent: flags.llmConsent === true,
+        dryRun: flags.dryRun === true,
+        env,
+        emit: flags.dryRun ? write : emitNotice,
+        ...(flags.post ? { post: flags.post } : {}),
+      });
+      reported = reviewed.skills;
+      llmReport = reviewed.report;
+    }
+  }
+  const code = exitCodeFor(verdict, deterministicFindings(skills), config.failOn, {
+    filesSkipped: skills.reduce((sum, skill) => sum + skill.filesSkipped.length, 0),
+    allowSkipped: flags.allowSkipped === true,
+  });
+  if (flags.dryRun) return { skills, verdict, code };
+  const color = colorEnabled(Boolean(flags.noColor), env) && !flags.quiet;
   const renderContext = {
     scanMode,
     ...(limitNote ? { limitNote } : {}),
     ...(advisory.note ? { advisory: advisory.note } : {}),
+    ...(llmReport ? { llmReview: llmReport } : {}),
   };
   if (format === 'json') {
-    write(renderJson(skills, verdict, scannedAt, renderContext));
+    write(renderJson(reported, verdict, scannedAt, renderContext));
   } else if (format === 'html') {
-    write(`${renderHtml(skills, verdict, scannedAt, scanMode, advisory.note)}\n`);
+    write(`${renderHtml(reported, verdict, scannedAt, scanMode, advisory.note)}\n`);
   } else {
-    write(
-      `${renderHuman(
-        skills,
-        verdict,
-        colorEnabled(Boolean(flags.noColor), env) && !flags.quiet,
-        scanMode,
-        advisory.note,
-      )}\n`,
-    );
+    write(`${renderHuman(reported, verdict, color, scanMode, advisory.note, llmReport)}\n`);
   }
-  if (flags.sarif) await writeFile(flags.sarif, renderSarif(skills, scanMode));
-  if (flags.md) await writeFile(flags.md, renderMarkdown(skills, verdict, scanMode, advisory.note));
+  if (flags.sarif) await writeFile(flags.sarif, renderSarif(reported, scanMode));
+  if (flags.md)
+    await writeFile(
+      flags.md,
+      renderMarkdown(reported, verdict, scanMode, advisory.note, llmReport),
+    );
   if (flags.html)
-    await writeFile(flags.html, renderHtml(skills, verdict, scannedAt, scanMode, advisory.note));
-  const findings = skills.flatMap((skill) => skill.findings);
-  const filesSkipped = skills.reduce((sum, skill) => sum + skill.filesSkipped.length, 0);
+    await writeFile(flags.html, renderHtml(reported, verdict, scannedAt, scanMode, advisory.note));
+  return { skills: reported, verdict, code };
+}
+
+function textSkip(skillName: string, reason: string): LlmSkillReview {
   return {
-    skills,
-    verdict,
-    code: exitCodeFor(verdict, findings, config.failOn, {
-      filesSkipped,
-      allowSkipped: flags.allowSkipped === true,
-    }),
+    skillName,
+    status: 'skipped',
+    endpoint: 'unset',
+    model: 'unset',
+    api: 'ollama',
+    redactedSecrets: 0,
+    reason,
   };
+}
+
+function deterministicFindings(skills: SkillReport[]): Finding[] {
+  return skills.flatMap((skill) =>
+    skill.findings.filter((finding) => finding.ruleId !== LLM_RULE_ID),
+  );
 }
 
 function resolveScanMode(flags: ScanFlags): ScanMode {
@@ -188,6 +249,7 @@ async function stdinText(flags: ScanFlags): Promise<string> {
   }
   return Buffer.concat(chunks).toString('utf8');
 }
+
 async function applyAdvisoryCache(
   skills: SkillReport[],
   config: Awaited<ReturnType<typeof loadConfig>>,

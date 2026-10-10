@@ -23,3 +23,7 @@ The production advisory private key is not in this repository. The CLI rejects a
 ## Runtime guard
 
 The optional OpenClaw plugin logs tool calls on the machine and, in `enforce` mode, can block four kinds of call. The plugin runs inside the OpenClaw process. A caller who can change OpenClaw's config, the plugin file, or `~/.ironheights/guard-policy.json` can disable it. Treat that as defense in depth. The limits are in [docs/guard.md](docs/guard.md). The guard does not send the audit log anywhere.
+
+## Optional model review
+
+`scan --llm` and `review` are off unless you pass them. A localhost model server stays on the machine. Any other host needs `--llm-consent` and `IRONHEIGHTS_LLM_API_KEY`. Ironheights redacts common secret shapes before sending and prints the request body first. Redaction can miss a secret. Do not send a skill that contains a live secret to a remote model. Model notes are advisory and can be wrong. A report to GitHub should still use a synthetic snippet, not a live secret.

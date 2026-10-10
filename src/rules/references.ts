@@ -161,6 +161,8 @@ export const RULE_REFERENCES: Record<string, RuleReferences> = {
     owaspAgentic: ['ASI05:2026'],
     mitreAtlas: [],
   },
+  // Advisory notes are not a detection technique, so no framework id is cited.
+  'IH-LLM-001': { owaspLlm: [], owaspAgentic: [], mitreAtlas: [] },
 };
 
 export function referencesFor(ruleId: string): RuleReferences {

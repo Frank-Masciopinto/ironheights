@@ -2,7 +2,7 @@
 
 Ironheights is a local-first scanner and integrity monitor for [OpenClaw](https://docs.openclaw.ai) skills. It reads skill files as data, looks for risky patterns with fixed rules, and compares skill and agent files with a baseline you save on the same machine.
 
-It does not send telemetry, and it does not run the files it scans. It does not call the network unless you run `fetch`, `safe-install`, `advisories update`, or `--online`.
+It does not send telemetry, and it does not run the files it scans. It does not call the network unless you run `fetch`, `safe-install`, `advisories update`, `--online`, `scan --llm`, or `review`.
 
 ## Install
 
@@ -85,7 +85,8 @@ Absence of findings is not proof of safety.
 ## Commands
 
 ```text
-ironheights scan <path> [--all] [--json] [--sarif <file>] [--md <file>] [--html <file>] [--format text|json|html] [--since-baseline [file]] [--stdin] [--text <text>] [--fail-on <severity>] [--config <file>] [--allow-skipped] [--no-color] [--quiet]
+ironheights scan <path> [--all] [--json] [--sarif <file>] [--md <file>] [--html <file>] [--format text|json|html] [--since-baseline [file]] [--stdin] [--text <text>] [--fail-on <severity>] [--config <file>] [--allow-skipped] [--no-color] [--quiet] [--llm] [--llm-url <url>] [--llm-model <name>] [--llm-api ollama|openai] [--llm-consent] [--dry-run]
+ironheights review <path> [the same flags as scan]
 ironheights fetch <owner>/<slug>[@version] [--out <dir>] [--json] [--sarif <file>] [--md <file>] [--fail-on <severity>] [--config <file>] [--allow-skipped] [--no-color] [--quiet]
 ironheights safe-install <owner>/<slug>[@version] [--dir <skills-dir>] [--accept-review] [--out <dir>] [--json] [--config <file>] [--no-color] [--quiet]
 ironheights advisories update
@@ -113,7 +114,7 @@ ironheights --online <command>
 
 ```text
 fetch ada/notes@1.0.0
-This command contacts the network. ironheights does not call the network unless you run fetch, safe-install, advisories update, or --online.
+This command contacts the network. ironheights does not call the network unless you run fetch, safe-install, advisories update, --online, scan --llm, or review.
 
 Requesting:
   GET https://clawhub.ai/api/v1/skills/notes?owner=ada
@@ -138,7 +139,7 @@ Staged 1 files at /tmp/ironheights-fetch-.../notes
 
 ```text
 advisories update
-This command contacts the network. ironheights does not call the network unless you run fetch, safe-install, advisories update, or --online.
+This command contacts the network. ironheights does not call the network unless you run fetch, safe-install, advisories update, --online, scan --llm, or review.
 
 Requesting:
   GET https://ironheights.dev/advisories.json
@@ -245,11 +246,14 @@ Ironheights reads `ironheights.config.json` from the current directory, then `~/
     { "ruleId": "IH-NET-001", "path": "docs/**", "reason": "documented example hosts" }
   ],
   "suppressCritical": false,
-  "suppressIntegrity": false
+  "suppressIntegrity": false,
+  "llm": { "url": "http://127.0.0.1:11434", "model": "llama3.2", "api": "ollama" }
 }
 ```
 
 An allowlist entry matches that host and its subdomains. The built-in list includes `example.com`, `example.org`, `example.net`, `localhost`, the loopback addresses `127.0.0.1` and `::1`, GitHub, npm, PyPI, and `openclaw.ai`.
+
+`llm` sets the model server used by `scan --llm` and `review`. It does not turn the review on, and it cannot grant consent to send skill text off the machine. Unknown keys are still an error, including a `consent` key under `llm`.
 
 ## JSON output
 
@@ -276,13 +280,15 @@ An allowlist entry matches that host and its subdomains. The built-in list inclu
 
 `grade.score` is omitted when `grade.letter` is `incomplete`. A text scan sets `scanMode` to `text` and adds `scanLimit`. `--since-baseline` adds `sinceBaseline` on the document and on each skill, including `omitted`. Each skill also has `suppressed`, `suppressedCount`, `suppressionRefused`, and `suppressionRefusedCount`. When a cached advisory feed was checked, the document also has `advisoryFeed` with `entries` and `generatedAt`.
 
-Each skill has `skillName`, `root`, `filesScanned`, `filesSkipped`, `skippedFileCount`, `findings`, `score`, and `verdict`. `skippedFileCount` is the number of files the scan did not read. `filesSkipped` lists each path and the reason. A finding has `ruleId`, `severity`, `confidence`, `file`, optional `line` and `column`, `evidence`, `message`, `remediation`, and `references` (`owaspLlm`, `owaspAgentic`, `mitreAtlas`). With `--since-baseline`, `score` and `verdict` describe the new findings. The grade still describes the full scan, including an `IH-ADV-001` match. `--sarif` writes SARIF 2.1.0. The run `properties` include `skippedFileCount`, `gradeLetter`, `disclaimer`, and `gradeScore` when the scan is complete. Rule `properties` and `tags` include the same references. `tool.driver.informationUri` is `https://github.com/Frank-Masciopinto/ironheights`.
+`llmReview` is present only after `scan --llm` or `review`. A normal scan does not include that key. `advisory` is always true there. The grade and `verdict` stay the deterministic result, including an `IH-ADV-001` match.
+
+Each skill has `skillName`, `root`, `filesScanned`, `filesSkipped`, `skippedFileCount`, `findings`, `score`, and `verdict`. `skippedFileCount` is the number of files the scan did not read. `filesSkipped` lists each path and the reason. A finding has `ruleId`, `severity`, `confidence`, `file`, optional `line` and `column`, `evidence`, `message`, `remediation`, and `references` (`owaspLlm`, `owaspAgentic`, `mitreAtlas`). With `--since-baseline`, `score` and `verdict` describe the new findings. The grade still describes the full scan, including an `IH-ADV-001` match. `--sarif` writes SARIF 2.1.0. The run `properties` include `skippedFileCount`, `gradeLetter`, `disclaimer`, and `gradeScore` when the scan is complete. Rule `properties` and `tags` include the same references. An `IH-LLM-001` result sets `properties.advisory` to true. `tool.driver.informationUri` is `https://github.com/Frank-Masciopinto/ironheights`.
 
 Scoring is critical 100, high 40, medium 15, low 5, info 0. The verdict is `block` when any finding is critical or the score is at least 80. It is `review` when any finding is high or medium, or the score is at least 15. It is `incomplete` when files were skipped and the score would otherwise be `no-findings`. Otherwise it is `no-findings`.
 
 ## Rules
 
-The full list is generated in [docs/rules.md](docs/rules.md), including OWASP LLM Top 10 2025, OWASP Agentic Top 10 2026, and MITRE ATLAS ids. `none` means no defensible mapping was recorded. P0 rules cover remote shells, prerequisite installs, undeclared hosts, credential paths, hard-coded secrets, instruction overrides, hidden text, bundled executables, persistence, and MCP launch and secret checks. P1 rules cover dynamic execution, exfiltration shape, secrets in chat, weakened approvals, obfuscation, privilege bypass, filesystem tricks, skill metadata, and broad MCP filesystem roots. Integrity rules `IH-INT-001` through `IH-INT-004` come from `verify`, not from a content scan. `IH-ADV-001` comes from the cached advisory feed, not from a content pattern. Config rules `IH-CFG-001` through `IH-CFG-009` come from `audit-config`, not from a skill scan.
+The full list is generated in [docs/rules.md](docs/rules.md), including OWASP LLM Top 10 2025, OWASP Agentic Top 10 2026, and MITRE ATLAS ids. `none` means no defensible mapping was recorded. P0 rules cover remote shells, prerequisite installs, undeclared hosts, credential paths, hard-coded secrets, instruction overrides, hidden text, bundled executables, persistence, and MCP launch and secret checks. P1 rules cover dynamic execution, exfiltration shape, secrets in chat, weakened approvals, obfuscation, privilege bypass, filesystem tricks, skill metadata, and broad MCP filesystem roots. Integrity rules `IH-INT-001` through `IH-INT-004` come from `verify`, not from a content scan. `IH-ADV-001` comes from the cached advisory feed, not from a content pattern. Config rules `IH-CFG-001` through `IH-CFG-009` come from `audit-config`, not from a skill scan. `IH-LLM-001` is an advisory model note. It is not a pattern rule, and it appears only after `scan --llm` or `review`.
 
 `IH-CRED-002` uses Shannon entropy. A quoted value assigned to a key-like name is reported when it is at least 20 characters and at least 4 bits per character. Evidence keeps the first four characters and masks the rest.
 
@@ -347,12 +353,13 @@ This skill is advisory. It runs inside the agent, and a hostile skill can try to
 - Behavior that only appears at runtime and never shows up as one of the tool calls the guard knows how to read. The guard is described in [docs/guard.md](docs/guard.md). It does not see a process that is already running.
 - A host that is already compromised, including a baseline an attacker can rewrite.
 - Social engineering that never lands in a file the scanner reads.
+- Whether a model review is right. `scan --llm` can miss an attack and it can invent one.
 
 No findings means the rules did not match. It does not mean the skill is safe.
 
 ## Privacy
 
-Scans stay on the machine. There is no telemetry. `fetch`, `safe-install`, `advisories update`, and `--online` are the only commands that open a connection, and each one prints the URLs first. The scanner reads files up to the configured size and does not extract archives. Set `IRONHEIGHTS_HOME` to put the baseline, the advisory cache, and the quarantine directory somewhere else.
+Scans stay on the machine. There is no telemetry. `fetch`, `safe-install`, `advisories update`, and `--online` open a connection, and each one prints the URLs first. `scan --llm` and `review` are the other network path. They are off unless you pass them, and a normal `scan` does not call the network. The scanner reads files up to the configured size and does not extract archives. Set `IRONHEIGHTS_HOME` to put the baseline, the advisory cache, and the quarantine directory somewhere else.
 
 ## Use in CI
 
@@ -382,6 +389,28 @@ GitHub Actions runs this repository on `windows-latest` for Node.js `20.0.0` and
 Scanned text is normalized from CRLF to LF. Directory junctions are treated like symlinks. Baseline keys under the home directory use `~/` with forward slashes so a baseline written on Windows still points at the same files when it is read back.
 
 Node on Windows applies only the read-only attribute when Ironheights asks for mode `0600` or `0700`. `audit-config` does not report world-readable config permissions on Windows, and it does not run `icacls`. A baseline key file is refused for group or world read on macOS and Linux only. OpenClaw's own `openclaw security audit` is the check that understands Windows ACLs. A skills directory is refused when a path component is a symlink or a junction. An 8.3 short name is the same directory, not a symlink.
+
+## Optional model review
+
+`scan --llm` and `review` ask a language model for a second opinion. They are off unless you pass them. A scan without those commands is unchanged, and the review is never required.
+
+The model is a reviewer of evidence the rules already extracted. It is not an authority. It can only add advisory notes with rule id `IH-LLM-001`. Those notes are severity `info`, they can be wrong, and they do not change the verdict or the exit code. A block stays a block. An empty model reply is not a clearance. `--fail-on` ignores `IH-LLM-001`.
+
+```bash
+ironheights scan ./path/to/skill --llm
+ironheights scan ./path/to/skill --llm --dry-run
+ironheights review ./path/to/skill --llm-url http://127.0.0.1:1234/v1 --llm-model local-model
+```
+
+The default server is Ollama at `http://127.0.0.1:11434` (`/api/chat`, model `llama3.2`). A loopback URL (`localhost`, `127.0.0.0/8`, or `::1`) does not need an extra flag. An OpenAI-compatible base URL works with `--llm-api openai`, and a URL that already ends in `/v1` or `/chat/completions` uses that API. Pass `--llm-model` when the default name is wrong.
+
+Any other host needs both `--llm-consent` and `IRONHEIGHTS_LLM_API_KEY`. The key is sent as a bearer token and is not printed. Putting the key in the URL is refused. Config cannot store consent.
+
+Before a request is sent, Ironheights prints the exact request body to stderr. `--dry-run` prints that body to stdout and does not send it, and it does not write the findings report. Skill text is untrusted data: it is wrapped in delimiters, size-capped, stripped of control characters, and scrubbed for common secret shapes. The scrub can miss a secret. Do not point a remote model at a skill that contains a live one. Absolute paths on your machine are not included. Redirects are not followed.
+
+The model must reply with one JSON object, `{"notes":[...]}`, and nothing else. Any other output is discarded. If the server is down, times out, or returns a bad reply, the command prints why and keeps the deterministic result and exit code. `--llm-api` must be `ollama` or `openai`; a different value is a usage error.
+
+Details and the request limits are in [docs/llm.md](docs/llm.md).
 
 ## Benchmark
 
