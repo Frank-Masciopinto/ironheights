@@ -5,7 +5,7 @@ description: >
   secret you configure.
 inputs:
   version:
-    description: Exact ironheights version, for example 0.1.5. Ranges and latest are rejected.
+    description: Exact ironheights version, for example 0.2.0. Ranges and latest are rejected.
     required: true
   path:
     description: Directory to scan.
@@ -16,7 +16,7 @@ inputs:
     required: false
     default: ''
   allow-skipped:
-    description: Pass --allow-skipped so a skipped file does not force exit code 3.
+    description: Pass --allow-skipped so a skipped file or directory does not force exit code 3.
     required: false
     default: 'false'
   config:

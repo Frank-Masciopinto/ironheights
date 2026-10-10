@@ -14,6 +14,7 @@ import { runRules } from './commands/rules.ts';
 import { runSafeInstall } from './commands/safe-install.ts';
 import { runScan } from './commands/scan.ts';
 import { IronheightsError, UsageError } from '../core/errors.ts';
+import { finishCommand } from '../util/flush.ts';
 import { TOOL_VERSION } from '../version.ts';
 
 export interface MainHooks {
@@ -56,8 +57,8 @@ export async function main(argv: string[], hooks: MainHooks = {}): Promise<numbe
     .version(TOOL_VERSION)
     .exitOverride();
 
-  registerScan(program, 'scan');
-  registerScan(program, 'review');
+  registerScan(program, 'scan', hooks);
+  registerScan(program, 'review', hooks);
 
   program
     .command('baseline [action]')
@@ -221,7 +222,10 @@ export async function main(argv: string[], hooks: MainHooks = {}): Promise<numbe
     .option('--config <file>', 'config file')
     .option('--no-color', 'disable color')
     .option('--quiet', 'disable color and extra emphasis')
-    .option('--allow-skipped', 'accept skipped files and return the finding verdict')
+    .option(
+      '--allow-skipped',
+      'accept skipped files and directories and return the finding verdict',
+    )
     .action(async (skill: string, opts: Record<string, string | boolean | undefined>) => {
       process.exitCode = await runFetch({
         skill,
@@ -320,7 +324,7 @@ function auditFlags(opts: AuditCommandOptions) {
   };
 }
 
-function registerScan(program: Command, name: 'scan' | 'review'): void {
+function registerScan(program: Command, name: 'scan' | 'review', hooks: MainHooks): void {
   const description =
     name === 'review'
       ? 'scan, then ask a model for an advisory second opinion'
@@ -346,7 +350,7 @@ function registerScan(program: Command, name: 'scan' | 'review'): void {
     .option('--quiet', 'disable color and extra emphasis')
     .option(
       '--allow-skipped',
-      'accept skipped files and return the finding verdict instead of incomplete',
+      'accept skipped files and directories and return the finding verdict instead of incomplete',
     )
     .option('--llm', 'ask a model for an advisory second opinion')
     .option('--llm-url <url>', 'model server base URL')
@@ -379,6 +383,9 @@ function registerScan(program: Command, name: 'scan' | 'review'): void {
         ...(typeof opts.llmApi === 'string' ? { llmApi: opts.llmApi } : {}),
         llmConsent: Boolean(opts.llmConsent),
         dryRun: Boolean(opts.dryRun),
+        ...(hooks.advisoryPublicKey !== undefined
+          ? { advisoryPublicKey: hooks.advisoryPublicKey }
+          : {}),
       });
       process.exitCode = code;
     });
@@ -414,9 +421,9 @@ export function isDirectInvocation(moduleUrl: string, entryPath: string | undefi
 if (isDirectInvocation(import.meta.url, process.argv[1])) {
   main(process.argv.slice(2))
     .then((code) => {
-      process.exit(code);
+      finishCommand(code);
     })
     .catch(() => {
-      process.exitCode = 70;
+      finishCommand(70);
     });
 }

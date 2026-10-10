@@ -1,6 +1,7 @@
 import type { Grade, SkillReport, Verdict } from './types.ts';
 import { clip } from '../util/text.ts';
 import { REPOSITORY_URL, SAFETY_REMINDER, TOOL_VERSION } from '../version.ts';
+import { blockingSkipCount } from './verdict.ts';
 
 export type ScanMode = 'directory' | 'text';
 
@@ -10,7 +11,8 @@ export const TEXT_SCAN_LIMIT =
 /**
  * Trust score is 100 minus the risk score, never below 0.
  * A 90–100, B 80–89, C 70–79, D 60–69, F 0–59.
- * Any skipped file forces `incomplete` and omits the number.
+ * Any skipped file, or a `.git` / `node_modules` directory that was not
+ * explicitly ignored, forces `incomplete` and omits the number.
  */
 export function gradeFor(riskScore: number, filesSkipped: number): Grade {
   if (filesSkipped > 0) {
@@ -22,10 +24,20 @@ export function gradeFor(riskScore: number, filesSkipped: number): Grade {
 }
 
 export function gradeFromSkills(skills: SkillReport[]): Grade {
-  const skipped = skills.reduce((sum, skill) => sum + skill.filesSkipped.length, 0);
+  const skipped = skills.reduce((sum, skill) => sum + blockingSkipCount(skill), 0);
   if (skipped > 0) return gradeFor(0, skipped);
   const risk = skills.reduce((max, skill) => Math.max(max, skill.gradeRisk ?? skill.score), 0);
   return gradeFor(risk, 0);
+}
+
+export function incompleteScanLine(files: number, directories: number): string {
+  const parts: string[] = [];
+  if (files > 0) parts.push(`${files} ${files === 1 ? 'file was' : 'files were'}`);
+  if (directories > 0) {
+    parts.push(`${directories} ${directories === 1 ? 'directory was' : 'directories were'}`);
+  }
+  if (parts.length === 0) return 'Scan incomplete.';
+  return `Scan incomplete: ${parts.join(' and ')} not scanned.`;
 }
 
 export function formatGrade(grade: Grade): string {

@@ -1,5 +1,12 @@
 node_modules/
 dist/
+# Regression fixtures have to keep these directory names.
+!test/fixtures/regressions/
+!test/fixtures/regressions/**
+!test/fixtures/regressions/**/dist/
+!test/fixtures/regressions/**/dist/**
+!test/fixtures/regressions/**/node_modules/
+!test/fixtures/regressions/**/node_modules/**
 dist-scripts/
 dist-types/
 coverage/

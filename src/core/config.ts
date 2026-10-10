@@ -21,6 +21,16 @@ export const ConfigSchema = z
     agentFiles: z.array(z.string()).optional(),
     allowDomains: z.array(z.string()).optional(),
     ignoreGlobs: z.array(z.string()).optional(),
+    ignoreDirs: z
+      .array(
+        z
+          .object({
+            path: z.string().trim().min(1),
+            reason: z.string().trim().min(8),
+          })
+          .strict(),
+      )
+      .optional(),
     ruleOverrides: z
       .record(
         z.string(),
@@ -85,7 +95,12 @@ export const DEFAULT_LIMITS = {
 
 export const DEFAULT_THRESHOLDS = { block: 80, review: 15 } as const;
 
-export const DEFAULT_IGNORE = ['**/.git/**', '**/node_modules/**', '**/dist/**'] as const;
+/**
+ * Extra path filters. Empty by default.
+ * `.git` and `node_modules` are reported as skipped directories.
+ * `dist` is scanned like any other directory.
+ */
+export const DEFAULT_IGNORE = [] as const;
 
 export interface LoadConfigOptions {
   cwd?: string;
@@ -122,6 +137,7 @@ export async function loadConfig(options: LoadConfigOptions = {}): Promise<Resol
     agentFiles: (input.agentFiles ?? defaults.agentFiles).map((file) => expandHome(file, env)),
     allowDomains: [...defaults.allowDomains, ...allowExtra],
     ignoreGlobs: input.ignoreGlobs ?? [...DEFAULT_IGNORE],
+    ignoreDirs: input.ignoreDirs ?? [],
     ruleOverrides: input.ruleOverrides ?? {},
     suppressions: input.suppressions ?? [],
     suppressCritical: input.suppressCritical ?? false,
@@ -157,6 +173,7 @@ export function emptyConfig(overrides: Partial<ResolvedConfig> = {}): ResolvedCo
     agentFiles: [],
     allowDomains: [...BUILTIN_ALLOW_DOMAINS],
     ignoreGlobs: [...DEFAULT_IGNORE],
+    ignoreDirs: [],
     ruleOverrides: {},
     suppressions: [],
     suppressCritical: false,

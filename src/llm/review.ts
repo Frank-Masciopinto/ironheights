@@ -117,7 +117,12 @@ async function reviewOne(
   }
   let files;
   try {
-    files = await walkSkill(skill.root, input.config.limits, input.config.ignoreGlobs);
+    files = await walkSkill(
+      skill.root,
+      input.config.limits,
+      input.config.ignoreGlobs,
+      input.config.ignoreDirs,
+    );
   } catch {
     return finish(
       input,

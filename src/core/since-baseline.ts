@@ -10,7 +10,7 @@ import {
   toPortablePath,
 } from '../integrity/baseline.ts';
 import type { Baseline } from './types.ts';
-import { scoreFindings, verdictFor } from './verdict.ts';
+import { blockingSkipCount, scoreFindings, verdictFor } from './verdict.ts';
 
 export interface SinceBaselineOptions {
   thresholds: Thresholds;
@@ -54,7 +54,7 @@ export async function applySinceBaseline(
       findings: fresh,
       score,
       verdict: verdictFor(fresh, options.thresholds, {
-        filesSkipped: skill.filesSkipped.length,
+        filesSkipped: blockingSkipCount(skill),
         allowSkipped: options.allowSkipped,
       }),
       gradeRisk: skill.gradeRisk ?? skill.score,

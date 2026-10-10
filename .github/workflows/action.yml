@@ -11,6 +11,7 @@ jobs:
       - id: scan
         uses: ./
         with:
+          # Last release on npm. Move this pin to 0.2.0 after that version is published.
           version: '0.1.5'
           path: test/fixtures/benign
       - name: Benign fixture passes
@@ -31,6 +32,7 @@ jobs:
         uses: ./
         continue-on-error: true
         with:
+          # Last release on npm. Move this pin to 0.2.0 after that version is published.
           version: '0.1.5'
           path: test/fixtures/malicious/IH-CRED-001
       - name: Malicious fixture fails
@@ -56,6 +58,7 @@ jobs:
         uses: ./
         continue-on-error: true
         with:
+          # Last release on npm. Move this pin to 0.2.0 after that version is published.
           version: '0.1.5'
           path: ${{ runner.temp }}/padded-skill
       - name: Skipped file exits 3

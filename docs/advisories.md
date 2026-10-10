@@ -17,7 +17,7 @@ Name matching is case-insensitive against the skill folder and the `name` in `SK
 
 When `fetch` or `safe-install` knows the publisher handle, a name match also requires `owner` if the advisory sets it. A local `scan` does not know the publisher, so a slug match applies even when `owner` is set. Hash and host matches do not use `owner`.
 
-A missing cache is not an error. `scan` reports nothing from the feed. A cache that fails the signature check, or a production public key that is still `UNCONFIGURED`, stops the command with exit code 70. The bad cache is not used.
+A missing cache is not an error. `scan` reports nothing from the feed. A cache that fails the signature check stops the command with exit code 70. The bad cache is not used. A build whose pinned constant is not 64 lowercase hex characters, including the old `UNCONFIGURED` sentinel, also refuses the feed.
 
 ## Document
 
@@ -52,11 +52,21 @@ The detached signature file is one line:
 ed25519 <base64 of the 64-byte signature>
 ```
 
+## Pinned key
+
+The production public key is pinned in `src/advisories/pinned-key.ts`:
+
+```text
+8424b837422792656e6e7500869395a5afe64bf163baa63acea83f1e97cc2b6c
+```
+
+That is the hex encoding of the raw 32-byte Ed25519 public key. The matching private key is held offline. It is not in this repository, and this project will not ask for it. Tests inject `test/fixtures/advisories/test-public.hex`. That key is not the production key.
+
 ## Signing procedure
 
-The production private key is not in this repository. Do not generate it on a shared machine and do not commit it.
+The production private key is not in this repository. Do not generate a replacement on a shared machine and do not commit it.
 
-1. On a machine you control, create a key file outside the repo:
+1. The current public key is already pinned, as shown above. To mint a replacement on a machine you control:
 
    ```bash
    node scripts/generate-advisory-key.mjs --out "$HOME/ironheights-advisory.key"
@@ -64,9 +74,9 @@ The production private key is not in this repository. Do not generate it on a sh
 
    The command prints the public key and writes the seed with mode `0600`.
 
-2. Put that public key in `src/advisories/pinned-key.ts` as `PINNED_ADVISORY_PUBLIC_KEY_HEX` (64 lowercase hex characters, no `sha256:` prefix). Until that constant replaces `UNCONFIGURED`, the CLI refuses every feed.
+2. Put the new public key in `src/advisories/pinned-key.ts` as `PINNED_ADVISORY_PUBLIC_KEY_HEX` (64 lowercase hex characters, no `sha256:` prefix).
 
-3. Ship a CLI release that contains the public key. The feed published before that release cannot be trusted by older binaries, and a binary that still says `UNCONFIGURED` will keep refusing.
+3. Ship a CLI release that contains the new public key before you publish a feed signed by the new key. A binary still on the previous pin rejects the new feed. The new binary rejects a feed signed by the previous key. One signature cannot satisfy both. Keep serving the old feed until the release that pins the new key is out, then publish the new JSON and the new signature together.
 
 4. Build a source file from the tracker. The signing script adds `schemaVersion`, sorts entries, and strips `sha256:` from hashes. `status` must be the status the tracker states, not a status invented for the feed.
 
@@ -117,4 +127,4 @@ Build the source file from the public tracker. Map each row as follows:
 
 Give each row a stable `id`. Re-sign and replace both URLs when the tracker changes. Upload the pair together so a client cannot cache a new JSON file with the previous signature. Clients that already have a good cache keep it when a later download fails verification.
 
-Rotating the key is a CLI release first, then a newly signed feed. The website and `pinned-key.ts` have to move together.
+Rotating the key is a CLI release first, then a newly signed feed. The website and `pinned-key.ts` have to move together. Publish `advisories.json` and `advisories.json.sig` only after the release that pins the matching public key. Until that pair is live, clients with no cache scan offline and report nothing from the feed.

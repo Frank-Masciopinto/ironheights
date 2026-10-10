@@ -1,5 +1,20 @@
-import type { Severity, Verdict } from './types.ts';
+import type { Severity, SkippedDirectory, Verdict } from './types.ts';
 import type { Finding } from './types.ts';
+
+/** `.git` and `node_modules` directories that were not named in `ignoreDirs`. */
+export function blockingDirectoryCount(skill: {
+  skippedDirectories?: readonly SkippedDirectory[];
+}): number {
+  return (skill.skippedDirectories ?? []).filter((dir) => dir.explicit !== true).length;
+}
+
+/** Skipped files plus `.git` / `node_modules` directories that were not explicitly ignored. */
+export function blockingSkipCount(skill: {
+  filesSkipped: readonly unknown[];
+  skippedDirectories?: readonly SkippedDirectory[];
+}): number {
+  return skill.filesSkipped.length + blockingDirectoryCount(skill);
+}
 
 export const SEVERITY_POINTS: Record<Severity, number> = {
   critical: 100,

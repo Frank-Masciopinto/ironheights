@@ -1,6 +1,7 @@
 import { gradeFromSkills } from '../../core/grade.ts';
 import type { ScanMode } from '../../core/grade.ts';
-import type { Finding, SkillReport } from '../../core/types.ts';
+import type { Finding, SkillReport, SkippedDirectory } from '../../core/types.ts';
+import { blockingDirectoryCount } from '../../core/verdict.ts';
 import { LLM_RULE_ID } from '../../llm/constants.ts';
 import { allRules } from '../../rules/index.ts';
 import { referencesFor, referenceTags } from '../../rules/references.ts';
@@ -60,6 +61,8 @@ export function renderSarif(skills: SkillReport[], scanMode: ScanMode = 'directo
     };
   });
   const suppressedCount = skills.reduce((sum, skill) => sum + (skill.suppressed?.length ?? 0), 0);
+  const skippedDirectories = skills.flatMap((skill) => skill.skippedDirectories ?? []);
+  const blockingDirectories = skills.reduce((sum, skill) => sum + blockingDirectoryCount(skill), 0);
   const doc = {
     $schema:
       'https://raw.githubusercontent.com/oasis-tcs/sarif-spec/main/sarif-2.1/schema/sarif-schema-2.1.0.json',
@@ -77,6 +80,7 @@ export function renderSarif(skills: SkillReport[], scanMode: ScanMode = 'directo
         results,
         properties: {
           skippedFileCount: skills.reduce((sum, skill) => sum + skill.filesSkipped.length, 0),
+          ...sarifDirectories(skippedDirectories, blockingDirectories),
           suppressedCount,
           gradeLetter: grade.letter,
           ...(grade.score !== undefined ? { gradeScore: grade.score } : {}),
@@ -87,6 +91,21 @@ export function renderSarif(skills: SkillReport[], scanMode: ScanMode = 'directo
     ],
   };
   return `${JSON.stringify(doc, null, 2)}\n`;
+}
+
+function sarifDirectories(
+  directories: SkippedDirectory[],
+  blockingDirectories: number,
+): { skippedDirectories: SkippedDirectory[]; warning?: string } | Record<string, never> {
+  if (directories.length === 0) return {};
+  return {
+    skippedDirectories: directories.map((dir) => ({
+      path: dir.path,
+      reason: dir.reason,
+      ...(dir.explicit ? { explicit: true } : {}),
+    })),
+    ...(blockingDirectories > 0 ? { warning: 'Skipped directories were not scanned.' } : {}),
+  };
 }
 
 function sarifLevel(severity: Finding['severity']): 'error' | 'warning' | 'note' {
