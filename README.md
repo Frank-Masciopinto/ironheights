@@ -60,12 +60,32 @@ Verdict: review
 Absence of findings is not proof of safety.
 ```
 
-Exit codes are `0` for no findings, `1` for review, `2` for block, `64` for a usage or config error, and `70` for an internal error. `--fail-on low|medium|high|critical` returns `0` when every finding is below that severity.
+| Exit | Meaning                                                                                        |
+| ---- | ---------------------------------------------------------------------------------------------- |
+| 0    | No findings                                                                                    |
+| 1    | Review                                                                                         |
+| 2    | Block                                                                                          |
+| 3    | Incomplete. A file was skipped, and the files that were scanned did not reach review or block. |
+| 64   | Usage or config error                                                                          |
+| 70   | Internal error                                                                                 |
+
+`--fail-on low|medium|high|critical` returns `0` when every finding is below that severity and no file was skipped. A skipped file still returns `3` unless you pass `--allow-skipped`. That flag keeps the skipped-file warning and returns the finding verdict (`0`, `1`, or `2`) instead.
+
+A scan that skipped a file looks like this:
+
+```text
+padded
+  warning: skipped payload.md (file exceeds 1048576 bytes)
+  Scan incomplete: 1 file was not scanned.
+
+Verdict: incomplete
+Absence of findings is not proof of safety.
+```
 
 ## Commands
 
 ```text
-ironheights scan <path> [--all] [--json] [--sarif <file>] [--md <file>] [--fail-on <severity>] [--config <file>] [--no-color] [--quiet]
+ironheights scan <path> [--all] [--json] [--sarif <file>] [--md <file>] [--fail-on <severity>] [--config <file>] [--allow-skipped] [--no-color] [--quiet]
 ironheights baseline create|update|show
 ironheights verify
 ironheights quarantine <skill>
@@ -105,16 +125,17 @@ An allowlist entry matches that host and its subdomains. The built-in list inclu
 ```json
 {
   "schemaVersion": 1,
-  "tool": { "name": "ironheights", "version": "0.1.3" },
+  "tool": { "name": "ironheights", "version": "0.1.4" },
   "scannedAt": "2026-10-09T00:00:00.000Z",
   "verdict": "no-findings",
+  "skippedFileCount": 0,
   "skills": []
 }
 ```
 
-Each skill has `skillName`, `root`, `filesScanned`, `filesSkipped`, `findings`, `score`, and `verdict`. A finding has `ruleId`, `severity`, `confidence`, `file`, optional `line` and `column`, `evidence`, `message`, and `remediation`. `--sarif` writes SARIF 2.1.0.
+Each skill has `skillName`, `root`, `filesScanned`, `filesSkipped`, `skippedFileCount`, `findings`, `score`, and `verdict`. `skippedFileCount` is the number of files the scan did not read. `filesSkipped` lists each path and the reason. A finding has `ruleId`, `severity`, `confidence`, `file`, optional `line` and `column`, `evidence`, `message`, and `remediation`. `--sarif` writes SARIF 2.1.0. The run `properties.skippedFileCount` is the same total, and `tool.driver.informationUri` is `https://github.com/Frank-Masciopinto/ironheights`.
 
-Scoring is critical 100, high 40, medium 15, low 5, info 0. The verdict is `block` when any finding is critical or the score is at least 80. It is `review` when any finding is high or medium, or the score is at least 15. Otherwise it is `no-findings`.
+Scoring is critical 100, high 40, medium 15, low 5, info 0. The verdict is `block` when any finding is critical or the score is at least 80. It is `review` when any finding is high or medium, or the score is at least 15. It is `incomplete` when files were skipped and the score would otherwise be `no-findings`. Otherwise it is `no-findings`.
 
 ## Rules
 

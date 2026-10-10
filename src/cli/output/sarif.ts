@@ -1,6 +1,6 @@
 import type { Finding, SkillReport } from '../../core/types.ts';
 import { allRules } from '../../rules/index.ts';
-import { TOOL_NAME, TOOL_VERSION } from '../../version.ts';
+import { REPOSITORY_URL, TOOL_NAME, TOOL_VERSION } from '../../version.ts';
 
 export function renderSarif(skills: SkillReport[]): string {
   const findings = skills.flatMap((skill) => skill.findings);
@@ -46,11 +46,14 @@ export function renderSarif(skills: SkillReport[]): string {
           driver: {
             name: TOOL_NAME,
             version: TOOL_VERSION,
-            informationUri: 'https://github.com/ironheights/ironheights',
+            informationUri: REPOSITORY_URL,
             rules,
           },
         },
         results,
+        properties: {
+          skippedFileCount: skills.reduce((sum, skill) => sum + skill.filesSkipped.length, 0),
+        },
       },
     ],
   };

@@ -19,6 +19,7 @@ export interface ScanFlags {
   config?: string;
   noColor?: boolean;
   quiet?: boolean;
+  allowSkipped?: boolean;
   paths: string[];
   env?: NodeJS.ProcessEnv;
   stdout?: (text: string) => void;
@@ -44,7 +45,10 @@ export async function runScan(flags: ScanFlags): Promise<number> {
         throw new UsageError(`path not found: ${target}`);
       }
     }
-    const result = await scanPath(target, config, flags.now ? { now: flags.now } : {});
+    const result = await scanPath(target, config, {
+      ...(flags.now ? { now: flags.now } : {}),
+      allowSkipped: flags.allowSkipped === true,
+    });
     scannedAt = result.scannedAt;
     skills.push(...result.skills);
   }
@@ -58,7 +62,11 @@ export async function runScan(flags: ScanFlags): Promise<number> {
   if (flags.sarif) await writeFile(flags.sarif, renderSarif(skills));
   if (flags.md) await writeFile(flags.md, renderMarkdown(skills, verdict));
   const findings = skills.flatMap((skill) => skill.findings);
-  return exitCodeFor(verdict, findings, config.failOn);
+  const filesSkipped = skills.reduce((sum, skill) => sum + skill.filesSkipped.length, 0);
+  return exitCodeFor(verdict, findings, config.failOn, {
+    filesSkipped,
+    allowSkipped: flags.allowSkipped === true,
+  });
 }
 
 function parseFailOn(value: string): Severity {

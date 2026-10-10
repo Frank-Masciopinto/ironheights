@@ -15,16 +15,18 @@ exports[`output snapshots > renders human, json, and sarif 2`] = `
   "schemaVersion": 1,
   "tool": {
     "name": "ironheights",
-    "version": "0.1.3"
+    "version": "0.1.4"
   },
   "scannedAt": "2026-10-09T00:00:00.000Z",
   "verdict": "review",
+  "skippedFileCount": 0,
   "skills": [
     {
       "skillName": "demo",
       "root": "/tmp/demo",
       "filesScanned": 1,
       "filesSkipped": [],
+      "skippedFileCount": 0,
       "findings": [
         {
           "ruleId": "IH-CRED-001",
@@ -54,8 +56,8 @@ exports[`output snapshots > renders human, json, and sarif 3`] = `
       "tool": {
         "driver": {
           "name": "ironheights",
-          "version": "0.1.3",
-          "informationUri": "https://github.com/ironheights/ironheights",
+          "version": "0.1.4",
+          "informationUri": "https://github.com/Frank-Masciopinto/ironheights",
           "rules": [
             {
               "id": "IH-CRED-001",
@@ -63,7 +65,7 @@ exports[`output snapshots > renders human, json, and sarif 3`] = `
                 "text": "Access to a sensitive path"
               },
               "fullDescription": {
-                "text": "References to keys, browser stores, wallets, shell history, or OpenClaw auth files expose credentials."
+                "text": "References to keys, browser stores, wallets, shell history, or OpenClaw auth files expose credentials. A credential directory such as ~/.ssh, ~/.aws, ~/.gnupg, or ~/.azure counts with or without a file name after it."
               },
               "help": {
                 "text": "Do not read these paths from a skill. Use a scoped environment variable or the platform secret store."
@@ -109,7 +111,10 @@ exports[`output snapshots > renders human, json, and sarif 3`] = `
             "remediation": "fix it"
           }
         }
-      ]
+      ],
+      "properties": {
+        "skippedFileCount": 0
+      }
     }
   ]
 }
