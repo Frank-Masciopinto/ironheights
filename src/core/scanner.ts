@@ -4,7 +4,7 @@ import { parseSkillMarkdown, type SkillFrontmatter } from '../openclaw/skill.ts'
 import { allContentRules } from '../rules/index.ts';
 import type { Finding, ResolvedConfig, ScanContext, ScannedFile, SkillReport } from './types.ts';
 import { applySuppressions } from './suppress.ts';
-import { scoreFindings, verdictFor, worstVerdict } from './verdict.ts';
+import { blockingSkipCount, scoreFindings, verdictFor, worstVerdict } from './verdict.ts';
 import { walkSkill } from './walker.ts';
 import type { Verdict } from './types.ts';
 
@@ -80,7 +80,7 @@ export async function scanSkill(
   config: ResolvedConfig,
   options: { allowSkipped?: boolean } = {},
 ): Promise<SkillReport> {
-  const walked = await walkSkill(root, config.limits, config.ignoreGlobs);
+  const walked = await walkSkill(root, config.limits, config.ignoreGlobs, config.ignoreDirs);
   const frontmatter = await readSkillFrontmatter(root, walked.files);
   const skillName = frontmatter?.name ?? basename(root);
   const ctx: ScanContext = {
@@ -98,6 +98,7 @@ export async function scanSkill(
     root,
     walked.files.length,
     walked.skipped,
+    walked.skippedDirectories,
     raw,
     walked.files,
     config,
@@ -121,6 +122,7 @@ export async function scanText(
       root,
       0,
       [{ file: relativePath, reason: `text exceeds ${config.limits.maxFileBytes} bytes` }],
+      [],
       [],
       [],
       config,
@@ -151,6 +153,7 @@ export async function scanText(
     label,
     root,
     1,
+    [],
     [],
     scanFile(file, ctx, { textMode: true }),
     [file],
@@ -183,6 +186,7 @@ function finishSkill(
   root: string,
   filesScanned: number,
   filesSkipped: SkillReport['filesSkipped'],
+  skippedDirectories: SkillReport['skippedDirectories'],
   raw: Finding[],
   files: ScannedFile[],
   config: ResolvedConfig,
@@ -191,22 +195,25 @@ function finishSkill(
   raw.sort(compareFindings);
   const outcome = applySuppressions(raw, files, config);
   const score = scoreFindings(outcome.active);
-  return {
+  const report: SkillReport = {
     skillName,
     root,
     filesScanned,
     filesSkipped,
+    ...(skippedDirectories && skippedDirectories.length > 0 ? { skippedDirectories } : {}),
     findings: outcome.active,
     suppressed: outcome.suppressed,
     suppressionRefused: outcome.refused,
     suppressionWarnings: outcome.warnings,
     score,
     gradeRisk: score,
-    verdict: verdictFor(outcome.active, config.thresholds, {
-      filesSkipped: filesSkipped.length,
-      allowSkipped,
-    }),
+    verdict: 'no-findings',
   };
+  report.verdict = verdictFor(outcome.active, config.thresholds, {
+    filesSkipped: blockingSkipCount(report),
+    allowSkipped,
+  });
+  return report;
 }
 
 function ruleApplies(

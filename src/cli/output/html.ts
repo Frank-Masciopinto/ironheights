@@ -1,14 +1,18 @@
 import {
   formatGrade,
   gradeFromSkills,
+  incompleteScanLine,
   renderBadge,
   renderSummary,
   TEXT_SCAN_LIMIT,
 } from '../../core/grade.ts';
 import type { ScanMode } from '../../core/grade.ts';
 import type { AdvisoryFeedNote, Finding, SkillReport, Verdict } from '../../core/types.ts';
+import { blockingDirectoryCount } from '../../core/verdict.ts';
+import type { LlmReviewReport } from '../../llm/review.ts';
 import { referenceTags } from '../../rules/references.ts';
 import { SAFETY_REMINDER, TOOL_VERSION } from '../../version.ts';
+import { llmStatusLines } from './llm-status.ts';
 
 const STYLE = `
   body { font-family: system-ui, sans-serif; margin: 2rem auto; max-width: 52rem; color: #1c1917; background: #fff; line-height: 1.45; }
@@ -31,6 +35,7 @@ export function renderHtml(
   scannedAt: string,
   scanMode: ScanMode = 'directory',
   advisory?: AdvisoryFeedNote,
+  llmReview?: LlmReviewReport,
 ): string {
   const grade = gradeFromSkills(skills);
   const summary = renderSummary({ skills, verdict, grade, scanMode });
@@ -58,6 +63,7 @@ export function renderHtml(
   parts.push(
     `<p>Verdict: ${escapeHtml(verdict)}</p>`,
     `<p class="grade">Grade: ${escapeHtml(formatGrade(grade))}</p>`,
+    ...llmStatusLines(skills, llmReview).map((line) => `<p class="note">${escapeHtml(line)}</p>`),
     `<p class="disclaimer">${escapeHtml(SAFETY_REMINDER)}</p>`,
     `<pre>${escapeHtml(summary)}</pre>`,
     '<p>README badge</p>',
@@ -99,6 +105,21 @@ export function renderHtml(
         skill.filesSkipped.map((item) => `${item.file} (${item.reason})`),
       ),
     );
+    parts.push(
+      simpleList(
+        'Skipped directories',
+        (skill.skippedDirectories ?? []).map((item) =>
+          item.explicit
+            ? `ignored ${item.path} (${item.reason})`
+            : `warning: skipped directory ${item.path} (${item.reason})`,
+        ),
+      ),
+    );
+    if (skill.verdict === 'incomplete') {
+      parts.push(
+        `<p>${escapeHtml(incompleteScanLine(skill.filesSkipped.length, blockingDirectoryCount(skill)))}</p>`,
+      );
+    }
   }
   parts.push(`<p class="disclaimer">${escapeHtml(SAFETY_REMINDER)}</p>`, '</body>', '</html>', '');
   return parts.join('\n');

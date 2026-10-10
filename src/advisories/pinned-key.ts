@@ -1,12 +1,12 @@
 /**
  * Ed25519 public key for https://ironheights.dev/advisories.json.
  *
- * Set this to the hex encoding of the raw 32-byte public key before publishing
- * a feed. The matching private key is not in this repository. Until this
- * constant is replaced, the CLI refuses every feed (fail closed).
- * See docs/advisories.md.
+ * Raw 32-byte key, lowercase hex. The matching private key is held offline
+ * and is not in this repository. Rotation is a CLI release that changes this
+ * constant, then a feed signed by the new key. See docs/advisories.md.
  */
-export const PINNED_ADVISORY_PUBLIC_KEY_HEX = 'UNCONFIGURED';
+export const PINNED_ADVISORY_PUBLIC_KEY_HEX: string =
+  '8424b837422792656e6e7500869395a5afe64bf163baa63acea83f1e97cc2b6c';
 
 const UNCONFIGURED = 'UNCONFIGURED';
 

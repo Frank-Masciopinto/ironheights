@@ -9,7 +9,7 @@ import { TEXT_SCAN_LIMIT } from '../../core/grade.ts';
 import type { ScanMode } from '../../core/grade.ts';
 import { scanPath, scanText } from '../../core/scanner.ts';
 import { applySinceBaseline } from '../../core/since-baseline.ts';
-import { exitCodeFor, worstVerdict } from '../../core/verdict.ts';
+import { blockingSkipCount, exitCodeFor, worstVerdict } from '../../core/verdict.ts';
 import { baselinePath } from '../../integrity/baseline.ts';
 import { LLM_RULE_ID, skipNote } from '../../llm/constants.ts';
 import type { PostOptions, PostResult } from '../../llm/client.ts';
@@ -163,7 +163,7 @@ export async function executeScan(flags: ScanFlags): Promise<ScanExecution> {
     }
   }
   const code = exitCodeFor(verdict, deterministicFindings(skills), config.failOn, {
-    filesSkipped: skills.reduce((sum, skill) => sum + skill.filesSkipped.length, 0),
+    filesSkipped: skills.reduce((sum, skill) => sum + blockingSkipCount(skill), 0),
     allowSkipped: flags.allowSkipped === true,
   });
   if (flags.dryRun) return { skills, verdict, code };
@@ -177,7 +177,7 @@ export async function executeScan(flags: ScanFlags): Promise<ScanExecution> {
   if (format === 'json') {
     write(renderJson(reported, verdict, scannedAt, renderContext));
   } else if (format === 'html') {
-    write(`${renderHtml(reported, verdict, scannedAt, scanMode, advisory.note)}\n`);
+    write(`${renderHtml(reported, verdict, scannedAt, scanMode, advisory.note, llmReport)}\n`);
   } else {
     write(`${renderHuman(reported, verdict, color, scanMode, advisory.note, llmReport)}\n`);
   }
@@ -188,7 +188,10 @@ export async function executeScan(flags: ScanFlags): Promise<ScanExecution> {
       renderMarkdown(reported, verdict, scanMode, advisory.note, llmReport),
     );
   if (flags.html)
-    await writeFile(flags.html, renderHtml(reported, verdict, scannedAt, scanMode, advisory.note));
+    await writeFile(
+      flags.html,
+      renderHtml(reported, verdict, scannedAt, scanMode, advisory.note, llmReport),
+    );
   return { skills: reported, verdict, code };
 }
 

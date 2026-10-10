@@ -2,23 +2,27 @@ import { lstat, open, readdir, realpath, stat } from 'node:fs/promises';
 import { relative, resolve, sep } from 'node:path';
 import { isInsideRoot, normalizeForCompare, stripLongPath } from '../util/paths.ts';
 import picomatch from 'picomatch';
+import { directorySkip, OPAQUE_DIRECTORY_NAMES } from './directories.ts';
 import { classifyFile, decodeText } from './filetype.ts';
-import type { Limits, ScannedFile, SkippedFile } from './types.ts';
+import type { IgnoreDir, Limits, ScannedFile, SkippedDirectory, SkippedFile } from './types.ts';
 
 export interface WalkResult {
   files: ScannedFile[];
   skipped: SkippedFile[];
+  skippedDirectories: SkippedDirectory[];
 }
 
 export async function walkSkill(
   root: string,
   limits: Limits,
   ignoreGlobs: string[],
+  ignoreDirs: readonly IgnoreDir[] = [],
 ): Promise<WalkResult> {
   const realRoot = stripLongPath(await realpath(root));
-  const ignore = picomatch(ignoreGlobs, { dot: true });
+  const ignore = ignoreGlobs.length === 0 ? () => false : picomatch(ignoreGlobs, { dot: true });
   const files: ScannedFile[] = [];
   const skipped: SkippedFile[] = [];
+  const skippedDirectories: SkippedDirectory[] = [];
   let truncated = false;
 
   async function visit(dir: string, depth: number, seen: Set<string>): Promise<void> {
@@ -46,6 +50,20 @@ export async function walkSkill(
         continue;
       }
       const portable = rel.split(sep).join('/');
+      if (OPAQUE_DIRECTORY_NAMES.has(entry.name)) {
+        let opaqueInfo;
+        try {
+          opaqueInfo = await lstat(abs);
+        } catch {
+          skipped.push({ file: portable, reason: 'unreadable file' });
+          continue;
+        }
+        if (opaqueInfo.isDirectory() || opaqueInfo.isSymbolicLink()) {
+          const recorded = directorySkip(portable, entry.name, ignoreDirs);
+          if (recorded) skippedDirectories.push(recorded);
+          continue;
+        }
+      }
       if (ignore(portable)) continue;
       if (files.length >= limits.maxFiles) {
         truncated = true;
@@ -175,7 +193,7 @@ export async function walkSkill(
   }
 
   await visit(realRoot, 0, new Set([normalizeForCompare(realRoot)]));
-  return { files, skipped };
+  return { files, skipped, skippedDirectories };
 }
 
 async function readHead(abs: string, size: number): Promise<Uint8Array | undefined> {

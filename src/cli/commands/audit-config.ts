@@ -1,7 +1,7 @@
 import { stat, writeFile } from 'node:fs/promises';
 import { auditOpenClawConfig } from '../../audit/audit-config.ts';
 import { UsageError } from '../../core/errors.ts';
-import { exitCodeFor } from '../../core/verdict.ts';
+import { blockingSkipCount, exitCodeFor } from '../../core/verdict.ts';
 import { colorEnabled } from '../../util/terminal.ts';
 import { renderHuman } from '../output/human.ts';
 import { renderJson } from '../output/json.ts';
@@ -69,6 +69,6 @@ export async function runAuditConfig(flags: AuditConfigFlags): Promise<number> {
   if (flags.sarif) await writeFile(flags.sarif, renderSarif(result.skills));
   if (flags.md) await writeFile(flags.md, renderMarkdown(result.skills, result.verdict));
   const findings = result.skills.flatMap((skill) => skill.findings);
-  const filesSkipped = result.skills.reduce((sum, skill) => sum + skill.filesSkipped.length, 0);
+  const filesSkipped = result.skills.reduce((sum, skill) => sum + blockingSkipCount(skill), 0);
   return exitCodeFor(result.verdict, findings, failOn, { filesSkipped });
 }

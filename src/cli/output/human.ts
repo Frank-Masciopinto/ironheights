@@ -1,13 +1,14 @@
 import {
   formatGrade,
   gradeFromSkills,
+  incompleteScanLine,
   renderBadge,
   renderSummary,
   TEXT_SCAN_LIMIT,
 } from '../../core/grade.ts';
 import type { ScanMode } from '../../core/grade.ts';
 import type { AdvisoryFeedNote, Finding, SkillReport, Verdict } from '../../core/types.ts';
-import { compareSeverity } from '../../core/verdict.ts';
+import { blockingDirectoryCount, compareSeverity } from '../../core/verdict.ts';
 import { LLM_RULE_ID } from '../../llm/constants.ts';
 import type { LlmReviewReport } from '../../llm/review.ts';
 import { clip } from '../../util/text.ts';
@@ -69,8 +70,18 @@ export function renderHuman(
       const warning = `warning: skipped ${skipped.file} (${skipped.reason})`;
       lines.push(`  ${paint(color, '33', warning)}`);
     }
+    for (const dir of skill.skippedDirectories ?? []) {
+      if (dir.explicit) {
+        lines.push(`  ignored directory ${dir.path} (${dir.reason})`);
+        continue;
+      }
+      const warning = `warning: skipped directory ${dir.path} (${dir.reason})`;
+      lines.push(`  ${paint(color, '33', warning)}`);
+    }
     if (skill.verdict === 'incomplete') {
-      lines.push(`  ${incompleteSummary(skill.filesSkipped.length)}`);
+      lines.push(
+        `  ${incompleteScanLine(skill.filesSkipped.length, blockingDirectoryCount(skill))}`,
+      );
     }
     lines.push('');
   }
@@ -90,10 +101,7 @@ export function renderHuman(
 
 function findingLines(finding: Finding, color: boolean): string[] {
   const label = paint(color, SEVERITY_COLOR[finding.severity], `[${finding.severity}]`);
-  const lines = [
-    `  ${label} ${finding.ruleId} ${where(finding)}`,
-    `    ${clip(finding.evidence)}`,
-  ];
+  const lines = [`  ${label} ${finding.ruleId} ${where(finding)}`, `    ${clip(finding.evidence)}`];
   if (finding.ruleId === LLM_RULE_ID) lines.push(`    ${finding.message}`);
   lines.push(`    ${finding.remediation}`);
   return lines;
@@ -107,9 +115,4 @@ function appendList(lines: string[], title: string, items: string[]): void {
   if (items.length === 0) return;
   lines.push(`  ${title}: ${items.length}`);
   for (const item of items) lines.push(`    ${item}`);
-}
-
-function incompleteSummary(count: number): string {
-  const noun = count === 1 ? 'file was' : 'files were';
-  return `Scan incomplete: ${count} ${noun} not scanned.`;
 }

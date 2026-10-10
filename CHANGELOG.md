@@ -1,10 +1,14 @@
 # Changelog
 
-## Unreleased
+## 0.2.0 — 2026-10-10
+
+`scan --json` and `scan --format html` (and every other command that writes to stdout) wait until the pipe has accepted the whole report before the process ends. `process.exit()` was dropping everything past the first 64 KiB, so a piped report came back as broken JSON. A file written with `--sarif` or `--html` was already complete. The exit code is unchanged.
+
+`dist/` is scanned like any other directory. A pipe-to-shell line in `dist/` is a finding. `.git/` and `node_modules/` are not entered. They are listed in the text report, in JSON `skippedDirectories`, and in the SARIF run `properties`, with the warning "Skipped directories were not scanned." Their presence makes the verdict `incomplete` and the exit code `3` when the scanned files would otherwise be `no-findings`. Review still exits `1` and block still exits `2`. `--allow-skipped` keeps the warning and returns the finding verdict. `ignoreDirs` in config, each entry a path plus a reason of at least 8 characters, acknowledges `.git` or `node_modules` so they stay listed and do not make the scan incomplete. The grade is `incomplete` when a directory was skipped and not acknowledged, including when `--allow-skipped` is set. See [docs/limits.md](docs/limits.md).
 
 `ironheights fetch <owner>/<slug>[@version]` downloads a ClawHub skill over HTTPS, writes the files without executing them, and scans the staging directory. `ironheights safe-install` does the same and copies the skill into a skills directory only when the verdict is `no-findings`, or `review` with `--accept-review`. `block` and `incomplete` are not installed. An existing copy is backed up and restored if the copy fails.
 
-`ironheights advisories update` and `--online` download `https://ironheights.dev/advisories.json` and `advisories.json.sig`. The signature is Ed25519 and the public key is pinned in the CLI. A bad signature is rejected and is not cached. `scan` and `fetch` compare a cached feed with the skill name, content hashes, and indicator hosts and report `IH-ADV-001`. The production public key is `UNCONFIGURED` until the owner replaces it, and the CLI refuses the feed until then.
+`ironheights advisories update` and `--online` download `https://ironheights.dev/advisories.json` and `advisories.json.sig`. The signature is Ed25519. The production public key is pinned as `8424b837422792656e6e7500869395a5afe64bf163baa63acea83f1e97cc2b6c`. A bad signature is rejected and is not cached. `scan` and `fetch` compare a cached feed with the skill name, content hashes, and indicator hosts and report `IH-ADV-001`. Tests inject a separate key. Rotating the production key is a CLI release first, then a feed signed by the new key. The private key stays offline.
 
 `baseline create --key` and `verify --key` sign and check `baseline.json` with HMAC-SHA256 or Ed25519. `verify` reports a signature mismatch as a tampered baseline. Release builds still publish to npm with provenance, and they also write `SHA256SUMS` for the GitHub release.
 

@@ -60,16 +60,16 @@ Verdict: review
 Absence of findings is not proof of safety.
 ```
 
-| Exit | Meaning                                                                                        |
-| ---- | ---------------------------------------------------------------------------------------------- |
-| 0    | No findings                                                                                    |
-| 1    | Review                                                                                         |
-| 2    | Block                                                                                          |
-| 3    | Incomplete. A file was skipped, and the files that were scanned did not reach review or block. |
-| 64   | Usage or config error                                                                          |
-| 70   | The command stopped: an internal error, a failed network request, or a rejected signature.     |
+| Exit | Meaning                                                                                                                 |
+| ---- | ----------------------------------------------------------------------------------------------------------------------- |
+| 0    | No findings                                                                                                             |
+| 1    | Review                                                                                                                  |
+| 2    | Block                                                                                                                   |
+| 3    | Incomplete. A file was skipped, or `.git` / `node_modules` was not entered, and the rest did not reach review or block. |
+| 64   | Usage or config error                                                                                                   |
+| 70   | The command stopped: an internal error, a failed network request, or a rejected signature.                              |
 
-`--fail-on low|medium|high|critical` returns `0` when every finding is below that severity and no file was skipped. A skipped file still returns `3` unless you pass `--allow-skipped`. That flag keeps the skipped-file warning and returns the finding verdict (`0`, `1`, or `2`) instead.
+`--fail-on low|medium|high|critical` returns `0` when every finding is below that severity and nothing was skipped. A skipped file, or a `.git` or `node_modules` directory that was not entered, still returns `3` unless you pass `--allow-skipped` or you list that directory under `ignoreDirs` with a reason. `--allow-skipped` keeps the warning and returns the finding verdict (`0`, `1`, or `2`). The grade stays `incomplete`. Limits and `ignoreDirs` are in [docs/limits.md](docs/limits.md).
 
 A scan that skipped a file looks like this:
 
@@ -101,8 +101,9 @@ ironheights doctor
 ironheights doctor audit
 ironheights audit-config [--json] [--sarif <file>] [--md <file>] [--fail-on <severity>] [--openclaw-config <file>]
 ironheights bench <corpusDir> [--external <file.json>]
-ironheights guard status|log
-ironheights guard policy check [--call <json>]
+ironheights guard status [--policy <file>] [--config <file>] [--json]
+ironheights guard policy check [--policy <file>] [--config <file>] [--call <json>] [--call-file <file>] [--json]
+ironheights guard log [--tail <n>] [--policy <file>] [--json]
 ironheights --online <command>
 ```
 
@@ -150,7 +151,7 @@ Cached 2 advisories generated at 2026-10-10T00:00:00.000Z
 Wrote /home/ada/.ironheights/advisories.json
 ```
 
-The production public key ships as `UNCONFIGURED` until the owner pins one. Until then, `advisories update` and `--online` fetch the files and then refuse them. `scan` with no cache still runs offline.
+The production public key is pinned in this release: `8424b837422792656e6e7500869395a5afe64bf163baa63acea83f1e97cc2b6c`. A feed signed by another key is rejected. `scan` with no cache still runs offline. Rotating the key is a new CLI release first, then a feed signed by the new key. The private key is not in this repository.
 
 `audit-config` reads the local OpenClaw config and reports high-risk settings as `IH-CFG-001` through `IH-CFG-009`. `doctor audit` is the same command. It does not replace [`openclaw security audit`](https://docs.openclaw.ai/cli/security). See [docs/audit-config.md](docs/audit-config.md).
 
@@ -158,14 +159,14 @@ The production public key ships as `UNCONFIGURED` until the owner pins one. Unti
 
 Every scan prints a grade on the line before "Absence of findings is not proof of safety." The number is a trust score: 100 minus the risk score, and never below 0. A is 90–100, B is 80–89, C is 70–79, D is 60–69, and F is 0–59. The grade uses the worst skill after suppressions. Findings omitted by `--since-baseline` still count toward the grade.
 
-A skipped file makes the grade `incomplete` and hides the number, including when you pass `--allow-skipped`. The exit code can still be 0 in that case. The verdict line is unchanged.
+A skipped file, or a `.git` or `node_modules` directory that was not acknowledged in `ignoreDirs`, makes the grade `incomplete` and hides the number, including when you pass `--allow-skipped`. The exit code can still be 0 in that case. The verdict line is unchanged.
 
 ```text
 Verdict: review
 Grade: D (60/100)
 Absence of findings is not proof of safety.
-ironheights 0.1.5 | demo | grade D (60/100) | verdict review | 1 finding
-Badge: [ironheights 0.1.5: grade D (60/100), verdict review](https://github.com/Frank-Masciopinto/ironheights) — Absence of findings is not proof of safety.
+ironheights 0.2.0 | demo | grade D (60/100) | verdict review | 1 finding
+Badge: [ironheights 0.2.0: grade D (60/100), verdict review](https://github.com/Frank-Masciopinto/ironheights) — Absence of findings is not proof of safety.
 ```
 
 The badge line is text you can paste into a README. It does not load an image from a badge service.
@@ -237,7 +238,8 @@ Ironheights reads `ironheights.config.json` from the current directory, then `~/
   "skillDirs": ["~/.openclaw/workspace/skills"],
   "agentFiles": ["~/.openclaw/workspace/AGENTS.md"],
   "allowDomains": ["docs.example.com"],
-  "ignoreGlobs": ["**/.git/**"],
+  "ignoreGlobs": ["**/*.map"],
+  "ignoreDirs": [{ "path": "node_modules", "reason": "packages are not skill instructions" }],
   "ruleOverrides": { "IH-NET-001": { "enabled": true, "severity": "low" } },
   "failOn": "high",
   "limits": { "maxFileBytes": 1048576, "maxFiles": 2000, "maxDepth": 10 },
@@ -251,6 +253,8 @@ Ironheights reads `ironheights.config.json` from the current directory, then `~/
 }
 ```
 
+`ignoreDirs` acknowledges `.git` or `node_modules` so those directories stay listed and do not make the scan incomplete. Each entry needs a reason of at least 8 characters. `dist` is scanned either way. `ignoreGlobs` drops matching paths with no finding. The default list is empty. See [docs/limits.md](docs/limits.md).
+
 An allowlist entry matches that host and its subdomains. The built-in list includes `example.com`, `example.org`, `example.net`, `localhost`, the loopback addresses `127.0.0.1` and `::1`, GitHub, npm, PyPI, and `openclaw.ai`.
 
 `llm` sets the model server used by `scan --llm` and `review`. It does not turn the review on, and it cannot grant consent to send skill text off the machine. Unknown keys are still an error, including a `consent` key under `llm`.
@@ -262,7 +266,7 @@ An allowlist entry matches that host and its subdomains. The built-in list inclu
 ```json
 {
   "schemaVersion": 1,
-  "tool": { "name": "ironheights", "version": "0.1.5" },
+  "tool": { "name": "ironheights", "version": "0.2.0" },
   "scannedAt": "2026-10-09T00:00:00.000Z",
   "verdict": "no-findings",
   "skippedFileCount": 0,
@@ -272,8 +276,8 @@ An allowlist entry matches that host and its subdomains. The built-in list inclu
     "disclaimer": "Absence of findings is not proof of safety."
   },
   "scanMode": "directory",
-  "summary": "ironheights 0.1.5 | no skills | grade A (100/100) | verdict no-findings | 0 findings",
-  "badge": "[ironheights 0.1.5: grade A (100/100), verdict no-findings](https://github.com/Frank-Masciopinto/ironheights) — Absence of findings is not proof of safety.",
+  "summary": "ironheights 0.2.0 | no skills | grade A (100/100) | verdict no-findings | 0 findings",
+  "badge": "[ironheights 0.2.0: grade A (100/100), verdict no-findings](https://github.com/Frank-Masciopinto/ironheights) — Absence of findings is not proof of safety.",
   "skills": []
 }
 ```
@@ -282,7 +286,7 @@ An allowlist entry matches that host and its subdomains. The built-in list inclu
 
 `llmReview` is present only after `scan --llm` or `review`. A normal scan does not include that key. `advisory` is always true there. The grade and `verdict` stay the deterministic result, including an `IH-ADV-001` match.
 
-Each skill has `skillName`, `root`, `filesScanned`, `filesSkipped`, `skippedFileCount`, `findings`, `score`, and `verdict`. `skippedFileCount` is the number of files the scan did not read. `filesSkipped` lists each path and the reason. A finding has `ruleId`, `severity`, `confidence`, `file`, optional `line` and `column`, `evidence`, `message`, `remediation`, and `references` (`owaspLlm`, `owaspAgentic`, `mitreAtlas`). With `--since-baseline`, `score` and `verdict` describe the new findings. The grade still describes the full scan, including an `IH-ADV-001` match. `--sarif` writes SARIF 2.1.0. The run `properties` include `skippedFileCount`, `gradeLetter`, `disclaimer`, and `gradeScore` when the scan is complete. Rule `properties` and `tags` include the same references. An `IH-LLM-001` result sets `properties.advisory` to true. `tool.driver.informationUri` is `https://github.com/Frank-Masciopinto/ironheights`.
+Each skill has `skillName`, `root`, `filesScanned`, `filesSkipped`, `skippedFileCount`, `findings`, `score`, and `verdict`. `skippedFileCount` is the number of files the scan did not read. `filesSkipped` lists each path and the reason. `skippedDirectories` lists `.git` and `node_modules` directories that were not entered. An `explicit` flag means `ignoreDirs` acknowledged that directory. A finding has `ruleId`, `severity`, `confidence`, `file`, optional `line` and `column`, `evidence`, `message`, `remediation`, and `references` (`owaspLlm`, `owaspAgentic`, `mitreAtlas`). With `--since-baseline`, `score` and `verdict` describe the new findings. The grade still describes the full scan, including an `IH-ADV-001` match. `--sarif` writes SARIF 2.1.0. The run `properties` include `skippedFileCount`, `gradeLetter`, `disclaimer`, and `gradeScore` when the scan is complete. Rule `properties` and `tags` include the same references. An `IH-LLM-001` result sets `properties.advisory` to true. `tool.driver.informationUri` is `https://github.com/Frank-Masciopinto/ironheights`.
 
 Scoring is critical 100, high 40, medium 15, low 5, info 0. The verdict is `block` when any finding is critical or the score is at least 80. It is `review` when any finding is high or medium, or the score is at least 15. It is `incomplete` when files were skipped and the score would otherwise be `no-findings`. Otherwise it is `no-findings`.
 
@@ -341,6 +345,8 @@ ironheights guard status
 ironheights guard policy check --call '{"toolName":"read","params":{"path":"~/.ssh/id_rsa"}}'
 ```
 
+`guard policy check` exits 0 when the call would be allowed, 1 when it would be blocked, and 64 when the policy file is invalid.
+
 ## The advisory skill
 
 `skill/ironheights/SKILL.md` tells an OpenClaw agent to run `ironheights scan <path> --json`, summarize the result, and stop on a `block` verdict until you confirm. The skill asks for no network access and no secrets.
@@ -363,7 +369,7 @@ Scans stay on the machine. There is no telemetry. `fetch`, `safe-install`, `advi
 
 ## Use in CI
 
-The repository root `action.yml` is a composite action. After a release tag, call it as `Frank-Masciopinto/ironheights@v0.1.5` (pin the tag you trust). It runs `npx ironheights@<version> scan` and does not read secrets. Exit codes match the scanner, including `3` when a file is skipped. See [docs/ci.md](docs/ci.md) for the pre-commit hook and a SARIF upload example.
+The repository root `action.yml` is a composite action. After a release tag, call it as `Frank-Masciopinto/ironheights@v0.2.0` (pin the tag you trust). It runs `npx ironheights@<version> scan` and does not read secrets. Exit codes match the scanner, including `3` when a file or a `.git` / `node_modules` directory was skipped. See [docs/ci.md](docs/ci.md) for the pre-commit hook and a SARIF upload example.
 
 ```yaml
 name: ironheights
@@ -373,14 +379,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: Frank-Masciopinto/ironheights@v0.1.5
+      - uses: Frank-Masciopinto/ironheights@v0.2.0
         with:
-          version: '0.1.5'
+          version: '0.2.0'
           path: skills
           fail-on: high
 ```
 
-This repository's [action workflow](.github/workflows/action.yml) runs that action against a benign fixture (exit 0), a malicious fixture (exit 1 or 2), and an oversized file (exit 3). It pins scanner version `0.1.5` because that is the published package. The action file in this commit is what the workflow executes.
+This repository's [action workflow](.github/workflows/action.yml) runs that action against a benign fixture (exit 0), a malicious fixture (exit 1 or 2), and an oversized file (exit 3). It installs npm package `0.1.5`, the last release on the registry, until `0.2.0` is published. The action file in this commit is what the workflow executes.
 
 ## Windows
 

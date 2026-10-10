@@ -78,6 +78,22 @@ export interface SkippedFile {
   reason: string;
 }
 
+/**
+ * A directory the scan did not enter.
+ * `explicit` means `ignoreDirs` named it, so it does not make the scan incomplete.
+ */
+export interface SkippedDirectory {
+  path: string;
+  reason: string;
+  explicit?: boolean;
+}
+
+/** Config entry that acknowledges a `.git` or `node_modules` directory. */
+export interface IgnoreDir {
+  path: string;
+  reason: string;
+}
+
 /** Framework ids cited on a rule. Empty arrays mean no defensible mapping. */
 export interface RuleReferences {
   owaspLlm: string[];
@@ -132,6 +148,8 @@ export interface SkillReport {
   root: string;
   filesScanned: number;
   filesSkipped: SkippedFile[];
+  /** `.git` and `node_modules` directories that were not entered. */
+  skippedDirectories?: SkippedDirectory[];
   findings: Finding[];
   score: number;
   verdict: Verdict;
@@ -161,6 +179,8 @@ export interface ScanOutput {
   scannedAt: string;
   verdict: Verdict;
   skippedFileCount: number;
+  /** Present when a `.git` or `node_modules` directory was not entered. */
+  skippedDirectories?: SkippedDirectory[];
   grade: Grade;
   scanMode: 'directory' | 'text';
   summary: string;
@@ -209,6 +229,7 @@ export interface ResolvedConfig {
   agentFiles: string[];
   allowDomains: string[];
   ignoreGlobs: string[];
+  ignoreDirs: IgnoreDir[];
   ruleOverrides: Record<string, RuleOverride>;
   suppressions: SuppressionEntry[];
   /** When false, a suppression never hides a critical finding. */

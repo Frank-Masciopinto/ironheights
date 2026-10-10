@@ -4,6 +4,7 @@
 
 | Version | Supported |
 | ------- | --------- |
+| 0.2.x   | yes       |
 | 0.1.x   | yes       |
 
 ## Reporting a vulnerability
@@ -14,11 +15,11 @@ Give the maintainers time to ship a fix before writing about the issue in public
 
 Do not send copies of real secrets or live malware. A synthetic snippet that matches the pattern is enough.
 
-Ironheights does not phone home during `scan`. `fetch`, `safe-install`, `advisories update`, and `--online` are explicit network commands. Each one prints the URL before connecting, talks only to `clawhub.ai` or `ironheights.dev` over HTTPS, and refuses redirects. A report you send to GitHub is the disclosure channel. The advisory feed is a signed document you choose to download. It is not telemetry.
+Ironheights does not phone home during `scan`. `fetch`, `safe-install`, `advisories update`, and `--online` are explicit network commands. `scan --llm` and `review` are the other network path, and they are off unless you pass them. Each download command prints the URL before connecting, talks only to `clawhub.ai` or `ironheights.dev` over HTTPS, and refuses redirects. A report you send to GitHub is the disclosure channel. The advisory feed is a signed document you choose to download. It is not telemetry.
 
 ## Advisory signatures
 
-The production advisory private key is not in this repository. The CLI rejects a feed whose signature does not match the public key in `src/advisories/pinned-key.ts`. Until that constant is set, every feed is rejected. See [docs/advisories.md](docs/advisories.md).
+The production advisory private key is not in this repository. The CLI rejects a feed whose signature does not match the public key pinned in `src/advisories/pinned-key.ts` (`8424b837422792656e6e7500869395a5afe64bf163baa63acea83f1e97cc2b6c`). See [docs/advisories.md](docs/advisories.md).
 
 ## Runtime guard
 

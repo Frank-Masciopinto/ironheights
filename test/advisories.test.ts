@@ -58,8 +58,11 @@ describe('advisory feed', () => {
     await Promise.all(dirs.splice(0).map((dir) => rm(dir, { recursive: true, force: true })));
   });
 
-  it('pins no production key and fails closed on a bad signature', () => {
-    expect(pinnedAdvisoryPublicKey()).toBeNull();
+  it('pins the production advisory key and still verifies with the injected test key', () => {
+    const production = '8424b837422792656e6e7500869395a5afe64bf163baa63acea83f1e97cc2b6c';
+    const pinned = pinnedAdvisoryPublicKey();
+    expect(Buffer.from(pinned ?? new Uint8Array()).toString('hex')).toBe(production);
+    expect(Buffer.from(testPublic).toString('hex')).not.toBe(production);
     expect(publicKeyHexFromSeed(testSeed)).toBe(Buffer.from(testPublic).toString('hex'));
     const signed = feed([sample]);
     expect(parseAdvisoryDocument(signed.json).advisories).toHaveLength(1);
@@ -153,11 +156,13 @@ describe('advisory feed', () => {
     expect(still.status).toBe('ok');
   });
 
-  it('fails closed when the production key is unset or the cache was tampered', async () => {
+  it('fails closed when the key is absent, the production key does not match, or the cache was tampered', async () => {
     const root = await mkdtemp(join(tmpdir(), 'ih-adv-bad-'));
     dirs.push(root);
     const signed = feed([sample]);
     await writeAdvisoryCache(root, signed.json, signed.sig);
+    const wrongKey = await readAdvisoryCache(root, pinnedAdvisoryPublicKey());
+    expect(wrongKey.status).toBe('rejected');
     const missing = await readAdvisoryCache(join(root, 'empty'), null);
     expect(missing.status).toBe('missing');
     const rejected = await readAdvisoryCache(root, null);

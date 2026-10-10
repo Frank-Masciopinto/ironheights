@@ -5,6 +5,7 @@ import type {
   Finding,
   JsonSkillReport,
   ScanOutput,
+  SkippedDirectory,
   SkillReport,
   Verdict,
 } from '../../core/types.ts';
@@ -35,6 +36,7 @@ export function renderJson(
     scannedAt,
     verdict,
     skippedFileCount: skills.reduce((sum, skill) => sum + skill.filesSkipped.length, 0),
+    ...directoryField(collectDirectories(skills)),
     grade,
     scanMode,
     summary: renderSummary(summaryInput),
@@ -56,6 +58,7 @@ function stableSkill(skill: SkillReport): JsonSkillReport {
     root: skill.root,
     filesScanned: skill.filesScanned,
     filesSkipped: skill.filesSkipped,
+    ...directoryField(skill.skippedDirectories ?? []),
     skippedFileCount: skill.filesSkipped.length,
     findings: skill.findings.map(stableFinding),
     suppressed,
@@ -97,6 +100,23 @@ function stableFinding(
     message: finding.message,
     remediation: finding.remediation,
     ...(known > 0 || finding.ruleId.startsWith('IH-') ? { references } : {}),
+  };
+}
+
+function collectDirectories(skills: SkillReport[]): SkippedDirectory[] {
+  return skills.flatMap((skill) => skill.skippedDirectories ?? []);
+}
+
+function directoryField(
+  directories: SkippedDirectory[],
+): { skippedDirectories: SkippedDirectory[] } | Record<string, never> {
+  if (directories.length === 0) return {};
+  return {
+    skippedDirectories: directories.map((dir) => ({
+      path: dir.path,
+      reason: dir.reason,
+      ...(dir.explicit ? { explicit: true } : {}),
+    })),
   };
 }
 

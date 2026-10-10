@@ -1,11 +1,13 @@
 import {
   formatGrade,
   gradeFromSkills,
+  incompleteScanLine,
   renderSummary,
   TEXT_SCAN_LIMIT,
 } from '../../core/grade.ts';
 import type { ScanMode } from '../../core/grade.ts';
 import type { AdvisoryFeedNote, SkillReport, Verdict } from '../../core/types.ts';
+import { blockingDirectoryCount } from '../../core/verdict.ts';
 import type { LlmReviewReport } from '../../llm/review.ts';
 import { referenceTags } from '../../rules/references.ts';
 import { NO_FINDINGS_LABEL, SAFETY_REMINDER } from '../../version.ts';
@@ -75,10 +77,15 @@ export function renderMarkdown(
     for (const skipped of skill.filesSkipped) {
       lines.push(`- warning: skipped \`${skipped.file}\` (${skipped.reason})`);
     }
+    for (const dir of skill.skippedDirectories ?? []) {
+      if (dir.explicit) {
+        lines.push(`- ignored directory \`${dir.path}\` (${dir.reason})`);
+        continue;
+      }
+      lines.push(`- warning: skipped directory \`${dir.path}\` (${dir.reason})`);
+    }
     if (skill.verdict === 'incomplete') {
-      const count = skill.filesSkipped.length;
-      const noun = count === 1 ? 'file was' : 'files were';
-      lines.push('', `Scan incomplete: ${count} ${noun} not scanned.`);
+      lines.push('', incompleteScanLine(skill.filesSkipped.length, blockingDirectoryCount(skill)));
     }
     lines.push('');
   }

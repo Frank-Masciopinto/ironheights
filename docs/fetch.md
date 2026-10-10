@@ -1,6 +1,6 @@
 # Fetch and safe-install
 
-`fetch` and `safe-install` are the commands that download a skill. Every other command stays on the machine, except `advisories update` and `--online`, which fetch the advisory feed described in [advisories.md](advisories.md).
+`fetch` and `safe-install` download a skill. `advisories update` and `--online` download the advisory feed described in [advisories.md](advisories.md). `scan --llm` and `review` are the opt-in model path. Every other command stays on the machine.
 
 Nothing that is downloaded is executed. Files are written mode `0600`. Archives are stored as bytes and are not extracted.
 
@@ -10,7 +10,7 @@ The host is `clawhub.ai` and the scheme is `https`. Redirects are refused. The C
 
 ```text
 fetch ada/notes@1.0.0
-This command contacts the network. ironheights does not call the network unless you run fetch, safe-install, advisories update, or --online.
+This command contacts the network. ironheights does not call the network unless you run fetch, safe-install, advisories update, --online, scan --llm, or review.
 
 Requesting:
   GET https://clawhub.ai/api/v1/skills/notes?owner=ada
