@@ -37,6 +37,8 @@ Do not run `ironheights fetch`, `ironheights safe-install`, `ironheights advisor
 
 Request no network access. Request no secrets. Do not read credential files. The only tool you need is the `ironheights` command above.
 
+Do not pass `--llm`, `review`, or `--llm-consent` unless the user explicitly asks for a model review. That path can send skill text to a server. It is off by default, the notes can be wrong, and they do not replace the scan verdict. The default command remains `ironheights scan <path> --json`.
+
 ## Example
 
 User: "Install the weather-report skill from ./downloads/weather-report."

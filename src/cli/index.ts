@@ -51,55 +51,13 @@ export async function main(argv: string[], hooks: MainHooks = {}): Promise<numbe
   program
     .name('ironheights')
     .description(
-      'Local-first security scanner for OpenClaw skills. Network is off unless you run fetch, safe-install, advisories update, or --online.',
+      'Local-first security scanner for OpenClaw skills. Network is off unless you run fetch, safe-install, advisories update, --online, scan --llm, or review.',
     )
     .version(TOOL_VERSION)
     .exitOverride();
 
-  program
-    .command('scan [paths...]')
-    .option('--all', 'scan every configured skill directory')
-    .option('--json', 'print JSON to stdout')
-    .option('--sarif <file>', 'write SARIF 2.1.0')
-    .option('--md <file>', 'write a markdown report')
-    .option('--html <file>', 'write a self-contained HTML report')
-    .option('--format <format>', 'stdout format: text, json, or html')
-    .option(
-      '--since-baseline [file]',
-      'report findings that are new compared with an integrity baseline or a previous JSON result',
-    )
-    .option('--stdin', 'scan one piece of text from stdin')
-    .option('--text <text>', 'scan one piece of text')
-    .option('--fail-on <severity>', 'minimum severity that returns a non-zero exit code')
-    .option('--config <file>', 'config file')
-    .option('--no-color', 'disable color')
-    .option('--quiet', 'disable color and extra emphasis')
-    .option(
-      '--allow-skipped',
-      'accept skipped files and return the finding verdict instead of incomplete',
-    )
-    .action(async (paths: string[], opts: Record<string, string | boolean | undefined>) => {
-      const code = await runScan({
-        paths,
-        all: Boolean(opts.all),
-        json: Boolean(opts.json),
-        ...(typeof opts.sarif === 'string' ? { sarif: opts.sarif } : {}),
-        ...(typeof opts.md === 'string' ? { md: opts.md } : {}),
-        ...(typeof opts.html === 'string' ? { html: opts.html } : {}),
-        ...(typeof opts.format === 'string' ? { format: opts.format } : {}),
-        ...(opts.sinceBaseline === true || typeof opts.sinceBaseline === 'string'
-          ? { sinceBaseline: opts.sinceBaseline }
-          : {}),
-        stdin: Boolean(opts.stdin),
-        ...(typeof opts.text === 'string' ? { text: opts.text } : {}),
-        ...(typeof opts.failOn === 'string' ? { failOn: opts.failOn } : {}),
-        ...(typeof opts.config === 'string' ? { config: opts.config } : {}),
-        noColor: Boolean(opts.color === false || opts.noColor),
-        quiet: Boolean(opts.quiet),
-        allowSkipped: Boolean(opts.allowSkipped),
-      });
-      process.exitCode = code;
-    });
+  registerScan(program, 'scan');
+  registerScan(program, 'review');
 
   program
     .command('baseline [action]')
@@ -360,6 +318,70 @@ function auditFlags(opts: AuditCommandOptions) {
     noColor: Boolean(opts.color === false),
     quiet: Boolean(opts.quiet),
   };
+}
+
+function registerScan(program: Command, name: 'scan' | 'review'): void {
+  const description =
+    name === 'review'
+      ? 'scan, then ask a model for an advisory second opinion'
+      : 'scan skill files with fixed rules';
+  program
+    .command(`${name} [paths...]`)
+    .description(description)
+    .option('--all', 'scan every configured skill directory')
+    .option('--json', 'print JSON to stdout')
+    .option('--sarif <file>', 'write SARIF 2.1.0')
+    .option('--md <file>', 'write a markdown report')
+    .option('--html <file>', 'write a self-contained HTML report')
+    .option('--format <format>', 'stdout format: text, json, or html')
+    .option(
+      '--since-baseline [file]',
+      'report findings that are new compared with an integrity baseline or a previous JSON result',
+    )
+    .option('--stdin', 'scan one piece of text from stdin')
+    .option('--text <text>', 'scan one piece of text')
+    .option('--fail-on <severity>', 'minimum severity that returns a non-zero exit code')
+    .option('--config <file>', 'config file')
+    .option('--no-color', 'disable color')
+    .option('--quiet', 'disable color and extra emphasis')
+    .option(
+      '--allow-skipped',
+      'accept skipped files and return the finding verdict instead of incomplete',
+    )
+    .option('--llm', 'ask a model for an advisory second opinion')
+    .option('--llm-url <url>', 'model server base URL')
+    .option('--llm-model <name>', 'model name')
+    .option('--llm-api <api>', 'ollama or openai')
+    .option('--llm-consent', 'send skill text to a non-localhost model server')
+    .option('--dry-run', 'print the model prompt and do not send it')
+    .action(async (paths: string[], opts: Record<string, string | boolean | undefined>) => {
+      const code = await runScan({
+        paths,
+        all: Boolean(opts.all),
+        json: Boolean(opts.json),
+        ...(typeof opts.sarif === 'string' ? { sarif: opts.sarif } : {}),
+        ...(typeof opts.md === 'string' ? { md: opts.md } : {}),
+        ...(typeof opts.html === 'string' ? { html: opts.html } : {}),
+        ...(typeof opts.format === 'string' ? { format: opts.format } : {}),
+        ...(opts.sinceBaseline === true || typeof opts.sinceBaseline === 'string'
+          ? { sinceBaseline: opts.sinceBaseline }
+          : {}),
+        stdin: Boolean(opts.stdin),
+        ...(typeof opts.text === 'string' ? { text: opts.text } : {}),
+        ...(typeof opts.failOn === 'string' ? { failOn: opts.failOn } : {}),
+        ...(typeof opts.config === 'string' ? { config: opts.config } : {}),
+        noColor: Boolean(opts.color === false || opts.noColor),
+        quiet: Boolean(opts.quiet),
+        allowSkipped: Boolean(opts.allowSkipped),
+        llm: name === 'review' || Boolean(opts.llm),
+        ...(typeof opts.llmUrl === 'string' ? { llmUrl: opts.llmUrl } : {}),
+        ...(typeof opts.llmModel === 'string' ? { llmModel: opts.llmModel } : {}),
+        ...(typeof opts.llmApi === 'string' ? { llmApi: opts.llmApi } : {}),
+        llmConsent: Boolean(opts.llmConsent),
+        dryRun: Boolean(opts.dryRun),
+      });
+      process.exitCode = code;
+    });
 }
 
 /**

@@ -14,7 +14,8 @@ export type Category =
   | 'integrity'
   | 'mcp'
   | 'advisory'
-  | 'config';
+  | 'config'
+  | 'llm-review';
 
 export type FileKind = 'markdown' | 'script' | 'config' | 'binary' | 'text';
 export type AppliesTo = 'markdown' | 'script' | 'config' | 'binary' | 'any';
@@ -52,7 +53,7 @@ export interface Rule {
   title: string;
   category: Category;
   severity: Severity;
-  priority: 'P0' | 'P1';
+  priority: 'P0' | 'P1' | 'advisory';
   description: string;
   remediation: string;
   appliesTo: AppliesTo[];
@@ -182,6 +183,15 @@ export interface Thresholds {
   review: number;
 }
 
+/** Connection defaults for an opt-in model review. Presence does not enable it. */
+export interface ResolvedLlmConfig {
+  url: string;
+  model: string;
+  api?: 'ollama' | 'openai';
+  timeoutMs: number;
+  maxInputChars: number;
+}
+
 export interface RuleOverride {
   enabled?: boolean;
   severity?: Severity;
@@ -208,6 +218,7 @@ export interface ResolvedConfig {
   failOn?: Severity;
   limits: Limits;
   thresholds: Thresholds;
+  llm: ResolvedLlmConfig;
   configPath?: string;
 }
 

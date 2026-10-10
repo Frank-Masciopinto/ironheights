@@ -32,6 +32,10 @@ A composite action at `action.yml` runs `npx ironheights@<pinned version> scan`.
 
 Windows CI on `windows-latest` runs the build, the test suite, and the packed CLI smoke test on Node.js 20.0.0 and Node.js 24. Path handling accepts `~\` and `%USERPROFILE%` / `%APPDATA%` / `%LOCALAPPDATA%`. Credential rules recognize those home paths. Scanned text is normalized to LF.
 
+`scan --llm` and `review` ask a language model for an advisory second opinion. The review is off unless you pass it. The default server is a loopback Ollama-compatible endpoint. A non-localhost URL needs `--llm-consent` and `IRONHEIGHTS_LLM_API_KEY`. Ironheights prints the exact request body before sending it. `--dry-run` prints that body and does not send it.
+
+The model can only add `IH-LLM-001` notes. Those notes do not change the verdict, the grade, or the exit code. A block stays a block. If the model is unreachable, times out, or returns anything other than the expected JSON, the scan keeps the deterministic result and says why. Skill text is capped, stripped of control characters, and scrubbed for common secrets before it is sent. The scrub can miss a secret. Model notes can be wrong. `scan --stdin` and `scan --text` are not sent to a model, because a text scan has no skill directory.
+
 ## 0.1.5
 
 `IH-NET-001` reports a Markdown URL again when the line tells the reader to download, install, fetch, or follow it, and when the host is a paste site or a file-drop host such as `rentry.co`, `glot.io`, `transfer.sh`, or `file.io`. A schema link such as `http://schemas.openxmlformats.org/...` and an official API host mentioned in prose stay quiet. `metadata.ironheights.allowDomains` still skips a declared host for that skill only.

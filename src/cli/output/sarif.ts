@@ -1,6 +1,7 @@
 import { gradeFromSkills } from '../../core/grade.ts';
 import type { ScanMode } from '../../core/grade.ts';
 import type { Finding, SkillReport } from '../../core/types.ts';
+import { LLM_RULE_ID } from '../../llm/constants.ts';
 import { allRules } from '../../rules/index.ts';
 import { referencesFor, referenceTags } from '../../rules/references.ts';
 import { REPOSITORY_URL, SAFETY_REMINDER, TOOL_NAME, TOOL_VERSION } from '../../version.ts';
@@ -54,6 +55,7 @@ export function renderSarif(skills: SkillReport[], scanMode: ScanMode = 'directo
         owaspLlm: refs.owaspLlm,
         owaspAgentic: refs.owaspAgentic,
         mitreAtlas: refs.mitreAtlas,
+        ...(finding.ruleId === LLM_RULE_ID ? { advisory: true } : {}),
       },
     };
   });

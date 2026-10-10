@@ -8,6 +8,7 @@ import type {
   SkillReport,
   Verdict,
 } from '../../core/types.ts';
+import type { LlmReviewReport } from '../../llm/review.ts';
 import { referencesFor } from '../../rules/references.ts';
 import { SCHEMA_VERSION, TOOL_NAME, TOOL_VERSION } from '../../version.ts';
 
@@ -15,6 +16,7 @@ export interface RenderContext {
   scanMode?: ScanMode;
   limitNote?: string;
   advisory?: AdvisoryFeedNote;
+  llmReview?: LlmReviewReport;
 }
 
 export function renderJson(
@@ -27,7 +29,7 @@ export function renderJson(
   const grade = gradeFromSkills(skills);
   const summaryInput = { skills, verdict, grade, scanMode };
   const since = sinceBaselineSummary(skills);
-  const payload: ScanOutput = {
+  const payload: ScanOutput & { llmReview?: LlmReviewReport } = {
     schemaVersion: SCHEMA_VERSION,
     tool: { name: TOOL_NAME, version: TOOL_VERSION },
     scannedAt,
@@ -39,6 +41,7 @@ export function renderJson(
     badge: renderBadge(summaryInput),
     ...(context.limitNote ? { scanLimit: context.limitNote } : {}),
     ...(since ? { sinceBaseline: since } : {}),
+    ...(context.llmReview ? { llmReview: context.llmReview } : {}),
     skills: skills.map(stableSkill),
     ...(context.advisory ? { advisoryFeed: context.advisory } : {}),
   };

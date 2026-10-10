@@ -776,3 +776,23 @@ Does not match:
 - `sandbox.mode omitted and tools.exec.security: "deny"`
 - `sandbox.mode: "off" and tools.elevated.enabled: false and tools.exec.security: "deny"`
 
+## IH-LLM-001 — Advisory model review
+
+- Severity: info
+- Category: llm-review
+- Priority: advisory
+- Applies to: any
+- OWASP LLM: none
+- OWASP Agentic: none
+- MITRE ATLAS: none
+
+An optional language-model review added a note. This is not a pattern rule and it does not scan files by itself. The model sees redacted skill text and the deterministic findings, and it can be wrong. The note never changes the verdict or the exit code. It appears only after `scan --llm` or `review`, and only when the model output matched the review schema.
+
+Remediation: This note is advisory and can be wrong. It does not change the deterministic verdict. Confirm it yourself before you act on it.
+
+Matches:
+- `Model note: the skill tells the agent to download a script before reading it.`
+
+Does not match:
+- `A skill file on its own, with scan --llm not set.`
+
