@@ -116,6 +116,51 @@ export const RULE_REFERENCES: Record<string, RuleReferences> = {
     owaspAgentic: [],
     mitreAtlas: [],
   },
+  'IH-CFG-001': {
+    owaspLlm: ['LLM06:2025'],
+    owaspAgentic: ['ASI05:2026'],
+    mitreAtlas: [],
+  },
+  'IH-CFG-002': {
+    owaspLlm: ['LLM06:2025'],
+    owaspAgentic: [],
+    mitreAtlas: [],
+  },
+  'IH-CFG-003': {
+    owaspLlm: ['LLM06:2025'],
+    owaspAgentic: ['ASI05:2026'],
+    mitreAtlas: [],
+  },
+  'IH-CFG-004': {
+    owaspLlm: ['LLM06:2025'],
+    owaspAgentic: ['ASI05:2026'],
+    mitreAtlas: [],
+  },
+  'IH-CFG-005': {
+    owaspLlm: ['LLM02:2025'],
+    owaspAgentic: [],
+    mitreAtlas: ['AML.T0055'],
+  },
+  'IH-CFG-006': {
+    owaspLlm: ['LLM02:2025'],
+    owaspAgentic: [],
+    mitreAtlas: ['AML.T0055'],
+  },
+  'IH-CFG-007': {
+    owaspLlm: ['LLM06:2025'],
+    owaspAgentic: ['ASI05:2026'],
+    mitreAtlas: [],
+  },
+  'IH-CFG-008': {
+    owaspLlm: ['LLM03:2025'],
+    owaspAgentic: ['ASI04:2026'],
+    mitreAtlas: [],
+  },
+  'IH-CFG-009': {
+    owaspLlm: ['LLM06:2025'],
+    owaspAgentic: ['ASI05:2026'],
+    mitreAtlas: [],
+  },
 };
 
 export function referencesFor(ruleId: string): RuleReferences {

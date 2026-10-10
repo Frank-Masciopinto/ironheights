@@ -186,13 +186,22 @@ export function hasSensitiveMarker(text: string): boolean {
 
 /**
  * ~/.ssh, ~/.aws, ~/.gnupg, and ~/.azure count with or without a trailing
- * slash or file name. The directory name has to end at a boundary so "sshd"
- * and ".sshfoo" do not match.
+ * slash or file name. Windows accepts ~\.ssh, %USERPROFILE%\.ssh, and
+ * AppData Chrome, Firefox, and credential-store paths. The directory name
+ * has to end at a boundary so "sshd" and ".sshfoo" do not match.
  */
-const CREDENTIAL_DIR = /(?:(?:~\/|\/)|(?:^|[\s"'`(:=]))\.(?:ssh|aws|gnupg|azure)(?![A-Za-z0-9_])/i;
+const CREDENTIAL_DIR = new RegExp(
+  [
+    '(?:~[/\\\\]|[/\\\\])\\.(?:ssh|aws|gnupg|azure)(?![A-Za-z0-9_])',
+    '(?:^|[\\s"\'`(:=])\\.(?:ssh|aws|gnupg|azure)(?![A-Za-z0-9_])',
+    '%(?:USERPROFILE|HOME)%[/\\\\]\\.(?:ssh|aws|gnupg|azure)(?![A-Za-z0-9_])',
+    '(?:%(?:APPDATA|LOCALAPPDATA)%|AppData[/\\\\](?:Roaming|Local))[/\\\\](?:\\.ssh|\\.aws|\\.gnupg|Google[/\\\\]Chrome|Mozilla[/\\\\]Firefox|Microsoft[/\\\\]Credentials)',
+  ].join('|'),
+  'i',
+);
 
 const SENSITIVE_PATH =
-  /(?:~\/\.ssh\/|\/\.ssh\/|id_rsa|id_ed25519|\.aws\/credentials|\.aws\/config|application_default_credentials|\.azure\/|(?:~\/|\.\.?\/|\/|--env-file(?:=|\s+))\S{0,120}\.env\b|Login Data|[\\/]Cookies\b|cookies\.sqlite|login\.keychain|\.bash_history|\.zsh_history|openclaw\.json|credentials\/whatsapp|auth-profiles\.json|\.electrum|wallet\.dat|seed phrase)/i;
+  /(?:~[/\\]\.ssh[/\\]|[/\\]\.ssh[/\\]|id_rsa|id_ed25519|\.aws[/\\]credentials|\.aws[/\\]config|application_default_credentials|\.azure[/\\]|(?:~[/\\]|\.\.?[/\\]|[/\\]|--env-file(?:=|\s+))\S{0,120}\.env\b|Login Data|[\\/]Cookies\b|cookies\.sqlite|login\.keychain|\.bash_history|\.zsh_history|openclaw\.json|credentials[/\\]whatsapp|auth-profiles\.json|\.electrum|wallet\.dat|seed phrase)/i;
 
 function ignoredDestination(
   url: ExtractedUrl,

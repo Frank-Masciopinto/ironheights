@@ -1,6 +1,6 @@
 import { access, readFile } from 'node:fs/promises';
-import { homedir } from 'node:os';
-import { isAbsolute, join, resolve } from 'node:path';
+import { isAbsolute, join, resolve, win32 } from 'node:path';
+import { expandUserPath, homeDirectory } from '../util/paths.ts';
 import { z } from 'zod';
 import { UsageError } from './errors.ts';
 import type { ResolvedConfig, Severity } from './types.ts';
@@ -78,7 +78,7 @@ export interface LoadConfigOptions {
 }
 
 export function ironheightsHome(env: NodeJS.ProcessEnv = process.env): string {
-  return env.IRONHEIGHTS_HOME ?? join(homedir(), '.ironheights');
+  return env.IRONHEIGHTS_HOME ?? join(homeDirectory(env), '.ironheights');
 }
 
 export async function loadConfig(options: LoadConfigOptions = {}): Promise<ResolvedConfig> {
@@ -102,8 +102,8 @@ export async function loadConfig(options: LoadConfigOptions = {}): Promise<Resol
   const defaults = await discoverDefaultPaths(env);
   const allowExtra = input.allowDomains ?? [];
   return {
-    skillDirs: (input.skillDirs ?? defaults.skillDirs).map((dir) => expandHome(dir)),
-    agentFiles: (input.agentFiles ?? defaults.agentFiles).map((file) => expandHome(file)),
+    skillDirs: (input.skillDirs ?? defaults.skillDirs).map((dir) => expandHome(dir, env)),
+    agentFiles: (input.agentFiles ?? defaults.agentFiles).map((file) => expandHome(file, env)),
     allowDomains: [...defaults.allowDomains, ...allowExtra],
     ignoreGlobs: input.ignoreGlobs ?? [...DEFAULT_IGNORE],
     ruleOverrides: input.ruleOverrides ?? {},
@@ -174,10 +174,10 @@ async function firstExisting(paths: string[]): Promise<string | undefined> {
   return undefined;
 }
 
-function expandHome(value: string): string {
-  if (value === '~') return homedir();
-  if (value.startsWith('~/')) return join(homedir(), value.slice(2));
-  return isAbsolute(value) ? value : resolve(value);
+function expandHome(value: string, env: NodeJS.ProcessEnv): string {
+  const expanded = expandUserPath(value, env);
+  if (isAbsolute(expanded) || win32.isAbsolute(expanded)) return expanded;
+  return resolve(expanded);
 }
 
 export function isSeverity(value: string): value is Severity {

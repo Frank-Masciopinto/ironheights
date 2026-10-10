@@ -1,4 +1,4 @@
-import { mkdtemp, mkdir, symlink, writeFile, chmod, rm } from 'node:fs/promises';
+import { chmod, mkdtemp, mkdir, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
@@ -12,6 +12,7 @@ import { renderSarif } from '../src/cli/output/sarif.ts';
 import { parseSkillMarkdown } from '../src/openclaw/skill.ts';
 import { SAFETY_REMINDER } from '../src/version.ts';
 import type { Finding } from '../src/core/types.ts';
+import { linkPath } from './support.ts';
 
 const finding = (severity: Finding['severity'], ruleId = 'IH-TEST'): Finding => ({
   ruleId,
@@ -165,10 +166,11 @@ describe('walker robustness', () => {
     await writeFile(join(weird, 'ansi\u001b[31m.md'), 'hello');
     const loopDir = join(weird, 'loop');
     await mkdir(loopDir);
-    await symlink(loopDir, join(loopDir, 'self'));
+    await linkPath(loopDir, join(loopDir, 'self'));
     const outside = join(dir, 'outside.txt');
     await writeFile(outside, 'secret');
-    await symlink(outside, join(weird, 'escape'));
+    const outsideLinked = await linkPath(outside, join(weird, 'escape'));
+    await writeFile(join(weird, 'crlf.txt'), 'line one\r\nline two\r\n');
     const walked = await walkSkill(
       weird,
       { maxFileBytes: 1024 * 1024, maxFiles: 20, maxDepth: 4 },
@@ -177,8 +179,11 @@ describe('walker robustness', () => {
     expect(
       walked.files.some((file) => file.symlinkLoop || file.relativePath.includes('self')),
     ).toBe(true);
-    expect(walked.files.some((file) => file.symlinkOutside)).toBe(true);
+    if (outsideLinked) expect(walked.files.some((file) => file.symlinkOutside)).toBe(true);
     expect(walked.files.some((file) => file.relativePath.includes('long.txt'))).toBe(true);
+    expect(walked.files.find((file) => file.relativePath === 'crlf.txt')?.text).toBe(
+      'line one\nline two\n',
+    );
 
     const unreadable = join(dir, 'locked');
     await mkdir(unreadable);
@@ -190,10 +195,17 @@ describe('walker robustness', () => {
       { maxFileBytes: 1000, maxFiles: 10, maxDepth: 3 },
       [],
     );
-    expect(
-      lockedWalk.skipped.some((item) => item.reason === 'unreadable file') ||
-        lockedWalk.files.length === 0,
-    ).toBe(true);
+    if (process.platform === 'win32') {
+      expect(
+        lockedWalk.files.some((file) => file.relativePath === 'nope.txt') ||
+          lockedWalk.skipped.length > 0,
+      ).toBe(true);
+    } else {
+      expect(
+        lockedWalk.skipped.some((item) => item.reason === 'unreadable file') ||
+          lockedWalk.files.length === 0,
+      ).toBe(true);
+    }
     await chmod(locked, 0o644);
     await rm(dir, { recursive: true, force: true });
   });

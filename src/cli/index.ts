@@ -3,6 +3,7 @@ import { realpathSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { runAdvisories } from './commands/advisories.ts';
+import { runAuditConfig } from './commands/audit-config.ts';
 import { runBaseline, runVerify } from './commands/baseline.ts';
 import { runBenchCommand } from './commands/bench.ts';
 import { runDoctor } from './commands/doctor.ts';
@@ -12,7 +13,7 @@ import { runQuarantine } from './commands/quarantine.ts';
 import { runRules } from './commands/rules.ts';
 import { runSafeInstall } from './commands/safe-install.ts';
 import { runScan } from './commands/scan.ts';
-import { IronheightsError } from '../core/errors.ts';
+import { IronheightsError, UsageError } from '../core/errors.ts';
 import { TOOL_VERSION } from '../version.ts';
 
 export interface MainHooks {
@@ -199,12 +200,46 @@ export async function main(argv: string[], hooks: MainHooks = {}): Promise<numbe
       });
     });
 
-  program
-    .command('doctor')
-    .option('--config <file>', 'config file')
-    .action(async (opts: { config?: string }) => {
+  const audit = program
+    .command('audit-config')
+    .description(
+      'Read the local OpenClaw config and report high-risk settings. Offline and read-only.',
+    )
+    .option('--json', 'print JSON to stdout')
+    .option('--sarif <file>', 'write SARIF 2.1.0')
+    .option('--md <file>', 'write a markdown report')
+    .option('--fail-on <severity>', 'minimum severity that returns a non-zero exit code')
+    .option('--openclaw-config <file>', 'OpenClaw config file to read')
+    .option('--no-color', 'disable color')
+    .option('--quiet', 'disable color and extra emphasis');
+  audit.action(async (opts: AuditCommandOptions) => {
+    process.exitCode = await runAuditConfig(auditFlags(opts));
+  });
+
+  const doctor = program
+    .command('doctor [action]')
+    .description('Show OpenClaw locations. `doctor audit` is an alias of audit-config.')
+    .option('--config <file>', 'ironheights config file')
+    .option('--json', 'with audit, print JSON')
+    .option('--sarif <file>', 'with audit, write SARIF 2.1.0')
+    .option('--md <file>', 'with audit, write a markdown report')
+    .option(
+      '--fail-on <severity>',
+      'with audit, minimum severity that returns a non-zero exit code',
+    )
+    .option('--openclaw-config <file>', 'with audit, OpenClaw config file to read')
+    .option('--no-color', 'disable color')
+    .option('--quiet', 'disable color and extra emphasis');
+  doctor.action(
+    async (action: string | undefined, opts: AuditCommandOptions & { config?: string }) => {
+      if (action === 'audit') {
+        process.exitCode = await runAuditConfig(auditFlags(opts));
+        return;
+      }
+      if (action) throw new UsageError('doctor actions: audit');
       process.exitCode = await runDoctor(opts.config ? { config: opts.config } : {});
-    });
+    },
+  );
 
   program
     .command('bench [corpusDir]')
@@ -303,6 +338,28 @@ export async function main(argv: string[], hooks: MainHooks = {}): Promise<numbe
   }
   const code = process.exitCode;
   return typeof code === 'number' ? code : 0;
+}
+
+interface AuditCommandOptions {
+  json?: boolean;
+  sarif?: string;
+  md?: string;
+  failOn?: string;
+  openclawConfig?: string;
+  color?: boolean;
+  quiet?: boolean;
+}
+
+function auditFlags(opts: AuditCommandOptions) {
+  return {
+    json: Boolean(opts.json),
+    ...(typeof opts.sarif === 'string' ? { sarif: opts.sarif } : {}),
+    ...(typeof opts.md === 'string' ? { md: opts.md } : {}),
+    ...(typeof opts.failOn === 'string' ? { failOn: opts.failOn } : {}),
+    ...(typeof opts.openclawConfig === 'string' ? { openclawConfig: opts.openclawConfig } : {}),
+    noColor: Boolean(opts.color === false),
+    quiet: Boolean(opts.quiet),
+  };
 }
 
 /**

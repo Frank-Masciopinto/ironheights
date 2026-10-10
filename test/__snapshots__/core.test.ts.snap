@@ -89,7 +89,7 @@ exports[`output snapshots > renders human, json, and sarif 3`] = `
                 "text": "Access to a sensitive path"
               },
               "fullDescription": {
-                "text": "References to keys, browser stores, wallets, shell history, or OpenClaw auth files expose credentials. A credential directory such as ~/.ssh, ~/.aws, ~/.gnupg, or ~/.azure counts with or without a file name after it."
+                "text": "References to keys, browser stores, wallets, shell history, or OpenClaw auth files expose credentials. A credential directory such as ~/.ssh, ~/.aws, ~/.gnupg, or ~/.azure counts with or without a file name after it. Windows forms count too: ~\\\\.ssh, %USERPROFILE%\\\\.ssh, and AppData paths for Chrome, Firefox, or the credential store."
               },
               "help": {
                 "text": "Do not read these paths from a skill. Use a scoped environment variable or the platform secret store."

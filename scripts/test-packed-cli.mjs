@@ -5,11 +5,13 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
+const isWin = process.platform === 'win32';
 
 function run(command, args, options = {}) {
   const result = spawnSync(command, args, {
     cwd: root,
     encoding: 'utf8',
+    shell: isWin,
     ...options,
   });
   if (result.error) {
@@ -64,7 +66,11 @@ try {
   for (const bin of bins) {
     const help = run(bin, ['--help'], { cwd: installDir });
     if (!assertOk(help, `${bin} --help failed`)) process.exit(1);
-    if (!help.stdout.includes('Usage:') || !help.stdout.includes('scan')) {
+    if (
+      !help.stdout.includes('Usage:') ||
+      !help.stdout.includes('scan') ||
+      !help.stdout.includes('audit-config')
+    ) {
       fail(`${bin} --help did not print usage`, help);
       process.exit(1);
     }

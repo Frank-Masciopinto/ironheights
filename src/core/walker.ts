@@ -1,5 +1,6 @@
 import { lstat, open, readdir, realpath, stat } from 'node:fs/promises';
 import { relative, resolve, sep } from 'node:path';
+import { isInsideRoot, normalizeForCompare, stripLongPath } from '../util/paths.ts';
 import picomatch from 'picomatch';
 import { classifyFile, decodeText } from './filetype.ts';
 import type { Limits, ScannedFile, SkippedFile } from './types.ts';
@@ -14,7 +15,7 @@ export async function walkSkill(
   limits: Limits,
   ignoreGlobs: string[],
 ): Promise<WalkResult> {
-  const realRoot = await realpath(root);
+  const realRoot = stripLongPath(await realpath(root));
   const ignore = picomatch(ignoreGlobs, { dot: true });
   const files: ScannedFile[] = [];
   const skipped: SkippedFile[] = [];
@@ -82,13 +83,12 @@ export async function walkSkill(
   ): Promise<void> {
     let target: string;
     try {
-      target = await realpath(abs);
+      target = stripLongPath(await realpath(abs));
     } catch {
       skipped.push({ file: portable, reason: 'broken symlink' });
       return;
     }
-    const relTarget = relative(realRoot, target);
-    const outside = relTarget.startsWith('..') || relTarget.split(sep).includes('..');
+    const outside = !isInsideRoot(realRoot, target);
     if (outside) {
       await addFile(abs, portable, (await lstat(abs)).mode, 0, {
         symlinkOutside: true,
@@ -98,7 +98,8 @@ export async function walkSkill(
       });
       return;
     }
-    if (seen.has(target)) {
+    const seenKey = normalizeForCompare(target);
+    if (seen.has(seenKey)) {
       await addFile(abs, portable, (await lstat(abs)).mode, 0, {
         symlinkOutside: false,
         symlinkLoop: true,
@@ -107,7 +108,7 @@ export async function walkSkill(
       });
       return;
     }
-    seen.add(target);
+    seen.add(seenKey);
     let targetStat;
     try {
       targetStat = await stat(abs);
@@ -168,7 +169,7 @@ export async function walkSkill(
     });
   }
 
-  await visit(realRoot, 0, new Set([realRoot]));
+  await visit(realRoot, 0, new Set([normalizeForCompare(realRoot)]));
   return { files, skipped };
 }
 

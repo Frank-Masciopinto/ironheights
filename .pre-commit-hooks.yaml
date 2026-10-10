@@ -1,0 +1,10 @@
+- id: ironheights
+  name: ironheights
+  description: >
+    Scan the working tree with the local ironheights CLI. Requires ironheights
+    on PATH (npm install -g ironheights@0.1.5). Offline. Does not upload results.
+  entry: ironheights
+  language: system
+  args: [scan, ., --fail-on, high]
+  pass_filenames: false
+  files: '(^|/)SKILL\.md$'

@@ -26,6 +26,12 @@ Inline `ironheights-ignore IH-XXX-000 reason="..." ` comments, and config `suppr
 
 Rules in JSON and SARIF `properties` and tags now carry OWASP LLM Top 10 2025, OWASP Agentic Top 10 2026, and MITRE ATLAS ids where a mapping is defensible. `docs/rules.md` lists `none` when it is not.
 
+`ironheights audit-config` (alias `doctor audit`) reads the local OpenClaw config and reports `IH-CFG-001` through `IH-CFG-009`. Output is text, JSON, or SARIF. `schemaVersion` stays `1`, with extra fields `command`, `configPath`, `configFound`, `configParsed`, `nativeAudit`, and `limits`. Secret values are replaced with `<redacted>`. The command does not call the network, does not change files, and does not replace `openclaw security audit`.
+
+A composite action at `action.yml` runs `npx ironheights@<pinned version> scan`. `.pre-commit-hooks.yaml` scans a tree with `ironheights` on `PATH`. Exit code `3` still means the scan was incomplete.
+
+Windows CI on `windows-latest` runs the build, the test suite, and the packed CLI smoke test on Node.js 20.0.0 and Node.js 24. Path handling accepts `~\` and `%USERPROFILE%` / `%APPDATA%` / `%LOCALAPPDATA%`. Credential rules recognize those home paths. Scanned text is normalized to LF.
+
 ## 0.1.5
 
 `IH-NET-001` reports a Markdown URL again when the line tells the reader to download, install, fetch, or follow it, and when the host is a paste site or a file-drop host such as `rentry.co`, `glot.io`, `transfer.sh`, or `file.io`. A schema link such as `http://schemas.openxmlformats.org/...` and an official API host mentioned in prose stay quiet. `metadata.ironheights.allowDomains` still skips a declared host for that skill only.

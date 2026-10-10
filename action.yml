@@ -1,0 +1,114 @@
+name: Ironheights
+description: >
+  Scan a path with a pinned ironheights release. The scanner does not use the
+  network. SARIF upload is opt-in and uses the calling workflow token, not a
+  secret you configure.
+inputs:
+  version:
+    description: Exact ironheights version, for example 0.1.5. Ranges and latest are rejected.
+    required: true
+  path:
+    description: Directory to scan.
+    required: false
+    default: .
+  fail-on:
+    description: 'Minimum severity that fails the check: info, low, medium, high, or critical. Empty keeps the scanner default.'
+    required: false
+    default: ''
+  allow-skipped:
+    description: Pass --allow-skipped so a skipped file does not force exit code 3.
+    required: false
+    default: 'false'
+  config:
+    description: Optional ironheights.config.json path.
+    required: false
+    default: ''
+  sarif-file:
+    description: Write SARIF 2.1.0 to this path. Also implied when upload-sarif is true.
+    required: false
+    default: ''
+  upload-sarif:
+    description: Upload SARIF to GitHub code scanning. The workflow needs security-events write. No repository secret.
+    required: false
+    default: 'false'
+  node-version:
+    description: Node.js version used to run npx.
+    required: false
+    default: '20'
+outputs:
+  exit-code:
+    description: '0 no findings, 1 review, 2 block, 3 incomplete, 64 usage, 70 internal.'
+    value: ${{ steps.scan.outputs.exit-code }}
+  sarif-file:
+    description: SARIF path when a file was written.
+    value: ${{ steps.scan.outputs.sarif-file }}
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+    - id: scan
+      shell: bash
+      env:
+        IH_VERSION: ${{ inputs.version }}
+        IH_PATH: ${{ inputs.path }}
+        IH_FAIL_ON: ${{ inputs.fail-on }}
+        IH_ALLOW_SKIPPED: ${{ inputs.allow-skipped }}
+        IH_CONFIG: ${{ inputs.config }}
+        IH_SARIF_FILE: ${{ inputs.sarif-file }}
+        IH_UPLOAD: ${{ inputs.upload-sarif }}
+      run: |
+        set -euo pipefail
+        record() {
+          echo "exit-code=$1" >> "$GITHUB_OUTPUT"
+          if [[ -n "${2:-}" ]]; then
+            echo "sarif-file=$2" >> "$GITHUB_OUTPUT"
+          else
+            echo "sarif-file=" >> "$GITHUB_OUTPUT"
+          fi
+        }
+        if [[ ! "$IH_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+          echo "ironheights version must be an exact x.y.z pin" >&2
+          record 64
+          exit 0
+        fi
+        case "$IH_FAIL_ON" in
+          ''|info|low|medium|high|critical) ;;
+          *)
+            echo "fail-on must be info, low, medium, high, or critical" >&2
+            record 64
+            exit 0
+            ;;
+        esac
+        args=(scan "$IH_PATH" --no-color)
+        if [[ -n "$IH_FAIL_ON" ]]; then
+          args+=(--fail-on "$IH_FAIL_ON")
+        fi
+        if [[ "$IH_ALLOW_SKIPPED" == "true" ]]; then
+          args+=(--allow-skipped)
+        fi
+        if [[ -n "$IH_CONFIG" ]]; then
+          args+=(--config "$IH_CONFIG")
+        fi
+        sarif=""
+        if [[ "$IH_UPLOAD" == "true" || -n "$IH_SARIF_FILE" ]]; then
+          sarif="${IH_SARIF_FILE:-ironheights.sarif}"
+          args+=(--sarif "$sarif")
+        fi
+        set +e
+        npx --yes "ironheights@${IH_VERSION}" "${args[@]}"
+        code=$?
+        set -e
+        record "$code" "$sarif"
+    - name: Upload SARIF
+      if: inputs.upload-sarif == 'true'
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: ${{ steps.scan.outputs.sarif-file }}
+    - name: Apply scanner exit code
+      if: steps.scan.outputs.exit-code != '0'
+      shell: bash
+      env:
+        IH_CODE: ${{ steps.scan.outputs.exit-code }}
+      run: exit "$IH_CODE"

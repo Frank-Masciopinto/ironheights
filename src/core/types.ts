@@ -13,7 +13,8 @@ export type Category =
   | 'meta'
   | 'integrity'
   | 'mcp'
-  | 'advisory';
+  | 'advisory'
+  | 'config';
 
 export type FileKind = 'markdown' | 'script' | 'config' | 'binary' | 'text';
 export type AppliesTo = 'markdown' | 'script' | 'config' | 'binary' | 'any';

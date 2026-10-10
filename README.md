@@ -6,7 +6,7 @@ It does not send telemetry, and it does not run the files it scans. It does not 
 
 ## Install
 
-Ironheights requires Node.js 20 or newer.
+Ironheights requires Node.js 20 or newer on macOS, Linux, and Windows.
 
 OpenClaw 2026.9.3 requires Node.js `>=24.16.0 <25 || >=26.1.0`. `ironheights doctor` prints whether the current runtime is inside that range.
 
@@ -97,6 +97,8 @@ ironheights quarantine restore <id>
 ironheights rules list
 ironheights rules show <id>
 ironheights doctor
+ironheights doctor audit
+ironheights audit-config [--json] [--sarif <file>] [--md <file>] [--fail-on <severity>] [--openclaw-config <file>]
 ironheights bench <corpusDir> [--external <file.json>]
 ironheights guard status|log
 ironheights guard policy check [--call <json>]
@@ -148,6 +150,8 @@ Wrote /home/ada/.ironheights/advisories.json
 ```
 
 The production public key ships as `UNCONFIGURED` until the owner pins one. Until then, `advisories update` and `--online` fetch the files and then refuse them. `scan` with no cache still runs offline.
+
+`audit-config` reads the local OpenClaw config and reports high-risk settings as `IH-CFG-001` through `IH-CFG-009`. `doctor audit` is the same command. It does not replace [`openclaw security audit`](https://docs.openclaw.ai/cli/security). See [docs/audit-config.md](docs/audit-config.md).
 
 ## Grade
 
@@ -278,7 +282,7 @@ Scoring is critical 100, high 40, medium 15, low 5, info 0. The verdict is `bloc
 
 ## Rules
 
-The full list is generated in [docs/rules.md](docs/rules.md), including OWASP LLM Top 10 2025, OWASP Agentic Top 10 2026, and MITRE ATLAS ids. `none` means no defensible mapping was recorded. P0 rules cover remote shells, prerequisite installs, undeclared hosts, credential paths, hard-coded secrets, instruction overrides, hidden text, bundled executables, persistence, and MCP launch and secret checks. P1 rules cover dynamic execution, exfiltration shape, secrets in chat, weakened approvals, obfuscation, privilege bypass, filesystem tricks, skill metadata, and broad MCP filesystem roots. Integrity rules `IH-INT-001` through `IH-INT-004` come from `verify`, not from a content scan. `IH-ADV-001` comes from the cached advisory feed, not from a content pattern.
+The full list is generated in [docs/rules.md](docs/rules.md), including OWASP LLM Top 10 2025, OWASP Agentic Top 10 2026, and MITRE ATLAS ids. `none` means no defensible mapping was recorded. P0 rules cover remote shells, prerequisite installs, undeclared hosts, credential paths, hard-coded secrets, instruction overrides, hidden text, bundled executables, persistence, and MCP launch and secret checks. P1 rules cover dynamic execution, exfiltration shape, secrets in chat, weakened approvals, obfuscation, privilege bypass, filesystem tricks, skill metadata, and broad MCP filesystem roots. Integrity rules `IH-INT-001` through `IH-INT-004` come from `verify`, not from a content scan. `IH-ADV-001` comes from the cached advisory feed, not from a content pattern. Config rules `IH-CFG-001` through `IH-CFG-009` come from `audit-config`, not from a skill scan.
 
 `IH-CRED-002` uses Shannon entropy. A quoted value assigned to a key-like name is reported when it is at least 20 characters and at least 4 bits per character. Evidence keeps the first four characters and masks the rest.
 
@@ -298,7 +302,9 @@ Verified against the OpenClaw docs for the 2026.9.3 line:
 | Plugin skills         | real paths linked from `~/.openclaw/plugin-skills`     |
 | Extra directories     | `skills.load.extraDirs` in `~/.openclaw/openclaw.json` |
 
-The default workspace is `~/.openclaw/workspace`. Config is `$OPENCLAW_CONFIG_PATH` or `~/.openclaw/openclaw.json`. State moves when `OPENCLAW_STATE_DIR` is set.
+The default workspace is `~/.openclaw/workspace`. Config is `$OPENCLAW_CONFIG_PATH` or `~/.openclaw/openclaw.json`. State moves when `OPENCLAW_STATE_DIR` is set. On Windows, `~` is `%USERPROFILE%`, so the same defaults are `%USERPROFILE%\.openclaw\workspace` and `%USERPROFILE%\.openclaw\openclaw.json`. Paths in config may use `~`, `~/`, `~\`, `%USERPROFILE%`, `%APPDATA%`, or `%LOCALAPPDATA%`.
+
+Bundled skills on Windows are also looked up under `%APPDATA%\npm\node_modules\openclaw\skills`, `%LOCALAPPDATA%\pnpm\global\node_modules\openclaw\skills`, `%LOCALAPPDATA%\OpenClaw\deps\portable-node\node_modules\openclaw\skills`, `%ProgramFiles%\nodejs\node_modules\openclaw\skills`, and the git-install wrapper `%USERPROFILE%\.local\bin\openclaw.cmd`. `npm_config_prefix` is checked on every platform.
 
 Watched agent files default to `AGENTS.md`, `SOUL.md`, `IDENTITY.md`, `USER.md`, `TOOLS.md`, `BOOTSTRAP.md`, `MEMORY.md`, the `memory/` directory, `openclaw.json`, `credentials/`, and `.env` under the OpenClaw state directory. Change the list with `agentFiles`.
 
@@ -316,7 +322,7 @@ A download, install, or fetch instruction is a contact, and so is a paste site o
 
 An attacker who can write your home directory and who has the key can still replace the baseline. Keeping a copy of the key off the machine is still worth doing.
 
-`quarantine <skill>` moves a skill to `~/.ironheights/quarantine/<timestamp>-<name>`. That directory is mode `0700`. `quarantine restore <id>` moves it back. Ironheights does not delete a skill on its own.
+`quarantine <skill>` moves a skill to `~/.ironheights/quarantine/<timestamp>-<name>`. That directory is mode `0700` where the operating system honors Unix modes. `quarantine restore <id>` moves it back. A symlink or junction inside the skill is moved with the skill and is not followed into a delete. Ironheights does not delete a skill on its own.
 
 ## Runtime guard
 
@@ -347,6 +353,35 @@ No findings means the rules did not match. It does not mean the skill is safe.
 ## Privacy
 
 Scans stay on the machine. There is no telemetry. `fetch`, `safe-install`, `advisories update`, and `--online` are the only commands that open a connection, and each one prints the URLs first. The scanner reads files up to the configured size and does not extract archives. Set `IRONHEIGHTS_HOME` to put the baseline, the advisory cache, and the quarantine directory somewhere else.
+
+## Use in CI
+
+The repository root `action.yml` is a composite action. After a release tag, call it as `Frank-Masciopinto/ironheights@v0.1.5` (pin the tag you trust). It runs `npx ironheights@<version> scan` and does not read secrets. Exit codes match the scanner, including `3` when a file is skipped. See [docs/ci.md](docs/ci.md) for the pre-commit hook and a SARIF upload example.
+
+```yaml
+name: ironheights
+on: [pull_request]
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: Frank-Masciopinto/ironheights@v0.1.5
+        with:
+          version: '0.1.5'
+          path: skills
+          fail-on: high
+```
+
+This repository's [action workflow](.github/workflows/action.yml) runs that action against a benign fixture (exit 0), a malicious fixture (exit 1 or 2), and an oversized file (exit 3). It pins scanner version `0.1.5` because that is the published package. The action file in this commit is what the workflow executes.
+
+## Windows
+
+GitHub Actions runs this repository on `windows-latest` for Node.js `20.0.0` and Node.js `24`. Each Windows job runs `npm run build`, `npm test`, and `npm run test:packed`. That is the tested surface: the build, the unit and fixture tests, and the packed CLI smoke test. It is not a manual test of the OpenClaw Windows Hub app or a running Gateway service.
+
+Scanned text is normalized from CRLF to LF. Directory junctions are treated like symlinks. Baseline keys under the home directory use `~/` with forward slashes so a baseline written on Windows still points at the same files when it is read back.
+
+Node on Windows applies only the read-only attribute when Ironheights asks for mode `0600` or `0700`. `audit-config` does not report world-readable config permissions on Windows, and it does not run `icacls`. OpenClaw's own `openclaw security audit` is the check that understands Windows ACLs.
 
 ## Benchmark
 

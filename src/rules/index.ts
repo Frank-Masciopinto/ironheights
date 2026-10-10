@@ -1,3 +1,4 @@
+import { configRules } from '../audit/rules.ts';
 import type { Rule } from '../core/types.ts';
 import { advisoryRules } from './advisory.ts';
 import { bin001 } from './binary.ts';
@@ -41,7 +42,7 @@ export function allContentRules(): Rule[] {
 }
 
 export function allRules(): Rule[] {
-  return [...contentRules, ...integrityRules, ...advisoryRules];
+  return [...contentRules, ...integrityRules, ...advisoryRules, ...configRules];
 }
 
 export function ruleById(id: string): Rule | undefined {
