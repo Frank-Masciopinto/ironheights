@@ -94,6 +94,8 @@ ironheights rules list
 ironheights rules show <id>
 ironheights doctor
 ironheights bench <corpusDir> [--external <file.json>]
+ironheights guard status|log
+ironheights guard policy check [--call <json>]
 ironheights --online
 ```
 
@@ -179,6 +181,17 @@ An attacker who can write your home directory can edit the baseline. Signing it,
 
 `quarantine <skill>` moves a skill to `~/.ironheights/quarantine/<timestamp>-<name>`. That directory is mode `0700`. `quarantine restore <id>` moves it back. Ironheights does not delete a skill on its own.
 
+## Runtime guard
+
+`ironheights guard` evaluates a tool call against a local policy. The OpenClaw plugin in this package registers `before_tool_call` and can block that call when the policy mode is `enforce`. The default mode is `monitor`: it appends a redacted line to `~/.ironheights/guard.log.jsonl` and does not block.
+
+The hook runs inside the OpenClaw process. It is not a sandbox and not a process outside the agent. A skill that can edit OpenClaw config or the policy file can turn it off. Details, the threat model, and the policy file are in [docs/guard.md](docs/guard.md).
+
+```bash
+ironheights guard status
+ironheights guard policy check --call '{"toolName":"read","params":{"path":"~/.ssh/id_rsa"}}'
+```
+
 ## The advisory skill
 
 `skill/ironheights/SKILL.md` tells an OpenClaw agent to run `ironheights scan <path> --json`, summarize the result, and stop on a `block` verdict until you confirm. The skill asks for no network access and no secrets.
@@ -188,7 +201,7 @@ This skill is advisory. It runs inside the agent, and a hostile skill can try to
 ## What Ironheights cannot detect
 
 - Novel attacks and attacks that are heavily obfuscated in a way the current rules do not describe.
-- Behavior that only appears at runtime, after a script is executed.
+- Behavior that only appears at runtime and never shows up as one of the tool calls the guard knows how to read. The guard is described in [docs/guard.md](docs/guard.md). It does not see a process that is already running.
 - A host that is already compromised, including a baseline an attacker can rewrite.
 - Social engineering that never lands in a file the scanner reads.
 

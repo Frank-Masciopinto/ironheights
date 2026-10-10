@@ -19,10 +19,14 @@
   "files": [
     "dist",
     "skill",
+    "openclaw.plugin.json",
     "README.md",
     "LICENSE",
     "SECURITY.md"
   ],
+  "openclaw": {
+    "extensions": ["./dist/openclaw/plugin.js"]
+  },
   "engines": {
     "node": ">=20"
   },

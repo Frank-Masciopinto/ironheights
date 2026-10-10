@@ -15,3 +15,7 @@ Give the maintainers time to ship a fix before writing about the issue in public
 Do not send copies of real secrets or live malware. A synthetic snippet that matches the pattern is enough.
 
 Ironheights does not phone home. A report you send to GitHub is the only disclosure channel.
+
+## Runtime guard
+
+The optional OpenClaw plugin logs tool calls on the machine and, in `enforce` mode, can block four kinds of call. The plugin runs inside the OpenClaw process. A caller who can change OpenClaw's config, the plugin file, or `~/.ironheights/guard-policy.json` can disable it. Treat that as defense in depth. The limits are in [docs/guard.md](docs/guard.md). The guard does not send the audit log anywhere.

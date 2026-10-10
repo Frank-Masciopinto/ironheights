@@ -1,0 +1,21 @@
+{
+  "id": "ironheights-guard",
+  "name": "Ironheights Guard",
+  "description": "Local runtime guard for high-risk OpenClaw tool calls. Append-only audit log on this machine. Blocks only in enforce mode.",
+  "activation": { "onStartup": true },
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "mode": {
+        "type": "string",
+        "enum": ["monitor", "enforce"],
+        "description": "Overrides the mode in the guard policy file. monitor logs only. enforce blocks."
+      },
+      "policyPath": {
+        "type": "string",
+        "description": "Absolute path to guard-policy.json. Defaults to ~/.ironheights/guard-policy.json."
+      }
+    }
+  }
+}

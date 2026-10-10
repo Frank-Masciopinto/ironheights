@@ -5,6 +5,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { runBaseline, runVerify } from './commands/baseline.ts';
 import { runBenchCommand } from './commands/bench.ts';
 import { runDoctor } from './commands/doctor.ts';
+import { runGuardLog, runGuardPolicyCheck, runGuardStatus } from './commands/guard.ts';
 import { runQuarantine } from './commands/quarantine.ts';
 import { runRules } from './commands/rules.ts';
 import { runScan } from './commands/scan.ts';
@@ -86,6 +87,63 @@ export async function main(argv: string[]): Promise<number> {
     .command('rules [action] [id]')
     .action((action: string | undefined, id: string | undefined) => {
       process.exitCode = runRules(action, id);
+    });
+
+  const guard = program.command('guard').description('Runtime guard for OpenClaw tool calls');
+
+  guard
+    .command('status')
+    .description('Show guard mode, policy, audit log, and whether the OpenClaw plugin is enabled')
+    .option('--policy <file>', 'guard policy file')
+    .option('--config <file>', 'ironheights config file')
+    .option('--json', 'print JSON')
+    .action(async (opts: { policy?: string; config?: string; json?: boolean }) => {
+      process.exitCode = await runGuardStatus({
+        ...(opts.policy ? { policy: opts.policy } : {}),
+        ...(opts.config ? { config: opts.config } : {}),
+        json: Boolean(opts.json),
+      });
+    });
+
+  const policy = guard.command('policy').description('Check the guard policy file');
+  policy
+    .command('check')
+    .description('Validate the policy and, with --call, evaluate one tool call')
+    .option('--policy <file>', 'guard policy file')
+    .option('--config <file>', 'ironheights config file')
+    .option('--call <json>', 'tool call JSON')
+    .option('--call-file <file>', 'file containing tool call JSON')
+    .option('--json', 'print JSON')
+    .action(
+      async (opts: {
+        policy?: string;
+        config?: string;
+        call?: string;
+        callFile?: string;
+        json?: boolean;
+      }) => {
+        process.exitCode = await runGuardPolicyCheck({
+          ...(opts.policy ? { policy: opts.policy } : {}),
+          ...(opts.config ? { config: opts.config } : {}),
+          ...(opts.call ? { call: opts.call } : {}),
+          ...(opts.callFile ? { callFile: opts.callFile } : {}),
+          json: Boolean(opts.json),
+        });
+      },
+    );
+
+  guard
+    .command('log')
+    .description('Print recent audit log events')
+    .option('--policy <file>', 'guard policy file')
+    .option('--tail <n>', 'number of events to print', '20')
+    .option('--json', 'print JSON')
+    .action(async (opts: { policy?: string; tail?: string; json?: boolean }) => {
+      process.exitCode = await runGuardLog({
+        ...(opts.policy ? { policy: opts.policy } : {}),
+        ...(opts.tail ? { tail: opts.tail } : {}),
+        json: Boolean(opts.json),
+      });
     });
 
   program
