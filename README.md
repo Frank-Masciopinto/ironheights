@@ -125,7 +125,7 @@ An allowlist entry matches that host and its subdomains. The built-in list inclu
 ```json
 {
   "schemaVersion": 1,
-  "tool": { "name": "ironheights", "version": "0.1.4" },
+  "tool": { "name": "ironheights", "version": "0.1.5" },
   "scannedAt": "2026-10-09T00:00:00.000Z",
   "verdict": "no-findings",
   "skippedFileCount": 0,
@@ -168,6 +168,8 @@ Bundled skills are the `skills/` directory in the OpenClaw package. Ironheights 
 `SKILL.md` needs YAML frontmatter with `name` and `description`. Optional fields include `metadata.openclaw`, `homepage`, `user-invocable`, `disable-model-invocation`, and the `command-dispatch` keys.
 
 `metadata.ironheights.allowDomains` is a list of hosts that this skill is allowed to contact. `IH-NET-001` skips those hosts and their subdomains for that skill only. Another skill that calls the same host still reports. The bundled OpenClaw skills do not declare their hosts, so `scan --all` on a stock install still reports their API hosts.
+
+A download, install, or fetch instruction is a contact, and so is a paste site or a file-drop host. A schema link, or an official API host mentioned in prose, is not.
 
 ## Integrity
 
