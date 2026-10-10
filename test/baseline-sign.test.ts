@@ -82,7 +82,11 @@ describe('baseline signatures', () => {
       const clean = await verifyBaseline(config, home, { keyPath: key });
       expect(clean.baselineTampered).toBe(false);
       await chmod(key, 0o644);
-      await expect(loadBaselineKey(key, 'verify')).rejects.toThrow(/group or others/);
+      if (process.platform === 'win32') {
+        await expect(loadBaselineKey(key, 'verify')).resolves.toMatchObject({ alg: 'hmac-sha256' });
+      } else {
+        await expect(loadBaselineKey(key, 'verify')).rejects.toThrow(/group or others/);
+      }
     } finally {
       await rm(root, { recursive: true, force: true });
     }

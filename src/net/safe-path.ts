@@ -1,6 +1,6 @@
 import { constants } from 'node:fs';
 import { lstat, mkdir, open, realpath } from 'node:fs/promises';
-import { isAbsolute, join, relative, sep } from 'node:path';
+import { isAbsolute, join, parse, relative, sep } from 'node:path';
 import { UsageError } from '../core/errors.ts';
 import { clip } from '../util/text.ts';
 
@@ -10,6 +10,26 @@ const MAX_SEGMENT = 255;
 const CONTROLS = new RegExp(
   `[${String.fromCharCode(0)}-${String.fromCharCode(31)}${String.fromCharCode(127)}]`,
 );
+
+/**
+ * True when a path component is a symlink or a Windows junction.
+ * An 8.3 short name is not a symlink, so a realpath string that only
+ * differs by that name is still the same directory.
+ */
+export async function pathContainsSymlink(absPath: string): Promise<boolean> {
+  const { root } = parse(absPath);
+  let current = root;
+  const parts = absPath
+    .slice(root.length)
+    .split(sep)
+    .filter((part) => part.length > 0);
+  for (const part of parts) {
+    current = join(current, part);
+    const info = await lstat(current);
+    if (info.isSymbolicLink()) return true;
+  }
+  return false;
+}
 
 /** Reject absolute paths, empty segments, and `..` before any write. */
 export function safeRelativeParts(input: string, maxDepth: number): string[] {

@@ -138,7 +138,7 @@ describe('clawhub fetch', () => {
     expect(lines.join('')).toContain('Verdict: no-findings');
     expect(await readFile(join(root, 'stage', 'SKILL.md'), 'utf8')).toContain('Write notes');
     const mode = (await lstat(join(root, 'stage', 'SKILL.md'))).mode & 0o777;
-    expect(mode).toBe(0o600);
+    if (process.platform !== 'win32') expect(mode).toBe(0o600);
     expect(seen.some((url) => url.includes('/file?'))).toBe(true);
   });
 

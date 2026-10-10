@@ -381,7 +381,7 @@ GitHub Actions runs this repository on `windows-latest` for Node.js `20.0.0` and
 
 Scanned text is normalized from CRLF to LF. Directory junctions are treated like symlinks. Baseline keys under the home directory use `~/` with forward slashes so a baseline written on Windows still points at the same files when it is read back.
 
-Node on Windows applies only the read-only attribute when Ironheights asks for mode `0600` or `0700`. `audit-config` does not report world-readable config permissions on Windows, and it does not run `icacls`. OpenClaw's own `openclaw security audit` is the check that understands Windows ACLs.
+Node on Windows applies only the read-only attribute when Ironheights asks for mode `0600` or `0700`. `audit-config` does not report world-readable config permissions on Windows, and it does not run `icacls`. A baseline key file is refused for group or world read on macOS and Linux only. OpenClaw's own `openclaw security audit` is the check that understands Windows ACLs. A skills directory is refused when a path component is a symlink or a junction. An 8.3 short name is the same directory, not a symlink.
 
 ## Benchmark
 

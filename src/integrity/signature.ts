@@ -33,7 +33,8 @@ export async function loadBaselineKey(
   const info = await stat(filePath).catch(() => {
     throw new UsageError(`cannot read baseline key file: ${filePath}`);
   });
-  if ((info.mode & 0o077) !== 0) {
+  // Node on Windows reports 0666 for a normal file. Unix mode bits are not ACLs.
+  if (process.platform !== 'win32' && (info.mode & 0o077) !== 0) {
     throw new UsageError('baseline key file must not be readable by group or others');
   }
   const text = await readFile(filePath, 'utf8');

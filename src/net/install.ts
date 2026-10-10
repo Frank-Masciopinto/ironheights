@@ -1,7 +1,8 @@
 import { lstat, mkdir, readdir, readFile, realpath, rename, rm } from 'node:fs/promises';
 import { join, relative, resolve, sep } from 'node:path';
 import { UsageError } from '../core/errors.ts';
-import { assertInside, writeRegularFileInside } from './safe-path.ts';
+import { stripLongPath } from '../util/paths.ts';
+import { assertInside, pathContainsSymlink, writeRegularFileInside } from './safe-path.ts';
 
 export interface InstallResult {
   dest: string;
@@ -102,10 +103,10 @@ async function assertRealDirectory(parent: string): Promise<string> {
     throw new UsageError('skills directory was not created');
   }
   if (info.isSymbolicLink()) throw new UsageError('refusing skills directory that is a symlink');
-  const real = await realpath(resolved);
-  if (real !== resolved)
+  if (await pathContainsSymlink(resolved)) {
     throw new UsageError('refusing skills directory that is reached through a symlink');
-  return real;
+  }
+  return stripLongPath(await realpath(resolved));
 }
 
 function isEnoent(error: unknown): boolean {

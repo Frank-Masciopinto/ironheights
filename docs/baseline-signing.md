@@ -17,7 +17,7 @@ publicKey: <base64 of 32 bytes>
 seed: <base64 of 32 bytes>
 ```
 
-HMAC uses `secret` instead of `publicKey` and `seed`. A verify-only Ed25519 file can omit `seed`. The CLI refuses a key file that is readable by group or others. It does not print key material.
+HMAC uses `secret` instead of `publicKey` and `seed`. A verify-only Ed25519 file can omit `seed`. The CLI refuses a key file that is readable by group or others. It does not print key material. On Windows, Node does not report those Unix bits, so the refusal is not applied. Keep the key file's ACL tight there.
 
 ## Sign and check
 
