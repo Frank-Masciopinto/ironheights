@@ -163,7 +163,12 @@ describe('walker robustness', () => {
     await mkdir(weird);
     await writeFile(join(weird, 'bad.bin'), Buffer.from([0xff, 0xfe, 0x00, 0x41]));
     await writeFile(join(weird, 'long.txt'), `${'a'.repeat(20000)}\n`);
-    await writeFile(join(weird, 'ansi\u001b[31m.md'), 'hello');
+    try {
+      await writeFile(join(weird, 'ansi\u001b[31m.md'), 'hello');
+    } catch (error) {
+      const code = (error as NodeJS.ErrnoException).code;
+      if (process.platform !== 'win32' || (code !== 'ENOENT' && code !== 'EINVAL')) throw error;
+    }
     const loopDir = join(weird, 'loop');
     await mkdir(loopDir);
     await linkPath(loopDir, join(loopDir, 'self'));
