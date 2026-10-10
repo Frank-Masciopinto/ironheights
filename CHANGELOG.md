@@ -6,6 +6,20 @@
 
 The OpenClaw integration is an in-process `before_tool_call` plugin (`openclaw.plugin.json`). It is not a sandbox and not a process outside the agent. A skill that can edit OpenClaw config or the policy file can turn it off. Limits and the threat model are in `docs/guard.md`.
 
+`scan` prints a grade next to "Absence of findings is not proof of safety." The grade is a trust score from 0 to 100 (A 90–100, B 80–89, C 70–79, D 60–69, F 0–59) based on the existing risk points. Any skipped file, including a scan that passed `--allow-skipped`, is grade `incomplete` and has no numeric score. The grade uses the worst skill after suppressions, including findings that `--since-baseline` omits from the finding list. `schemaVersion` stays `1`. Grade, summary, badge, scan mode, suppressions, and references are additive fields.
+
+`scan --since-baseline [file]` reports findings that are new. With no file it reads `~/.ironheights/baseline.json`. An integrity baseline treats a finding as pre-existing when that file's bytes still match, and it refuses a `treeHash` mismatch. A previous `--json` result matches rule id, file, and evidence, and ignores line numbers. Omitted findings are counted and listed. The exit code follows the new findings. A text scan accepts only a previous JSON result.
+
+`scan --html <file>` and `--format html` write one HTML file. It has no scripts and a `default-src 'none'` content security policy. Untrusted text is escaped. The report includes a README badge line that does not call a badge service. Text output prints the same summary and badge.
+
+Inline `ironheights-ignore IH-XXX-000 reason="..." ` comments, and config `suppressions`, require a reason of at least 8 characters. A comment applies to its own line and the next line. Suppressed findings are counted and listed. A marker with no usable reason is listed and does not hide the finding. Critical findings and `IH-INT-*` findings stay visible unless `suppressCritical` or `suppressIntegrity` is set. A critical integrity finding needs both.
+
+`scan --stdin` and `scan --text` run the same content rules on one piece of text for inbound email or web text. The output is labelled as a limited text scan. `--stdin` reads a pipe and returns a usage error on a terminal. This mode does not execute the text.
+
+`IH-MCP-001`, `IH-MCP-002`, and `IH-MCP-003` check MCP configuration files for a shell pipe or an unpinned `npx` package, a literal secret in `env`, and a broad filesystem root. [docs/other-agents.md](docs/other-agents.md) explains how to point `scan` at Claude Code, Codex, and Cursor skill folders. An MCP server interface for ironheights itself stays excluded. See [docs/ideas.md](docs/ideas.md).
+
+Rules in JSON and SARIF `properties` and tags now carry OWASP LLM Top 10 2025, OWASP Agentic Top 10 2026, and MITRE ATLAS ids where a mapping is defensible. `docs/rules.md` lists `none` when it is not.
+
 ## 0.1.5
 
 `IH-NET-001` reports a Markdown URL again when the line tells the reader to download, install, fetch, or follow it, and when the host is a paste site or a file-drop host such as `rentry.co`, `glot.io`, `transfer.sh`, or `file.io`. A schema link such as `http://schemas.openxmlformats.org/...` and an official API host mentioned in prose stay quiet. `metadata.ironheights.allowDomains` still skips a declared host for that skill only.

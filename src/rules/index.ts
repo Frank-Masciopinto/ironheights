@@ -5,6 +5,7 @@ import { exec001, exec002, exec003 } from './exec.ts';
 import { fs001 } from './filesystem.ts';
 import { inj001, inj002, inj003 } from './injection.ts';
 import { integrityRules } from './integrity.ts';
+import { mcp001, mcp002, mcp003 } from './mcp.ts';
 import { meta001 } from './meta.ts';
 import { net001, net002 } from './network.ts';
 import { obf001 } from './obfuscation.ts';
@@ -29,6 +30,9 @@ export const contentRules: Rule[] = [
   bin001,
   fs001,
   meta001,
+  mcp001,
+  mcp002,
+  mcp003,
 ];
 
 export function allContentRules(): Rule[] {

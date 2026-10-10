@@ -141,6 +141,19 @@ async function collectDir(
   }
 }
 
+/** Same bytes the integrity baseline records for a path. */
+export async function hashRecord(abs: string): Promise<FileRecord | undefined> {
+  let info;
+  try {
+    info = await lstat(abs);
+  } catch {
+    return undefined;
+  }
+  if (info.isSymbolicLink()) return recordLink(abs, info.mode, info.size);
+  if (info.isFile()) return recordFile(abs, info.mode, info.size);
+  return undefined;
+}
+
 async function recordFile(abs: string, mode: number, size: number): Promise<FileRecord> {
   return { sha256: await sha256File(abs), size, mode: mode & 0o777 };
 }

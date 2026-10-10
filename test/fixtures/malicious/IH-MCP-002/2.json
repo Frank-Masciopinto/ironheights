@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "notes": {
+      "command": "node",
+      "args": ["server.js"],
+      "env": { "GITHUB_TOKEN": "ghp_abcdefghijklmnopqrst" }
+    }
+  }
+}

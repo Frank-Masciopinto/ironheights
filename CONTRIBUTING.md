@@ -9,8 +9,9 @@
 5. Near misses must stay clean for every rule, because `test/fixtures/benign` is scanned as one skill.
 6. URLs in fixtures use `.invalid` or `example.com` only. Do not commit real malware.
 7. Extend `src/rules/data/injection-phrases.json` when the rule is a phrase list. Matching is case-insensitive.
-8. Run `npm run docs:rules` and commit `docs/rules.md`. Do not edit that file by hand.
-9. Run `npm run lint && npm run typecheck && npm test`.
+8. Add a `RULE_REFERENCES` entry in `src/rules/references.ts`, even when every list is empty.
+9. Run `npm run docs:rules` and commit `docs/rules.md`. Do not edit that file by hand.
+10. Run `npm run lint && npm run typecheck && npm test`.
 
 A finding needs a rule id, severity, confidence, file, evidence under 200 characters, a message, and the remediation string. Mask secrets before they reach `evidence`.
 

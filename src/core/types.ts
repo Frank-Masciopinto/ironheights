@@ -11,7 +11,8 @@ export type Category =
   | 'binary'
   | 'filesystem'
   | 'meta'
-  | 'integrity';
+  | 'integrity'
+  | 'mcp';
 
 export type FileKind = 'markdown' | 'script' | 'config' | 'binary' | 'text';
 export type AppliesTo = 'markdown' | 'script' | 'config' | 'binary' | 'any';
@@ -74,6 +75,55 @@ export interface SkippedFile {
   reason: string;
 }
 
+/** Framework ids cited on a rule. Empty arrays mean no defensible mapping. */
+export interface RuleReferences {
+  owaspLlm: string[];
+  owaspAgentic: string[];
+  mitreAtlas: string[];
+}
+
+export interface SuppressedFinding {
+  ruleId: string;
+  severity: Severity;
+  file: string;
+  line?: number;
+  evidence: string;
+  reason: string;
+}
+
+export interface RefusedSuppression {
+  ruleId: string;
+  severity: Severity;
+  file: string;
+  line?: number;
+  detail: string;
+}
+
+/**
+ * Letter grades use the trust score 100 minus the risk score, capped at 0.
+ * `incomplete` has no numeric score: a skipped file must not look like a pass.
+ */
+export interface Grade {
+  letter: 'A' | 'B' | 'C' | 'D' | 'F' | 'incomplete';
+  score?: number;
+  disclaimer: string;
+}
+
+export interface SinceBaselineOmitted {
+  ruleId: string;
+  severity: Severity;
+  file: string;
+  line?: number;
+  evidence: string;
+}
+
+export interface SinceBaselineNote {
+  comparedWith: string;
+  kind: 'integrity' | 'scan-result';
+  omittedCount?: number;
+  omitted: SinceBaselineOmitted[];
+}
+
 export interface SkillReport {
   skillName: string;
   root: string;
@@ -82,6 +132,19 @@ export interface SkillReport {
   findings: Finding[];
   score: number;
   verdict: Verdict;
+  /** Risk points after suppression and before `--since-baseline`. The grade uses this. */
+  gradeRisk?: number;
+  suppressed?: SuppressedFinding[];
+  suppressionRefused?: RefusedSuppression[];
+  suppressionWarnings?: string[];
+  sinceBaseline?: SinceBaselineNote;
+}
+
+export interface JsonSkillReport extends SkillReport {
+  skippedFileCount: number;
+  suppressedCount: number;
+  suppressionRefusedCount: number;
+  findings: Array<Finding & { references?: RuleReferences }>;
 }
 
 export interface ScanOutput {
@@ -90,7 +153,13 @@ export interface ScanOutput {
   scannedAt: string;
   verdict: Verdict;
   skippedFileCount: number;
-  skills: Array<SkillReport & { skippedFileCount: number }>;
+  grade: Grade;
+  scanMode: 'directory' | 'text';
+  summary: string;
+  badge: string;
+  scanLimit?: string;
+  sinceBaseline?: { path: string; kind: 'integrity' | 'scan-result'; omittedCount: number };
+  skills: JsonSkillReport[];
 }
 
 export interface Limits {
@@ -109,12 +178,24 @@ export interface RuleOverride {
   severity?: Severity;
 }
 
+export interface SuppressionEntry {
+  ruleId: string;
+  path?: string;
+  line?: number;
+  reason: string;
+}
+
 export interface ResolvedConfig {
   skillDirs: string[];
   agentFiles: string[];
   allowDomains: string[];
   ignoreGlobs: string[];
   ruleOverrides: Record<string, RuleOverride>;
+  suppressions: SuppressionEntry[];
+  /** When false, a suppression never hides a critical finding. */
+  suppressCritical: boolean;
+  /** When false, a suppression never hides an IH-INT finding. */
+  suppressIntegrity: boolean;
   failOn?: Severity;
   limits: Limits;
   thresholds: Thresholds;

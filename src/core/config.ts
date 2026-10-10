@@ -26,6 +26,20 @@ export const ConfigSchema = z
           .strict(),
       )
       .optional(),
+    suppressions: z
+      .array(
+        z
+          .object({
+            ruleId: z.string().regex(/^IH-[A-Z]+-\d{3}$/),
+            path: z.string().min(1).optional(),
+            line: z.number().int().positive().optional(),
+            reason: z.string().trim().min(8),
+          })
+          .strict(),
+      )
+      .optional(),
+    suppressCritical: z.boolean().optional(),
+    suppressIntegrity: z.boolean().optional(),
     failOn: severitySchema.optional(),
     limits: z
       .object({
@@ -93,6 +107,9 @@ export async function loadConfig(options: LoadConfigOptions = {}): Promise<Resol
     allowDomains: [...defaults.allowDomains, ...allowExtra],
     ignoreGlobs: input.ignoreGlobs ?? [...DEFAULT_IGNORE],
     ruleOverrides: input.ruleOverrides ?? {},
+    suppressions: input.suppressions ?? [],
+    suppressCritical: input.suppressCritical ?? false,
+    suppressIntegrity: input.suppressIntegrity ?? false,
     ...(input.failOn ? { failOn: input.failOn } : {}),
     limits: {
       maxFileBytes: input.limits?.maxFileBytes ?? DEFAULT_LIMITS.maxFileBytes,
@@ -114,6 +131,9 @@ export function emptyConfig(overrides: Partial<ResolvedConfig> = {}): ResolvedCo
     allowDomains: [...BUILTIN_ALLOW_DOMAINS],
     ignoreGlobs: [...DEFAULT_IGNORE],
     ruleOverrides: {},
+    suppressions: [],
+    suppressCritical: false,
+    suppressIntegrity: false,
     limits: { ...DEFAULT_LIMITS },
     thresholds: { ...DEFAULT_THRESHOLDS },
     ...overrides,

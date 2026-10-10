@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "localpkg": {
+      "command": "npx",
+      "args": ["./local-server"]
+    }
+  }
+}
