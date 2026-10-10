@@ -537,3 +537,27 @@ Matches:
 Does not match:
 - `AGENTS.md matches baseline`
 
+## IH-ADV-001 — Advisory feed match
+
+- Severity: critical
+- Category: advisory
+- Priority: P0
+- Applies to: any
+- OWASP LLM: LLM03:2025
+- OWASP Agentic: none
+- MITRE ATLAS: none
+
+The cached signed advisory feed lists this skill name, a file content hash, or an indicator host. The match is reported only when a local cache is present. Scan does not contact the network to refresh the feed.
+
+Remediation: Do not install or enable this skill. Read the source links, then quarantine the copy if it is already on disk.
+
+Matches:
+- `skill slug evil-skill is listed in the advisory feed`
+- `file sha256 matches an advisory content hash`
+- `skill text contains an advisory IOC host`
+
+Does not match:
+- `skill slug is not in the feed`
+- `no advisory cache is present`
+- `a version-specific advisory does not list this version`
+

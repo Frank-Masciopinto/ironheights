@@ -2,7 +2,7 @@
 
 Ironheights is a local-first scanner and integrity monitor for [OpenClaw](https://docs.openclaw.ai) skills. It reads skill files as data, looks for risky patterns with fixed rules, and compares skill and agent files with a baseline you save on the same machine.
 
-It does not call the network, does not send telemetry, and does not run the files it scans.
+It does not send telemetry, and it does not run the files it scans. It does not call the network unless you run `fetch`, `safe-install`, `advisories update`, or `--online`.
 
 ## Install
 
@@ -67,7 +67,7 @@ Absence of findings is not proof of safety.
 | 2    | Block                                                                                          |
 | 3    | Incomplete. A file was skipped, and the files that were scanned did not reach review or block. |
 | 64   | Usage or config error                                                                          |
-| 70   | Internal error                                                                                 |
+| 70   | The command stopped: an internal error, a failed network request, or a rejected signature.     |
 
 `--fail-on low|medium|high|critical` returns `0` when every finding is below that severity and no file was skipped. A skipped file still returns `3` unless you pass `--allow-skipped`. That flag keeps the skipped-file warning and returns the finding verdict (`0`, `1`, or `2`) instead.
 
@@ -86,8 +86,12 @@ Absence of findings is not proof of safety.
 
 ```text
 ironheights scan <path> [--all] [--json] [--sarif <file>] [--md <file>] [--html <file>] [--format text|json|html] [--since-baseline [file]] [--stdin] [--text <text>] [--fail-on <severity>] [--config <file>] [--allow-skipped] [--no-color] [--quiet]
-ironheights baseline create|update|show
-ironheights verify
+ironheights fetch <owner>/<slug>[@version] [--out <dir>] [--json] [--sarif <file>] [--md <file>] [--fail-on <severity>] [--config <file>] [--allow-skipped] [--no-color] [--quiet]
+ironheights safe-install <owner>/<slug>[@version] [--dir <skills-dir>] [--accept-review] [--out <dir>] [--json] [--config <file>] [--no-color] [--quiet]
+ironheights advisories update
+ironheights advisories show
+ironheights baseline create|update|show [--key <file>]
+ironheights verify [--key <file>]
 ironheights quarantine <skill>
 ironheights quarantine restore <id>
 ironheights rules list
@@ -96,10 +100,54 @@ ironheights doctor
 ironheights bench <corpusDir> [--external <file.json>]
 ironheights guard status|log
 ironheights guard policy check [--call <json>]
-ironheights --online
+ironheights --online <command>
 ```
 
-`--online` prints `not implemented in MVP` and does nothing else. `--all` scans the skill directories from config, or the OpenClaw locations below when config does not set `skillDirs`.
+`scan` reads a cached advisory feed when one is present and does not download it. `--online` prints the feed URLs, downloads `https://ironheights.dev/advisories.json` and `https://ironheights.dev/advisories.json.sig`, checks the signature, then runs the rest of the command. `--online` with no other command only updates the cache. `--all` scans the skill directories from config, or the OpenClaw locations below when config does not set `skillDirs`.
+
+## Fetch and safe-install
+
+`fetch <owner>/<slug>[@version]` downloads a ClawHub skill into a temp directory, or into `--out`, and scans it. It prints every URL before requesting it. The host is `https://clawhub.ai`. Redirects are refused. Files are written mode `0600` and are not executed. Zip and tar bytes are stored and not extracted. Absolute paths, `..`, and symlinks are refused. See [docs/fetch.md](docs/fetch.md).
+
+```text
+fetch ada/notes@1.0.0
+This command contacts the network. ironheights does not call the network unless you run fetch, safe-install, advisories update, or --online.
+
+Requesting:
+  GET https://clawhub.ai/api/v1/skills/notes?owner=ada
+  GET https://clawhub.ai/api/v1/skills/notes/versions/1.0.0?owner=ada
+
+Requesting:
+  GET https://clawhub.ai/api/v1/skills/notes/file?owner=ada&path=SKILL.md&version=1.0.0
+
+notes
+  No findings
+
+Verdict: no-findings
+Absence of findings is not proof of safety.
+Staged 1 files at /tmp/ironheights-fetch-.../notes
+```
+
+`safe-install` uses the same download, then copies into the OpenClaw workspace skills directory, or into `--dir`. It copies only when the verdict is `no-findings`, or `review` if you pass `--accept-review`. `block` and `incomplete` are not installed. An existing copy is moved to `~/.ironheights/install-backup/` first and restored if the copy fails.
+
+## Advisory feed
+
+`advisories update` downloads the signed feed from `https://ironheights.dev/advisories.json` and the detached signature beside it, then stores both under `~/.ironheights`. A bad signature is not cached. `scan` and `fetch` compare the skill name, file sha256, and indicator hosts with that cache and report `IH-ADV-001` with the source links. The feed format, the pinned public key, and the signing steps are in [docs/advisories.md](docs/advisories.md).
+
+```text
+advisories update
+This command contacts the network. ironheights does not call the network unless you run fetch, safe-install, advisories update, or --online.
+
+Requesting:
+  GET https://ironheights.dev/advisories.json
+  GET https://ironheights.dev/advisories.json.sig
+
+Advisory feed signature verified.
+Cached 2 advisories generated at 2026-10-10T00:00:00.000Z
+Wrote /home/ada/.ironheights/advisories.json
+```
+
+The production public key ships as `UNCONFIGURED` until the owner pins one. Until then, `advisories update` and `--online` fetch the files and then refuse them. `scan` with no cache still runs offline.
 
 ## Grade
 
@@ -222,15 +270,15 @@ An allowlist entry matches that host and its subdomains. The built-in list inclu
 }
 ```
 
-`grade.score` is omitted when `grade.letter` is `incomplete`. A text scan sets `scanMode` to `text` and adds `scanLimit`. `--since-baseline` adds `sinceBaseline` on the document and on each skill, including `omitted`. Each skill also has `suppressed`, `suppressedCount`, `suppressionRefused`, and `suppressionRefusedCount`.
+`grade.score` is omitted when `grade.letter` is `incomplete`. A text scan sets `scanMode` to `text` and adds `scanLimit`. `--since-baseline` adds `sinceBaseline` on the document and on each skill, including `omitted`. Each skill also has `suppressed`, `suppressedCount`, `suppressionRefused`, and `suppressionRefusedCount`. When a cached advisory feed was checked, the document also has `advisoryFeed` with `entries` and `generatedAt`.
 
-Each skill has `skillName`, `root`, `filesScanned`, `filesSkipped`, `skippedFileCount`, `findings`, `score`, and `verdict`. `skippedFileCount` is the number of files the scan did not read. `filesSkipped` lists each path and the reason. A finding has `ruleId`, `severity`, `confidence`, `file`, optional `line` and `column`, `evidence`, `message`, `remediation`, and `references` (`owaspLlm`, `owaspAgentic`, `mitreAtlas`). With `--since-baseline`, `score` and `verdict` describe the new findings. The grade still describes the full scan. `--sarif` writes SARIF 2.1.0. The run `properties` include `skippedFileCount`, `gradeLetter`, `disclaimer`, and `gradeScore` when the scan is complete. Rule `properties` and `tags` include the same references. `tool.driver.informationUri` is `https://github.com/Frank-Masciopinto/ironheights`.
+Each skill has `skillName`, `root`, `filesScanned`, `filesSkipped`, `skippedFileCount`, `findings`, `score`, and `verdict`. `skippedFileCount` is the number of files the scan did not read. `filesSkipped` lists each path and the reason. A finding has `ruleId`, `severity`, `confidence`, `file`, optional `line` and `column`, `evidence`, `message`, `remediation`, and `references` (`owaspLlm`, `owaspAgentic`, `mitreAtlas`). With `--since-baseline`, `score` and `verdict` describe the new findings. The grade still describes the full scan, including an `IH-ADV-001` match. `--sarif` writes SARIF 2.1.0. The run `properties` include `skippedFileCount`, `gradeLetter`, `disclaimer`, and `gradeScore` when the scan is complete. Rule `properties` and `tags` include the same references. `tool.driver.informationUri` is `https://github.com/Frank-Masciopinto/ironheights`.
 
 Scoring is critical 100, high 40, medium 15, low 5, info 0. The verdict is `block` when any finding is critical or the score is at least 80. It is `review` when any finding is high or medium, or the score is at least 15. It is `incomplete` when files were skipped and the score would otherwise be `no-findings`. Otherwise it is `no-findings`.
 
 ## Rules
 
-The full list is generated in [docs/rules.md](docs/rules.md), including OWASP LLM Top 10 2025, OWASP Agentic Top 10 2026, and MITRE ATLAS ids. `none` means no defensible mapping was recorded. P0 rules cover remote shells, prerequisite installs, undeclared hosts, credential paths, hard-coded secrets, instruction overrides, hidden text, bundled executables, persistence, and MCP launch and secret checks. P1 rules cover dynamic execution, exfiltration shape, secrets in chat, weakened approvals, obfuscation, privilege bypass, filesystem tricks, skill metadata, and broad MCP filesystem roots. Integrity rules `IH-INT-001` through `IH-INT-004` come from `verify`, not from a content scan.
+The full list is generated in [docs/rules.md](docs/rules.md), including OWASP LLM Top 10 2025, OWASP Agentic Top 10 2026, and MITRE ATLAS ids. `none` means no defensible mapping was recorded. P0 rules cover remote shells, prerequisite installs, undeclared hosts, credential paths, hard-coded secrets, instruction overrides, hidden text, bundled executables, persistence, and MCP launch and secret checks. P1 rules cover dynamic execution, exfiltration shape, secrets in chat, weakened approvals, obfuscation, privilege bypass, filesystem tricks, skill metadata, and broad MCP filesystem roots. Integrity rules `IH-INT-001` through `IH-INT-004` come from `verify`, not from a content scan. `IH-ADV-001` comes from the cached advisory feed, not from a content pattern.
 
 `IH-CRED-002` uses Shannon entropy. A quoted value assigned to a key-like name is reported when it is at least 20 characters and at least 4 bits per character. Evidence keeps the first four characters and masks the rest.
 
@@ -264,9 +312,9 @@ A download, install, or fetch instruction is a contact, and so is a paste site o
 
 ## Integrity
 
-`baseline create` writes `~/.ironheights/baseline.json` with mode `0600`. The file stores a sha256, size, and mode for each path, plus a `treeHash` of the sorted content hashes. `verify` reports added, modified, removed, and mode-changed files.
+`baseline create` writes `~/.ironheights/baseline.json` with mode `0600`. The file stores a sha256, size, and mode for each path, plus a `treeHash` of the sorted content hashes. `verify` reports added, modified, removed, and mode-changed files. Pass `--key` (or set `IRONHEIGHTS_BASELINE_KEY`) to sign `baseline.json` and to check `baseline.json.sig`. A bad signature is reported as a tampered baseline. See [docs/baseline-signing.md](docs/baseline-signing.md).
 
-An attacker who can write your home directory can edit the baseline. Signing it, or keeping a copy off the machine, is future work. See [docs/ideas.md](docs/ideas.md).
+An attacker who can write your home directory and who has the key can still replace the baseline. Keeping a copy of the key off the machine is still worth doing.
 
 `quarantine <skill>` moves a skill to `~/.ironheights/quarantine/<timestamp>-<name>`. That directory is mode `0700`. `quarantine restore <id>` moves it back. Ironheights does not delete a skill on its own.
 
@@ -298,11 +346,15 @@ No findings means the rules did not match. It does not mean the skill is safe.
 
 ## Privacy
 
-Scans stay on the machine. There is no telemetry and no default network call. The scanner reads files up to the configured size and does not extract archives. Set `IRONHEIGHTS_HOME` to put the baseline and quarantine directory somewhere else.
+Scans stay on the machine. There is no telemetry. `fetch`, `safe-install`, `advisories update`, and `--online` are the only commands that open a connection, and each one prints the URLs first. The scanner reads files up to the configured size and does not extract archives. Set `IRONHEIGHTS_HOME` to put the baseline, the advisory cache, and the quarantine directory somewhere else.
 
 ## Benchmark
 
 See [docs/benchmark.md](docs/benchmark.md). The corpus in this repository is synthetic. Keep real samples on an isolated machine, on a read-only mount, and do not run them.
+
+## Releases
+
+npm releases are published with provenance. The tag workflow also writes `SHA256SUMS` for the package tarball and attaches it to the GitHub release. See [docs/release-verification.md](docs/release-verification.md).
 
 ## Reporting a vulnerability
 

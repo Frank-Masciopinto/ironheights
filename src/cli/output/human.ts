@@ -6,7 +6,7 @@ import {
   TEXT_SCAN_LIMIT,
 } from '../../core/grade.ts';
 import type { ScanMode } from '../../core/grade.ts';
-import type { Finding, SkillReport, Verdict } from '../../core/types.ts';
+import type { AdvisoryFeedNote, Finding, SkillReport, Verdict } from '../../core/types.ts';
 import { compareSeverity } from '../../core/verdict.ts';
 import { clip } from '../../util/text.ts';
 import { paint } from '../../util/terminal.ts';
@@ -25,6 +25,7 @@ export function renderHuman(
   verdict: Verdict,
   color: boolean,
   scanMode: ScanMode = 'directory',
+  advisory?: AdvisoryFeedNote,
 ): string {
   const lines: string[] = [];
   if (scanMode === 'text') lines.push(TEXT_SCAN_LIMIT, '');
@@ -71,6 +72,9 @@ export function renderHuman(
   }
   const grade = gradeFromSkills(skills);
   const summaryInput = { skills, verdict, grade, scanMode };
+  if (advisory) {
+    lines.push(`Advisory feed: ${advisory.entries} entries, generated ${advisory.generatedAt}.`);
+  }
   lines.push(`Verdict: ${verdict}`);
   lines.push(`Grade: ${formatGrade(grade)}`);
   lines.push(SAFETY_REMINDER);

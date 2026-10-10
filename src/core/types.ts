@@ -12,7 +12,8 @@ export type Category =
   | 'filesystem'
   | 'meta'
   | 'integrity'
-  | 'mcp';
+  | 'mcp'
+  | 'advisory';
 
 export type FileKind = 'markdown' | 'script' | 'config' | 'binary' | 'text';
 export type AppliesTo = 'markdown' | 'script' | 'config' | 'binary' | 'any';
@@ -147,6 +148,11 @@ export interface JsonSkillReport extends SkillReport {
   findings: Array<Finding & { references?: RuleReferences }>;
 }
 
+export interface AdvisoryFeedNote {
+  entries: number;
+  generatedAt: string;
+}
+
 export interface ScanOutput {
   schemaVersion: number;
   tool: { name: string; version: string };
@@ -160,6 +166,8 @@ export interface ScanOutput {
   scanLimit?: string;
   sinceBaseline?: { path: string; kind: 'integrity' | 'scan-result'; omittedCount: number };
   skills: JsonSkillReport[];
+  /** Present only when a cached advisory feed was checked during this scan. */
+  advisoryFeed?: AdvisoryFeedNote;
 }
 
 export interface Limits {

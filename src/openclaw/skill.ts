@@ -3,6 +3,7 @@ import { parse as parseYaml } from 'yaml';
 export interface SkillFrontmatter {
   name?: string;
   description?: string;
+  version?: string;
   allowDomains: string[];
   malformed: boolean;
   missing: boolean;
@@ -22,12 +23,14 @@ export function parseSkillMarkdown(text: string): SkillFrontmatter {
     const name = typeof record.name === 'string' ? record.name.trim() : undefined;
     const description =
       typeof record.description === 'string' ? record.description.trim() : undefined;
+    const version = typeof record.version === 'string' ? record.version.trim() : undefined;
     return {
       allowDomains: allowDomainsFrom(record),
       malformed: false,
       missing: false,
       ...(name ? { name } : {}),
       ...(description ? { description } : {}),
+      ...(version ? { version } : {}),
     };
   } catch {
     return { allowDomains: [], malformed: true, missing: false };

@@ -6,7 +6,7 @@ import {
   TEXT_SCAN_LIMIT,
 } from '../../core/grade.ts';
 import type { ScanMode } from '../../core/grade.ts';
-import type { Finding, SkillReport, Verdict } from '../../core/types.ts';
+import type { AdvisoryFeedNote, Finding, SkillReport, Verdict } from '../../core/types.ts';
 import { referenceTags } from '../../rules/references.ts';
 import { SAFETY_REMINDER, TOOL_VERSION } from '../../version.ts';
 
@@ -30,6 +30,7 @@ export function renderHtml(
   verdict: Verdict,
   scannedAt: string,
   scanMode: ScanMode = 'directory',
+  advisory?: AdvisoryFeedNote,
 ): string {
   const grade = gradeFromSkills(skills);
   const summary = renderSummary({ skills, verdict, grade, scanMode });
@@ -49,6 +50,11 @@ export function renderHtml(
     `<p>Scanned at ${escapeHtml(scannedAt)}</p>`,
   ];
   if (scanMode === 'text') parts.push(`<p class="note">${escapeHtml(TEXT_SCAN_LIMIT)}</p>`);
+  if (advisory) {
+    parts.push(
+      `<p class="note">${escapeHtml(`Advisory feed: ${advisory.entries} entries, generated ${advisory.generatedAt}.`)}</p>`,
+    );
+  }
   parts.push(
     `<p>Verdict: ${escapeHtml(verdict)}</p>`,
     `<p class="grade">Grade: ${escapeHtml(formatGrade(grade))}</p>`,

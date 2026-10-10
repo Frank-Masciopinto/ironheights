@@ -1,4 +1,5 @@
 import type { Rule } from '../core/types.ts';
+import { advisoryRules } from './advisory.ts';
 import { bin001 } from './binary.ts';
 import { cred001, cred002, cred003 } from './credentials.ts';
 import { exec001, exec002, exec003 } from './exec.ts';
@@ -40,7 +41,7 @@ export function allContentRules(): Rule[] {
 }
 
 export function allRules(): Rule[] {
-  return [...contentRules, ...integrityRules];
+  return [...contentRules, ...integrityRules, ...advisoryRules];
 }
 
 export function ruleById(id: string): Rule | undefined {

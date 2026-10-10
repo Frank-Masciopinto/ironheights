@@ -68,6 +68,32 @@ try {
       fail(`${bin} --help did not print usage`, help);
       process.exit(1);
     }
+    if (
+      !help.stdout.includes('fetch') ||
+      !help.stdout.includes('safe-install') ||
+      !help.stdout.includes('advisories')
+    ) {
+      fail(`${bin} --help did not list fetch, safe-install, and advisories`, help);
+      process.exit(1);
+    }
+  }
+
+  const emptyHome = join(installDir, 'empty-home');
+  await mkdir(emptyHome);
+  const advisories = run(bins[0], ['advisories', 'show'], {
+    cwd: installDir,
+    env: { ...process.env, IRONHEIGHTS_HOME: emptyHome },
+  });
+  if (!assertOk(advisories, 'advisories show failed')) process.exit(1);
+  if (!advisories.stdout.includes('No advisory cache')) {
+    fail('advisories show did not report a missing cache', advisories);
+    process.exit(1);
+  }
+
+  const fetchUsage = run(bins[0], ['fetch'], { cwd: installDir });
+  if (fetchUsage.status !== 64) {
+    fail('fetch without a skill did not exit 64', fetchUsage);
+    process.exit(1);
   }
 
   const fixture = join(installDir, 'fixture');

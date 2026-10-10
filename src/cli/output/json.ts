@@ -1,6 +1,7 @@
 import { gradeFromSkills, renderBadge, renderSummary } from '../../core/grade.ts';
 import type { ScanMode } from '../../core/grade.ts';
 import type {
+  AdvisoryFeedNote,
   Finding,
   JsonSkillReport,
   ScanOutput,
@@ -13,6 +14,7 @@ import { SCHEMA_VERSION, TOOL_NAME, TOOL_VERSION } from '../../version.ts';
 export interface RenderContext {
   scanMode?: ScanMode;
   limitNote?: string;
+  advisory?: AdvisoryFeedNote;
 }
 
 export function renderJson(
@@ -38,6 +40,7 @@ export function renderJson(
     ...(context.limitNote ? { scanLimit: context.limitNote } : {}),
     ...(since ? { sinceBaseline: since } : {}),
     skills: skills.map(stableSkill),
+    ...(context.advisory ? { advisoryFeed: context.advisory } : {}),
   };
   return `${JSON.stringify(payload, null, 2)}\n`;
 }

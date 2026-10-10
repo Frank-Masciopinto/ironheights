@@ -1,7 +1,8 @@
-import { readFile } from 'node:fs/promises';
+import { readFile, rm } from 'node:fs/promises';
 import type { Finding, ResolvedConfig } from '../core/types.ts';
 import { UsageError } from '../core/errors.ts';
 import { int001, int002, int003, int004 } from '../rules/integrity.ts';
+import { writeAtomic } from '../util/atomic.ts';
 import { clip } from '../util/text.ts';
 import {
   baselineIsTampered,
@@ -12,10 +13,14 @@ import {
   toPortablePath,
   writeBaseline,
 } from './baseline.ts';
+import { loadBaselineKey, signBaselineBytes, verifyBaselineBytes } from './signature.ts';
 import type { Baseline } from '../core/types.ts';
 
 export interface VerifyResult {
   baselineTampered: boolean;
+  treeHashMismatch: boolean;
+  signatureChecked: boolean;
+  signatureMismatch: boolean;
   added: string[];
   modified: string[];
   removed: string[];
@@ -27,11 +32,21 @@ export async function saveBaseline(
   config: ResolvedConfig,
   home: string,
   now = new Date(),
+  options: { keyPath?: string } = {},
 ): Promise<Baseline> {
   const roots = [...config.skillDirs, ...config.agentFiles];
   const baseline = await createBaseline(roots, now);
   if (baseline.roots.length === 0) throw new UsageError('no baseline roots exist');
-  await writeBaseline(baselinePath(home), baseline);
+  const filePath = baselinePath(home);
+  await writeBaseline(filePath, baseline);
+  const sigPath = `${filePath}.sig`;
+  if (options.keyPath) {
+    const key = await loadBaselineKey(options.keyPath, 'sign');
+    const body = await readFile(filePath, 'utf8');
+    await writeAtomic(sigPath, signBaselineBytes(body, key), 0o600);
+  } else {
+    await rm(sigPath, { force: true });
+  }
   return baseline;
 }
 
@@ -40,9 +55,16 @@ export async function loadBaseline(home: string): Promise<Baseline> {
   return parseBaseline(raw);
 }
 
-export async function verifyBaseline(config: ResolvedConfig, home: string): Promise<VerifyResult> {
-  const saved = await loadBaseline(home);
-  const tampered = baselineIsTampered(saved);
+export async function verifyBaseline(
+  config: ResolvedConfig,
+  home: string,
+  options: { keyPath?: string } = {},
+): Promise<VerifyResult> {
+  const filePath = baselinePath(home);
+  const raw = await readFile(filePath, 'utf8');
+  const saved = parseBaseline(raw);
+  const treeHashMismatch = baselineIsTampered(saved);
+  const signature = await checkSignature(raw, `${filePath}.sig`, options.keyPath);
   const roots = saved.roots.map(fromPortablePath);
   const current = await createBaseline(roots);
   const added: string[] = [];
@@ -51,13 +73,24 @@ export async function verifyBaseline(config: ResolvedConfig, home: string): Prom
   const modeChanged: string[] = [];
   const findings: Finding[] = [];
 
-  if (tampered) {
+  if (treeHashMismatch) {
     findings.push(
       finding(
         int001,
         'baseline.json',
         'Baseline treeHash does not match the recorded file hashes.',
         'treeHash mismatch',
+        'critical',
+      ),
+    );
+  }
+  if (signature.mismatch) {
+    findings.push(
+      finding(
+        int001,
+        'baseline.json',
+        'Baseline signature is missing or invalid.',
+        'signature mismatch',
         'critical',
       ),
     );
@@ -102,7 +135,33 @@ export async function verifyBaseline(config: ResolvedConfig, home: string): Prom
     findings.push(finding(rule, path, 'Path from the baseline is missing.', path));
   }
 
-  return { baselineTampered: tampered, added, modified, removed, modeChanged, findings };
+  return {
+    baselineTampered: treeHashMismatch || signature.mismatch,
+    treeHashMismatch,
+    signatureChecked: signature.checked,
+    signatureMismatch: signature.mismatch,
+    added,
+    modified,
+    removed,
+    modeChanged,
+    findings,
+  };
+}
+
+async function checkSignature(
+  raw: string,
+  sigPath: string,
+  keyPath: string | undefined,
+): Promise<{ checked: boolean; mismatch: boolean }> {
+  if (!keyPath) return { checked: false, mismatch: false };
+  const key = await loadBaselineKey(keyPath, 'verify');
+  let sigText: string;
+  try {
+    sigText = await readFile(sigPath, 'utf8');
+  } catch {
+    return { checked: true, mismatch: true };
+  }
+  return { checked: true, mismatch: !verifyBaselineBytes(raw, sigText, key) };
 }
 
 function isAgent(path: string, files: Set<string>, dirs: string[]): boolean {

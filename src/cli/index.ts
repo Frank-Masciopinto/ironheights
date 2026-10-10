@@ -2,26 +2,56 @@ import { Command, CommanderError } from 'commander';
 import { realpathSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { runAdvisories } from './commands/advisories.ts';
 import { runBaseline, runVerify } from './commands/baseline.ts';
 import { runBenchCommand } from './commands/bench.ts';
 import { runDoctor } from './commands/doctor.ts';
+import { runFetch } from './commands/fetch.ts';
 import { runGuardLog, runGuardPolicyCheck, runGuardStatus } from './commands/guard.ts';
 import { runQuarantine } from './commands/quarantine.ts';
 import { runRules } from './commands/rules.ts';
+import { runSafeInstall } from './commands/safe-install.ts';
 import { runScan } from './commands/scan.ts';
 import { IronheightsError } from '../core/errors.ts';
 import { TOOL_VERSION } from '../version.ts';
 
-export async function main(argv: string[]): Promise<number> {
-  if (argv.includes('--online')) {
-    process.stdout.write('not implemented in MVP\n');
-    return 0;
+export interface MainHooks {
+  /** Test hook. Production calls global fetch. */
+  fetchImpl?: typeof fetch;
+  /** Test hook. Production uses the pinned advisory public key. */
+  advisoryPublicKey?: Uint8Array | null;
+}
+
+export async function main(argv: string[], hooks: MainHooks = {}): Promise<number> {
+  const online = argv.includes('--online');
+  const rest = argv.filter((arg) => arg !== '--online');
+  const helpOrVersion = rest.some(
+    (arg) => arg === '--help' || arg === '-h' || arg === '--version' || arg === '-V',
+  );
+  const updatesFeed = rest[0] === 'advisories' && rest[1] === 'update';
+  if (online && !helpOrVersion && !updatesFeed) {
+    try {
+      const code = await runAdvisories('update', {
+        ...(hooks.fetchImpl ? { fetchImpl: hooks.fetchImpl } : {}),
+        ...(hooks.advisoryPublicKey !== undefined ? { publicKey: hooks.advisoryPublicKey } : {}),
+      });
+      if (code !== 0) return code;
+    } catch (error) {
+      if (error instanceof IronheightsError) {
+        process.stderr.write(`${error.message}\n`);
+        return error.exitCode;
+      }
+      throw error;
+    }
+    if (rest.length === 0) return 0;
   }
   process.exitCode = undefined;
   const program = new Command();
   program
     .name('ironheights')
-    .description('Local-first security scanner for OpenClaw skills')
+    .description(
+      'Local-first security scanner for OpenClaw skills. Network is off unless you run fetch, safe-install, advisories update, or --online.',
+    )
     .version(TOOL_VERSION)
     .exitOverride();
 
@@ -73,16 +103,24 @@ export async function main(argv: string[]): Promise<number> {
   program
     .command('baseline [action]')
     .option('--config <file>', 'config file')
-    .action(async (action: string | undefined, opts: { config?: string }) => {
-      const code = await runBaseline(action, opts.config ? { config: opts.config } : {});
+    .option('--key <file>', 'sign baseline.json with this key file')
+    .action(async (action: string | undefined, opts: { config?: string; key?: string }) => {
+      const code = await runBaseline(action, {
+        ...(opts.config ? { config: opts.config } : {}),
+        ...(opts.key ? { key: opts.key } : {}),
+      });
       process.exitCode = code;
     });
 
   program
     .command('verify')
     .option('--config <file>', 'config file')
-    .action(async (opts: { config?: string }) => {
-      const code = await runVerify(opts.config ? { config: opts.config } : {});
+    .option('--key <file>', 'check baseline.json.sig with this key file')
+    .action(async (opts: { config?: string; key?: string }) => {
+      const code = await runVerify({
+        ...(opts.config ? { config: opts.config } : {}),
+        ...(opts.key ? { key: opts.key } : {}),
+      });
       process.exitCode = code;
     });
 
@@ -176,6 +214,74 @@ export async function main(argv: string[]): Promise<number> {
       process.exitCode = await runBenchCommand({
         ...((opts.corpus ?? corpusDir) ? { corpusDir: opts.corpus ?? corpusDir } : {}),
         ...(opts.external ? { external: opts.external } : {}),
+      });
+    });
+
+  program
+    .command('fetch')
+    .argument('<skill>', 'owner/slug or owner/slug@version')
+    .option('--out <dir>', 'staging directory')
+    .option('--json', 'print JSON to stdout')
+    .option('--sarif <file>', 'write SARIF 2.1.0')
+    .option('--md <file>', 'write a markdown report')
+    .option('--fail-on <severity>', 'minimum severity that returns a non-zero exit code')
+    .option('--config <file>', 'config file')
+    .option('--no-color', 'disable color')
+    .option('--quiet', 'disable color and extra emphasis')
+    .option('--allow-skipped', 'accept skipped files and return the finding verdict')
+    .action(async (skill: string, opts: Record<string, string | boolean | undefined>) => {
+      process.exitCode = await runFetch({
+        skill,
+        ...(typeof opts.out === 'string' ? { out: opts.out } : {}),
+        json: Boolean(opts.json),
+        ...(typeof opts.sarif === 'string' ? { sarif: opts.sarif } : {}),
+        ...(typeof opts.md === 'string' ? { md: opts.md } : {}),
+        ...(typeof opts.failOn === 'string' ? { failOn: opts.failOn } : {}),
+        ...(typeof opts.config === 'string' ? { config: opts.config } : {}),
+        noColor: Boolean(opts.color === false || opts.noColor),
+        quiet: Boolean(opts.quiet),
+        allowSkipped: Boolean(opts.allowSkipped),
+        ...(hooks.fetchImpl ? { fetchImpl: hooks.fetchImpl } : {}),
+        ...(hooks.advisoryPublicKey !== undefined
+          ? { advisoryPublicKey: hooks.advisoryPublicKey }
+          : {}),
+      });
+    });
+
+  program
+    .command('safe-install')
+    .argument('<skill>', 'owner/slug or owner/slug@version')
+    .option('--dir <dir>', 'skills directory to install into')
+    .option('--accept-review', 'install when the verdict is review')
+    .option('--out <dir>', 'staging directory')
+    .option('--json', 'print JSON to stdout')
+    .option('--config <file>', 'config file')
+    .option('--no-color', 'disable color')
+    .option('--quiet', 'disable color and extra emphasis')
+    .action(async (skill: string, opts: Record<string, string | boolean | undefined>) => {
+      process.exitCode = await runSafeInstall({
+        skill,
+        ...(typeof opts.dir === 'string' ? { dir: opts.dir } : {}),
+        acceptReview: Boolean(opts.acceptReview),
+        ...(typeof opts.out === 'string' ? { out: opts.out } : {}),
+        json: Boolean(opts.json),
+        ...(typeof opts.config === 'string' ? { config: opts.config } : {}),
+        noColor: Boolean(opts.color === false || opts.noColor),
+        quiet: Boolean(opts.quiet),
+        ...(hooks.fetchImpl ? { fetchImpl: hooks.fetchImpl } : {}),
+        ...(hooks.advisoryPublicKey !== undefined
+          ? { advisoryPublicKey: hooks.advisoryPublicKey }
+          : {}),
+      });
+    });
+
+  program
+    .command('advisories')
+    .argument('<action>', 'update or show')
+    .action(async (action: string) => {
+      process.exitCode = await runAdvisories(action, {
+        ...(hooks.fetchImpl ? { fetchImpl: hooks.fetchImpl } : {}),
+        ...(hooks.advisoryPublicKey !== undefined ? { publicKey: hooks.advisoryPublicKey } : {}),
       });
     });
 
