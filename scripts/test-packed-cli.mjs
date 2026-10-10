@@ -8,7 +8,11 @@ const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const isWin = process.platform === 'win32';
 
 function run(command, args, options = {}) {
-  const result = spawnSync(command, args, {
+  // Windows runs the npm .cmd shim through cmd.exe, which concatenates
+  // arguments without quoting them. A --text value with spaces was split
+  // into extra paths.
+  const argv = isWin ? args.map(quoteWindowsArg) : args;
+  const result = spawnSync(command, argv, {
     cwd: root,
     encoding: 'utf8',
     shell: isWin,
@@ -18,6 +22,11 @@ function run(command, args, options = {}) {
     throw result.error;
   }
   return result;
+}
+
+function quoteWindowsArg(arg) {
+  if (!/[\s"]/.test(arg)) return arg;
+  return `"${arg.replaceAll('"', '""')}"`;
 }
 
 function fail(message, result) {
