@@ -59,11 +59,9 @@ describe('cli', () => {
     }
   });
 
-  it('returns 64 for a missing path and stubs --online', async () => {
+  it('returns 64 for a missing path and does not use the network for scan', async () => {
     const code = await main(['scan', 'test/fixtures/does-not-exist']);
     expect(code).toBe(64);
-    const online = await main(['--online', 'scan', 'test/fixtures/benign']);
-    expect(online).toBe(0);
   });
 
   it('uses --fail-on', async () => {

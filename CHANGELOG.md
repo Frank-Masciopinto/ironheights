@@ -2,11 +2,17 @@
 
 ## Unreleased
 
+`ironheights fetch <owner>/<slug>[@version]` downloads a ClawHub skill over HTTPS, writes the files without executing them, and scans the staging directory. `ironheights safe-install` does the same and copies the skill into a skills directory only when the verdict is `no-findings`, or `review` with `--accept-review`. `block` and `incomplete` are not installed. An existing copy is backed up and restored if the copy fails.
+
+`ironheights advisories update` and `--online` download `https://ironheights.dev/advisories.json` and `advisories.json.sig`. The signature is Ed25519 and the public key is pinned in the CLI. A bad signature is rejected and is not cached. `scan` and `fetch` compare a cached feed with the skill name, content hashes, and indicator hosts and report `IH-ADV-001`. The production public key is `UNCONFIGURED` until the owner replaces it, and the CLI refuses the feed until then.
+
+`baseline create --key` and `verify --key` sign and check `baseline.json` with HMAC-SHA256 or Ed25519. `verify` reports a signature mismatch as a tampered baseline. Release builds still publish to npm with provenance, and they also write `SHA256SUMS` for the GitHub release.
+
 `ironheights guard` watches OpenClaw tool calls for credential-path reads, download-and-execute shell commands, outbound requests to undeclared or high-risk hosts, and writes to agent identity files, memory files, and skill folders. The default mode is `monitor`: append a redacted line to a local log and do not block. `enforce` blocks the call until the policy file has an allow entry with a reason. Host allowlists reuse `allowDomains`, including `metadata.ironheights.allowDomains` when the tool call names that skill.
 
 The OpenClaw integration is an in-process `before_tool_call` plugin (`openclaw.plugin.json`). It is not a sandbox and not a process outside the agent. A skill that can edit OpenClaw config or the policy file can turn it off. Limits and the threat model are in `docs/guard.md`.
 
-`scan` prints a grade next to "Absence of findings is not proof of safety." The grade is a trust score from 0 to 100 (A 90–100, B 80–89, C 70–79, D 60–69, F 0–59) based on the existing risk points. Any skipped file, including a scan that passed `--allow-skipped`, is grade `incomplete` and has no numeric score. The grade uses the worst skill after suppressions, including findings that `--since-baseline` omits from the finding list. `schemaVersion` stays `1`. Grade, summary, badge, scan mode, suppressions, and references are additive fields.
+`scan` prints a grade next to "Absence of findings is not proof of safety." The grade is a trust score from 0 to 100 (A 90–100, B 80–89, C 70–79, D 60–69, F 0–59) based on the existing risk points. Any skipped file, including a scan that passed `--allow-skipped`, is grade `incomplete` and has no numeric score. The grade uses the worst skill after suppressions, including findings that `--since-baseline` omits from the finding list. An `IH-ADV-001` match is included in that grade. `schemaVersion` stays `1`. Grade, summary, badge, scan mode, suppressions, references, and `advisoryFeed` are additive fields.
 
 `scan --since-baseline [file]` reports findings that are new. With no file it reads `~/.ironheights/baseline.json`. An integrity baseline treats a finding as pre-existing when that file's bytes still match, and it refuses a `treeHash` mismatch. A previous `--json` result matches rule id, file, and evidence, and ignores line numbers. Omitted findings are counted and listed. The exit code follows the new findings. A text scan accepts only a previous JSON result.
 

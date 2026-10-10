@@ -19,3 +19,10 @@ export class InternalError extends IronheightsError {
     super(message, 70);
   }
 }
+
+/** Network failure or a rejected signature. The command stops and does not trust the data. */
+export class NetworkError extends IronheightsError {
+  constructor(message: string) {
+    super(message, 70);
+  }
+}

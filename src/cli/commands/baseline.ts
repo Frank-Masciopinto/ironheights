@@ -10,7 +10,12 @@ import { saveBaseline, verifyBaseline } from '../../integrity/verify.ts';
 
 export async function runBaseline(
   action: string | undefined,
-  options: { config?: string; env?: NodeJS.ProcessEnv; stdout?: (text: string) => void },
+  options: {
+    config?: string;
+    key?: string;
+    env?: NodeJS.ProcessEnv;
+    stdout?: (text: string) => void;
+  },
 ): Promise<number> {
   if (action !== 'create' && action !== 'update' && action !== 'show') {
     throw new UsageError('baseline requires create, update, or show');
@@ -38,13 +43,16 @@ export async function runBaseline(
     ...(options.config ? { explicitPath: options.config } : {}),
     env,
   });
-  const baseline = await saveBaseline(config, home);
+  const keyPath = options.key ?? env.IRONHEIGHTS_BASELINE_KEY;
+  const baseline = await saveBaseline(config, home, new Date(), keyPath ? { keyPath } : {});
   write(`wrote ${baselinePath(home)} (${Object.keys(baseline.files).length} files)\n`);
+  if (keyPath) write(`signed ${baselinePath(home)}.sig\n`);
   return 0;
 }
 
 export async function runVerify(options: {
   config?: string;
+  key?: string;
   env?: NodeJS.ProcessEnv;
   stdout?: (text: string) => void;
 }): Promise<number> {
@@ -54,12 +62,15 @@ export async function runVerify(options: {
     ...(options.config ? { explicitPath: options.config } : {}),
     env,
   });
-  const result = await verifyBaseline(config, home);
+  const keyPath = options.key ?? env.IRONHEIGHTS_BASELINE_KEY;
+  const result = await verifyBaseline(config, home, keyPath ? { keyPath } : {});
   const write = options.stdout ?? ((text: string) => process.stdout.write(text));
   write(
     `added: ${result.added.length}\nmodified: ${result.modified.length}\nremoved: ${result.removed.length}\nmodeChanged: ${result.modeChanged.length}\n`,
   );
-  if (result.baselineTampered) write('baseline: treeHash mismatch\n');
+  if (result.treeHashMismatch) write('baseline: treeHash mismatch\n');
+  if (result.signatureMismatch) write('baseline: signature mismatch\n');
+  if (result.signatureChecked && !result.signatureMismatch) write('baseline: signature ok\n');
   for (const finding of result.findings) {
     write(`${finding.ruleId} ${finding.file} ${finding.message}\n`);
   }
