@@ -20,9 +20,9 @@ export function renderHuman(skills: SkillReport[], verdict: Verdict, color: bool
   }
   for (const skill of skills) {
     lines.push(clip(skill.skillName, 120));
-    if (skill.findings.length === 0) {
+    if (skill.findings.length === 0 && skill.verdict !== 'incomplete') {
       lines.push(`  ${NO_FINDINGS_LABEL}`);
-    } else {
+    } else if (skill.findings.length > 0) {
       const grouped = [...skill.findings].sort((a, b) => compareSeverity(a.severity, b.severity));
       for (const finding of grouped) {
         const where = finding.line ? `${finding.file}:${finding.line}` : finding.file;
@@ -32,11 +32,20 @@ export function renderHuman(skills: SkillReport[], verdict: Verdict, color: bool
         lines.push(`    ${finding.remediation}`);
       }
     }
-    if (skill.filesSkipped.length > 0) {
-      lines.push(`  skipped: ${skill.filesSkipped.length}`);
+    for (const skipped of skill.filesSkipped) {
+      const warning = `warning: skipped ${skipped.file} (${skipped.reason})`;
+      lines.push(`  ${paint(color, '33', warning)}`);
+    }
+    if (skill.verdict === 'incomplete') {
+      lines.push(`  ${incompleteSummary(skill.filesSkipped.length)}`);
     }
     lines.push('');
   }
   lines.push(`Verdict: ${verdict}`, SAFETY_REMINDER);
   return lines.join('\n');
+}
+
+function incompleteSummary(count: number): string {
+  const noun = count === 1 ? 'file was' : 'files were';
+  return `Scan incomplete: ${count} ${noun} not scanned.`;
 }

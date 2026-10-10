@@ -51,7 +51,7 @@ export const exec002: Rule = {
   severity: 'high',
   priority: 'P0',
   description:
-    'Skills sometimes tell the agent to install a tool from a URL or git link before doing anything else.',
+    'Skills sometimes tell the agent to install a tool from a URL or git link before doing anything else. Each command is reported once, on the line that contains it.',
   remediation:
     'Install only from the language registry or the operating-system package manager, pinned to a version.',
   appliesTo: ['markdown', 'any'],
@@ -107,26 +107,46 @@ function checkExec001(file: ScannedFile): Finding[] {
   return findings;
 }
 
+/**
+ * One finding per command. URL installs and remote runs have to match on that
+ * line, so a window cannot report the same span on a blank line or the line
+ * above. A prerequisite phrase a couple of lines away only raises confidence,
+ * or decides whether a remote run counts.
+ */
 function checkExec002(file: ScannedFile): Finding[] {
   const findings: Finding[] = [];
   const lines = file.text.split(/\r?\n/);
+  const seen = new Set<string>();
   for (let i = 0; i < lines.length; i += 1) {
     const line = lines[i] ?? '';
-    const window = lines.slice(i, Math.min(lines.length, i + 3)).join(' ');
-    const urlInstall = URL_INSTALL.test(line);
-    const remotePrereq = REMOTE_RUN.test(window) && PREREQ.test(window);
-    if (!urlInstall && !remotePrereq) continue;
+    if (line.trim() === '') continue;
+    const urlMatch = matchOnce(URL_INSTALL, line);
+    const remoteMatch = urlMatch ? undefined : matchOnce(REMOTE_RUN, line);
+    const match = urlMatch ?? remoteMatch;
+    if (!match) continue;
+    const around = lines.slice(Math.max(0, i - 2), Math.min(lines.length, i + 3)).join('\n');
+    if (!urlMatch && !PREREQ.test(around)) continue;
+    const span = `${i}:${match.index}:${match[0].length}`;
+    if (seen.has(span)) continue;
+    seen.add(span);
     pushUnique(
       findings,
       createFinding(exec002, file, {
         line: i + 1,
-        evidence: window,
+        evidence: match[0],
         message: 'Instructions install or run code from a URL or non-registry source.',
-        confidence: PREREQ.test(window) ? 'high' : 'medium',
+        confidence: PREREQ.test(around) ? 'high' : 'medium',
       }),
     );
   }
   return findings;
+}
+
+function matchOnce(pattern: RegExp, text: string): RegExpExecArray | undefined {
+  pattern.lastIndex = 0;
+  const match = pattern.exec(text);
+  pattern.lastIndex = 0;
+  return match ?? undefined;
 }
 
 function checkExec003(file: ScannedFile): Finding[] {

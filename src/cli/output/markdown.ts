@@ -12,9 +12,8 @@ export function renderMarkdown(skills: SkillReport[], verdict: Verdict): string 
       `Score: ${skill.score}`,
       '',
     );
-    if (skill.findings.length === 0) {
+    if (skill.findings.length === 0 && skill.verdict !== 'incomplete') {
       lines.push(NO_FINDINGS_LABEL, '');
-      continue;
     }
     for (const finding of skill.findings) {
       const where = finding.line ? `${finding.file}:${finding.line}` : finding.file;
@@ -22,6 +21,14 @@ export function renderMarkdown(skills: SkillReport[], verdict: Verdict): string 
       lines.push(`  - ${finding.message}`);
       lines.push(`  - Evidence: \`${finding.evidence.replace(/`/g, "'")}\``);
       lines.push(`  - ${finding.remediation}`);
+    }
+    for (const skipped of skill.filesSkipped) {
+      lines.push(`- warning: skipped \`${skipped.file}\` (${skipped.reason})`);
+    }
+    if (skill.verdict === 'incomplete') {
+      const count = skill.filesSkipped.length;
+      const noun = count === 1 ? 'file was' : 'files were';
+      lines.push('', `Scan incomplete: ${count} ${noun} not scanned.`);
     }
     lines.push('');
   }

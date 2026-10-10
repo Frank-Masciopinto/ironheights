@@ -15,7 +15,7 @@ export type Category =
 
 export type FileKind = 'markdown' | 'script' | 'config' | 'binary' | 'text';
 export type AppliesTo = 'markdown' | 'script' | 'config' | 'binary' | 'any';
-export type Verdict = 'no-findings' | 'review' | 'block';
+export type Verdict = 'no-findings' | 'review' | 'block' | 'incomplete';
 
 export interface ScannedFile {
   relativePath: string;
@@ -89,7 +89,8 @@ export interface ScanOutput {
   tool: { name: string; version: string };
   scannedAt: string;
   verdict: Verdict;
-  skills: SkillReport[];
+  skippedFileCount: number;
+  skills: Array<SkillReport & { skippedFileCount: number }>;
 }
 
 export interface Limits {

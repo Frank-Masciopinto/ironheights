@@ -34,6 +34,10 @@ export async function main(argv: string[]): Promise<number> {
     .option('--config <file>', 'config file')
     .option('--no-color', 'disable color')
     .option('--quiet', 'disable color and extra emphasis')
+    .option(
+      '--allow-skipped',
+      'accept skipped files and return the finding verdict instead of incomplete',
+    )
     .action(async (paths: string[], opts: Record<string, string | boolean | undefined>) => {
       const code = await runScan({
         paths,
@@ -45,6 +49,7 @@ export async function main(argv: string[]): Promise<number> {
         ...(typeof opts.config === 'string' ? { config: opts.config } : {}),
         noColor: Boolean(opts.color === false || opts.noColor),
         quiet: Boolean(opts.quiet),
+        allowSkipped: Boolean(opts.allowSkipped),
       });
       process.exitCode = code;
     });

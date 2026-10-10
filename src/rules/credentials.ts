@@ -25,18 +25,19 @@ export const cred001: Rule = {
   severity: 'high',
   priority: 'P0',
   description:
-    'References to keys, browser stores, wallets, shell history, or OpenClaw auth files expose credentials.',
+    'References to keys, browser stores, wallets, shell history, or OpenClaw auth files expose credentials. A credential directory such as ~/.ssh, ~/.aws, ~/.gnupg, or ~/.azure counts with or without a file name after it.',
   remediation:
     'Do not read these paths from a skill. Use a scoped environment variable or the platform secret store.',
   appliesTo: ['any'],
   examples: {
-    matches: ['cat ~/.ssh/id_rsa', 'open ~/.aws/credentials'],
+    matches: ['cat ~/.ssh/id_rsa', 'open ~/.aws/credentials', '~/.ssh', '~/.gnupg/'],
     nonMatches: [
       'write notes to notes/today.md',
       'use an environment variable',
       'const token = process.env.API_TOKEN',
       'the browser stores cookies for the site',
       'Never upload `.env` or tokens.',
+      'the sshd service accepts local connections',
     ],
   },
   check(file) {

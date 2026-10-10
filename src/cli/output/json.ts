@@ -7,17 +7,19 @@ export function renderJson(skills: SkillReport[], verdict: Verdict, scannedAt: s
     tool: { name: TOOL_NAME, version: TOOL_VERSION },
     scannedAt,
     verdict,
+    skippedFileCount: skills.reduce((sum, skill) => sum + skill.filesSkipped.length, 0),
     skills: skills.map(stableSkill),
   };
   return `${JSON.stringify(payload, null, 2)}\n`;
 }
 
-function stableSkill(skill: SkillReport): SkillReport {
+function stableSkill(skill: SkillReport): SkillReport & { skippedFileCount: number } {
   return {
     skillName: skill.skillName,
     root: skill.root,
     filesScanned: skill.filesScanned,
     filesSkipped: skill.filesSkipped,
+    skippedFileCount: skill.filesSkipped.length,
     findings: skill.findings.map((finding) => ({
       ruleId: finding.ruleId,
       severity: finding.severity,

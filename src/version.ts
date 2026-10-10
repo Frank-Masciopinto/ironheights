@@ -1,5 +1,6 @@
 export const TOOL_NAME = 'ironheights';
-export const TOOL_VERSION = '0.1.3';
+export const TOOL_VERSION = '0.1.4';
+export const REPOSITORY_URL = 'https://github.com/Frank-Masciopinto/ironheights';
 export const SCHEMA_VERSION = 1;
 
 export const SAFETY_REMINDER = 'Absence of findings is not proof of safety.';

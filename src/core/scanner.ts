@@ -15,13 +15,13 @@ export interface ScanPathResult {
 export async function scanPath(
   root: string,
   config: ResolvedConfig,
-  options: { now?: Date } = {},
+  options: { now?: Date; allowSkipped?: boolean } = {},
 ): Promise<ScanPathResult & { scannedAt: string }> {
   const abs = resolve(root);
   const skillRoots = await discoverSkillRoots(abs);
   const skills: SkillReport[] = [];
   for (const skillRoot of skillRoots) {
-    skills.push(await scanSkill(skillRoot, config));
+    skills.push(await scanSkill(skillRoot, config, options));
   }
   return {
     skills,
@@ -74,7 +74,11 @@ async function hasSkillFile(dir: string): Promise<boolean> {
   }
 }
 
-export async function scanSkill(root: string, config: ResolvedConfig): Promise<SkillReport> {
+export async function scanSkill(
+  root: string,
+  config: ResolvedConfig,
+  options: { allowSkipped?: boolean } = {},
+): Promise<SkillReport> {
   const walked = await walkSkill(root, config.limits, config.ignoreGlobs);
   const frontmatter = await readSkillFrontmatter(root, walked.files);
   const skillName = frontmatter?.name ?? basename(root);
@@ -97,7 +101,10 @@ export async function scanSkill(root: string, config: ResolvedConfig): Promise<S
     filesSkipped: walked.skipped,
     findings,
     score,
-    verdict: verdictFor(findings, config.thresholds),
+    verdict: verdictFor(findings, config.thresholds, {
+      filesSkipped: walked.skipped.length,
+      allowSkipped: options.allowSkipped === true,
+    }),
   };
 }
 
