@@ -1,6 +1,9 @@
 import { readFile } from 'node:fs/promises';
 import { ironheightsHome, loadConfig } from '../../core/config.ts';
+import { formatGrade, gradeFor } from '../../core/grade.ts';
+import { applySuppressions } from '../../core/suppress.ts';
 import { exitCodeFor, scoreFindings, verdictFor } from '../../core/verdict.ts';
+import { SAFETY_REMINDER } from '../../version.ts';
 import { UsageError } from '../../core/errors.ts';
 import { baselinePath } from '../../integrity/baseline.ts';
 import { saveBaseline, verifyBaseline } from '../../integrity/verify.ts';
@@ -60,8 +63,16 @@ export async function runVerify(options: {
   for (const finding of result.findings) {
     write(`${finding.ruleId} ${finding.file} ${finding.message}\n`);
   }
-  const score = scoreFindings(result.findings);
-  const verdict = verdictFor(result.findings, config.thresholds);
-  write(`score: ${score}\nVerdict: ${verdict}\nAbsence of findings is not proof of safety.\n`);
-  return exitCodeFor(verdict, result.findings, config.failOn);
+  const outcome = applySuppressions(result.findings, [], config);
+  for (const item of outcome.suppressed) {
+    write(`suppressed ${item.ruleId} ${item.file} reason=${item.reason}\n`);
+  }
+  for (const item of outcome.refused) {
+    write(`suppression refused ${item.ruleId} ${item.file} ${item.detail}\n`);
+  }
+  const score = scoreFindings(outcome.active);
+  const verdict = verdictFor(outcome.active, config.thresholds);
+  const grade = gradeFor(score, 0);
+  write(`score: ${score}\nVerdict: ${verdict}\nGrade: ${formatGrade(grade)}\n${SAFETY_REMINDER}\n`);
+  return exitCodeFor(verdict, outcome.active, config.failOn);
 }

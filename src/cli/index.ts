@@ -31,6 +31,14 @@ export async function main(argv: string[]): Promise<number> {
     .option('--json', 'print JSON to stdout')
     .option('--sarif <file>', 'write SARIF 2.1.0')
     .option('--md <file>', 'write a markdown report')
+    .option('--html <file>', 'write a self-contained HTML report')
+    .option('--format <format>', 'stdout format: text, json, or html')
+    .option(
+      '--since-baseline [file]',
+      'report findings that are new compared with an integrity baseline or a previous JSON result',
+    )
+    .option('--stdin', 'scan one piece of text from stdin')
+    .option('--text <text>', 'scan one piece of text')
     .option('--fail-on <severity>', 'minimum severity that returns a non-zero exit code')
     .option('--config <file>', 'config file')
     .option('--no-color', 'disable color')
@@ -46,6 +54,13 @@ export async function main(argv: string[]): Promise<number> {
         json: Boolean(opts.json),
         ...(typeof opts.sarif === 'string' ? { sarif: opts.sarif } : {}),
         ...(typeof opts.md === 'string' ? { md: opts.md } : {}),
+        ...(typeof opts.html === 'string' ? { html: opts.html } : {}),
+        ...(typeof opts.format === 'string' ? { format: opts.format } : {}),
+        ...(opts.sinceBaseline === true || typeof opts.sinceBaseline === 'string'
+          ? { sinceBaseline: opts.sinceBaseline }
+          : {}),
+        stdin: Boolean(opts.stdin),
+        ...(typeof opts.text === 'string' ? { text: opts.text } : {}),
         ...(typeof opts.failOn === 'string' ? { failOn: opts.failOn } : {}),
         ...(typeof opts.config === 'string' ? { config: opts.config } : {}),
         noColor: Boolean(opts.color === false || opts.noColor),

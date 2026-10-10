@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "remote": {
+      "command": "npx",
+      "args": ["-y", "unpinned-mcp-server"]
+    }
+  }
+}

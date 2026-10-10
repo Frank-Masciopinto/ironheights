@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "notes": {
+      "command": "node",
+      "args": ["server.js"],
+      "env": { "TOKEN": "" }
+    }
+  }
+}

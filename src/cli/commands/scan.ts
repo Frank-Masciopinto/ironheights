@@ -1,10 +1,15 @@
 import { stat, writeFile } from 'node:fs/promises';
 import { UsageError } from '../../core/errors.ts';
-import { loadConfig } from '../../core/config.ts';
-import { scanPath } from '../../core/scanner.ts';
+import { ironheightsHome, loadConfig } from '../../core/config.ts';
+import { TEXT_SCAN_LIMIT } from '../../core/grade.ts';
+import type { ScanMode } from '../../core/grade.ts';
+import { scanPath, scanText } from '../../core/scanner.ts';
+import { applySinceBaseline } from '../../core/since-baseline.ts';
 import { exitCodeFor, worstVerdict } from '../../core/verdict.ts';
-import type { Severity } from '../../core/types.ts';
+import type { Severity, SkillReport } from '../../core/types.ts';
+import { baselinePath } from '../../integrity/baseline.ts';
 import { colorEnabled } from '../../util/terminal.ts';
+import { renderHtml } from '../output/html.ts';
 import { renderHuman } from '../output/human.ts';
 import { renderJson } from '../output/json.ts';
 import { renderMarkdown } from '../output/markdown.ts';
@@ -15,11 +20,17 @@ export interface ScanFlags {
   json?: boolean;
   sarif?: string;
   md?: string;
+  html?: string;
+  format?: string;
   failOn?: string;
   config?: string;
   noColor?: boolean;
   quiet?: boolean;
   allowSkipped?: boolean;
+  sinceBaseline?: string | true;
+  stdin?: boolean;
+  stdinText?: string;
+  text?: string;
   paths: string[];
   env?: NodeJS.ProcessEnv;
   stdout?: (text: string) => void;
@@ -33,40 +44,113 @@ export async function runScan(flags: ScanFlags): Promise<number> {
     env,
   });
   if (flags.failOn) config.failOn = parseFailOn(flags.failOn);
-  const targets = flags.all ? config.skillDirs : flags.paths;
-  if (!flags.all && targets.length === 0) throw new UsageError('scan requires a path or --all');
-  const skills = [];
+  const format = resolveFormat(flags);
+  const scanMode = resolveScanMode(flags);
+  let skills: SkillReport[] = [];
   let scannedAt = (flags.now ?? new Date()).toISOString();
-  for (const target of targets) {
-    if (!flags.all) {
-      try {
-        await stat(target);
-      } catch {
-        throw new UsageError(`path not found: ${target}`);
-      }
-    }
-    const result = await scanPath(target, config, {
+
+  if (scanMode === 'text') {
+    const text = flags.stdin ? await stdinText(flags) : (flags.text ?? '');
+    const result = await scanText(text, config, {
+      label: flags.stdin ? 'stdin' : 'text',
       ...(flags.now ? { now: flags.now } : {}),
       allowSkipped: flags.allowSkipped === true,
     });
     scannedAt = result.scannedAt;
-    skills.push(...result.skills);
+    skills = result.skills;
+  } else {
+    const targets = flags.all ? config.skillDirs : flags.paths;
+    if (!flags.all && targets.length === 0) throw new UsageError('scan requires a path or --all');
+    for (const target of targets) {
+      if (!flags.all) {
+        try {
+          await stat(target);
+        } catch {
+          throw new UsageError(`path not found: ${target}`);
+        }
+      }
+      const result = await scanPath(target, config, {
+        ...(flags.now ? { now: flags.now } : {}),
+        allowSkipped: flags.allowSkipped === true,
+      });
+      scannedAt = result.scannedAt;
+      skills.push(...result.skills);
+    }
   }
+
+  if (flags.sinceBaseline !== undefined) {
+    const source =
+      flags.sinceBaseline === true ? baselinePath(ironheightsHome(env)) : flags.sinceBaseline;
+    skills = await applySinceBaseline(skills, source, {
+      thresholds: config.thresholds,
+      allowSkipped: flags.allowSkipped === true,
+      scanMode,
+    });
+  }
+
   const verdict = worstVerdict(skills.map((skill) => skill.verdict));
+  const limitNote = scanMode === 'text' ? TEXT_SCAN_LIMIT : undefined;
   const write = flags.stdout ?? ((text: string) => process.stdout.write(text));
-  if (flags.json) write(renderJson(skills, verdict, scannedAt));
-  else
+  if (format === 'json') {
     write(
-      `${renderHuman(skills, verdict, colorEnabled(Boolean(flags.noColor), env) && !flags.quiet)}\n`,
+      renderJson(skills, verdict, scannedAt, { scanMode, ...(limitNote ? { limitNote } : {}) }),
     );
-  if (flags.sarif) await writeFile(flags.sarif, renderSarif(skills));
-  if (flags.md) await writeFile(flags.md, renderMarkdown(skills, verdict));
+  } else if (format === 'html') {
+    write(`${renderHtml(skills, verdict, scannedAt, scanMode)}\n`);
+  } else {
+    write(
+      `${renderHuman(skills, verdict, colorEnabled(Boolean(flags.noColor), env) && !flags.quiet, scanMode)}\n`,
+    );
+  }
+  if (flags.sarif) await writeFile(flags.sarif, renderSarif(skills, scanMode));
+  if (flags.md) await writeFile(flags.md, renderMarkdown(skills, verdict, scanMode));
+  if (flags.html) await writeFile(flags.html, renderHtml(skills, verdict, scannedAt, scanMode));
   const findings = skills.flatMap((skill) => skill.findings);
   const filesSkipped = skills.reduce((sum, skill) => sum + skill.filesSkipped.length, 0);
   return exitCodeFor(verdict, findings, config.failOn, {
     filesSkipped,
     allowSkipped: flags.allowSkipped === true,
   });
+}
+
+function resolveScanMode(flags: ScanFlags): ScanMode {
+  const textMode = flags.stdin === true || flags.text !== undefined;
+  if (flags.stdin && flags.text !== undefined) {
+    throw new UsageError('pass either --stdin or --text');
+  }
+  if (textMode && (flags.all || flags.paths.length > 0)) {
+    throw new UsageError('a text scan does not take a path or --all');
+  }
+  if (!textMode && !flags.all && flags.paths.length === 0) {
+    throw new UsageError('scan requires a path, --all, --stdin, or --text');
+  }
+  return textMode ? 'text' : 'directory';
+}
+
+function resolveFormat(flags: ScanFlags): 'text' | 'json' | 'html' {
+  if (flags.json && flags.format && flags.format !== 'json') {
+    throw new UsageError('pass either --json or --format');
+  }
+  if (flags.json) return 'json';
+  if (!flags.format) return 'text';
+  switch (flags.format) {
+    case 'text':
+    case 'json':
+    case 'html':
+      return flags.format;
+    default:
+      throw new UsageError('--format must be text, json, or html');
+  }
+}
+
+async function stdinText(flags: ScanFlags): Promise<string> {
+  if (flags.stdinText !== undefined) return flags.stdinText;
+  if (process.stdin.isTTY) throw new UsageError('scan --stdin reads text from a pipe');
+  const chunks: Buffer[] = [];
+  for await (const chunk of process.stdin) {
+    chunks.push(typeof chunk === 'string' ? Buffer.from(chunk) : chunk);
+  }
+  return Buffer.concat(chunks).toString('utf8');
 }
 
 function parseFailOn(value: string): Severity {

@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "dist": {
+      "command": "npx",
+      "args": ["-y", "@scope/tool@latest"]
+    }
+  }
+}

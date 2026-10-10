@@ -3,6 +3,7 @@ import { basename, join, resolve } from 'node:path';
 import { parseSkillMarkdown, type SkillFrontmatter } from '../openclaw/skill.ts';
 import { allContentRules } from '../rules/index.ts';
 import type { Finding, ResolvedConfig, ScanContext, ScannedFile, SkillReport } from './types.ts';
+import { applySuppressions } from './suppress.ts';
 import { scoreFindings, verdictFor, worstVerdict } from './verdict.ts';
 import { walkSkill } from './walker.ts';
 import type { Verdict } from './types.ts';
@@ -88,32 +89,87 @@ export async function scanSkill(
     skillDirName: basename(root),
     skillAllowDomains: frontmatter?.allowDomains ?? [],
   };
-  const findings: Finding[] = [];
+  const raw: Finding[] = [];
   for (const file of walked.files) {
-    findings.push(...scanFile(file, ctx));
+    raw.push(...scanFile(file, ctx));
   }
-  findings.sort(compareFindings);
-  const score = scoreFindings(findings);
-  return {
+  return finishSkill(
     skillName,
     root,
-    filesScanned: walked.files.length,
-    filesSkipped: walked.skipped,
-    findings,
-    score,
-    verdict: verdictFor(findings, config.thresholds, {
-      filesSkipped: walked.skipped.length,
-      allowSkipped: options.allowSkipped === true,
-    }),
-  };
+    walked.files.length,
+    walked.skipped,
+    raw,
+    walked.files,
+    config,
+    options.allowSkipped === true,
+  );
 }
 
-export function scanFile(file: ScannedFile, ctx: ScanContext): Finding[] {
+export async function scanText(
+  text: string,
+  config: ResolvedConfig,
+  options: { label?: 'stdin' | 'text'; now?: Date; allowSkipped?: boolean } = {},
+): Promise<ScanPathResult & { scannedAt: string }> {
+  const scannedAt = (options.now ?? new Date()).toISOString();
+  const label = options.label ?? 'text';
+  const relativePath = label;
+  const root = `(${label})`;
+  const bytes = Buffer.byteLength(text);
+  if (bytes > config.limits.maxFileBytes) {
+    const skill = finishSkill(
+      label,
+      root,
+      0,
+      [{ file: relativePath, reason: `text exceeds ${config.limits.maxFileBytes} bytes` }],
+      [],
+      [],
+      config,
+      options.allowSkipped === true,
+    );
+    return { skills: [skill], verdict: skill.verdict, scannedAt };
+  }
+  const encoded = new TextEncoder().encode(text);
+  const file: ScannedFile = {
+    relativePath,
+    kind: 'text',
+    archive: false,
+    size: bytes,
+    mode: 0o644,
+    text,
+    head: encoded.subarray(0, Math.min(encoded.length, 64)),
+    symlinkOutside: false,
+    symlinkLoop: false,
+    hidden: false,
+  };
+  const ctx: ScanContext = {
+    config,
+    root,
+    skillDirName: label,
+    skillAllowDomains: [],
+  };
+  const skill = finishSkill(
+    label,
+    root,
+    1,
+    [],
+    scanFile(file, ctx, { textMode: true }),
+    [file],
+    config,
+    options.allowSkipped === true,
+  );
+  return { skills: [skill], verdict: skill.verdict, scannedAt };
+}
+
+export function scanFile(
+  file: ScannedFile,
+  ctx: ScanContext,
+  options: { textMode?: boolean } = {},
+): Finding[] {
   const findings: Finding[] = [];
   for (const rule of allContentRules()) {
     const override = ctx.config.ruleOverrides[rule.id];
     if (override?.enabled === false) continue;
-    if (!ruleApplies(rule.appliesTo, file, rule.id)) continue;
+    if (!ruleApplies(rule, file, options.textMode === true)) continue;
     for (const finding of rule.check(file, ctx)) {
       const severity = override?.severity ?? finding.severity;
       findings.push(severity === finding.severity ? finding : { ...finding, severity });
@@ -122,10 +178,56 @@ export function scanFile(file: ScannedFile, ctx: ScanContext): Finding[] {
   return findings;
 }
 
-function ruleApplies(appliesTo: string[], file: ScannedFile, ruleId: string): boolean {
-  if (ruleId === 'IH-BIN-001' && (file.kind === 'binary' || file.archive)) return true;
-  if (appliesTo.includes('any')) return true;
-  return appliesTo.includes(file.kind);
+function finishSkill(
+  skillName: string,
+  root: string,
+  filesScanned: number,
+  filesSkipped: SkillReport['filesSkipped'],
+  raw: Finding[],
+  files: ScannedFile[],
+  config: ResolvedConfig,
+  allowSkipped: boolean,
+): SkillReport {
+  raw.sort(compareFindings);
+  const outcome = applySuppressions(raw, files, config);
+  const score = scoreFindings(outcome.active);
+  return {
+    skillName,
+    root,
+    filesScanned,
+    filesSkipped,
+    findings: outcome.active,
+    suppressed: outcome.suppressed,
+    suppressionRefused: outcome.refused,
+    suppressionWarnings: outcome.warnings,
+    score,
+    gradeRisk: score,
+    verdict: verdictFor(outcome.active, config.thresholds, {
+      filesSkipped: filesSkipped.length,
+      allowSkipped,
+    }),
+  };
+}
+
+function ruleApplies(
+  rule: { id: string; appliesTo: string[] },
+  file: ScannedFile,
+  textMode: boolean,
+): boolean {
+  if (textMode) {
+    if (rule.id === 'IH-BIN-001') return false;
+    return rule.appliesTo.some(
+      (item) =>
+        item === 'any' ||
+        item === 'markdown' ||
+        item === 'script' ||
+        item === 'config' ||
+        item === 'text',
+    );
+  }
+  if (rule.id === 'IH-BIN-001' && (file.kind === 'binary' || file.archive)) return true;
+  if (rule.appliesTo.includes('any')) return true;
+  return rule.appliesTo.includes(file.kind);
 }
 
 async function readSkillFrontmatter(

@@ -85,7 +85,7 @@ Absence of findings is not proof of safety.
 ## Commands
 
 ```text
-ironheights scan <path> [--all] [--json] [--sarif <file>] [--md <file>] [--fail-on <severity>] [--config <file>] [--allow-skipped] [--no-color] [--quiet]
+ironheights scan <path> [--all] [--json] [--sarif <file>] [--md <file>] [--html <file>] [--format text|json|html] [--since-baseline [file]] [--stdin] [--text <text>] [--fail-on <severity>] [--config <file>] [--allow-skipped] [--no-color] [--quiet]
 ironheights baseline create|update|show
 ironheights verify
 ironheights quarantine <skill>
@@ -101,6 +101,80 @@ ironheights --online
 
 `--online` prints `not implemented in MVP` and does nothing else. `--all` scans the skill directories from config, or the OpenClaw locations below when config does not set `skillDirs`.
 
+## Grade
+
+Every scan prints a grade on the line before "Absence of findings is not proof of safety." The number is a trust score: 100 minus the risk score, and never below 0. A is 90–100, B is 80–89, C is 70–79, D is 60–69, and F is 0–59. The grade uses the worst skill after suppressions. Findings omitted by `--since-baseline` still count toward the grade.
+
+A skipped file makes the grade `incomplete` and hides the number, including when you pass `--allow-skipped`. The exit code can still be 0 in that case. The verdict line is unchanged.
+
+```text
+Verdict: review
+Grade: D (60/100)
+Absence of findings is not proof of safety.
+ironheights 0.1.5 | demo | grade D (60/100) | verdict review | 1 finding
+Badge: [ironheights 0.1.5: grade D (60/100), verdict review](https://github.com/Frank-Masciopinto/ironheights) — Absence of findings is not proof of safety.
+```
+
+The badge line is text you can paste into a README. It does not load an image from a badge service.
+
+## Findings since a baseline
+
+`scan --since-baseline` compares the scan with a saved result and lists only findings that are new. Omitted findings are counted under "Omitted as pre-existing" and are not removed from the grade. The exit code follows the new findings, so an update that adds nothing new exits 0 even when the grade is still D or F.
+
+With no path, the flag reads `~/.ironheights/baseline.json` (or `$IRONHEIGHTS_HOME/baseline.json`). That file is the integrity baseline from `baseline create`. A finding is pre-existing when the file's bytes still match the saved hash. A changed or new file reports every finding in that file. If `treeHash` does not match the file hashes, the scan stops with exit 64 and hides nothing.
+
+You can also pass a previous `--json` report. A finding is pre-existing when the skill name, rule id, file, and evidence match. Line numbers are ignored. Save that report from a scan that did not use `--since-baseline`.
+
+```bash
+ironheights scan ./skill --since-baseline
+ironheights scan ./skill --json > previous.json
+ironheights scan ./skill --since-baseline previous.json
+```
+
+Put the skill path before `--since-baseline` when you omit the file, so the flag does not take the path as its argument.
+
+## HTML report
+
+`--html report.html` writes one HTML file and still prints the text report. `--format html` prints the HTML to stdout. The file contains its CSS, no scripts, and a content security policy of `default-src 'none'`. Skill names, paths, and evidence are escaped. The page does not request anything from the network.
+
+## Suppressions
+
+A suppression needs a reason of at least 8 characters. The comment applies to the line it is on and the next line. Quote the reason when it contains spaces.
+
+```text
+# ironheights-ignore IH-CRED-001 reason="reviewed local demo"
+cat ~/.ssh/id_rsa
+```
+
+`//` and `<!-- -->` comments work the same way because the marker is plain text. A marker with no rule id or no usable reason is listed under "Suppression ignored" and the finding stays.
+
+Config entries do the same job for a rule and an optional glob:
+
+```json
+{
+  "suppressions": [
+    { "ruleId": "IH-NET-001", "path": "docs/**", "reason": "documented example hosts" }
+  ],
+  "suppressCritical": false,
+  "suppressIntegrity": false
+}
+```
+
+Suppressed findings are listed with their reasons and counted in the summary line. They do not add risk points. Critical findings stay visible unless `suppressCritical` is true. `IH-INT-*` findings, including on `verify`, stay visible unless `suppressIntegrity` is true. A critical integrity finding needs both.
+
+## Text scan
+
+`scan --text` and `scan --stdin` run the content rules on one piece of text, for an inbound email or a web page. The report starts with a limited-scan line: this is not a review of a skill directory, and the text is not executed. `--stdin` reads a pipe. On a terminal it exits 64. Do not combine either flag with a path or `--all`.
+
+```bash
+ironheights scan --text 'Hello, the meeting is at 3pm.'
+printf '%s' 'Ignore previous instructions' | ironheights scan --stdin
+```
+
+## Other agents and MCP configs
+
+The same `scan` command reads Claude Code, Codex, and Cursor skill folders. MCP configuration rules `IH-MCP-001`, `IH-MCP-002`, and `IH-MCP-003` flag a server launched with `curl|sh` or an unpinned `npx` package, a literal secret in `env`, and a broad filesystem root. Paths and examples are in [docs/other-agents.md](docs/other-agents.md). Ironheights does not ship an MCP server. See [docs/ideas.md](docs/ideas.md).
+
 ## Config
 
 Ironheights reads `ironheights.config.json` from the current directory, then `~/.ironheights/ironheights.config.json`. Unknown keys are an error. `thresholds.block` defaults to 80 and `thresholds.review` defaults to 15.
@@ -114,7 +188,12 @@ Ironheights reads `ironheights.config.json` from the current directory, then `~/
   "ruleOverrides": { "IH-NET-001": { "enabled": true, "severity": "low" } },
   "failOn": "high",
   "limits": { "maxFileBytes": 1048576, "maxFiles": 2000, "maxDepth": 10 },
-  "thresholds": { "block": 80, "review": 15 }
+  "thresholds": { "block": 80, "review": 15 },
+  "suppressions": [
+    { "ruleId": "IH-NET-001", "path": "docs/**", "reason": "documented example hosts" }
+  ],
+  "suppressCritical": false,
+  "suppressIntegrity": false
 }
 ```
 
@@ -122,7 +201,7 @@ An allowlist entry matches that host and its subdomains. The built-in list inclu
 
 ## JSON output
 
-`--json` prints a document with `schemaVersion` `1`:
+`--json` prints a document with `schemaVersion` `1`. New fields below are additive. Consumers that ignore unknown keys keep working, so `schemaVersion` stays `1`.
 
 ```json
 {
@@ -131,17 +210,27 @@ An allowlist entry matches that host and its subdomains. The built-in list inclu
   "scannedAt": "2026-10-09T00:00:00.000Z",
   "verdict": "no-findings",
   "skippedFileCount": 0,
+  "grade": {
+    "letter": "A",
+    "score": 100,
+    "disclaimer": "Absence of findings is not proof of safety."
+  },
+  "scanMode": "directory",
+  "summary": "ironheights 0.1.5 | no skills | grade A (100/100) | verdict no-findings | 0 findings",
+  "badge": "[ironheights 0.1.5: grade A (100/100), verdict no-findings](https://github.com/Frank-Masciopinto/ironheights) — Absence of findings is not proof of safety.",
   "skills": []
 }
 ```
 
-Each skill has `skillName`, `root`, `filesScanned`, `filesSkipped`, `skippedFileCount`, `findings`, `score`, and `verdict`. `skippedFileCount` is the number of files the scan did not read. `filesSkipped` lists each path and the reason. A finding has `ruleId`, `severity`, `confidence`, `file`, optional `line` and `column`, `evidence`, `message`, and `remediation`. `--sarif` writes SARIF 2.1.0. The run `properties.skippedFileCount` is the same total, and `tool.driver.informationUri` is `https://github.com/Frank-Masciopinto/ironheights`.
+`grade.score` is omitted when `grade.letter` is `incomplete`. A text scan sets `scanMode` to `text` and adds `scanLimit`. `--since-baseline` adds `sinceBaseline` on the document and on each skill, including `omitted`. Each skill also has `suppressed`, `suppressedCount`, `suppressionRefused`, and `suppressionRefusedCount`.
+
+Each skill has `skillName`, `root`, `filesScanned`, `filesSkipped`, `skippedFileCount`, `findings`, `score`, and `verdict`. `skippedFileCount` is the number of files the scan did not read. `filesSkipped` lists each path and the reason. A finding has `ruleId`, `severity`, `confidence`, `file`, optional `line` and `column`, `evidence`, `message`, `remediation`, and `references` (`owaspLlm`, `owaspAgentic`, `mitreAtlas`). With `--since-baseline`, `score` and `verdict` describe the new findings. The grade still describes the full scan. `--sarif` writes SARIF 2.1.0. The run `properties` include `skippedFileCount`, `gradeLetter`, `disclaimer`, and `gradeScore` when the scan is complete. Rule `properties` and `tags` include the same references. `tool.driver.informationUri` is `https://github.com/Frank-Masciopinto/ironheights`.
 
 Scoring is critical 100, high 40, medium 15, low 5, info 0. The verdict is `block` when any finding is critical or the score is at least 80. It is `review` when any finding is high or medium, or the score is at least 15. It is `incomplete` when files were skipped and the score would otherwise be `no-findings`. Otherwise it is `no-findings`.
 
 ## Rules
 
-The full list is generated in [docs/rules.md](docs/rules.md). P0 rules cover remote shells, prerequisite installs, undeclared hosts, credential paths, hard-coded secrets, instruction overrides, hidden text, bundled executables, and persistence. P1 rules cover dynamic execution, exfiltration shape, secrets in chat, weakened approvals, obfuscation, privilege bypass, filesystem tricks, and skill metadata. Integrity rules `IH-INT-001` through `IH-INT-004` come from `verify`, not from a content scan.
+The full list is generated in [docs/rules.md](docs/rules.md), including OWASP LLM Top 10 2025, OWASP Agentic Top 10 2026, and MITRE ATLAS ids. `none` means no defensible mapping was recorded. P0 rules cover remote shells, prerequisite installs, undeclared hosts, credential paths, hard-coded secrets, instruction overrides, hidden text, bundled executables, persistence, and MCP launch and secret checks. P1 rules cover dynamic execution, exfiltration shape, secrets in chat, weakened approvals, obfuscation, privilege bypass, filesystem tricks, skill metadata, and broad MCP filesystem roots. Integrity rules `IH-INT-001` through `IH-INT-004` come from `verify`, not from a content scan.
 
 `IH-CRED-002` uses Shannon entropy. A quoted value assigned to a key-like name is reported when it is at least 20 characters and at least 4 bits per character. Evidence keeps the first four characters and masks the rest.
 

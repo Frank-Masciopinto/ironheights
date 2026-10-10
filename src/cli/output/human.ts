@@ -1,3 +1,11 @@
+import {
+  formatGrade,
+  gradeFromSkills,
+  renderBadge,
+  renderSummary,
+  TEXT_SCAN_LIMIT,
+} from '../../core/grade.ts';
+import type { ScanMode } from '../../core/grade.ts';
 import type { Finding, SkillReport, Verdict } from '../../core/types.ts';
 import { compareSeverity } from '../../core/verdict.ts';
 import { clip } from '../../util/text.ts';
@@ -12,24 +20,44 @@ const SEVERITY_COLOR: Record<Finding['severity'], string> = {
   info: '2',
 };
 
-export function renderHuman(skills: SkillReport[], verdict: Verdict, color: boolean): string {
+export function renderHuman(
+  skills: SkillReport[],
+  verdict: Verdict,
+  color: boolean,
+  scanMode: ScanMode = 'directory',
+): string {
   const lines: string[] = [];
+  if (scanMode === 'text') lines.push(TEXT_SCAN_LIMIT, '');
   if (skills.length === 0) {
-    lines.push(NO_FINDINGS_LABEL, '', `Verdict: ${verdict}`, SAFETY_REMINDER);
-    return lines.join('\n');
+    lines.push(NO_FINDINGS_LABEL, '');
   }
   for (const skill of skills) {
     lines.push(clip(skill.skillName, 120));
     if (skill.findings.length === 0 && skill.verdict !== 'incomplete') {
-      lines.push(`  ${NO_FINDINGS_LABEL}`);
+      lines.push(`  ${skill.sinceBaseline ? 'No new findings' : NO_FINDINGS_LABEL}`);
     } else if (skill.findings.length > 0) {
       const grouped = [...skill.findings].sort((a, b) => compareSeverity(a.severity, b.severity));
       for (const finding of grouped) {
-        const where = finding.line ? `${finding.file}:${finding.line}` : finding.file;
-        const label = paint(color, SEVERITY_COLOR[finding.severity], `[${finding.severity}]`);
-        lines.push(`  ${label} ${finding.ruleId} ${where}`);
-        lines.push(`    ${clip(finding.evidence)}`);
-        lines.push(`    ${finding.remediation}`);
+        lines.push(...findingLines(finding, color));
+      }
+    }
+    appendList(
+      lines,
+      'Suppressed',
+      (skill.suppressed ?? []).map((item) => `${item.ruleId} ${where(item)} reason=${item.reason}`),
+    );
+    appendList(
+      lines,
+      'Suppression refused',
+      (skill.suppressionRefused ?? []).map(
+        (item) => `${item.ruleId} ${where(item)} ${item.detail}`,
+      ),
+    );
+    appendList(lines, 'Suppression ignored', skill.suppressionWarnings ?? []);
+    if (skill.sinceBaseline) {
+      lines.push(`  Omitted as pre-existing: ${skill.sinceBaseline.omitted.length}`);
+      for (const item of skill.sinceBaseline.omitted) {
+        lines.push(`    ${item.ruleId} ${where(item)}`);
       }
     }
     for (const skipped of skill.filesSkipped) {
@@ -41,8 +69,33 @@ export function renderHuman(skills: SkillReport[], verdict: Verdict, color: bool
     }
     lines.push('');
   }
-  lines.push(`Verdict: ${verdict}`, SAFETY_REMINDER);
+  const grade = gradeFromSkills(skills);
+  const summaryInput = { skills, verdict, grade, scanMode };
+  lines.push(`Verdict: ${verdict}`);
+  lines.push(`Grade: ${formatGrade(grade)}`);
+  lines.push(SAFETY_REMINDER);
+  lines.push(renderSummary(summaryInput));
+  lines.push(`Badge: ${renderBadge(summaryInput)}`);
   return lines.join('\n');
+}
+
+function findingLines(finding: Finding, color: boolean): string[] {
+  const label = paint(color, SEVERITY_COLOR[finding.severity], `[${finding.severity}]`);
+  return [
+    `  ${label} ${finding.ruleId} ${where(finding)}`,
+    `    ${clip(finding.evidence)}`,
+    `    ${finding.remediation}`,
+  ];
+}
+
+function where(item: { file: string; line?: number }): string {
+  return item.line ? `${item.file}:${item.line}` : item.file;
+}
+
+function appendList(lines: string[], title: string, items: string[]): void {
+  if (items.length === 0) return;
+  lines.push(`  ${title}: ${items.length}`);
+  for (const item of items) lines.push(`    ${item}`);
 }
 
 function incompleteSummary(count: number): string {

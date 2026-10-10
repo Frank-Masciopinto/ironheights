@@ -7,7 +7,10 @@ exports[`output snapshots > renders human, json, and sarif 1`] = `
     fix it
 
 Verdict: review
-Absence of findings is not proof of safety."
+Grade: D (60/100)
+Absence of findings is not proof of safety.
+ironheights 0.1.5 | demo | grade D (60/100) | verdict review | 1 finding
+Badge: [ironheights 0.1.5: grade D (60/100), verdict review](https://github.com/Frank-Masciopinto/ironheights) — Absence of findings is not proof of safety."
 `;
 
 exports[`output snapshots > renders human, json, and sarif 2`] = `
@@ -20,6 +23,14 @@ exports[`output snapshots > renders human, json, and sarif 2`] = `
   "scannedAt": "2026-10-09T00:00:00.000Z",
   "verdict": "review",
   "skippedFileCount": 0,
+  "grade": {
+    "letter": "D",
+    "score": 60,
+    "disclaimer": "Absence of findings is not proof of safety."
+  },
+  "scanMode": "directory",
+  "summary": "ironheights 0.1.5 | demo | grade D (60/100) | verdict review | 1 finding",
+  "badge": "[ironheights 0.1.5: grade D (60/100), verdict review](https://github.com/Frank-Masciopinto/ironheights) — Absence of findings is not proof of safety.",
   "skills": [
     {
       "skillName": "demo",
@@ -36,9 +47,22 @@ exports[`output snapshots > renders human, json, and sarif 2`] = `
           "line": 1,
           "evidence": "example",
           "message": "example",
-          "remediation": "fix it"
+          "remediation": "fix it",
+          "references": {
+            "owaspLlm": [
+              "LLM02:2025"
+            ],
+            "owaspAgentic": [],
+            "mitreAtlas": [
+              "AML.T0055"
+            ]
+          }
         }
       ],
+      "suppressed": [],
+      "suppressedCount": 0,
+      "suppressionRefused": [],
+      "suppressionRefusedCount": 0,
       "score": 40,
       "verdict": "review"
     }
@@ -77,7 +101,16 @@ exports[`output snapshots > renders human, json, and sarif 3`] = `
                 "category": "credentials",
                 "priority": "P0",
                 "tags": [
-                  "credentials"
+                  "credentials",
+                  "LLM02:2025",
+                  "AML.T0055"
+                ],
+                "owaspLlm": [
+                  "LLM02:2025"
+                ],
+                "owaspAgentic": [],
+                "mitreAtlas": [
+                  "AML.T0055"
                 ]
               }
             }
@@ -108,12 +141,28 @@ exports[`output snapshots > renders human, json, and sarif 3`] = `
           "properties": {
             "confidence": "high",
             "evidence": "example",
-            "remediation": "fix it"
+            "remediation": "fix it",
+            "tags": [
+              "LLM02:2025",
+              "AML.T0055"
+            ],
+            "owaspLlm": [
+              "LLM02:2025"
+            ],
+            "owaspAgentic": [],
+            "mitreAtlas": [
+              "AML.T0055"
+            ]
           }
         }
       ],
       "properties": {
-        "skippedFileCount": 0
+        "skippedFileCount": 0,
+        "suppressedCount": 0,
+        "gradeLetter": "D",
+        "gradeScore": 60,
+        "disclaimer": "Absence of findings is not proof of safety.",
+        "scanMode": "directory"
       }
     }
   ]
