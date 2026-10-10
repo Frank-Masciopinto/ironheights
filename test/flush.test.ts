@@ -19,7 +19,9 @@ describe('piped stdout is not cut at 64 KiB', () => {
     // The bundle stays inside the repo so Node can resolve external packages
     // (commander, zod, yaml, picomatch). A fully inlined ESM bundle cannot
     // load commander's dynamic require.
-    const bundleDir = await mkdtemp(join(process.cwd(), 'node_modules/.cache/ih-flush-'));
+    const cacheRoot = join(process.cwd(), 'node_modules', '.cache');
+    await mkdir(cacheRoot, { recursive: true });
+    const bundleDir = await mkdtemp(join(cacheRoot, 'ih-flush-'));
     bin = join(bundleDir, 'cli.mjs');
     await build({
       entryPoints: [join(process.cwd(), 'src/cli/index.ts')],
