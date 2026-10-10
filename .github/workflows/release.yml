@@ -51,6 +51,7 @@ jobs:
       - name: Attach checksums to the GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
         run: |
           tag="${GITHUB_REF_NAME}"
           notes="npm package published with provenance. Verify SHA256SUMS using docs/release-verification.md."
