@@ -2,7 +2,7 @@
 
 These are not implemented. They are recorded so the scanner stays small.
 
-- Runtime proxy, egress filtering, and command approval.
+- A runtime proxy or egress filter outside the OpenClaw process. The in-process tool-call guard is documented in [guard.md](guard.md). It is not that proxy.
 - Signing the baseline, or storing it off the machine. An attacker with the same user account can edit `~/.ironheights/baseline.json` today.
 - A cloud console, accounts, billing, or telemetry.
 - LLM-based detection.
