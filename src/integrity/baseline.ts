@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto';
 import { lstat, readdir, readlink, stat } from 'node:fs/promises';
-import { homedir } from 'node:os';
 import { basename, join, relative, sep } from 'node:path';
+import { fromPortablePath as fromPortable, toPortablePath as toPortable } from '../util/paths.ts';
 import { createReadStream } from 'node:fs';
 import { z } from 'zod';
 import { UsageError } from '../core/errors.ts';
@@ -33,17 +33,12 @@ export function baselinePath(home: string): string {
   return join(home, 'baseline.json');
 }
 
-export function toPortablePath(abs: string): string {
-  const home = homedir();
-  if (abs === home) return '~';
-  if (abs.startsWith(home + sep)) return `~${abs.slice(home.length)}`;
-  return abs;
+export function toPortablePath(abs: string, env: NodeJS.ProcessEnv = process.env): string {
+  return toPortable(abs, env);
 }
 
-export function fromPortablePath(portable: string): string {
-  if (portable === '~') return homedir();
-  if (portable.startsWith('~/')) return join(homedir(), portable.slice(2));
-  return portable;
+export function fromPortablePath(portable: string, env: NodeJS.ProcessEnv = process.env): string {
+  return fromPortable(portable, env);
 }
 
 export async function createBaseline(roots: string[], now = new Date()): Promise<Baseline> {

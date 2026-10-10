@@ -1,5 +1,6 @@
 import { lstat, open, readdir, realpath, stat } from 'node:fs/promises';
 import { relative, resolve, sep } from 'node:path';
+import { isInsideRoot, normalizeForCompare, stripLongPath } from '../util/paths.ts';
 import picomatch from 'picomatch';
 import { classifyFile, decodeText } from './filetype.ts';
 import type { Limits, ScannedFile, SkippedFile } from './types.ts';
@@ -14,7 +15,7 @@ export async function walkSkill(
   limits: Limits,
   ignoreGlobs: string[],
 ): Promise<WalkResult> {
-  const realRoot = await realpath(root);
+  const realRoot = stripLongPath(await realpath(root));
   const ignore = picomatch(ignoreGlobs, { dot: true });
   const files: ScannedFile[] = [];
   const skipped: SkippedFile[] = [];
@@ -82,13 +83,12 @@ export async function walkSkill(
   ): Promise<void> {
     let target: string;
     try {
-      target = await realpath(abs);
+      target = stripLongPath(await realpath(abs));
     } catch {
       skipped.push({ file: portable, reason: 'broken symlink' });
       return;
     }
-    const relTarget = relative(realRoot, target);
-    const outside = relTarget.startsWith('..') || relTarget.split(sep).includes('..');
+    const outside = !isInsideRoot(realRoot, target);
     if (outside) {
       await addFile(abs, portable, (await lstat(abs)).mode, 0, {
         symlinkOutside: true,
@@ -98,7 +98,8 @@ export async function walkSkill(
       });
       return;
     }
-    if (seen.has(target)) {
+    const seenKey = normalizeForCompare(target);
+    if (seen.has(seenKey)) {
       await addFile(abs, portable, (await lstat(abs)).mode, 0, {
         symlinkOutside: false,
         symlinkLoop: true,
@@ -107,7 +108,7 @@ export async function walkSkill(
       });
       return;
     }
-    seen.add(target);
+    seen.add(seenKey);
     let targetStat;
     try {
       targetStat = await stat(abs);
@@ -151,7 +152,12 @@ export async function walkSkill(
     }
     const classified = classifyFile(portable, head);
     const binary = classified.kind === 'binary';
-    const text = link.forceEmpty || binary ? '' : decodeText(await readAll(abs, size));
+    const bytes = link.forceEmpty || binary ? new Uint8Array() : await readAll(abs, size);
+    if (!bytes) {
+      skipped.push({ file: portable, reason: 'unreadable file' });
+      return;
+    }
+    const text = link.forceEmpty || binary ? '' : decodeText(bytes);
     const base = portable.split('/').pop() ?? portable;
     files.push({
       relativePath: portable,
@@ -168,7 +174,7 @@ export async function walkSkill(
     });
   }
 
-  await visit(realRoot, 0, new Set([realRoot]));
+  await visit(realRoot, 0, new Set([normalizeForCompare(realRoot)]));
   return { files, skipped };
 }
 
@@ -188,14 +194,18 @@ async function readHead(abs: string, size: number): Promise<Uint8Array | undefin
   }
 }
 
-async function readAll(abs: string, size: number): Promise<Uint8Array> {
-  const handle = await open(abs, 'r');
+async function readAll(abs: string, size: number): Promise<Uint8Array | undefined> {
   try {
-    const buf = Buffer.alloc(size);
-    await handle.read(buf, 0, size, 0);
-    return buf;
-  } finally {
-    await handle.close();
+    const handle = await open(abs, 'r');
+    try {
+      const buf = Buffer.alloc(size);
+      await handle.read(buf, 0, size, 0);
+      return buf;
+    } finally {
+      await handle.close();
+    }
+  } catch {
+    return undefined;
   }
 }
 

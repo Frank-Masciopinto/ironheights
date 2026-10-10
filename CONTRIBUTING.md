@@ -15,6 +15,8 @@
 
 A finding needs a rule id, severity, confidence, file, evidence under 200 characters, a message, and the remediation string. Mask secrets before they reach `evidence`.
 
+`IH-CFG-*` rules are not content rules. They live in `src/audit/` and run only from `audit-config`. Add match and no-match examples on the rule, fixture configs in `test/audit-config.test.ts`, and keep a skill scan of `test/fixtures/benign` quiet. Do not read secret values into evidence.
+
 ## Local checks
 
 Node.js 20 or newer. `.nvmrc` is `20`.

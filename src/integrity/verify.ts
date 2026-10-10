@@ -65,7 +65,7 @@ export async function verifyBaseline(
   const saved = parseBaseline(raw);
   const treeHashMismatch = baselineIsTampered(saved);
   const signature = await checkSignature(raw, `${filePath}.sig`, options.keyPath);
-  const roots = saved.roots.map(fromPortablePath);
+  const roots = saved.roots.map((portable) => fromPortablePath(portable));
   const current = await createBaseline(roots);
   const added: string[] = [];
   const modified: string[] = [];
@@ -96,9 +96,9 @@ export async function verifyBaseline(
     );
   }
 
-  const agent = new Set(config.agentFiles.map(toPortablePath));
+  const agent = new Set(config.agentFiles.map((file) => toPortablePath(file)));
   const agentDirs = config.agentFiles
-    .map(toPortablePath)
+    .map((file) => toPortablePath(file))
     .filter((path) => !path.endsWith('.md') && !path.endsWith('.json') && !path.endsWith('.env'));
 
   for (const [path, record] of Object.entries(current.files)) {

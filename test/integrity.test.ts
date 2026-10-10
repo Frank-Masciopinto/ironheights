@@ -1,4 +1,4 @@
-import { chmod, mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { chmod, mkdtemp, mkdir, readFile, rm, stat, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
@@ -12,6 +12,7 @@ import {
 import { quarantineSkill, restoreQuarantine } from '../src/integrity/quarantine.ts';
 import { verifyBaseline, saveBaseline } from '../src/integrity/verify.ts';
 import { scoreFindings, verdictFor } from '../src/core/verdict.ts';
+import { linkPath } from './support.ts';
 
 describe('integrity', () => {
   it('reports added, modified, removed, mode-changed, and tampered baselines', async () => {
@@ -35,9 +36,11 @@ describe('integrity', () => {
     await writeFile(file, '---\nname: skill\ndescription: Demo.\n---\nhello\n');
     const created = await createBaseline([skill]);
     await writeBaseline(join(home, 'baseline.json'), created);
-    await chmod(file, 0o600);
+    const beforeMode = (await stat(file)).mode & 0o777;
+    await chmod(file, 0o444);
+    const afterMode = (await stat(file)).mode & 0o777;
     const mode = await verifyBaseline(config, home);
-    expect(mode.modeChanged.length).toBe(1);
+    expect(mode.modeChanged.length).toBe(beforeMode === afterMode ? 0 : 1);
 
     await chmod(file, 0o644);
     const again = await createBaseline([skill]);
@@ -98,5 +101,25 @@ describe('quarantine', () => {
     expect(restored.originalPath).toBe(skill);
     expect(await readFile(join(skill, 'notes.txt'), 'utf8')).toBe('same bytes\n');
     expect(await readFile(join(skill, 'SKILL.md'), 'utf8')).toContain('keep');
+  });
+
+  it('moves a skill that links outside without deleting the target', async () => {
+    const dir = await mkdtemp(join(tmpdir(), 'ih-quar-link-'));
+    const skill = join(dir, 'linked-skill');
+    const outside = join(dir, 'outside.txt');
+    await mkdir(skill);
+    await writeFile(outside, 'keep-outside\n');
+    await writeFile(join(skill, 'SKILL.md'), '---\nname: linked\ndescription: Demo.\n---\n\n');
+    const linked = await linkPath(outside, join(skill, 'escape.txt'));
+    if (!linked) {
+      await rm(dir, { recursive: true, force: true });
+      return;
+    }
+    const home = join(dir, 'home');
+    const manifest = await quarantineSkill(skill, home, new Date('2026-10-09T00:00:00.000Z'));
+    expect(await readFile(outside, 'utf8')).toBe('keep-outside\n');
+    await restoreQuarantine(manifest.id, home);
+    expect(await readFile(outside, 'utf8')).toBe('keep-outside\n');
+    expect(await readFile(join(skill, 'SKILL.md'), 'utf8')).toContain('linked');
   });
 });

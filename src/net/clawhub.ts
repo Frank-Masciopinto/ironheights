@@ -5,7 +5,8 @@ import { join, resolve } from 'node:path';
 import { z } from 'zod';
 import { UsageError } from '../core/errors.ts';
 import { pinnedGet, formatRequestPlan } from './http.ts';
-import { safeRelativeParts, writeRegularFileInside } from './safe-path.ts';
+import { pathContainsSymlink, safeRelativeParts, writeRegularFileInside } from './safe-path.ts';
+import { stripLongPath } from '../util/paths.ts';
 
 export const CLAWHUB_ORIGIN = 'https://clawhub.ai';
 export const CLAWHUB_HOST = 'clawhub.ai';
@@ -297,9 +298,10 @@ async function prepareStaging(slug: string, outDir: string | undefined): Promise
   }
   if (info.isSymbolicLink()) throw new UsageError('refusing staging directory that is a symlink');
   if (!info.isDirectory()) throw new UsageError('staging path is not a directory');
-  const real = await realpath(resolved);
-  if (real !== resolved)
+  if (await pathContainsSymlink(resolved)) {
     throw new UsageError('refusing staging directory that is reached through a symlink');
+  }
+  const real = stripLongPath(await realpath(resolved));
   const entries = await readdir(real);
   if (entries.length > 0) throw new UsageError('staging directory is not empty');
   return { dir: real, parent: real, createdParent: false };

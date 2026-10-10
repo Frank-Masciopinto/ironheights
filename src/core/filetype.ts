@@ -118,5 +118,7 @@ function looksBinary(head: Uint8Array): boolean {
 }
 
 export function decodeText(bytes: Uint8Array): string {
-  return new TextDecoder('utf-8', { fatal: false }).decode(bytes);
+  let text = new TextDecoder('utf-8', { fatal: false }).decode(bytes);
+  if (text.charCodeAt(0) === 0xfeff) text = text.slice(1);
+  return text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
 }

@@ -1,6 +1,6 @@
 import { readdir, readFile, stat } from 'node:fs/promises';
-import { homedir } from 'node:os';
 import { join } from 'node:path';
+import { expandUserPath, homeDirectory } from '../util/paths.ts';
 import { BUILTIN_ALLOW_DOMAINS } from '../core/domains.ts';
 import {
   custodianSkillsDir,
@@ -49,7 +49,7 @@ export interface OpenClawLocations {
 }
 
 export function openclawStateDir(env: NodeJS.ProcessEnv = process.env): string {
-  return env.OPENCLAW_STATE_DIR ?? join(homedir(), '.openclaw');
+  return env.OPENCLAW_STATE_DIR ?? join(homeDirectory(env), '.openclaw');
 }
 
 export async function discoverDefaultPaths(env: NodeJS.ProcessEnv = process.env): Promise<{
@@ -82,8 +82,8 @@ export async function locateOpenClaw(
     try {
       const parsed = parseJson5(await readFile(configPath, 'utf8'));
       const extracted = extractOpenClawPaths(parsed);
-      if (extracted.workspace) workspace = expand(extracted.workspace);
-      extraDirs.push(...extracted.extraDirs.map(expand));
+      if (extracted.workspace) workspace = expand(extracted.workspace, env);
+      extraDirs.push(...extracted.extraDirs.map((dir) => expand(dir, env)));
       configParsed = true;
     } catch {
       configParsed = false;
@@ -96,7 +96,7 @@ export async function locateOpenClaw(
   const candidates: Array<{ path: string; source: string }> = [
     { path: join(workspace, 'skills'), source: 'workspace skills' },
     { path: join(workspace, '.agents', 'skills'), source: 'project agent skills' },
-    { path: join(homedir(), '.agents', 'skills'), source: 'personal agent skills' },
+    { path: join(homeDirectory(env), '.agents', 'skills'), source: 'personal agent skills' },
     { path: join(stateDir, 'skills'), source: 'managed skills' },
   ];
 
@@ -203,8 +203,6 @@ export function parseJson5(text: string): unknown {
   return JSON.parse(quotedKeys) as unknown;
 }
 
-function expand(value: string): string {
-  if (value === '~') return homedir();
-  if (value.startsWith('~/')) return join(homedir(), value.slice(2));
-  return value;
+function expand(value: string, env: NodeJS.ProcessEnv): string {
+  return expandUserPath(value, env);
 }

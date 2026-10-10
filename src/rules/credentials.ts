@@ -25,12 +25,20 @@ export const cred001: Rule = {
   severity: 'high',
   priority: 'P0',
   description:
-    'References to keys, browser stores, wallets, shell history, or OpenClaw auth files expose credentials. A credential directory such as ~/.ssh, ~/.aws, ~/.gnupg, or ~/.azure counts with or without a file name after it.',
+    'References to keys, browser stores, wallets, shell history, or OpenClaw auth files expose credentials. A credential directory such as ~/.ssh, ~/.aws, ~/.gnupg, or ~/.azure counts with or without a file name after it. Windows forms count too: ~\\.ssh, %USERPROFILE%\\.ssh, and AppData paths for Chrome, Firefox, or the credential store.',
   remediation:
     'Do not read these paths from a skill. Use a scoped environment variable or the platform secret store.',
   appliesTo: ['any'],
   examples: {
-    matches: ['cat ~/.ssh/id_rsa', 'open ~/.aws/credentials', '~/.ssh', '~/.gnupg/'],
+    matches: [
+      'cat ~/.ssh/id_rsa',
+      'open ~/.aws/credentials',
+      '~/.ssh',
+      '~/.gnupg/',
+      'type %USERPROFILE%\\.ssh\\id_rsa',
+      'Get-Content ~\\.aws\\credentials',
+      '%LOCALAPPDATA%\\Google\\Chrome\\User Data\\Default\\Login Data',
+    ],
     nonMatches: [
       'write notes to notes/today.md',
       'use an environment variable',
@@ -38,6 +46,8 @@ export const cred001: Rule = {
       'the browser stores cookies for the site',
       'Never upload `.env` or tokens.',
       'the sshd service accepts local connections',
+      'Use %USERPROFILE% as the home directory for notes.',
+      'AppData stores application settings for the editor.',
     ],
   },
   check(file) {

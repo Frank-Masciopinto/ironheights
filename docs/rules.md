@@ -135,7 +135,7 @@ Does not match:
 - OWASP Agentic: none
 - MITRE ATLAS: AML.T0055
 
-References to keys, browser stores, wallets, shell history, or OpenClaw auth files expose credentials. A credential directory such as ~/.ssh, ~/.aws, ~/.gnupg, or ~/.azure counts with or without a file name after it.
+References to keys, browser stores, wallets, shell history, or OpenClaw auth files expose credentials. A credential directory such as ~/.ssh, ~/.aws, ~/.gnupg, or ~/.azure counts with or without a file name after it. Windows forms count too: ~\.ssh, %USERPROFILE%\.ssh, and AppData paths for Chrome, Firefox, or the credential store.
 
 Remediation: Do not read these paths from a skill. Use a scoped environment variable or the platform secret store.
 
@@ -144,6 +144,9 @@ Matches:
 - `open ~/.aws/credentials`
 - `~/.ssh`
 - `~/.gnupg/`
+- `type %USERPROFILE%\.ssh\id_rsa`
+- `Get-Content ~\.aws\credentials`
+- `%LOCALAPPDATA%\Google\Chrome\User Data\Default\Login Data`
 
 Does not match:
 - `write notes to notes/today.md`
@@ -152,6 +155,8 @@ Does not match:
 - `the browser stores cookies for the site`
 - `Never upload '.env' or tokens.`
 - `the sshd service accepts local connections`
+- `Use %USERPROFILE% as the home directory for notes.`
+- `AppData stores application settings for the editor.`
 
 ## IH-CRED-002 — Hard-coded secret
 
@@ -560,4 +565,214 @@ Does not match:
 - `skill slug is not in the feed`
 - `no advisory cache is present`
 - `a version-specific advisory does not list this version`
+
+## IH-CFG-001 — Gateway bind is not loopback
+
+- Severity: high
+- Category: config
+- Priority: P0
+- Applies to: config
+- OWASP LLM: LLM06:2025
+- OWASP Agentic: ASI05:2026
+- MITRE ATLAS: none
+
+gateway.bind is lan, tailnet, custom, auto, or an all-interfaces address, or gateway.tailscale.mode is funnel. OpenClaw's native check gateway.bind_no_auth covers a remote bind without a shared secret, and gateway.tailscale_funnel covers public Funnel. This rule only reads the config value. It does not probe the listener. auto is medium because the effective bind is chosen at runtime. Funnel and 0.0.0.0 are critical.
+
+Remediation: Prefer gateway.bind "loopback". If the Gateway must leave the machine, require token or password auth and firewall the port. Do not use Tailscale Funnel for a Gateway you have not locked down. Run openclaw security audit for a live check.
+
+Matches:
+- `gateway.bind: "lan"`
+- `gateway.bind: "custom", gateway.customBindHost: "0.0.0.0"`
+- `gateway.tailscale.mode: "funnel"`
+
+Does not match:
+- `gateway.bind: "loopback"`
+- `gateway.bind omitted (OpenClaw default is loopback)`
+- `gateway.bind: "custom", gateway.customBindHost: "127.0.0.1"`
+
+## IH-CFG-002 — Gateway auth is missing or a placeholder
+
+- Severity: critical
+- Category: config
+- Priority: P0
+- Applies to: config
+- OWASP LLM: LLM06:2025
+- OWASP Agentic: none
+- MITRE ATLAS: none
+
+gateway.auth.mode is none or trusted-proxy, a non-loopback bind has no auth object, or the token or password in the file is empty or a known placeholder. Native checks gateway.bind_no_auth, gateway.loopback_no_auth, gateway.token_placeholder_value, and gateway.trusted_proxy_auth overlap this rule. A loopback bind that omits auth is not flagged: OpenClaw's default is authenticated, and the token may live in OPENCLAW_GATEWAY_TOKEN, which this command does not read. trusted-proxy is critical because the proxy becomes the auth boundary; proxy IPs and headers are left to the native audit.
+
+Remediation: Set gateway.auth.mode to token or password and store the secret in the environment or a SecretRef, not as a placeholder. For trusted-proxy, run openclaw security audit and keep gateway.trustedProxies tight. This command never prints the secret.
+
+Matches:
+- `gateway.auth.mode: "none"`
+- `gateway.bind: "lan" with no gateway.auth`
+- `gateway.auth.token: "replace-with-long-random-token"`
+- `gateway.auth.mode: "trusted-proxy"`
+
+Does not match:
+- `gateway.auth.mode: "token", gateway.auth.token: "${OPENCLAW_GATEWAY_TOKEN}"`
+- `gateway.bind: "loopback" and gateway.auth omitted`
+- `gateway.auth: { mode: "token" } with the secret only in the environment`
+
+## IH-CFG-003 — DM policy is open
+
+- Severity: critical
+- Category: config
+- Priority: P0
+- Applies to: config
+- OWASP LLM: LLM06:2025
+- OWASP Agentic: ASI05:2026
+- MITRE ATLAS: none
+
+A channel dmPolicy (or dm.policy) is open, so anyone can DM the agent. This matches the native check channels.<channel>.dm.open. Mutable allowFrom entries and name matching are not reimplemented.
+
+Remediation: Set dmPolicy to pairing or allowlist. Open is a last resort in the OpenClaw docs. Run openclaw security audit before exposing a bot.
+
+Matches:
+- `channels.telegram.dmPolicy: "open"`
+- `channels.discord.dm.policy: "open"`
+
+Does not match:
+- `channels.telegram.dmPolicy: "pairing"`
+- `channels.telegram.dmPolicy: "allowlist"`
+- `channels.telegram.dmPolicy: "disabled"`
+
+## IH-CFG-004 — Group policy is open
+
+- Severity: high
+- Category: config
+- Priority: P0
+- Applies to: config
+- OWASP LLM: LLM06:2025
+- OWASP Agentic: ASI05:2026
+- MITRE ATLAS: none
+
+A channel groupPolicy is open, so any member of a group can talk to the agent. Severity rises to critical when the same config also enables host exec, elevated tools, or an open DM policy. Native security.exposure.open_groups_with_elevated and security.exposure.open_channels_with_exec cover the live combination; this rule only reads the file.
+
+Remediation: Set groupPolicy to allowlist and require mentions. Do not combine an open room with tools.exec.security full or tools.elevated.
+
+Matches:
+- `channels.telegram.groupPolicy: "open"`
+- `channels.discord.groupPolicy: "open"`
+
+Does not match:
+- `channels.telegram.groupPolicy: "allowlist"`
+- `channels.telegram.groupPolicy: "disabled"`
+
+## IH-CFG-005 — Plaintext secret in OpenClaw config
+
+- Severity: high
+- Category: config
+- Priority: P1
+- Applies to: config
+- OWASP LLM: LLM02:2025
+- OWASP Agentic: none
+- MITRE ATLAS: AML.T0055
+
+A token, password, secret, or API key is a literal string in the config file. ${ENV} references and SecretRef objects (source env, file, exec, or store) are not literals. Placeholder literals are reported as IH-CFG-002 instead. Evidence is the key path plus <redacted>. Native config.secrets.gateway_password_in_config and config.secrets.hooks_token_in_config are the overlapping checks; other secret keys in the file are reported here too.
+
+Remediation: Remove the literal. Use a SecretRef or an environment variable. Rotate the value if the file was copied or committed. This command does not print the value.
+
+Matches:
+- `hooks.token: "a-real-token-value"`
+- `gateway.auth.password: "correct-horse"`
+
+Does not match:
+- `gateway.auth.token: "${OPENCLAW_GATEWAY_TOKEN}"`
+- `gateway.auth.token: { source: "env", provider: "default", id: "OPENCLAW_GATEWAY_TOKEN" }`
+- `gateway.auth.mode: "token"`
+
+## IH-CFG-006 — OpenClaw config permissions
+
+- Severity: critical
+- Category: config
+- Priority: P0
+- Applies to: config
+- OWASP LLM: LLM02:2025
+- OWASP Agentic: none
+- MITRE ATLAS: AML.T0055
+
+On POSIX, the config file is group-writable, world-writable, world-readable, or group-readable. A symlink is reported at medium severity because OpenClaw documents that a symlinked openclaw.json is unsupported. Native checks fs.config.perms_world_readable, fs.config.perms_writable, fs.config.perms_group_readable, and fs.config.symlink. Windows ACLs are not Unix mode bits. This rule does not report permission findings on Windows and does not run icacls. OpenClaw's audit does.
+
+Remediation: On POSIX, chmod 600 the config file and do not symlink it. On Windows, run openclaw security audit so ACL resets can be reviewed. This command never changes permissions.
+
+Matches:
+- `openclaw.json mode 0644`
+- `openclaw.json mode 0666`
+- `openclaw.json is a symlink`
+
+Does not match:
+- `openclaw.json mode 0600`
+- `openclaw.json mode 0400`
+
+## IH-CFG-007 — Dangerous tool permissions
+
+- Severity: high
+- Category: config
+- Priority: P1
+- Applies to: config
+- OWASP LLM: LLM06:2025
+- OWASP Agentic: ASI05:2026
+- MITRE ATLAS: none
+
+tools.exec.security or an agent exec security is full, exec ask is off while security is not deny, or tools.elevated is enabled. Elevated allowFrom containing * is critical. Native tools.exec.security_full_configured and tools.elevated.allowFrom.<channel>.wildcard overlap this rule. Interpreter allowlists, safeBins, and approval-file drift are left to the native audit.
+
+Remediation: Set tools.exec.security to deny or allowlist, set tools.exec.ask to always, and keep tools.elevated.enabled false unless allowFrom is a named list without *.
+
+Matches:
+- `tools.exec.security: "full"`
+- `tools.exec.security: "allowlist", tools.exec.ask: "off"`
+- `tools.elevated.enabled: true, tools.elevated.allowFrom.telegram: ["*"]`
+
+Does not match:
+- `tools.exec.security: "deny", tools.exec.ask: "always"`
+- `tools.elevated.enabled: false`
+- `tools.exec.security: "allowlist", tools.exec.ask: "always"`
+
+## IH-CFG-008 — Skills load from an extra directory
+
+- Severity: medium
+- Category: config
+- Priority: P1
+- Applies to: config
+- OWASP LLM: LLM03:2025
+- OWASP Agentic: ASI04:2026
+- MITRE ATLAS: none
+
+skills.load.extraDirs or skills.load.allowSymlinkTargets is set. Extra directories are the lowest-precedence skill roots and are trusted by the operator. OpenClaw tells you to keep allowSymlinkTargets narrow. A home directory, a filesystem root, or a path that contains .. is critical. Other extra directories are medium. The native audit does not have this check; it does have skills.workspace.symlink_escape, which walks the workspace and is not repeated here.
+
+Remediation: Remove extra directories you do not trust. Do not point extraDirs or allowSymlinkTargets at ~, /, or a drive root. Scan those directories with ironheights scan before loading them.
+
+Matches:
+- `skills.load.extraDirs: ["~/Projects/untrusted/skills"]`
+- `skills.load.extraDirs: ["~"]`
+- `skills.load.allowSymlinkTargets: ["/"]`
+
+Does not match:
+- `skills.load.extraDirs omitted`
+- `skills.load.extraDirs: []`
+
+## IH-CFG-009 — Sandbox disabled while tools can act
+
+- Severity: medium
+- Category: config
+- Priority: P1
+- Applies to: config
+- OWASP LLM: LLM06:2025
+- OWASP Agentic: ASI05:2026
+- MITRE ATLAS: none
+
+Sandbox mode is off, or sandbox.docker is set while mode is off, and the file also enables host exec, elevated tools, or an open room. A personal agent with sandbox off and tools.exec.security deny is a documented OpenClaw pattern and stays quiet. Native sandbox.docker_config_mode_off and the security.exposure.open_groups_with_runtime_or_fs checks overlap the noisy cases. Docker bind mounts, seccomp, and AppArmor are not reimplemented.
+
+Remediation: Set agents.defaults.sandbox.mode to all for any agent that can exec or that strangers can message. Otherwise set tools.exec.security to deny. Run openclaw security audit for sandbox mount checks.
+
+Matches:
+- `agents.defaults.sandbox.mode: "off" and tools.exec.security: "full"`
+- `sandbox.docker is set and sandbox.mode: "off"`
+
+Does not match:
+- `agents.defaults.sandbox.mode: "all"`
+- `sandbox.mode omitted and tools.exec.security: "deny"`
+- `sandbox.mode: "off" and tools.elevated.enabled: false and tools.exec.security: "deny"`
 

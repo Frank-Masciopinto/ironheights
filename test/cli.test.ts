@@ -1,6 +1,6 @@
-import { mkdtemp, mkdir, readFile, realpath, rm, symlink, writeFile } from 'node:fs/promises';
+import { mkdtemp, mkdir, readFile, realpath, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { join, sep } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import AjvDraft04 from 'ajv-draft-04';
 import { describe, expect, it } from 'vitest';
@@ -8,6 +8,7 @@ import { isDirectInvocation, main } from '../src/cli/index.ts';
 import { nodeMeetsOpenClaw, runDoctor } from '../src/cli/commands/doctor.ts';
 import { renderSarif } from '../src/cli/output/sarif.ts';
 import { locateOpenClaw, parseJson5 } from '../src/openclaw/locate.ts';
+import { linkPath } from './support.ts';
 
 const SarifAjv = AjvDraft04 as unknown as new (options: {
   allErrors: boolean;
@@ -23,12 +24,12 @@ describe('direct invocation', () => {
       const file = join(dir, 'index.js');
       await writeFile(file, '');
       const link = join(dir, 'ironheights');
-      await symlink(file, link);
+      const linked = await linkPath(file, link);
       const bin = join(dir, 'bin');
       await mkdir(bin);
       const moduleUrl = pathToFileURL(file).href;
       expect(isDirectInvocation(moduleUrl, file)).toBe(true);
-      expect(isDirectInvocation(moduleUrl, link)).toBe(true);
+      if (linked) expect(isDirectInvocation(moduleUrl, link)).toBe(true);
       expect(isDirectInvocation(moduleUrl, join(bin, '..', 'index.js'))).toBe(true);
       expect(isDirectInvocation(moduleUrl, undefined)).toBe(false);
       expect(isDirectInvocation(moduleUrl, '')).toBe(false);
@@ -87,9 +88,7 @@ describe('doctor and locate', () => {
     await mkdir(join(state, 'agents', 'main', 'agent'), { recursive: true });
     await writeFile(
       join(state, 'openclaw.json'),
-      '{ /* comment */ agents: { defaults: { workspace: "' +
-        workspace +
-        '", }, }, skills: { load: { extraDirs: [], }, }, }\n',
+      `{ /* comment */ agents: { defaults: { workspace: ${JSON.stringify(workspace)}, }, }, skills: { load: { extraDirs: [], }, }, }\n`,
     );
     const located = await locateOpenClaw({
       OPENCLAW_STATE_DIR: state,
@@ -151,12 +150,13 @@ describe('doctor and locate', () => {
       join(state, 'bin', 'openclaw'),
       `#!/bin/sh\nexec node "${packageRoot}/dist/entry.js" "$@"\n`,
     );
-    await symlink(pluginReal, join(state, 'plugin-skills', 'browser-automation'));
+    await linkPath(pluginReal, join(state, 'plugin-skills', 'browser-automation'));
 
     const located = await locateOpenClaw({ OPENCLAW_STATE_DIR: state });
     expect(
       located.skillDirs.some(
-        (item) => item.source === 'bundled skills' && item.path.endsWith('/skills') && item.exists,
+        (item) =>
+          item.source === 'bundled skills' && item.path.endsWith(`${sep}skills`) && item.exists,
       ),
     ).toBe(true);
     expect(

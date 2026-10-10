@@ -1,7 +1,26 @@
-import { readFile } from 'node:fs/promises';
+import { readFile, stat, symlink } from 'node:fs/promises';
 import { emptyConfig } from '../src/core/config.ts';
 import { classifyFile } from '../src/core/filetype.ts';
 import type { ResolvedConfig, ScannedFile, ScanContext } from '../src/core/types.ts';
+
+/** Create a symlink, or a directory junction when Windows denies file symlinks. Returns false when a file link cannot be created. */
+export async function linkPath(target: string, link: string): Promise<boolean> {
+  const info = await stat(target);
+  const type = info.isDirectory() ? 'dir' : 'file';
+  try {
+    await symlink(target, link, type);
+    return true;
+  } catch (error) {
+    const code = (error as NodeJS.ErrnoException).code;
+    const denied = code === 'EPERM' || code === 'ENOTSUP' || code === 'EACCES';
+    if (process.platform === 'win32' && denied && info.isDirectory()) {
+      await symlink(target, link, 'junction');
+      return true;
+    }
+    if (process.platform === 'win32' && denied) return false;
+    throw error;
+  }
+}
 
 export function context(
   config: ResolvedConfig = emptyConfig(),

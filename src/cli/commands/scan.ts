@@ -10,8 +10,9 @@ import type { ScanMode } from '../../core/grade.ts';
 import { scanPath, scanText } from '../../core/scanner.ts';
 import { applySinceBaseline } from '../../core/since-baseline.ts';
 import { exitCodeFor, worstVerdict } from '../../core/verdict.ts';
-import type { Severity, SkillReport, Verdict } from '../../core/types.ts';
+import type { SkillReport, Verdict } from '../../core/types.ts';
 import { baselinePath } from '../../integrity/baseline.ts';
+import { parseFailOn } from '../options.ts';
 import { colorEnabled } from '../../util/terminal.ts';
 import { renderHtml } from '../output/html.ts';
 import { renderHuman } from '../output/human.ts';
@@ -187,20 +188,6 @@ async function stdinText(flags: ScanFlags): Promise<string> {
   }
   return Buffer.concat(chunks).toString('utf8');
 }
-
-function parseFailOn(value: string): Severity {
-  switch (value) {
-    case 'info':
-    case 'low':
-    case 'medium':
-    case 'high':
-    case 'critical':
-      return value;
-    default:
-      throw new UsageError('--fail-on must be info, low, medium, high, or critical');
-  }
-}
-
 async function applyAdvisoryCache(
   skills: SkillReport[],
   config: Awaited<ReturnType<typeof loadConfig>>,

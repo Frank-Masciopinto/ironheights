@@ -1,5 +1,6 @@
 import { lstat, readdir, readFile, realpath, stat } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
+import { homeDirectory, pathPlatform } from '../util/paths.ts';
 
 /**
  * Bundled skills ship in the OpenClaw package `skills/` directory.
@@ -14,13 +15,14 @@ import { dirname, join } from 'node:path';
  * `openclaw.plugin.json`.
  */
 
-const GLOBAL_PACKAGE_SKILLS = [
+const UNIX_GLOBAL_PACKAGE_SKILLS = [
   '/opt/homebrew/lib/node_modules/openclaw/skills',
   '/usr/local/lib/node_modules/openclaw/skills',
   '/usr/lib/node_modules/openclaw/skills',
 ];
 
-const WRAPPER_ENTRY = /["']([^"']+\/node_modules\/openclaw)\/dist\/entry\.js["']/;
+const WRAPPER_ENTRY =
+  /["']([^"']+[/\\]node_modules[/\\]openclaw)[/\\](?:dist[/\\]entry\.js|bin[/\\]openclaw\.js)["']/i;
 
 export async function resolveBundledSkillsDir(
   env: NodeJS.ProcessEnv,
@@ -30,12 +32,14 @@ export async function resolveBundledSkillsDir(
   if (override && (await looksLikeSkillsDir(override))) return override;
 
   const candidates: string[] = [];
-  const fromWrapper = await packageRootFromWrapper(join(stateDir, 'bin', 'openclaw'));
-  if (fromWrapper) candidates.push(join(fromWrapper, 'skills'));
+  for (const wrapper of wrapperCandidates(stateDir, env)) {
+    const fromWrapper = await packageRootFromWrapper(wrapper);
+    if (fromWrapper) candidates.push(join(fromWrapper, 'skills'));
+  }
   for (const root of await packageRootsFromTools(join(stateDir, 'tools'))) {
     candidates.push(join(root, 'skills'));
   }
-  candidates.push(...GLOBAL_PACKAGE_SKILLS);
+  candidates.push(...globalPackageSkillDirs(env));
 
   for (const candidate of candidates) {
     if (await looksLikeSkillsDir(candidate)) return candidate;
@@ -102,9 +106,8 @@ async function packageRootFromWrapper(wrapperPath: string): Promise<string | und
     return undefined;
   }
   if (text.length > 8192) text = text.slice(0, 8192);
-  const match = WRAPPER_ENTRY.exec(text);
-  const root = match?.[1];
-  if (!root?.endsWith('/node_modules/openclaw')) return undefined;
+  const root = packageRootFromWrapperText(text);
+  if (!root) return undefined;
   try {
     const info = await stat(root);
     return info.isDirectory() ? root : undefined;
@@ -123,13 +126,83 @@ async function packageRootsFromTools(toolsDir: string): Promise<string[]> {
   const roots: string[] = [];
   for (const entry of entries) {
     if (!entry.isDirectory() || !entry.name.startsWith('node-v')) continue;
-    const root = join(toolsDir, entry.name, 'lib', 'node_modules', 'openclaw');
-    try {
-      const info = await stat(root);
-      if (info.isDirectory()) roots.push(root);
-    } catch {
-      continue;
+    const layouts = [
+      join(toolsDir, entry.name, 'lib', 'node_modules', 'openclaw'),
+      join(toolsDir, entry.name, 'node_modules', 'openclaw'),
+    ];
+    for (const root of layouts) {
+      try {
+        const info = await stat(root);
+        if (info.isDirectory()) roots.push(root);
+      } catch {
+        continue;
+      }
     }
   }
   return roots;
+}
+
+/** Package root named in an OpenClaw or npm wrapper, or undefined when the text has none. */
+export function packageRootFromWrapperText(text: string): string | undefined {
+  const sample = text.length > 8192 ? text.slice(0, 8192) : text;
+  const match = WRAPPER_ENTRY.exec(sample);
+  const root = match?.[1];
+  if (!root || !isOpenClawPackageRoot(root)) return undefined;
+  return root;
+}
+
+export function isOpenClawPackageRoot(root: string): boolean {
+  const normalized = root.replace(/\\/g, '/').replace(/\/+$/, '');
+  return normalized.endsWith('/node_modules/openclaw');
+}
+
+export function globalPackageSkillDirs(
+  env: NodeJS.ProcessEnv = process.env,
+  os: NodeJS.Platform = process.platform,
+): string[] {
+  const lib = pathPlatform(os);
+  const dirs = [...UNIX_GLOBAL_PACKAGE_SKILLS];
+  const prefix = env.npm_config_prefix;
+  if (prefix) dirs.push(lib.join(prefix, 'node_modules', 'openclaw', 'skills'));
+  if (os !== 'win32') return dirs;
+  const home = homeDirectory(env, os);
+  const appData = env.APPDATA || lib.join(home, 'AppData', 'Roaming');
+  const localAppData = env.LOCALAPPDATA || lib.join(home, 'AppData', 'Local');
+  const programFiles = env.ProgramFiles || 'C:\\Program Files';
+  dirs.push(
+    lib.join(appData, 'npm', 'node_modules', 'openclaw', 'skills'),
+    lib.join(localAppData, 'pnpm', 'global', 'node_modules', 'openclaw', 'skills'),
+    lib.join(
+      localAppData,
+      'OpenClaw',
+      'deps',
+      'portable-node',
+      'node_modules',
+      'openclaw',
+      'skills',
+    ),
+    lib.join(programFiles, 'nodejs', 'node_modules', 'openclaw', 'skills'),
+  );
+  return dirs;
+}
+
+export function wrapperCandidates(
+  stateDir: string,
+  env: NodeJS.ProcessEnv = process.env,
+  os: NodeJS.Platform = process.platform,
+): string[] {
+  const lib = pathPlatform(os);
+  const candidates = [
+    lib.join(stateDir, 'bin', 'openclaw'),
+    lib.join(stateDir, 'bin', 'openclaw.cmd'),
+  ];
+  if (os !== 'win32') return candidates;
+  const home = homeDirectory(env, os);
+  const appData = env.APPDATA || lib.join(home, 'AppData', 'Roaming');
+  candidates.push(
+    lib.join(home, '.local', 'bin', 'openclaw.cmd'),
+    lib.join(appData, 'npm', 'openclaw.cmd'),
+    lib.join(appData, 'npm', 'openclaw'),
+  );
+  return candidates;
 }
