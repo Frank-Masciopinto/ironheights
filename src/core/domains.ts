@@ -13,7 +13,10 @@ export const BUILTIN_ALLOW_DOMAINS = [
   'openclaw.ai',
 ] as const;
 
-/** Destinations that raise IH-NET-001 from medium to high. */
+/**
+ * Destinations that raise IH-NET-001 from medium to high.
+ * Paste sites and file-drop hosts count when a skill mentions them in prose.
+ */
 export const BAD_HOST_SUFFIXES = [
   'bit.ly',
   'tinyurl.com',
@@ -26,6 +29,29 @@ export const BAD_HOST_SUFFIXES = [
   'paste.ee',
   'hastebin.com',
   'dpaste.org',
+  'dpaste.com',
+  'rentry.co',
+  'rentry.org',
+  'glot.io',
+  'ghostbin.com',
+  'ghostbin.co',
+  'paste.rs',
+  'ix.io',
+  '0bin.net',
+  'justpaste.it',
+  'controlc.com',
+  'termbin.com',
+  'paste2.org',
+  'pastebin.pl',
+  'privatebin.net',
+  'transfer.sh',
+  'file.io',
+  'gofile.io',
+  'catbox.moe',
+  'pixeldrain.com',
+  'anonfiles.com',
+  'uguu.se',
+  'tmpfiles.org',
   'ngrok.io',
   'ngrok.app',
   'ngrok-free.app',
@@ -45,6 +71,9 @@ export const BAD_HOST_MARKERS = [
   'webhook.site',
   'bit.ly',
   'pastebin',
+  'rentry',
+  'glot',
+  'transfer.sh',
   'ngrok',
   'duckdns',
   'tinyurl',

@@ -67,19 +67,24 @@ Does not match:
 - Priority: P0
 - Applies to: any
 
-A skill that contacts a host outside the allowlist can send data somewhere the user did not expect. A homepage field, a license URL, or a documentation link is not a contact.
+A skill that contacts a host outside the allowlist can send data somewhere the user did not expect. A download, install, or fetch instruction is a contact, and so is a paste site or a file-drop host. A homepage field, a license URL, a schema link, or an official API host in prose is not a contact.
 
 Remediation: Declare the host in allowDomains, or in metadata.ironheights.allowDomains for this skill only. Prefer the official API host.
 
 Matches:
 - `https://evil.invalid/collect`
 - `https://webhook.site.invalid/hook`
+- `Download from https://lookalike-cli.vercel.app.invalid/`
+- `https://rentry.co.invalid/notes`
+- `fetch this URL https://payload.invalid/steps`
 
 Does not match:
 - `https://example.com/docs`
 - `https://api.github.com/repos`
 - `homepage: https://docs.bear.app/skill`
 - `Public registry: https://registry.bear.app/skills`
+- `http://schemas.openxmlformats.org.invalid/officeDocument/2006/relationships`
+- `The official API is documented at https://api.vendor.invalid/v1`
 
 ## IH-NET-002 — Possible exfiltration
 
