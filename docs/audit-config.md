@@ -48,13 +48,26 @@ JSON is the scan document plus fields. `schemaVersion` remains `1`.
   "scannedAt": "2026-10-10T00:00:00.000Z",
   "verdict": "no-findings",
   "skippedFileCount": 0,
+  "grade": {
+    "letter": "A",
+    "score": 100,
+    "disclaimer": "Absence of findings is not proof of safety."
+  },
+  "scanMode": "directory",
+  "summary": "ironheights 0.1.5 | openclaw-config | grade A (100/100) | verdict no-findings | 0 findings",
+  "badge": "[ironheights 0.1.5: grade A (100/100), verdict no-findings](https://github.com/Frank-Masciopinto/ironheights) — Absence of findings is not proof of safety.",
   "skills": [
     {
       "skillName": "openclaw-config",
       "root": "/home/me/.openclaw",
       "filesScanned": 1,
       "filesSkipped": [],
+      "skippedFileCount": 0,
       "findings": [],
+      "suppressed": [],
+      "suppressedCount": 0,
+      "suppressionRefused": [],
+      "suppressionRefusedCount": 0,
       "score": 0,
       "verdict": "no-findings"
     }
