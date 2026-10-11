@@ -44,7 +44,7 @@ JSON is the scan document plus fields. `schemaVersion` remains `1`.
 ```json
 {
   "schemaVersion": 1,
-  "tool": { "name": "ironheights", "version": "0.2.0" },
+  "tool": { "name": "ironheights", "version": "0.3.0" },
   "scannedAt": "2026-10-10T00:00:00.000Z",
   "verdict": "no-findings",
   "skippedFileCount": 0,
@@ -54,8 +54,8 @@ JSON is the scan document plus fields. `schemaVersion` remains `1`.
     "disclaimer": "Absence of findings is not proof of safety."
   },
   "scanMode": "directory",
-  "summary": "ironheights 0.2.0 | openclaw-config | grade A (100/100) | verdict no-findings | 0 findings",
-  "badge": "[ironheights 0.2.0: grade A (100/100), verdict no-findings](https://github.com/Frank-Masciopinto/ironheights) — Absence of findings is not proof of safety.",
+  "summary": "ironheights 0.3.0 | openclaw-config | grade A (100/100) | verdict no-findings | 0 findings",
+  "badge": "[ironheights 0.3.0: grade A (100/100), verdict no-findings](https://github.com/Frank-Masciopinto/ironheights) — Absence of findings is not proof of safety.",
   "skills": [
     {
       "skillName": "openclaw-config",

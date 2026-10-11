@@ -2,7 +2,7 @@
   name: ironheights
   description: >
     Scan the working tree with the local ironheights CLI. Requires ironheights
-    on PATH (npm install -g ironheights@0.2.0). Offline. Does not upload results.
+    on PATH (npm install -g ironheights@0.3.0). Offline. Does not upload results.
   entry: ironheights
   language: system
   args: [scan, ., --fail-on, high]

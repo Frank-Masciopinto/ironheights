@@ -19,7 +19,7 @@ Exit codes are the scanner's:
 
 | Input           | Default  | Meaning                                                   |
 | --------------- | -------- | --------------------------------------------------------- |
-| `version`       | required | Exact release, for example `0.2.0`. `latest` is rejected. |
+| `version`       | required | Exact release, for example `0.3.0`. `latest` is rejected. |
 | `path`          | `.`      | Directory passed to `ironheights scan`.                   |
 | `fail-on`       | empty    | `info`, `low`, `medium`, `high`, or `critical`.           |
 | `allow-skipped` | `false`  | Pass `--allow-skipped`.                                   |
@@ -34,7 +34,7 @@ Until you are ready to pin a tag, `uses: ./` runs the action in this repository.
 
 ## Example
 
-Pin a tag once a release exists. `v0.2.0` is this release. Do not point production jobs at a floating branch. The example below works after `0.2.0` is on npm.
+Pin a tag once a release exists. `v0.3.0` is this release. Do not point production jobs at a floating branch. The example below works after `0.3.0` is on npm.
 
 ```yaml
 name: ironheights
@@ -48,9 +48,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: Frank-Masciopinto/ironheights@v0.2.0
+      - uses: Frank-Masciopinto/ironheights@v0.3.0
         with:
-          version: '0.2.0'
+          version: '0.3.0'
           path: .
           fail-on: high
           sarif-file: ironheights.sarif
@@ -66,7 +66,7 @@ Omit `upload-sarif` and the `security-events` permission when you only want the 
 ```yaml
 repos:
   - repo: https://github.com/Frank-Masciopinto/ironheights
-    rev: v0.2.0
+    rev: v0.3.0
     hooks:
       - id: ironheights
 ```
