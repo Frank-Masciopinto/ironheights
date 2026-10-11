@@ -5,7 +5,7 @@ description: >
   secret you configure.
 inputs:
   version:
-    description: Exact ironheights version, for example 0.2.0. Ranges and latest are rejected.
+    description: Exact ironheights version, for example 0.3.0. Ranges and latest are rejected.
     required: true
   path:
     description: Directory to scan.

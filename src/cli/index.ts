@@ -6,6 +6,7 @@ import { runAdvisories } from './commands/advisories.ts';
 import { runAuditConfig } from './commands/audit-config.ts';
 import { runBaseline, runVerify } from './commands/baseline.ts';
 import { runBenchCommand } from './commands/bench.ts';
+import { runCoexist } from './commands/coexist.ts';
 import { runDoctor } from './commands/doctor.ts';
 import { runFetch } from './commands/fetch.ts';
 import { runGuardLog, runGuardPolicyCheck, runGuardStatus } from './commands/guard.ts';
@@ -175,27 +176,56 @@ export async function main(argv: string[], hooks: MainHooks = {}): Promise<numbe
     process.exitCode = await runAuditConfig(auditFlags(opts));
   });
 
+  const coexistOptions = (command: Command): Command =>
+    command
+      .option('--json', 'print JSON to stdout')
+      .option('--fail-on <severity>', 'minimum severity that returns exit code 1')
+      .option('--openclaw-config <file>', 'OpenClaw config file to read')
+      .option('--repo <dir>', 'project folder whose pre-commit and CI files are read')
+      .option('--config <file>', 'ironheights config file')
+      .option('--no-color', 'disable color')
+      .option('--quiet', 'disable color and extra emphasis');
+  coexistOptions(
+    program
+      .command('coexist')
+      .description(
+        'Detect other security tools next to Ironheights and report conflicts. Read-only and offline.',
+      ),
+  ).action(async (opts: CoexistCommandOptions) => {
+    process.exitCode = await runCoexist(coexistFlags(opts));
+  });
+
   const doctor = program
     .command('doctor [action]')
-    .description('Show OpenClaw locations. `doctor audit` is an alias of audit-config.')
+    .description(
+      'Show OpenClaw locations. `doctor audit` is an alias of audit-config, `doctor coexist` of coexist.',
+    )
     .option('--config <file>', 'ironheights config file')
-    .option('--json', 'with audit, print JSON')
-    .option('--sarif <file>', 'with audit, write SARIF 2.1.0')
-    .option('--md <file>', 'with audit, write a markdown report')
+    .option('--json', 'with audit or coexist, print JSON')
     .option(
       '--fail-on <severity>',
-      'with audit, minimum severity that returns a non-zero exit code',
+      'with audit or coexist, minimum severity that returns a non-zero exit code',
     )
-    .option('--openclaw-config <file>', 'with audit, OpenClaw config file to read')
+    .option('--repo <dir>', 'with coexist, project folder whose CI files are read')
+    .option('--sarif <file>', 'with audit, write SARIF 2.1.0')
+    .option('--md <file>', 'with audit, write a markdown report')
+    .option('--openclaw-config <file>', 'with audit or coexist, OpenClaw config file to read')
     .option('--no-color', 'disable color')
     .option('--quiet', 'disable color and extra emphasis');
   doctor.action(
-    async (action: string | undefined, opts: AuditCommandOptions & { config?: string }) => {
+    async (
+      action: string | undefined,
+      opts: AuditCommandOptions & CoexistCommandOptions & { config?: string },
+    ) => {
       if (action === 'audit') {
         process.exitCode = await runAuditConfig(auditFlags(opts));
         return;
       }
-      if (action) throw new UsageError('doctor actions: audit');
+      if (action === 'coexist') {
+        process.exitCode = await runCoexist(coexistFlags(opts));
+        return;
+      }
+      if (action) throw new UsageError('doctor actions: audit, coexist');
       process.exitCode = await runDoctor(opts.config ? { config: opts.config } : {});
     },
   );
@@ -319,6 +349,28 @@ function auditFlags(opts: AuditCommandOptions) {
     ...(typeof opts.md === 'string' ? { md: opts.md } : {}),
     ...(typeof opts.failOn === 'string' ? { failOn: opts.failOn } : {}),
     ...(typeof opts.openclawConfig === 'string' ? { openclawConfig: opts.openclawConfig } : {}),
+    noColor: Boolean(opts.color === false),
+    quiet: Boolean(opts.quiet),
+  };
+}
+
+interface CoexistCommandOptions {
+  json?: boolean;
+  failOn?: string;
+  openclawConfig?: string;
+  repo?: string;
+  config?: string;
+  color?: boolean;
+  quiet?: boolean;
+}
+
+function coexistFlags(opts: CoexistCommandOptions) {
+  return {
+    json: Boolean(opts.json),
+    ...(typeof opts.failOn === 'string' ? { failOn: opts.failOn } : {}),
+    ...(typeof opts.openclawConfig === 'string' ? { openclawConfig: opts.openclawConfig } : {}),
+    ...(typeof opts.repo === 'string' ? { repo: opts.repo } : {}),
+    ...(typeof opts.config === 'string' ? { config: opts.config } : {}),
     noColor: Boolean(opts.color === false),
     quiet: Boolean(opts.quiet),
   };

@@ -47,6 +47,7 @@ export function renderMarkdown(
       `Score: ${skill.score}`,
       '',
     );
+    if (skill.knownSecurityTool) lines.push(`Note: ${skill.knownSecurityTool.note}`, '');
     if (skill.findings.length === 0 && skill.verdict !== 'incomplete') {
       lines.push(skill.sinceBaseline ? 'No new findings' : NO_FINDINGS_LABEL, '');
     }
@@ -58,6 +59,7 @@ export function renderMarkdown(
       lines.push(`  - ${finding.message}`);
       lines.push(`  - Evidence: \`${finding.evidence.replace(/`/g, "'")}\``);
       lines.push(`  - ${finding.remediation}`);
+      if (finding.note) lines.push(`  - Note: ${finding.note}`);
     }
     for (const item of skill.suppressed ?? []) {
       const where = item.line ? `${item.file}:${item.line}` : item.file;

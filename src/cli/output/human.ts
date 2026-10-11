@@ -39,6 +39,9 @@ export function renderHuman(
   }
   for (const skill of skills) {
     lines.push(clip(skill.skillName, 120));
+    if (skill.knownSecurityTool) {
+      lines.push(`  Note: ${clip(skill.knownSecurityTool.note, 400)}`);
+    }
     if (skill.findings.length === 0 && skill.verdict !== 'incomplete') {
       lines.push(`  ${skill.sinceBaseline ? 'No new findings' : NO_FINDINGS_LABEL}`);
     } else if (skill.findings.length > 0) {
@@ -90,6 +93,16 @@ export function renderHuman(
   if (advisory) {
     lines.push(`Advisory feed: ${advisory.entries} entries, generated ${advisory.generatedAt}.`);
   }
+  const known = [
+    ...new Set(
+      skills.flatMap((skill) => (skill.knownSecurityTool ? [skill.knownSecurityTool.name] : [])),
+    ),
+  ];
+  if (known.length > 0) {
+    lines.push(
+      `Security tools among these skills (name match only): ${known.slice(0, 6).join(', ')}. Run \`ironheights coexist\` to check they work together.`,
+    );
+  }
   lines.push(`Verdict: ${verdict}`);
   lines.push(`Grade: ${formatGrade(grade)}`);
   lines.push(...llmStatusLines(skills, llmReview));
@@ -104,6 +117,7 @@ function findingLines(finding: Finding, color: boolean): string[] {
   const lines = [`  ${label} ${finding.ruleId} ${where(finding)}`, `    ${clip(finding.evidence)}`];
   if (finding.ruleId === LLM_RULE_ID) lines.push(`    ${finding.message}`);
   lines.push(`    ${finding.remediation}`);
+  if (finding.note) lines.push(`    note: ${clip(finding.note, 300)}`);
   return lines;
 }
 

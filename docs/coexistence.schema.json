@@ -1,0 +1,177 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ironheights.dev/coexistence.schema.json",
+  "title": "ironheights coexist --json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "tool",
+    "command",
+    "scannedAt",
+    "openclaw",
+    "ironheights",
+    "tools",
+    "proxyEnv",
+    "findings",
+    "summary",
+    "notes",
+    "limits"
+  ],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "tool": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version"],
+      "properties": { "name": { "type": "string" }, "version": { "type": "string" } }
+    },
+    "command": { "const": "coexist" },
+    "scannedAt": { "type": "string" },
+    "openclaw": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["stateDir", "configPath", "configFound", "configParsed"],
+      "properties": {
+        "stateDir": { "type": "string" },
+        "configPath": { "type": "string" },
+        "configFound": { "type": "boolean" },
+        "configParsed": { "type": "boolean" }
+      }
+    },
+    "ironheights": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "pluginEnabled",
+        "pluginListedInAllow",
+        "pluginDenied",
+        "mode",
+        "modeSource",
+        "priority",
+        "policyPath",
+        "logPath",
+        "home",
+        "baselineExists",
+        "effectiveAllowDomains"
+      ],
+      "properties": {
+        "pluginEnabled": { "enum": [true, false, "unknown"] },
+        "pluginListedInAllow": { "enum": [true, false, "not-set"] },
+        "pluginDenied": { "type": "boolean" },
+        "mode": { "enum": ["monitor", "enforce"] },
+        "modeSource": { "type": "string" },
+        "priority": { "type": "integer" },
+        "policyPath": { "type": "string" },
+        "logPath": { "type": "string" },
+        "home": { "type": "string" },
+        "baselineExists": { "type": "boolean" },
+        "effectiveAllowDomains": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "tools": { "type": "array", "items": { "$ref": "#/$defs/tool" } },
+    "proxyEnv": { "type": "array", "items": { "type": "string" } },
+    "findings": { "type": "array", "items": { "$ref": "#/$defs/finding" } },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["toolCount", "enabledToolCount", "findingCount"],
+      "properties": {
+        "toolCount": { "type": "integer" },
+        "enabledToolCount": { "type": "integer" },
+        "findingCount": { "type": "integer" }
+      }
+    },
+    "notes": { "type": "array", "items": { "type": "string" } },
+    "limits": { "type": "array", "items": { "type": "string" } }
+  },
+  "$defs": {
+    "tri": { "enum": ["yes", "no", "unknown"] },
+    "tool": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "listed",
+        "kind",
+        "confidence",
+        "status",
+        "registersBeforeToolCall",
+        "canBlock",
+        "traits",
+        "evidence",
+        "sources"
+      ],
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "listed": { "type": "boolean" },
+        "kind": {
+          "enum": [
+            "runtime-guard",
+            "skill-scanner",
+            "instruction-skill",
+            "config-auditor",
+            "integrity-monitor",
+            "cloud-lookup",
+            "advisory-feed",
+            "traffic-proxy",
+            "secret-scanner",
+            "unlisted-plugin"
+          ]
+        },
+        "confidence": { "enum": ["high", "medium", "low"] },
+        "status": { "enum": ["enabled", "disabled", "present"] },
+        "mode": { "type": "string" },
+        "modeSource": { "enum": ["config", "default"] },
+        "registersBeforeToolCall": { "$ref": "#/$defs/tri" },
+        "canBlock": { "$ref": "#/$defs/tri" },
+        "traits": { "type": "object" },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["kind", "detail"],
+            "properties": {
+              "kind": {
+                "enum": [
+                  "plugin-manifest",
+                  "plugin-config",
+                  "skill-dir",
+                  "skill-name",
+                  "hook-dir",
+                  "hook-config",
+                  "state-path",
+                  "cli-on-path",
+                  "repo-ci",
+                  "mcp-server",
+                  "code-hint"
+                ]
+              },
+              "detail": { "type": "string" },
+              "path": { "type": "string" }
+            }
+          }
+        },
+        "sources": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "finding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "class", "severity", "title", "detail", "tools", "fix"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^IH-COEX-\\d{3}$" },
+        "class": { "type": "string" },
+        "severity": { "enum": ["info", "low", "medium", "high", "critical"] },
+        "title": { "type": "string" },
+        "detail": { "type": "string" },
+        "tools": { "type": "array", "items": { "type": "string" } },
+        "fix": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+        "snippet": { "type": "string" }
+      }
+    }
+  }
+}

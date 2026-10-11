@@ -71,6 +71,8 @@ export interface Finding {
   evidence: string;
   message: string;
   remediation: string;
+  /** Extra context for the reader. It never changes severity, score or verdict. */
+  note?: string;
 }
 
 export interface SkippedFile {
@@ -159,6 +161,19 @@ export interface SkillReport {
   suppressionRefused?: RefusedSuppression[];
   suppressionWarnings?: string[];
   sinceBaseline?: SinceBaselineNote;
+  /** Set when the folder or SKILL.md name equals a listed security tool. Not verified. */
+  knownSecurityTool?: KnownSecurityToolNote;
+}
+
+export interface KnownSecurityToolNote {
+  id: string;
+  name: string;
+  matchedBy: 'folder-name' | 'skill-name';
+  /** Always false. A name match proves nothing about the files. */
+  verified: false;
+  /** How many findings had their confidence lowered one step. */
+  downgradedFindings: number;
+  note: string;
 }
 
 export interface JsonSkillReport extends SkillReport {
