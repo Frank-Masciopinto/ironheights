@@ -43,6 +43,10 @@ Mode comes from the plugin config `plugins.entries.ironheights-guard.config.mode
 
 The guard does not use OpenClaw's `requireApproval` prompt. A chat approval can be talked into, and OpenClaw does not persist `allow-always` unless the plugin stores it. The durable approval is an allow entry you write in the policy file.
 
+## Running next to another guard
+
+The plugin registers `before_tool_call` at priority `80`. Set `plugins.entries.ironheights-guard.config.priority` (an integer from -1000 to 1000) to change it. OpenClaw runs higher numbers first and stops at the first `block: true`. In `monitor` mode Ironheights never blocks, so keep it in `monitor` when another guard already enforces. `ironheights coexist` lists the other tools it can see and the overlaps. See [coexistence.md](coexistence.md).
+
 ## Enable it
 
 Install ironheights, then point OpenClaw at this package. The package manifest `openclaw.plugin.json` and `package.json` field `openclaw.extensions` point at `dist/openclaw/plugin.js`. `before_tool_call` does not need `hooks.allowConversationAccess`.

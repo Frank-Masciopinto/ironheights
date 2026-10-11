@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.3.0 — 2026-10-11
+
+`ironheights coexist` (alias `ironheights doctor coexist`) looks for other security tools on this machine and reports where they overlap with Ironheights. It reads files only: OpenClaw config plugin and hook entries, plugin manifests, skill and hook folders, known state paths, `PATH` lookups, and CI files in a repo folder. It runs no other tool, calls no network, and writes nothing. Each detected tool lists the file that showed it. Findings `IH-COEX-001` to `IH-COEX-011` cover two tool-call guards, Ironheights enforce mode blocking another tool, two tools owning the same files, config rewriting, shared state paths, double network use, scheduled scans, instruction overlap, a traffic-intercepting proxy, a config that exempts a security tool by name, and a plugin allowlist that leaves the guard out. Each has a severity and a fix. `--json` follows `docs/coexistence.schema.json`. `--fail-on <severity>` exits 1 when a finding reaches that severity. The list of known tools is in `src/coexist/registry.ts`, with a source for every entry. Detection is heuristic, and absence of a finding is not proof that tools will not interfere. See [docs/coexistence.md](docs/coexistence.md).
+
+`ironheights doctor` prints a one-line summary of other security tools.
+
+The guard plugin takes a `priority` setting (default 80, range -1000 to 1000). OpenClaw runs higher numbers first, and a block ends the chain. At startup the plugin writes one log line when it sees other security tools. The line is read-only, has a three-second limit, and never delays or breaks startup. The guard still only returns `block` and `blockReason`, still never blocks in `monitor` mode, and keeps all its files under `~/.ironheights`.
+
+`scan` notes a skill whose folder name or `SKILL.md` name equals a listed security tool: "name match only, not verified". Findings of the injection and credential kinds that sit in Markdown files get their `confidence` lowered one step and a `note`. Severity, score, grade, verdict, and exit code do not change, and nothing is allowlisted. A copied name earns no trust. `schemaVersion` stays `1`. `knownSecurityTool` and `note` are additive fields.
+
 ## 0.2.0 — 2026-10-10
 
 `scan --json` and `scan --format html` (and every other command that writes to stdout) wait until the pipe has accepted the whole report before the process ends. `process.exit()` was dropping everything past the first 64 KiB, so a piped report came back as broken JSON. A file written with `--sarif` or `--html` was already complete. The exit code is unchanged.

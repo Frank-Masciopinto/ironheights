@@ -99,6 +99,7 @@ ironheights rules list
 ironheights rules show <id>
 ironheights doctor
 ironheights doctor audit
+ironheights coexist [--json] [--fail-on <severity>] [--openclaw-config <file>] [--repo <dir>]
 ironheights audit-config [--json] [--sarif <file>] [--md <file>] [--fail-on <severity>] [--openclaw-config <file>]
 ironheights bench <corpusDir> [--external <file.json>]
 ironheights guard status [--policy <file>] [--config <file>] [--json]
@@ -165,8 +166,8 @@ A skipped file, or a `.git` or `node_modules` directory that was not acknowledge
 Verdict: review
 Grade: D (60/100)
 Absence of findings is not proof of safety.
-ironheights 0.2.0 | demo | grade D (60/100) | verdict review | 1 finding
-Badge: [ironheights 0.2.0: grade D (60/100), verdict review](https://github.com/Frank-Masciopinto/ironheights) — Absence of findings is not proof of safety.
+ironheights 0.3.0 | demo | grade D (60/100) | verdict review | 1 finding
+Badge: [ironheights 0.3.0: grade D (60/100), verdict review](https://github.com/Frank-Masciopinto/ironheights) — Absence of findings is not proof of safety.
 ```
 
 The badge line is text you can paste into a README. It does not load an image from a badge service.
@@ -266,7 +267,7 @@ An allowlist entry matches that host and its subdomains. The built-in list inclu
 ```json
 {
   "schemaVersion": 1,
-  "tool": { "name": "ironheights", "version": "0.2.0" },
+  "tool": { "name": "ironheights", "version": "0.3.0" },
   "scannedAt": "2026-10-09T00:00:00.000Z",
   "verdict": "no-findings",
   "skippedFileCount": 0,
@@ -276,8 +277,8 @@ An allowlist entry matches that host and its subdomains. The built-in list inclu
     "disclaimer": "Absence of findings is not proof of safety."
   },
   "scanMode": "directory",
-  "summary": "ironheights 0.2.0 | no skills | grade A (100/100) | verdict no-findings | 0 findings",
-  "badge": "[ironheights 0.2.0: grade A (100/100), verdict no-findings](https://github.com/Frank-Masciopinto/ironheights) — Absence of findings is not proof of safety.",
+  "summary": "ironheights 0.3.0 | no skills | grade A (100/100) | verdict no-findings | 0 findings",
+  "badge": "[ironheights 0.3.0: grade A (100/100), verdict no-findings](https://github.com/Frank-Masciopinto/ironheights) — Absence of findings is not proof of safety.",
   "skills": []
 }
 ```
@@ -347,6 +348,22 @@ ironheights guard policy check --call '{"toolName":"read","params":{"path":"~/.s
 
 `guard policy check` exits 0 when the call would be allowed, 1 when it would be blocked, and 64 when the policy file is invalid.
 
+## Other security tools
+
+Many OpenClaw setups already run another scanner or guard. `ironheights coexist` finds them and reports overlaps, read-only and offline. It never runs the other tool and never edits a file.
+
+```bash
+ironheights coexist                  # text report: tools found, with the file that showed each one
+ironheights coexist --json           # JSON for CI and scripts
+ironheights coexist --fail-on medium # exit 1 when a finding is medium or higher
+```
+
+It looks at OpenClaw config plugin and hook entries, plugin manifests, skill and hook folders, known state paths, `PATH`, and CI files in the folder you pass with `--repo`. Findings `IH-COEX-001` to `IH-COEX-011` cover two guards on `before_tool_call`, Ironheights enforce mode blocking another tool, two tools owning the same files, shared state paths, double network use, and a config that exempts a security tool by name. Each has a severity and a fix.
+
+The guard plugin runs at priority 80 by default and takes a `priority` setting. When another guard already enforces, keep Ironheights in `monitor` and let one tool own blocking. `scan` notes a skill that carries the name of a known security tool and lowers confidence on its Markdown injection and credential findings. It does not allowlist anything and does not change the verdict.
+
+Detection is heuristic. A renamed or unlisted tool is not found, and a name can be copied. Absence of a finding is not proof that tools will not interfere. Details and limits: [docs/coexistence.md](docs/coexistence.md).
+
 ## The advisory skill
 
 `skill/ironheights/SKILL.md` tells an OpenClaw agent to run `ironheights scan <path> --json`, summarize the result, and stop on a `block` verdict until you confirm. The skill asks for no network access and no secrets.
@@ -369,7 +386,7 @@ Scans stay on the machine. There is no telemetry. `fetch`, `safe-install`, `advi
 
 ## Use in CI
 
-The repository root `action.yml` is a composite action. After a release tag, call it as `Frank-Masciopinto/ironheights@v0.2.0` (pin the tag you trust). It runs `npx ironheights@<version> scan` and does not read secrets. Exit codes match the scanner, including `3` when a file or a `.git` / `node_modules` directory was skipped. See [docs/ci.md](docs/ci.md) for the pre-commit hook and a SARIF upload example.
+The repository root `action.yml` is a composite action. After a release tag, call it as `Frank-Masciopinto/ironheights@v0.3.0` (pin the tag you trust). It runs `npx ironheights@<version> scan` and does not read secrets. Exit codes match the scanner, including `3` when a file or a `.git` / `node_modules` directory was skipped. See [docs/ci.md](docs/ci.md) for the pre-commit hook and a SARIF upload example.
 
 ```yaml
 name: ironheights
@@ -379,9 +396,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: Frank-Masciopinto/ironheights@v0.2.0
+      - uses: Frank-Masciopinto/ironheights@v0.3.0
         with:
-          version: '0.2.0'
+          version: '0.3.0'
           path: skills
           fail-on: high
 ```
