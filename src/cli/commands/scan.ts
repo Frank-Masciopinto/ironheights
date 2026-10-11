@@ -1,4 +1,5 @@
 import { stat, writeFile } from 'node:fs/promises';
+import { annotateKnownSecurityTools } from '../../coexist/annotate.ts';
 import { annotateSkillReports } from '../../advisories/match.ts';
 import { readAdvisoryCache } from '../../advisories/cache.ts';
 import { pinnedAdvisoryPublicKey } from '../../advisories/pinned-key.ts';
@@ -115,6 +116,7 @@ export async function executeScan(flags: ScanFlags): Promise<ScanExecution> {
 
   const advisory = await applyAdvisoryCache(skills, config, env, flags);
   skills = advisory.skills;
+  if (scanMode === 'directory') skills = annotateKnownSecurityTools(skills);
 
   if (flags.sinceBaseline !== undefined) {
     const source =

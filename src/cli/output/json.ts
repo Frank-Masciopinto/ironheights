@@ -78,6 +78,7 @@ function stableSkill(skill: SkillReport): JsonSkillReport {
           },
         }
       : {}),
+    ...(skill.knownSecurityTool ? { knownSecurityTool: skill.knownSecurityTool } : {}),
     score: skill.score,
     verdict: skill.verdict,
   };
@@ -99,6 +100,7 @@ function stableFinding(
     evidence: finding.evidence,
     message: finding.message,
     remediation: finding.remediation,
+    ...(finding.note ? { note: finding.note } : {}),
     ...(known > 0 || finding.ruleId.startsWith('IH-') ? { references } : {}),
   };
 }
