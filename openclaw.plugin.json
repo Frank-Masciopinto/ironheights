@@ -12,6 +12,13 @@
         "enum": ["monitor", "enforce"],
         "description": "Overrides the mode in the guard policy file. monitor logs only. enforce blocks."
       },
+      "priority": {
+        "type": "integer",
+        "minimum": -1000,
+        "maximum": 1000,
+        "default": 80,
+        "description": "before_tool_call order. OpenClaw runs higher numbers first (default 0). A block ends the chain, so the guard with the higher priority decides. Default 80."
+      },
       "policyPath": {
         "type": "string",
         "description": "Absolute path to guard-policy.json. Defaults to ~/.ironheights/guard-policy.json."

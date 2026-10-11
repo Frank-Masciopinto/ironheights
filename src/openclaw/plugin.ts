@@ -1,3 +1,5 @@
+import { startupCoexistenceNote } from '../coexist/startup.ts';
+import { priorityFromConfig } from '../guard/priority.ts';
 import { createGuardHook, type GuardHookEvent } from '../guard/hook.ts';
 import { GUARD_PLUGIN_ID } from '../guard/types.ts';
 import { TOOL_VERSION } from '../version.ts';
@@ -48,7 +50,8 @@ const plugin = {
     const handler = createGuardHook({
       ...(api.pluginConfig !== undefined ? { pluginConfig: api.pluginConfig } : {}),
     });
-    api.on('before_tool_call', (event) => handler(event), { priority: 80 });
+    const priority = priorityFromConfig(api.pluginConfig);
+    api.on('before_tool_call', (event) => handler(event), { priority });
     const mode =
       api.pluginConfig &&
       typeof api.pluginConfig === 'object' &&
@@ -57,8 +60,14 @@ const plugin = {
         ? api.pluginConfig.mode
         : 'policy default';
     api.logger?.info?.(
-      `ironheights-guard registered before_tool_call in-process (mode hint: ${mode}). This hook is not outside the agent.`,
+      `ironheights-guard registered before_tool_call in-process (mode hint: ${mode}, priority ${priority}). This hook is not outside the agent.`,
     );
+    // Read-only look at other security tools. It writes nothing and never blocks startup.
+    void startupCoexistenceNote()
+      .then((note) => {
+        if (note) api.logger?.info?.(`ironheights-guard: ${note}`);
+      })
+      .catch(() => undefined);
   },
 };
 
