@@ -1,5 +1,6 @@
 import { stat } from 'node:fs/promises';
 import { loadConfig } from '../../core/config.ts';
+import { buildCoexistReport, renderCoexistSummary } from '../../coexist/report.ts';
 import { locateOpenClaw } from '../../openclaw/locate.ts';
 import { OPENCLAW_NODE_RANGE } from '../../version.ts';
 
@@ -45,6 +46,12 @@ export async function runDoctor(options: {
     const message = error instanceof Error ? error.message : 'invalid config';
     write(`Ironheights config: invalid (${message})\n`);
     return 64;
+  }
+  try {
+    const report = await buildCoexistReport({ env });
+    write(`${renderCoexistSummary(report)}\n`);
+  } catch {
+    write('Other security tools: could not be checked.\n');
   }
   return 0;
 }
