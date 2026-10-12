@@ -4,7 +4,7 @@ description: Scan an OpenClaw skill folder with the local ironheights CLI before
 metadata:
   openclaw:
     emoji: '🛡️'
-    homepage: https://github.com/Frank-Masciopinto/ironheights
+    homepage: https://www.ironheights.dev
     requires:
       bins: ['ironheights']
     install:
