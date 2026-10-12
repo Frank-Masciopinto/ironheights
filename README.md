@@ -1,5 +1,7 @@
 # Ironheights
 
+**Ironheights is an open-source, local-first security scanner for OpenClaw agent skills.** Website: [www.ironheights.dev](https://www.ironheights.dev)
+
 Ironheights is a local-first scanner and integrity monitor for [OpenClaw](https://docs.openclaw.ai) skills. It reads skill files as data, looks for risky patterns with fixed rules, and compares skill and agent files with a baseline you save on the same machine.
 
 It does not send telemetry, and it does not run the files it scans. It does not call the network unless you run `fetch`, `safe-install`, `advisories update`, `--online`, `scan --llm`, or `review`.
