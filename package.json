@@ -2,7 +2,7 @@
   "name": "ironheights",
   "version": "0.3.0",
   "description": "Local-first security scanner and integrity monitor for OpenClaw skills.",
-  "homepage": "https://github.com/Frank-Masciopinto/ironheights#readme",
+  "homepage": "https://www.ironheights.dev",
   "bugs": {
     "url": "https://github.com/Frank-Masciopinto/ironheights/issues"
   },
