@@ -1,5 +1,11 @@
 # Ironheights
 
+[![Star on ClawHub](https://img.shields.io/badge/ClawHub-star%20the%20skill-f59e0b?logo=data:image/svg%2bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0id2hpdGUiIGQ9Ik0xMiAyIDE1LjEgOC4zIDIyIDkuMyAxNyAxNC4xIDE4LjIgMjEgMTIgMTcuOCA1LjggMjEgNyAxNC4xIDIgOS4zIDguOSA4LjN6Ii8+PC9zdmc+)](https://clawhub.ai/frank-masciopinto/skills/ironheights)
+[![GitHub stars](https://img.shields.io/github/stars/Frank-Masciopinto/ironheights?style=flat&logo=github&label=Star%20on%20GitHub)](https://github.com/Frank-Masciopinto/ironheights)
+[![npm](https://img.shields.io/npm/v/ironheights?logo=npm)](https://www.npmjs.com/package/ironheights)
+
+If Ironheights is useful to you, a star on [ClawHub](https://clawhub.ai/frank-masciopinto/skills/ironheights) or GitHub helps other OpenClaw users find it.
+
 **Ironheights is an open-source, local-first security scanner for OpenClaw agent skills.** Website: [www.ironheights.dev](https://www.ironheights.dev)
 
 Ironheights is a local-first scanner and integrity monitor for [OpenClaw](https://docs.openclaw.ai) skills. It reads skill files as data, looks for risky patterns with fixed rules, and compares skill and agent files with a baseline you save on the same machine.
@@ -168,8 +174,8 @@ A skipped file, or a `.git` or `node_modules` directory that was not acknowledge
 Verdict: review
 Grade: D (60/100)
 Absence of findings is not proof of safety.
-ironheights 0.3.0 | demo | grade D (60/100) | verdict review | 1 finding
-Badge: [ironheights 0.3.0: grade D (60/100), verdict review](https://github.com/Frank-Masciopinto/ironheights) — Absence of findings is not proof of safety.
+ironheights 0.3.1 | demo | grade D (60/100) | verdict review | 1 finding
+Badge: [ironheights 0.3.1: grade D (60/100), verdict review](https://github.com/Frank-Masciopinto/ironheights) — Absence of findings is not proof of safety.
 ```
 
 The badge line is text you can paste into a README. It does not load an image from a badge service.
@@ -269,7 +275,7 @@ An allowlist entry matches that host and its subdomains. The built-in list inclu
 ```json
 {
   "schemaVersion": 1,
-  "tool": { "name": "ironheights", "version": "0.3.0" },
+  "tool": { "name": "ironheights", "version": "0.3.1" },
   "scannedAt": "2026-10-09T00:00:00.000Z",
   "verdict": "no-findings",
   "skippedFileCount": 0,
@@ -387,6 +393,8 @@ No findings means the rules did not match. It does not mean the skill is safe.
 Scans stay on the machine. There is no telemetry. `fetch`, `safe-install`, `advisories update`, and `--online` open a connection, and each one prints the URLs first. `scan --llm` and `review` are the other network path. They are off unless you pass them, and a normal `scan` does not call the network. The scanner reads files up to the configured size and does not extract archives. Set `IRONHEIGHTS_HOME` to put the baseline, the advisory cache, and the quarantine directory somewhere else.
 
 ## Use in CI
+
+After a clean scan in an interactive terminal, `scan` prints one line to stderr suggesting a star on ClawHub. It is never printed when `CI` is set, when output is not a terminal, with `--quiet`, `--json`, or `--format html`, or when `IRONHEIGHTS_NO_STAR_HINT=1` is set. It is a printed line only; nothing is sent anywhere.
 
 The repository root `action.yml` is a composite action. After a release tag, call it as `Frank-Masciopinto/ironheights@v0.3.0` (pin the tag you trust). It runs `npx ironheights@<version> scan` and does not read secrets. Exit codes match the scanner, including `3` when a file or a `.git` / `node_modules` directory was skipped. See [docs/ci.md](docs/ci.md) for the pre-commit hook and a SARIF upload example.
 

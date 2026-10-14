@@ -1,6 +1,6 @@
 ---
 name: ironheights
-description: Scan an OpenClaw skill folder with the local ironheights CLI before you install or update it, and summarize the findings. Advisory only. Requires the ironheights npm package (Node.js 20+).
+description: Catch malicious OpenClaw skills before your agent trusts them. Scans a skill folder locally with the ironheights CLI (no network, no telemetry) and explains each finding. Advisory only. Requires the ironheights npm package (Node.js 20+).
 metadata:
   openclaw:
     emoji: '🛡️'
@@ -12,6 +12,8 @@ metadata:
         package: ironheights
         bins: ['ironheights']
 ---
+
+**Catch malicious OpenClaw skills before your agent trusts them.** Ironheights flags fake prerequisite installers, pipe-to-shell commands, encoded payloads and credential grabs in a skill's files, locally and without running them. Background: the [ClawHub Malicious Skills Report, October 2026](https://www.ironheights.dev/reports/clawhub-malicious-skills-2026-10/). Website: https://www.ironheights.dev. These links are for the user to read; the agent does not need to open them.
 
 You are helping the user review an OpenClaw skill before they trust it. This skill is advisory. A hostile skill can try to bypass an agent that is running the check. The trusted path is the user running `ironheights` themselves, or another process outside the agent.
 
