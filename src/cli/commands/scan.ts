@@ -57,6 +57,8 @@ export interface ScanFlags {
   advisoryPublicKey?: Uint8Array | null;
   /** Publisher handle, set by fetch and safe-install. */
   skillOwner?: string;
+  /** Test seam for the terminal check. Production reads process.stdout/stderr.isTTY. */
+  isTTY?: boolean;
 }
 
 export interface ScanExecution {
@@ -65,8 +67,40 @@ export interface ScanExecution {
   skills: SkillReport[];
 }
 
+export const CLAWHUB_URL = 'https://clawhub.ai/frank-masciopinto/skills/ironheights';
+export const STAR_HINT = `If Ironheights is useful, a star on ClawHub helps others find it: ${CLAWHUB_URL} (hide: IRONHEIGHTS_NO_STAR_HINT=1 or --quiet)`;
+
+function envFlag(value: string | undefined): boolean {
+  return value !== undefined && value !== '' && value !== '0' && value.toLowerCase() !== 'false';
+}
+
+/**
+ * One line after a clean, human-readable scan in an interactive terminal. Never shown in CI,
+ * in pipes, with --quiet, for JSON/HTML output, or when IRONHEIGHTS_NO_STAR_HINT is set.
+ */
+export function shouldShowStarHint(
+  flags: ScanFlags,
+  verdict: Verdict,
+  env: NodeJS.ProcessEnv,
+  isTTY: boolean,
+): boolean {
+  if (verdict !== 'no-findings' || !isTTY) return false;
+  if (flags.quiet || flags.dryRun || flags.json || (flags.format && flags.format !== 'text')) {
+    return false;
+  }
+  if (envFlag(env.IRONHEIGHTS_NO_STAR_HINT) || envFlag(env.CI)) return false;
+  return true;
+}
+
 export async function runScan(flags: ScanFlags): Promise<number> {
-  return (await executeScan(flags)).code;
+  const result = await executeScan(flags);
+  const env = flags.env ?? process.env;
+  const isTTY = flags.isTTY ?? Boolean(process.stdout.isTTY && process.stderr.isTTY);
+  if (shouldShowStarHint(flags, result.verdict, env, isTTY)) {
+    const emit = flags.stderr ?? ((text: string) => process.stderr.write(text));
+    emit(`${STAR_HINT}\n`);
+  }
+  return result.code;
 }
 
 export async function executeScan(flags: ScanFlags): Promise<ScanExecution> {

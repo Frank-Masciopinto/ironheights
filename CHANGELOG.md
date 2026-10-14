@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.1 — 2026-10-14
+
+After a clean (`no-findings`) human-readable `scan` in an interactive terminal, one line on stderr suggests starring the skill on ClawHub. It is skipped when stdout or stderr is not a TTY, when `CI` is set, with `--quiet`, `--json`, `--format html`, or `--dry-run`, and when `IRONHEIGHTS_NO_STAR_HINT=1` is set. stdout, exit codes, and JSON/SARIF/HTML output are unchanged. No network call is made. The README has ClawHub, GitHub, and npm badges.
+
 ## 0.3.0 — 2026-10-11
 
 `ironheights coexist` (alias `ironheights doctor coexist`) looks for other security tools on this machine and reports where they overlap with Ironheights. It reads files only: OpenClaw config plugin and hook entries, plugin manifests, skill and hook folders, known state paths, `PATH` lookups, and CI files in a repo folder. It runs no other tool, calls no network, and writes nothing. Each detected tool lists the file that showed it. Findings `IH-COEX-001` to `IH-COEX-011` cover two tool-call guards, Ironheights enforce mode blocking another tool, two tools owning the same files, config rewriting, shared state paths, double network use, scheduled scans, instruction overlap, a traffic-intercepting proxy, a config that exempts a security tool by name, and a plugin allowlist that leaves the guard out. Each has a severity and a fix. `--json` follows `docs/coexistence.schema.json`. `--fail-on <severity>` exits 1 when a finding reaches that severity. The list of known tools is in `src/coexist/registry.ts`, with a source for every entry. Detection is heuristic, and absence of a finding is not proof that tools will not interfere. See [docs/coexistence.md](docs/coexistence.md).
