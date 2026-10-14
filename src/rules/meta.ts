@@ -18,7 +18,7 @@ export const meta001: Rule = {
     nonMatches: ['---\nname: notes\ndescription: Take notes.\n---'],
   },
   check(file, ctx) {
-    if (file.relativePath !== 'SKILL.md') return [];
+    if (file.relativePath.toLowerCase() !== 'skill.md') return [];
     const parsed = parseSkillMarkdown(file.text);
     const findings: Finding[] = [];
     if (parsed.missing || parsed.malformed) {

@@ -62,7 +62,9 @@ export async function collectSkillMaterial(
   const dirName = basename(root);
   const files: SkillMaterial['files'] = [];
   await walk(root, root, 0, limits, files);
-  const skillFile = files.find((file) => file.relativePath === 'SKILL.md');
+  const skillFile =
+    files.find((file) => file.relativePath === 'SKILL.md') ??
+    files.find((file) => file.relativePath.toLowerCase() === 'skill.md');
   const frontmatter = skillFile?.text ? parseSkillMarkdown(skillFile.text) : undefined;
   return {
     skillName: frontmatter?.name ?? fallbackName,

@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.5.1 — 2026-10-14
+
+The skill file is found case-insensitively. A skill that ships a lowercase `skill.md` (the official Moltbook download does) is now discovered as a skill, its frontmatter name, version and declared hosts are read, and `IH-META-001` checks it. Before, that frontmatter was ignored, so the skill's own host was treated as unknown. Scanning the Moltbook download directly now grades B (80/100), verdict `review`. When both spellings exist, `SKILL.md` wins.
+
+A plain link to a skill's own declared host is not an `IH-INJ-004` finding; an instruction to fetch from that host and follow it, or to overwrite the skill's own files with it, still is (first-party, medium). Both cases now have regression tests.
+
+First-party `IH-INJ-004` findings are grouped per rule across files, so the grade no longer depends on which file a duplicated line was kept from.
+
 ## 0.5.0 — 2026-10-14
 
 Fairer grades. 0.4.0 graded the official Moltbook skill F (25/100) although it is not malicious. Five medium findings were simply added up: the same `curl … > SKILL.md` line counted twice because it is copied into `SKILL.md` and `heartbeat.md`, remote instructions from the skill's own declared host weighed the same as a stranger's, and two API route lines were misread as path traversal. The grade now:
