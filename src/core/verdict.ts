@@ -62,7 +62,11 @@ export function gradeRiskFor(findings: Finding[]): number {
     if (finding.firstParty && finding.severity !== 'critical') {
       points = Math.min(points, FIRST_PARTY_POINTS);
     }
-    const key = `${finding.ruleId}|${finding.file}`;
+    // First-party hits share one host, so they group per rule across files. This keeps the
+    // grade independent of which file a duplicated line was kept from.
+    const key = finding.firstParty
+      ? `${finding.ruleId}|first-party`
+      : `${finding.ruleId}|${finding.file}`;
     const list = groups.get(key) ?? [];
     list.push(points);
     groups.set(key, list);

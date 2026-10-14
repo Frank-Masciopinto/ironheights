@@ -1,3 +1,4 @@
+import { findSkillFile, isSkillFileName } from './skill-file.ts';
 import { readdir, readFile, stat } from 'node:fs/promises';
 import { basename, join, resolve } from 'node:path';
 import { parseSkillMarkdown, type SkillFrontmatter } from '../openclaw/skill.ts';
@@ -73,12 +74,7 @@ async function findSkillDirs(dir: string, depth: number): Promise<string[]> {
 }
 
 async function hasSkillFile(dir: string): Promise<boolean> {
-  try {
-    const info = await stat(join(dir, 'SKILL.md'));
-    return info.isFile();
-  } catch {
-    return false;
-  }
+  return (await findSkillFile(dir)) !== undefined;
 }
 
 export async function scanSkill(
@@ -248,12 +244,13 @@ async function readSkillFrontmatter(
   root: string,
   files: ScannedFile[],
 ): Promise<SkillFrontmatter | undefined> {
-  const skill = files.find(
-    (file) => file.relativePath === 'SKILL.md' || file.relativePath.endsWith('/SKILL.md'),
-  );
-  if (skill && skill.relativePath === 'SKILL.md') return parseSkillMarkdown(skill.text);
+  const top = files.filter((file) => isSkillFileName(file.relativePath));
+  const skill = top.find((file) => file.relativePath === 'SKILL.md') ?? top[0];
+  if (skill) return parseSkillMarkdown(skill.text);
   try {
-    return parseSkillMarkdown(await readFile(join(root, 'SKILL.md'), 'utf8'));
+    const path = await findSkillFile(root);
+    if (!path) return undefined;
+    return parseSkillMarkdown(await readFile(path, 'utf8'));
   } catch {
     return undefined;
   }

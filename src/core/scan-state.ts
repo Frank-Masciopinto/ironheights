@@ -6,6 +6,7 @@ import { createBaseline } from '../integrity/baseline.ts';
 import { parseSkillMarkdown } from '../openclaw/skill.ts';
 import { writeAtomic } from '../util/atomic.ts';
 import { formatGrade } from './grade.ts';
+import { findSkillFile } from './skill-file.ts';
 import type { Grade, SkillReport } from './types.ts';
 
 /**
@@ -76,7 +77,8 @@ export async function fingerprintSkill(root: string): Promise<SkillFingerprint> 
   const treeHash = createHash('sha256').update(lines.join('\n')).digest('hex');
   let version: string | undefined;
   try {
-    version = parseSkillMarkdown(await readFile(join(abs, 'SKILL.md'), 'utf8'))?.version;
+    const path = await findSkillFile(abs);
+    version = path ? parseSkillMarkdown(await readFile(path, 'utf8'))?.version : undefined;
   } catch {
     version = undefined;
   }
