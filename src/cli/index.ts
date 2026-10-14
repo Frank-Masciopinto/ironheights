@@ -14,6 +14,7 @@ import { runQuarantine } from './commands/quarantine.ts';
 import { runRules } from './commands/rules.ts';
 import { runSafeInstall } from './commands/safe-install.ts';
 import { runScan } from './commands/scan.ts';
+import { runWatch } from './commands/watch.ts';
 import { IronheightsError, UsageError } from '../core/errors.ts';
 import { finishCommand } from '../util/flush.ts';
 import { TOOL_VERSION } from '../version.ts';
@@ -60,6 +61,33 @@ export async function main(argv: string[], hooks: MainHooks = {}): Promise<numbe
 
   registerScan(program, 'scan', hooks);
   registerScan(program, 'review', hooks);
+
+  program
+    .command('watch [paths...]')
+    .description(
+      'rescan skills automatically when one is installed, updated, or edited (content hash or version change)',
+    )
+    .option('--all', 'watch every configured skill directory')
+    .option('--interval <seconds>', 'seconds between checks', '60')
+    .option('--once', 'check once, rescan what changed, and exit')
+    .option('--json', 'print JSON to stdout')
+    .option('--fail-on <severity>', 'minimum severity that returns a non-zero exit code')
+    .option('--config <file>', 'config file')
+    .option('--no-color', 'disable color')
+    .option('--quiet', 'disable color and extra emphasis')
+    .action(async (paths: string[], opts: Record<string, string | boolean | undefined>) => {
+      process.exitCode = await runWatch({
+        paths,
+        all: Boolean(opts.all),
+        json: Boolean(opts.json),
+        once: Boolean(opts.once),
+        ...(typeof opts.interval === 'string' ? { interval: opts.interval } : {}),
+        ...(typeof opts.failOn === 'string' ? { failOn: opts.failOn } : {}),
+        ...(typeof opts.config === 'string' ? { config: opts.config } : {}),
+        noColor: Boolean(opts.color === false || opts.noColor),
+        quiet: Boolean(opts.quiet),
+      });
+    });
 
   program
     .command('baseline [action]')
@@ -410,6 +438,10 @@ function registerScan(program: Command, name: 'scan' | 'review', hooks: MainHook
     .option('--llm-api <api>', 'ollama or openai')
     .option('--llm-consent', 'send skill text to a non-localhost model server')
     .option('--dry-run', 'print the model prompt and do not send it')
+    .option(
+      '--changed',
+      'scan only skills that are new or whose content or version changed since their last scan',
+    )
     .action(async (paths: string[], opts: Record<string, string | boolean | undefined>) => {
       const code = await runScan({
         paths,
@@ -435,6 +467,7 @@ function registerScan(program: Command, name: 'scan' | 'review', hooks: MainHook
         ...(typeof opts.llmApi === 'string' ? { llmApi: opts.llmApi } : {}),
         llmConsent: Boolean(opts.llmConsent),
         dryRun: Boolean(opts.dryRun),
+        changed: Boolean(opts.changed),
         ...(hooks.advisoryPublicKey !== undefined
           ? { advisoryPublicKey: hooks.advisoryPublicKey }
           : {}),

@@ -168,17 +168,25 @@ The production public key is pinned in this release: `8424b837422792656e6e750086
 
 Every scan prints a grade on the line before "Absence of findings is not proof of safety." The number is a trust score: 100 minus the risk score, and never below 0. A is 90–100, B is 80–89, C is 70–79, D is 60–69, and F is 0–59. The grade uses the worst skill after suppressions. Findings omitted by `--since-baseline` still count toward the grade.
 
+The risk score behind the grade starts from the finding severities (critical 100, high 40, medium 15, low 5) and then removes double counting. The same evidence line for one rule, copied into two files, counts once. Repeat hits of one rule in one file are grouped: the first counts in full, each further hit counts half, and the group is capped at twice its worst hit. A first-party finding (an `IH-INJ-004` remote-instruction or self-update line whose URLs all point at the skill's own declared host) counts as a review item, 10 points. It stays a medium finding with `firstParty: true` and a note, and the verdict is unchanged. A critical finding always counts 100, so anything critical is F. `score` in the JSON keeps the plain severity sum and drives the verdict.
+
 A skipped file, or a `.git` or `node_modules` directory that was not acknowledged in `ignoreDirs`, makes the grade `incomplete` and hides the number, including when you pass `--allow-skipped`. The exit code can still be 0 in that case. The verdict line is unchanged.
 
 ```text
 Verdict: review
 Grade: D (60/100)
 Absence of findings is not proof of safety.
-ironheights 0.4.0 | demo | grade D (60/100) | verdict review | 1 finding
-Badge: [ironheights 0.4.0: grade D (60/100), verdict review](https://github.com/Frank-Masciopinto/ironheights) — Absence of findings is not proof of safety.
+ironheights 0.5.0 | demo | grade D (60/100) | verdict review | 1 finding
+Badge: [ironheights 0.5.0: grade D (60/100), verdict review](https://github.com/Frank-Masciopinto/ironheights) — Absence of findings is not proof of safety.
 ```
 
 The badge line is text you can paste into a README. It does not load an image from a badge service.
+
+## Rescan on update
+
+A scan covers the copy on disk. `ironheights scan --changed <skills folder>` (or `--all`) rescans only skills that are new or whose content hash or `SKILL.md` version changed since their last scan, and prints why ("version changed (1.12.0 -> 1.13.0)"). The hash and version of each scanned skill are kept in `~/.ironheights/scan-state.json`. When nothing changed, it prints "Nothing to rescan." and exits 0.
+
+`ironheights watch [paths...]` (or `watch --all`) runs that check every 60 seconds (`--interval <seconds>`, minimum 5) until stopped. `watch --once` checks once and exits, which suits cron or a post-update hook. The exit code is the worst seen.
 
 ## Findings since a baseline
 
@@ -275,7 +283,7 @@ An allowlist entry matches that host and its subdomains. The built-in list inclu
 ```json
 {
   "schemaVersion": 1,
-  "tool": { "name": "ironheights", "version": "0.4.0" },
+  "tool": { "name": "ironheights", "version": "0.5.0" },
   "scannedAt": "2026-10-09T00:00:00.000Z",
   "verdict": "no-findings",
   "skippedFileCount": 0,

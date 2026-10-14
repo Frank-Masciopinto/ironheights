@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.5.0 — 2026-10-14
+
+Fairer grades. 0.4.0 graded the official Moltbook skill F (25/100) although it is not malicious. Five medium findings were simply added up: the same `curl … > SKILL.md` line counted twice because it is copied into `SKILL.md` and `heartbeat.md`, remote instructions from the skill's own declared host weighed the same as a stranger's, and two API route lines were misread as path traversal. The grade now:
+
+- counts identical evidence for one rule once, across files;
+- groups repeat hits of one rule in one file (first in full, the rest at half, capped at twice the worst hit);
+- weighs a first-party `IH-INJ-004` finding (every URL on the line is the skill's own declared host) as a 10-point review item. The finding stays medium, gets `firstParty: true` and a note, and the verdict stays `review`. Third-party hosts are not discounted, and a critical finding always counts 100.
+
+The Moltbook skill now grades B (85/100), verdict `review`, with its three self-update and remote-instruction lines still listed. Every malicious test fixture still grades F, and benchmark recall is unchanged (review recall 1.000 on the 20-skill corpus). `score` in the JSON keeps the plain severity sum and still drives the verdict; only `grade` changes. `schemaVersion` stays `1`; `firstParty` is an additive finding field.
+
+`IH-FS-001` no longer reads URLs, API routes (`GET /api/v1/posts/uuid.../comments`) or `...` placeholders as `../` path traversal.
+
+Rescan on update. `scan --changed` rescans only skills that are new or whose content hash or `SKILL.md` version changed since their last scan, and says why. State lives in `~/.ironheights/scan-state.json`. `ironheights watch` repeats that check every 60 seconds (`--interval`, `--once`). The Ironheights skill now tells the agent to rescan any skill after it is installed or updated, before using it.
+
 ## 0.4.0 — 2026-10-14
 
 `IH-NET-001` no longer flags the skill's own declared hosts. A host counts as declared when it appears in frontmatter `homepage`, or under a `homepage`, `website`, `url`, `api_base`, `api`, `network`, `repository`, or `source` key anywhere in `metadata`. A leading `www.` is ignored and subdomains match. A declared host that is a raw IP or a known high-risk host (paste sites, webhook catchers, tunnels, shorteners) is still flagged at high severity. Prose URLs never declare a host.

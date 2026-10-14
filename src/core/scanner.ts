@@ -4,7 +4,13 @@ import { parseSkillMarkdown, type SkillFrontmatter } from '../openclaw/skill.ts'
 import { allContentRules } from '../rules/index.ts';
 import type { Finding, ResolvedConfig, ScanContext, ScannedFile, SkillReport } from './types.ts';
 import { applySuppressions } from './suppress.ts';
-import { blockingSkipCount, scoreFindings, verdictFor, worstVerdict } from './verdict.ts';
+import {
+  blockingSkipCount,
+  gradeRiskFor,
+  scoreFindings,
+  verdictFor,
+  worstVerdict,
+} from './verdict.ts';
 import { walkSkill } from './walker.ts';
 import type { Verdict } from './types.ts';
 
@@ -207,7 +213,7 @@ function finishSkill(
     suppressionRefused: outcome.refused,
     suppressionWarnings: outcome.warnings,
     score,
-    gradeRisk: score,
+    gradeRisk: gradeRiskFor(outcome.active),
     verdict: 'no-findings',
   };
   report.verdict = verdictFor(outcome.active, config.thresholds, {

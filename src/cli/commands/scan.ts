@@ -1,4 +1,5 @@
 import { stat, writeFile } from 'node:fs/promises';
+import { resolve } from 'node:path';
 import { annotateKnownSecurityTools } from '../../coexist/annotate.ts';
 import { annotateSkillReports } from '../../advisories/match.ts';
 import { readAdvisoryCache } from '../../advisories/cache.ts';
@@ -8,7 +9,19 @@ import { UsageError, NetworkError } from '../../core/errors.ts';
 import { ironheightsHome, loadConfig } from '../../core/config.ts';
 import { TEXT_SCAN_LIMIT } from '../../core/grade.ts';
 import type { ScanMode } from '../../core/grade.ts';
-import { scanPath, scanText } from '../../core/scanner.ts';
+import { discoverSkillRoots, scanPath, scanText } from '../../core/scanner.ts';
+import { gradeFromSkills } from '../../core/grade.ts';
+import type { Grade } from '../../core/types.ts';
+import {
+  findChangedSkills,
+  readScanState,
+  recordScans,
+  scanStatePath,
+  writeScanState,
+  type ChangeCheck,
+  type ScanState,
+  type SkillFingerprint,
+} from '../../core/scan-state.ts';
 import { applySinceBaseline } from '../../core/since-baseline.ts';
 import { blockingSkipCount, exitCodeFor, worstVerdict } from '../../core/verdict.ts';
 import { baselinePath } from '../../integrity/baseline.ts';
@@ -46,6 +59,8 @@ export interface ScanFlags {
   llmApi?: string;
   llmConsent?: boolean;
   dryRun?: boolean;
+  /** Scan only skills whose content hash or version changed since their last scan. */
+  changed?: boolean;
   paths: string[];
   env?: NodeJS.ProcessEnv;
   stdout?: (text: string) => void;
@@ -117,6 +132,8 @@ export async function executeScan(flags: ScanFlags): Promise<ScanExecution> {
   const format = resolveFormat(flags);
   const scanMode = resolveScanMode(flags);
   let skills: SkillReport[] = [];
+  let changedState: ScanState | undefined;
+  const changedFingerprints: SkillFingerprint[] = [];
   let scannedAt = (flags.now ?? new Date()).toISOString();
 
   if (scanMode === 'text') {
@@ -131,7 +148,40 @@ export async function executeScan(flags: ScanFlags): Promise<ScanExecution> {
   } else {
     const targets = flags.all ? config.skillDirs : flags.paths;
     if (!flags.all && targets.length === 0) throw new UsageError('scan requires a path or --all');
-    for (const target of targets) {
+    if (flags.changed) {
+      for (const target of targets) {
+        if (flags.all) continue;
+        try {
+          await stat(target);
+        } catch {
+          throw new UsageError(`path not found: ${target}`);
+        }
+      }
+      const roots: string[] = [];
+      for (const target of targets) roots.push(...(await discoverSkillRoots(target)));
+      changedState = await readScanState(scanStatePath(ironheightsHome(env)));
+      const check = await findChangedSkills(roots, changedState);
+      const emit = flags.stderr ?? ((text: string) => process.stderr.write(text));
+      if (check.changed.length === 0) {
+        if (!flags.quiet) {
+          emit(
+            `No skill changed since its last scan (${roots.length} checked). Nothing to rescan.\n`,
+          );
+        }
+        if (format === 'json') {
+          (flags.stdout ?? ((text: string) => process.stdout.write(text)))(
+            renderJson([], 'no-findings', scannedAt, { scanMode }),
+          );
+        }
+        return { code: 0, verdict: 'no-findings', skills: [] };
+      }
+      for (const item of check.changed) {
+        changedFingerprints.push(item.fingerprint);
+        emit(`Rescanning ${item.fingerprint.root}: ${describeChange(item)}\n`);
+      }
+    }
+    const scanTargets = flags.changed ? changedFingerprints.map((item) => item.root) : targets;
+    for (const target of scanTargets) {
       if (!flags.all) {
         try {
           await stat(target);
@@ -203,6 +253,14 @@ export async function executeScan(flags: ScanFlags): Promise<ScanExecution> {
     allowSkipped: flags.allowSkipped === true,
   });
   if (flags.dryRun) return { skills, verdict, code };
+  if (flags.changed && changedState) {
+    const grades = new Map<string, Grade>();
+    for (const skill of skills) grades.set(resolve(skill.root), gradeFromSkills([skill]));
+    await writeScanState(
+      scanStatePath(ironheightsHome(env)),
+      recordScans(changedState, changedFingerprints, skills, grades, flags.now ?? new Date()),
+    );
+  }
   const color = colorEnabled(Boolean(flags.noColor), env) && !flags.quiet;
   const renderContext = {
     scanMode,
@@ -229,6 +287,14 @@ export async function executeScan(flags: ScanFlags): Promise<ScanExecution> {
       renderHtml(reported, verdict, scannedAt, scanMode, advisory.note, llmReport),
     );
   return { skills: reported, verdict, code };
+}
+
+function describeChange(item: ChangeCheck): string {
+  if (item.reason === 'new') return 'not scanned before';
+  if (item.reason === 'version') {
+    return `version changed (${item.previous?.version ?? 'none'} -> ${item.fingerprint.version ?? 'none'})`;
+  }
+  return 'content changed since the last scan';
 }
 
 function textSkip(skillName: string, reason: string): LlmSkillReview {

@@ -3,6 +3,16 @@ import { eachLine } from '../util/text.ts';
 import { createFinding, pushUnique } from './helpers.ts';
 
 const TRAVERSAL = /(?:\.\.\/|\.\.\\){1,8}/;
+/** URLs and API route paths (`GET /api/v1/posts/uuid.../comments`) are not file paths. */
+const URL_TOKEN = /\b[a-z][a-z0-9+.-]*:\/\/\S+/gi;
+const ROUTE_TOKEN =
+  /(?:\b(?:GET|POST|PUT|PATCH|DELETE|HEAD|OPTIONS)\s+)?(?<![\w.])\/(?:api|v\d+)(?:\/[^\s"'`)]*)?/g;
+/** An ellipsis placeholder such as `uuid.../` is not a parent-directory segment. */
+const ELLIPSIS = /\.{3,}/g;
+
+export function stripNonPathTokens(line: string): string {
+  return line.replace(URL_TOKEN, ' ').replace(ROUTE_TOKEN, ' ').replace(ELLIPSIS, ' ');
+}
 
 export const fs001: Rule = {
   id: 'IH-FS-001',
@@ -52,7 +62,8 @@ export const fs001: Rule = {
       );
     }
     eachLine(file.text, (line, lineNumber) => {
-      if (!TRAVERSAL.test(line) && !/\bln\s+-s\s+\//.test(line)) return;
+      const scrubbed = stripNonPathTokens(line);
+      if (!TRAVERSAL.test(scrubbed) && !/\bln\s+-s\s+\//.test(line)) return;
       pushUnique(
         findings,
         createFinding(fs001, file, {

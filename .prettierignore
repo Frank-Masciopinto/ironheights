@@ -2,3 +2,4 @@ dist/
 coverage/
 bench/results/
 docs/rules.md
+test/fixtures/regressions/moltbook/

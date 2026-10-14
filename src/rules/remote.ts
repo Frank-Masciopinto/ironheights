@@ -1,5 +1,6 @@
 import { extensionOf } from '../core/filetype.ts';
-import type { Finding, Rule, ScannedFile } from '../core/types.ts';
+import type { Finding, Rule, ScanContext, ScannedFile } from '../core/types.ts';
+import { declaredHost } from './network.ts';
 import { createFinding, pushUnique } from './helpers.ts';
 
 const FETCH_VERB = /\b(?:fetch|curl|wget|download|re-?read|pull|check|load|get)\b/i;
@@ -39,7 +40,18 @@ export const inj004: Rule = {
   check: checkInj004,
 };
 
-function checkInj004(file: ScannedFile): Finding[] {
+const URL_IN_LINE = /https?:\/\/([^\s/"'`)<>]+)/gi;
+
+/** True when the line names at least one URL and every URL host is declared by the skill. */
+function firstPartyLine(line: string, declared: readonly string[]): boolean {
+  if (declared.length === 0) return false;
+  const hosts = [...line.matchAll(URL_IN_LINE)].map((m) => (m[1] ?? '').replace(/:\d+$/, ''));
+  if (hosts.length === 0) return false;
+  return hosts.every((host) => declaredHost(host, declared));
+}
+
+function checkInj004(file: ScannedFile, ctx?: ScanContext): Finding[] {
+  const declared = ctx?.skillDeclaredHosts ?? [];
   const findings: Finding[] = [];
   const byMessage = new Map<string, { line: number; evidence: string; lines: number[] }>();
   const lines = file.text.split(/\r?\n/);
@@ -79,15 +91,18 @@ function checkInj004(file: ScannedFile): Finding[] {
       hit.lines.length > 1
         ? ` Seen ${hit.lines.length} times (lines ${hit.lines.slice(0, 10).join(', ')}).`
         : '';
-    pushUnique(
-      findings,
-      createFinding(inj004, file, {
-        line: hit.line,
-        evidence: hit.evidence,
-        message: message + count,
-        confidence: 'medium',
-      }),
-    );
+    const finding = createFinding(inj004, file, {
+      line: hit.line,
+      evidence: hit.evidence,
+      message: message + count,
+      confidence: 'medium',
+    });
+    if (firstPartyLine(hit.evidence, declared)) {
+      finding.firstParty = true;
+      finding.note =
+        "First-party: the URL is the skill's own declared host. Review item: the copy you scanned can still change after install, so pin it and rescan after updates (ironheights scan --changed).";
+    }
+    pushUnique(findings, finding);
   }
   return findings;
 }
