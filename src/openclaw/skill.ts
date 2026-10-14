@@ -5,6 +5,8 @@ export interface SkillFrontmatter {
   description?: string;
   version?: string;
   allowDomains: string[];
+  /** Hosts the skill declares as its own: `homepage`, plus homepage/api_base/url/network values in `metadata`. */
+  declaredHosts?: string[];
   malformed: boolean;
   missing: boolean;
 }
@@ -26,6 +28,7 @@ export function parseSkillMarkdown(text: string): SkillFrontmatter {
     const version = typeof record.version === 'string' ? record.version.trim() : undefined;
     return {
       allowDomains: allowDomainsFrom(record),
+      declaredHosts: declaredHostsFrom(record),
       malformed: false,
       missing: false,
       ...(name ? { name } : {}),
@@ -55,4 +58,54 @@ function allowDomainsFrom(record: Record<string, unknown>): string[] {
 function asRecord(value: unknown): Record<string, unknown> | undefined {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return undefined;
   return value as Record<string, unknown>;
+}
+
+const DECLARED_KEYS = new Set([
+  'homepage',
+  'website',
+  'url',
+  'api_base',
+  'apibase',
+  'api',
+  'network',
+  'repository',
+  'source',
+]);
+
+/**
+ * The skill's own hosts. Only `homepage` at the top level and the listed keys
+ * inside `metadata` count; prose URLs never do.
+ */
+function declaredHostsFrom(record: Record<string, unknown>): string[] {
+  const hosts: string[] = [];
+  const add = (value: unknown): void => {
+    if (typeof value === 'string') {
+      const host = declaredHostOf(value);
+      if (host && !hosts.includes(host)) hosts.push(host);
+    } else if (Array.isArray(value)) {
+      for (const item of value.slice(0, 50)) add(item);
+    }
+  };
+  add(record.homepage);
+  const walk = (value: unknown, depth: number): void => {
+    const node = asRecord(value);
+    if (!node || depth > 4) return;
+    for (const [key, child] of Object.entries(node)) {
+      if (DECLARED_KEYS.has(key.toLowerCase())) add(child);
+      else walk(child, depth + 1);
+    }
+  };
+  walk(record.metadata, 0);
+  return hosts;
+}
+
+function declaredHostOf(value: string): string | undefined {
+  const trimmed = value.trim();
+  if (!/^https?:\/\//i.test(trimmed)) return undefined;
+  try {
+    const host = new URL(trimmed).hostname.toLowerCase().replace(/\.$/, '');
+    return host.includes('.') ? host : undefined;
+  } catch {
+    return undefined;
+  }
 }

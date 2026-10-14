@@ -88,6 +88,7 @@ export async function scanSkill(
     root,
     skillDirName: basename(root),
     skillAllowDomains: frontmatter?.allowDomains ?? [],
+    skillDeclaredHosts: frontmatter?.declaredHosts ?? [],
   };
   const raw: Finding[] = [];
   for (const file of walked.files) {

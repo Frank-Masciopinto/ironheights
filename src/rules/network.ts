@@ -13,7 +13,7 @@ export const net001: Rule = {
   severity: 'medium',
   priority: 'P0',
   description:
-    'A skill that contacts a host outside the allowlist can send data somewhere the user did not expect. A download, install, or fetch instruction is a contact, and so is a paste site or a file-drop host. A homepage field, a license URL, a schema link, or an official API host in prose is not a contact.',
+    'A skill that contacts a host outside the allowlist can send data somewhere the user did not expect. A download, install, or fetch instruction is a contact, and so is a paste site or a file-drop host. A homepage field, a license URL, a schema link, or an official API host in prose is not a contact. Hosts the skill declares as its own (frontmatter homepage, metadata homepage/api_base/network) are not flagged unless they are high-risk. Repeated hits on one host in a file are one finding with a count.',
   remediation:
     'Declare the host in allowDomains, or in metadata.ironheights.allowDomains for this skill only. Prefer the official API host.',
   appliesTo: ['any'],
@@ -123,32 +123,65 @@ export function badHost(host: string, raw: string): boolean {
 }
 
 function checkNet001(file: ScannedFile, ctx: ScanContext): Finding[] {
-  const findings: Finding[] = [];
   const lines = file.text.split(/\r?\n/);
   const markdown = isMarkdownPath(file.relativePath);
   const license = isLicensePath(file.relativePath);
   const allow = [...ctx.config.allowDomains, ...ctx.skillAllowDomains];
+  const declared = ctx.skillDeclaredHosts ?? [];
+  const byHost = new Map<string, { first: ExtractedUrl; raised: boolean; lines: number[] }>();
   for (const url of extractUrls(file.text)) {
     if (hostAllowed(url.host, allow)) continue;
+    const raised = badHost(url.host, url.raw);
+    if (!raised && declaredHost(url.host, declared)) continue;
     const line = lines[url.line - 1] ?? '';
     const previous = previousNonEmpty(lines, url.line - 1);
     if (ignoredDestination(url, line, previous, markdown, license)) continue;
-    const raised = badHost(url.host, url.raw);
+    const key = `${url.host}|${raised ? 1 : 0}`;
+    const entry = byHost.get(key);
+    if (entry) {
+      if (!entry.lines.includes(url.line)) entry.lines.push(url.line);
+      continue;
+    }
+    byHost.set(key, { first: url, raised, lines: [url.line] });
+  }
+  const findings: Finding[] = [];
+  for (const { first, raised, lines: hits } of byHost.values()) {
     const severity: Severity = raised ? 'high' : 'medium';
+    const base = raised
+      ? `Destination ${first.host} is a raw address or a known high-risk host.`
+      : `Destination ${first.host} is not in the allowlist.`;
+    const count =
+      hits.length > 1
+        ? ` Seen ${hits.length} times in this file (lines ${hits.slice(0, 10).join(', ')}${hits.length > 10 ? ', …' : ''}).`
+        : '';
     pushUnique(
       findings,
       createFinding(net001, file, {
-        line: url.line,
-        evidence: url.raw,
+        line: first.line,
+        evidence: first.raw,
         severity,
         confidence: raised ? 'high' : 'medium',
-        message: raised
-          ? `Destination ${url.host} is a raw address or a known high-risk host.`
-          : `Destination ${url.host} is not in the allowlist.`,
+        message: base + count,
       }),
     );
   }
   return findings;
+}
+
+/**
+ * A host the skill declares as its own, such as `homepage: https://www.vendor.dev`.
+ * A leading `www.` is dropped, and subdomains of the declared host match.
+ */
+export function declaredHost(host: string, declared: readonly string[]): boolean {
+  const normalized = host
+    .toLowerCase()
+    .replace(/\.$/, '')
+    .replace(/^www\./, '');
+  return declared.some((entry) => {
+    const base = entry.toLowerCase().replace(/^www\./, '');
+    if (!base.includes('.')) return false;
+    return normalized === base || normalized.endsWith(`.${base}`);
+  });
 }
 
 const OUTBOUND =
