@@ -75,6 +75,12 @@ export interface Finding {
   remediation: string;
   /** Extra context for the reader. It never changes severity, score or verdict. */
   note?: string;
+  /**
+   * Set when every URL in the finding points at a host the skill declares as its own
+   * (frontmatter homepage, metadata api_base). The finding keeps its severity and the
+   * verdict is unchanged; only the letter grade weighs it as a review item.
+   */
+  firstParty?: boolean;
 }
 
 export interface SkippedFile {

@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto';
 import { lstat, readdir, readFile } from 'node:fs/promises';
 import { basename, join, relative, sep } from 'node:path';
 import type { Finding, Limits, ResolvedConfig, SkillReport } from '../core/types.ts';
-import { blockingSkipCount, scoreFindings, verdictFor } from '../core/verdict.ts';
+import { blockingSkipCount, gradeRiskFor, scoreFindings, verdictFor } from '../core/verdict.ts';
 import { parseSkillMarkdown } from '../openclaw/skill.ts';
 import { adv001 } from '../rules/advisory.ts';
 import { clip } from '../util/text.ts';
@@ -44,7 +44,7 @@ export async function annotateSkillReports(
       ...skill,
       findings,
       score,
-      gradeRisk: score,
+      gradeRisk: gradeRiskFor(findings),
       verdict: verdictFor(findings, config.thresholds, {
         filesSkipped: blockingSkipCount(skill),
         allowSkipped: options.allowSkipped,

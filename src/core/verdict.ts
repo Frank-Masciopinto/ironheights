@@ -36,6 +36,47 @@ export function scoreFindings(findings: Finding[]): number {
   return findings.reduce((sum, finding) => sum + SEVERITY_POINTS[finding.severity], 0);
 }
 
+/** Grade points for a first-party review item (remote instructions from the skill's own host). */
+export const FIRST_PARTY_POINTS = 10;
+
+/**
+ * Risk points for the letter grade.
+ *
+ * - Identical evidence for the same rule (the same line copied into two files) counts once.
+ * - Repeat hits of one rule in the same file are grouped: the first counts in full, each
+ *   further hit counts half, and the group is capped at twice its worst hit.
+ * - A first-party finding (see `Finding.firstParty`) counts as a review item, at most
+ *   `FIRST_PARTY_POINTS`, so a legitimate self-updating skill is not graded like malware.
+ *
+ * Critical findings still score 100, so anything critical stays F.
+ */
+export function gradeRiskFor(findings: Finding[]): number {
+  const seen = new Set<string>();
+  const groups = new Map<string, number[]>();
+  for (const finding of findings) {
+    const evidence = finding.evidence.trim().replace(/\s+/g, ' ').toLowerCase();
+    const dedupe = `${finding.ruleId}|${evidence}`;
+    if (evidence !== '' && seen.has(dedupe)) continue;
+    seen.add(dedupe);
+    let points = SEVERITY_POINTS[finding.severity];
+    if (finding.firstParty && finding.severity !== 'critical') {
+      points = Math.min(points, FIRST_PARTY_POINTS);
+    }
+    const key = `${finding.ruleId}|${finding.file}`;
+    const list = groups.get(key) ?? [];
+    list.push(points);
+    groups.set(key, list);
+  }
+  let total = 0;
+  for (const list of groups.values()) {
+    list.sort((a, b) => b - a);
+    const worst = list[0] ?? 0;
+    const sum = list.reduce((acc, points, index) => acc + (index === 0 ? points : points / 2), 0);
+    total += Math.min(sum, worst * 2);
+  }
+  return Math.round(total);
+}
+
 export function verdictFor(
   findings: Finding[],
   thresholds: { block: number; review: number },
