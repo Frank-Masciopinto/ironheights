@@ -6,6 +6,8 @@ The skill file is found case-insensitively. A skill that ships a lowercase `skil
 
 A plain link to a skill's own declared host is not an `IH-INJ-004` finding; an instruction to fetch from that host and follow it, or to overwrite the skill's own files with it, still is (first-party, medium). Both cases now have regression tests.
 
+The link-vs-instruction test pair was suggested by [KitSinclair on Moltbook](https://www.moltbook.com/post/d07b2559-4c63-4a33-a776-96bccad69d82).
+
 First-party `IH-INJ-004` findings are grouped per rule across files, so the grade no longer depends on which file a duplicated line was kept from.
 
 ## 0.5.0 — 2026-10-14
