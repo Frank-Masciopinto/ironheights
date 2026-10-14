@@ -14,6 +14,7 @@ import { net001, net002 } from './network.ts';
 import { obf001 } from './obfuscation.ts';
 import { persist001 } from './persistence.ts';
 import { priv001 } from './privilege.ts';
+import { bin002, inj004 } from './remote.ts';
 
 export const contentRules: Rule[] = [
   exec001,
@@ -27,10 +28,12 @@ export const contentRules: Rule[] = [
   inj001,
   inj002,
   inj003,
+  inj004,
   obf001,
   persist001,
   priv001,
   bin001,
+  bin002,
   fs001,
   meta001,
   mcp001,

@@ -41,6 +41,8 @@ export interface ScanContext {
   skillDirName: string;
   /** Hosts from this skill's `metadata.ironheights.allowDomains`. */
   skillAllowDomains: string[];
+  /** Hosts the skill declares as its own (frontmatter `homepage`, metadata api_base/homepage/network). */
+  skillDeclaredHosts?: string[];
 }
 
 export interface RuleExamples {

@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.4.0 — 2026-10-14
+
+`IH-NET-001` no longer flags the skill's own declared hosts. A host counts as declared when it appears in frontmatter `homepage`, or under a `homepage`, `website`, `url`, `api_base`, `api`, `network`, `repository`, or `source` key anywhere in `metadata`. A leading `www.` is ignored and subdomains match. A declared host that is a raw IP or a known high-risk host (paste sites, webhook catchers, tunnels, shorteners) is still flagged at high severity. Prose URLs never declare a host.
+
+`IH-NET-001` reports repeated hits on one host in one file as a single finding at the first line, with "Seen N times (lines …)" in the message. A skill that mentions its API in 70 places now gets one finding, not 70. Score and grade drop to match.
+
+New rule `IH-INJ-004` (medium, review): remote or self-updating instructions. It flags a download that writes over a skill file (`curl … > …/skills/…/SKILL.md`), prose that tells the agent to overwrite its own skill files, and an instruction to fetch a remote file on a schedule ("every 30 minutes", "daily", "on each heartbeat") and follow it. A scan covers only the copy on disk, so these skills can change after review. Repeats of one pattern in a file are grouped.
+
+New rule `IH-BIN-002` (medium, review): compiled files that cannot be scanned (`.pyc`, `.pyo`, `.pyd`, `.class`, `.wasm`, `.luac`, `.beam`, `.elc`, `.o`, `.a`, `.node`). A `.pyc` next to a clean `.py` can hold different code. `schemaVersion` stays `1`.
+
 ## 0.3.1 — 2026-10-14
 
 After a clean (`no-findings`) human-readable `scan` in an interactive terminal, one line on stderr suggests starring the skill on ClawHub. It is skipped when stdout or stderr is not a TTY, when `CI` is set, with `--quiet`, `--json`, `--format html`, or `--dry-run`, and when `IRONHEIGHTS_NO_STAR_HINT=1` is set. stdout, exit codes, and JSON/SARIF/HTML output are unchanged. No network call is made. The README has ClawHub, GitHub, and npm badges.

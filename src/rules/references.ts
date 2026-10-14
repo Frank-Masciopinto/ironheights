@@ -62,6 +62,11 @@ export const RULE_REFERENCES: Record<string, RuleReferences> = {
     owaspAgentic: ['ASI03:2026', 'ASI06:2026'],
     mitreAtlas: [],
   },
+  'IH-INJ-004': {
+    owaspLlm: ['LLM01:2025'],
+    owaspAgentic: ['ASI04:2026'],
+    mitreAtlas: [],
+  },
   'IH-OBF-001': { owaspLlm: [], owaspAgentic: [], mitreAtlas: [] },
   'IH-PERSIST-001': { owaspLlm: [], owaspAgentic: [], mitreAtlas: [] },
   'IH-PRIV-001': {
@@ -73,6 +78,11 @@ export const RULE_REFERENCES: Record<string, RuleReferences> = {
     owaspLlm: ['LLM03:2025'],
     owaspAgentic: ['ASI04:2026'],
     mitreAtlas: ['AML.T0010'],
+  },
+  'IH-BIN-002': {
+    owaspLlm: ['LLM03:2025'],
+    owaspAgentic: ['ASI04:2026'],
+    mitreAtlas: [],
   },
   'IH-FS-001': { owaspLlm: [], owaspAgentic: [], mitreAtlas: [] },
   'IH-META-001': { owaspLlm: [], owaspAgentic: [], mitreAtlas: [] },
