@@ -81,6 +81,15 @@ export async function runVerify(options: {
   for (const item of outcome.refused) {
     write(`suppression refused ${item.ruleId} ${item.file} ${item.detail}\n`);
   }
+  for (const item of outcome.stale) {
+    write(
+      `stale suppression ${item.ruleId} ${item.path ?? '*'} evidence=${item.evidence} reason=${item.reason}\n`,
+    );
+  }
+  for (const finding of outcome.active) {
+    if (!finding.acceptance) continue;
+    write(`${finding.acceptance} ${finding.ruleId} ${finding.file}\n`);
+  }
   const score = scoreFindings(outcome.active);
   const verdict = verdictFor(outcome.active, config.thresholds);
   const grade = gradeFor(score, 0);

@@ -93,7 +93,7 @@ Absence of findings is not proof of safety.
 ## Commands
 
 ```text
-ironheights scan <path> [--all] [--json] [--sarif <file>] [--md <file>] [--html <file>] [--format text|json|html] [--since-baseline [file]] [--stdin] [--text <text>] [--fail-on <severity>] [--config <file>] [--allow-skipped] [--no-color] [--quiet] [--llm] [--llm-url <url>] [--llm-model <name>] [--llm-api ollama|openai] [--llm-consent] [--dry-run]
+ironheights scan <path> [--all] [--json] [--sarif <file>] [--md <file>] [--html <file>] [--format text|json|html] [--since-baseline [file]] [--print-suppressions] [--stdin] [--text <text>] [--fail-on <severity>] [--config <file>] [--allow-skipped] [--no-color] [--quiet] [--llm] [--llm-url <url>] [--llm-model <name>] [--llm-api ollama|openai] [--llm-consent] [--dry-run]
 ironheights review <path> [the same flags as scan]
 ironheights fetch <owner>/<slug>[@version] [--out <dir>] [--json] [--sarif <file>] [--md <file>] [--fail-on <severity>] [--config <file>] [--allow-skipped] [--no-color] [--quiet]
 ironheights safe-install <owner>/<slug>[@version] [--dir <skills-dir>] [--accept-review] [--out <dir>] [--json] [--config <file>] [--no-color] [--quiet]
@@ -176,8 +176,8 @@ A skipped file, or a `.git` or `node_modules` directory that was not acknowledge
 Verdict: review
 Grade: D (60/100)
 Absence of findings is not proof of safety.
-ironheights 0.5.1 | demo | grade D (60/100) | verdict review | 1 finding
-Badge: [ironheights 0.5.1: grade D (60/100), verdict review](https://github.com/Frank-Masciopinto/ironheights) — Absence of findings is not proof of safety.
+ironheights 0.6.0 | demo | grade D (60/100) | verdict review | 1 finding
+Badge: [ironheights 0.6.0: grade D (60/100), verdict review](https://github.com/Frank-Masciopinto/ironheights) — Absence of findings is not proof of safety.
 ```
 
 The badge line is text you can paste into a README. It does not load an image from a badge service.
@@ -231,6 +231,25 @@ Config entries do the same job for a rule and an optional glob:
 }
 ```
 
+An entry can name the finding it accepts by adding `evidence`. Use the evidence string from the report. The entry then suppresses only a finding with that rule id, a path the glob matches, and that exact evidence. Line numbers are ignored, the same match `scan --since-baseline previous.json` uses. An entry without `evidence` still covers the whole rule and glob. Evidence is the stricter option.
+
+```json
+{
+  "suppressions": [
+    {
+      "ruleId": "IH-CRED-001",
+      "path": "SKILL.md",
+      "evidence": "cat ~/.ssh/id_rsa",
+      "reason": "reviewed this local demo path"
+    }
+  ]
+}
+```
+
+`ironheights scan <path> --print-suppressions` prints one entry per current finding, with `ruleId`, `path`, and `evidence` filled in. `reason` is `TODO: reason` until you replace it. That placeholder meets the length rule and is still refused, so the finding stays visible at full weight. The entries are JSON on stdout. The exit code is still the scan verdict. `--print-suppressions` replaces the report on stdout.
+
+A finding of the same rule and path that was not named stays at full weight. It is marked `not accepted` when a named finding in that scope is still present, and `accepted finding changed` when every named finding for that rule and path is gone but the rule still fires. An evidence entry that matches nothing in a file it covers is listed under "Stale suppression". Text, JSON (`acceptance` on the finding, `staleSuppressions` on the skill), and SARIF all show these. `schemaVersion` stays `1`. With no suppression config, scan results are unchanged.
+
 Suppressed findings are listed with their reasons and counted in the summary line. They do not add risk points. Critical findings stay visible unless `suppressCritical` is true. `IH-INT-*` findings, including on `verify`, stay visible unless `suppressIntegrity` is true. A critical integrity finding needs both.
 
 ## Text scan
@@ -262,7 +281,13 @@ Ironheights reads `ironheights.config.json` from the current directory, then `~/
   "limits": { "maxFileBytes": 1048576, "maxFiles": 2000, "maxDepth": 10 },
   "thresholds": { "block": 80, "review": 15 },
   "suppressions": [
-    { "ruleId": "IH-NET-001", "path": "docs/**", "reason": "documented example hosts" }
+    { "ruleId": "IH-NET-001", "path": "docs/**", "reason": "documented example hosts" },
+    {
+      "ruleId": "IH-CRED-001",
+      "path": "SKILL.md",
+      "evidence": "cat ~/.ssh/id_rsa",
+      "reason": "reviewed this local demo path"
+    }
   ],
   "suppressCritical": false,
   "suppressIntegrity": false,
@@ -278,12 +303,12 @@ An allowlist entry matches that host and its subdomains. The built-in list inclu
 
 ## JSON output
 
-`--json` prints a document with `schemaVersion` `1`. New fields below are additive. Consumers that ignore unknown keys keep working, so `schemaVersion` stays `1`.
+`--json` prints a document with `schemaVersion` `1`. New fields below are additive. Consumers that ignore unknown keys keep working, so `schemaVersion` stays `1`. Evidence-bound drift adds `acceptance` on a finding and `staleSuppressions` on a skill. Both are omitted when they do not apply.
 
 ```json
 {
   "schemaVersion": 1,
-  "tool": { "name": "ironheights", "version": "0.5.1" },
+  "tool": { "name": "ironheights", "version": "0.6.0" },
   "scannedAt": "2026-10-09T00:00:00.000Z",
   "verdict": "no-findings",
   "skippedFileCount": 0,

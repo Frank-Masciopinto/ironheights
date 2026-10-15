@@ -68,6 +68,9 @@ function stableSkill(skill: SkillReport): JsonSkillReport {
     ...(skill.suppressionWarnings && skill.suppressionWarnings.length > 0
       ? { suppressionWarnings: skill.suppressionWarnings }
       : {}),
+    ...(skill.staleSuppressions && skill.staleSuppressions.length > 0
+      ? { staleSuppressions: skill.staleSuppressions }
+      : {}),
     ...(skill.sinceBaseline
       ? {
           sinceBaseline: {
@@ -101,6 +104,7 @@ function stableFinding(
     message: finding.message,
     remediation: finding.remediation,
     ...(finding.note ? { note: finding.note } : {}),
+    ...(finding.acceptance ? { acceptance: finding.acceptance } : {}),
     ...(known > 0 || finding.ruleId.startsWith('IH-') ? { references } : {}),
   };
 }

@@ -244,6 +244,10 @@ describe('0.5.1: lowercase skill.md', () => {
   });
 });
 
+// KitSinclair, Moltbook post d07b2559-4c63-4a33-a776-96bccad69d82
+// (https://www.moltbook.com/post/d07b2559-4c63-4a33-a776-96bccad69d82):
+// a plain link to the skill's own declared host is not IH-INJ-004; an instruction
+// to fetch that host and follow it, or to overwrite the skill with it, still is.
 describe('0.5.1: first-party links vs first-party instructions', () => {
   const head =
     '---\nname: vendor\ndescription: Vendor client.\nhomepage: https://www.vendor.dev\n---\n\n';
