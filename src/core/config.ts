@@ -49,6 +49,7 @@ export const ConfigSchema = z
             ruleId: z.string().regex(/^IH-[A-Z]+-\d{3}$/),
             path: z.string().min(1).optional(),
             line: z.number().int().positive().optional(),
+            evidence: z.string().min(1).optional(),
             reason: z.string().trim().min(8),
           })
           .strict(),

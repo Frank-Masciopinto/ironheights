@@ -7,6 +7,7 @@ import {
   TEXT_SCAN_LIMIT,
 } from '../../core/grade.ts';
 import type { ScanMode } from '../../core/grade.ts';
+import { acceptanceLabel } from '../../core/suppress.ts';
 import type { AdvisoryFeedNote, Finding, SkillReport, Verdict } from '../../core/types.ts';
 import { blockingDirectoryCount, compareSeverity } from '../../core/verdict.ts';
 import { LLM_RULE_ID } from '../../llm/constants.ts';
@@ -63,6 +64,14 @@ export function renderHuman(
       ),
     );
     appendList(lines, 'Suppression ignored', skill.suppressionWarnings ?? []);
+    appendList(
+      lines,
+      'Stale suppression',
+      (skill.staleSuppressions ?? []).map((item) => {
+        const wherePath = item.path ?? '*';
+        return `${item.ruleId} ${wherePath} evidence=${item.evidence} reason=${item.reason}`;
+      }),
+    );
     if (skill.sinceBaseline) {
       lines.push(`  Omitted as pre-existing: ${skill.sinceBaseline.omitted.length}`);
       for (const item of skill.sinceBaseline.omitted) {
@@ -115,6 +124,7 @@ export function renderHuman(
 function findingLines(finding: Finding, color: boolean): string[] {
   const label = paint(color, SEVERITY_COLOR[finding.severity], `[${finding.severity}]`);
   const lines = [`  ${label} ${finding.ruleId} ${where(finding)}`, `    ${clip(finding.evidence)}`];
+  if (finding.acceptance) lines.push(`    ${acceptanceLabel(finding.acceptance)}`);
   if (finding.ruleId === LLM_RULE_ID) lines.push(`    ${finding.message}`);
   lines.push(`    ${finding.remediation}`);
   if (finding.note) lines.push(`    note: ${clip(finding.note, 300)}`);

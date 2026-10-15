@@ -4,7 +4,7 @@ import { basename, join, resolve } from 'node:path';
 import { parseSkillMarkdown, type SkillFrontmatter } from '../openclaw/skill.ts';
 import { allContentRules } from '../rules/index.ts';
 import type { Finding, ResolvedConfig, ScanContext, ScannedFile, SkillReport } from './types.ts';
-import { applySuppressions } from './suppress.ts';
+import { applySuppressions, reconcileEvidenceDrift } from './suppress.ts';
 import {
   blockingSkipCount,
   gradeRiskFor,
@@ -31,9 +31,10 @@ export async function scanPath(
   for (const skillRoot of skillRoots) {
     skills.push(await scanSkill(skillRoot, config, options));
   }
+  const reconciled = reconcileEvidenceDrift(skills, config.suppressions);
   return {
-    skills,
-    verdict: worstVerdict(skills.map((skill) => skill.verdict)),
+    skills: reconciled,
+    verdict: worstVerdict(reconciled.map((skill) => skill.verdict)),
     scannedAt: (options.now ?? new Date()).toISOString(),
   };
 }
@@ -131,7 +132,8 @@ export async function scanText(
       config,
       options.allowSkipped === true,
     );
-    return { skills: [skill], verdict: skill.verdict, scannedAt };
+    const skills = reconcileEvidenceDrift([skill], config.suppressions);
+    return { skills, verdict: skills[0]?.verdict ?? skill.verdict, scannedAt };
   }
   const encoded = new TextEncoder().encode(text);
   const file: ScannedFile = {
@@ -163,7 +165,8 @@ export async function scanText(
     config,
     options.allowSkipped === true,
   );
-  return { skills: [skill], verdict: skill.verdict, scannedAt };
+  const skills = reconcileEvidenceDrift([skill], config.suppressions);
+  return { skills, verdict: skills[0]?.verdict ?? skill.verdict, scannedAt };
 }
 
 export function scanFile(
@@ -208,6 +211,8 @@ function finishSkill(
     suppressed: outcome.suppressed,
     suppressionRefused: outcome.refused,
     suppressionWarnings: outcome.warnings,
+    ...(outcome.stale.length > 0 ? { staleSuppressions: outcome.stale } : {}),
+    ...(outcome.matches.length > 0 ? { evidenceMatches: outcome.matches } : {}),
     score,
     gradeRisk: gradeRiskFor(outcome.active),
     verdict: 'no-findings',

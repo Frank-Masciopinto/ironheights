@@ -76,6 +76,13 @@ export interface Finding {
   /** Extra context for the reader. It never changes severity, score or verdict. */
   note?: string;
   /**
+   * Set when an evidence-bound suppression covers this rule and path but not this
+   * finding. It does not change severity, score, or verdict.
+   * `accepted finding changed` — every named acceptance for this rule and path missed.
+   * `not accepted` — a named acceptance still matches a different finding here.
+   */
+  acceptance?: 'accepted finding changed' | 'not accepted';
+  /**
    * Set when every URL in the finding points at a host the skill declares as its own
    * (frontmatter homepage, metadata api_base). The finding keeps its severity and the
    * verdict is unchanged; only the letter grade weighs it as a review item.
@@ -125,7 +132,24 @@ export interface RefusedSuppression {
   severity: Severity;
   file: string;
   line?: number;
+  /** Set when an evidence-bound entry matched this finding and was refused. */
+  evidence?: string;
   detail: string;
+}
+
+/** An evidence-bound suppression that matched no finding in a file it covers. */
+export interface StaleSuppression {
+  ruleId: string;
+  path?: string;
+  evidence: string;
+  reason: string;
+}
+
+/** An evidence-bound suppression that matched a finding. Omitted from JSON. */
+export interface EvidenceMatch {
+  ruleId: string;
+  path?: string;
+  evidence: string;
 }
 
 /**
@@ -168,6 +192,10 @@ export interface SkillReport {
   suppressed?: SuppressedFinding[];
   suppressionRefused?: RefusedSuppression[];
   suppressionWarnings?: string[];
+  /** Evidence-bound entries that covered a scanned file and matched nothing. */
+  staleSuppressions?: StaleSuppression[];
+  /** Matched evidence-bound entries. Renderers omit this. */
+  evidenceMatches?: EvidenceMatch[];
   sinceBaseline?: SinceBaselineNote;
   /** Set when the folder or SKILL.md name equals a listed security tool. Not verified. */
   knownSecurityTool?: KnownSecurityToolNote;
@@ -244,6 +272,12 @@ export interface SuppressionEntry {
   ruleId: string;
   path?: string;
   line?: number;
+  /**
+   * When set, the entry suppresses only a finding with this exact evidence.
+   * Line numbers are ignored, matching `scan --since-baseline` on a previous
+   * JSON result (rule id, file, evidence).
+   */
+  evidence?: string;
   reason: string;
 }
 

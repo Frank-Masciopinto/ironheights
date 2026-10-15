@@ -439,6 +439,10 @@ function registerScan(program: Command, name: 'scan' | 'review', hooks: MainHook
     .option('--llm-consent', 'send skill text to a non-localhost model server')
     .option('--dry-run', 'print the model prompt and do not send it')
     .option(
+      '--print-suppressions',
+      'print a suppression entry for each current finding, with evidence filled in and a placeholder reason',
+    )
+    .option(
       '--changed',
       'scan only skills that are new or whose content or version changed since their last scan',
     )
@@ -468,6 +472,7 @@ function registerScan(program: Command, name: 'scan' | 'review', hooks: MainHook
         llmConsent: Boolean(opts.llmConsent),
         dryRun: Boolean(opts.dryRun),
         changed: Boolean(opts.changed),
+        printSuppressions: Boolean(opts.printSuppressions),
         ...(hooks.advisoryPublicKey !== undefined
           ? { advisoryPublicKey: hooks.advisoryPublicKey }
           : {}),

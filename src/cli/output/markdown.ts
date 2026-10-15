@@ -7,6 +7,7 @@ import {
 } from '../../core/grade.ts';
 import type { ScanMode } from '../../core/grade.ts';
 import type { AdvisoryFeedNote, SkillReport, Verdict } from '../../core/types.ts';
+import { acceptanceLabel } from '../../core/suppress.ts';
 import { blockingDirectoryCount } from '../../core/verdict.ts';
 import type { LlmReviewReport } from '../../llm/review.ts';
 import { referenceTags } from '../../rules/references.ts';
@@ -58,6 +59,7 @@ export function renderMarkdown(
       lines.push(`- **${finding.severity}** \`${finding.ruleId}\` ${where}${suffix}`);
       lines.push(`  - ${finding.message}`);
       lines.push(`  - Evidence: \`${finding.evidence.replace(/`/g, "'")}\``);
+      if (finding.acceptance) lines.push(`  - ${acceptanceLabel(finding.acceptance)}`);
       lines.push(`  - ${finding.remediation}`);
       if (finding.note) lines.push(`  - Note: ${finding.note}`);
     }
@@ -71,6 +73,12 @@ export function renderMarkdown(
     }
     for (const warning of skill.suppressionWarnings ?? []) {
       lines.push(`- suppression ignored: ${warning}`);
+    }
+    for (const item of skill.staleSuppressions ?? []) {
+      const where = item.path ?? '*';
+      lines.push(
+        `- stale suppression \`${item.ruleId}\` ${where} evidence=${item.evidence} reason=${item.reason}`,
+      );
     }
     for (const item of skill.sinceBaseline?.omitted ?? []) {
       const where = item.line ? `${item.file}:${item.line}` : item.file;

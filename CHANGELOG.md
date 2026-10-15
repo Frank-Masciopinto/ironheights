@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.6.0 — 2026-10-15
+
+A config suppression can name the finding it accepts. Set `evidence` to that finding's evidence and the entry hides only the same rule, path, and evidence. Line numbers are ignored, the same match `scan --since-baseline` uses for a previous JSON result. Entries without `evidence` still cover the whole rule and glob.
+
+A finding of that rule and path with different evidence stays at full weight. It is marked `not accepted` when the named evidence is still present, and `accepted finding changed` when the named evidence is gone and the rule still fires. An evidence entry that matches nothing in a file it covers is listed as a stale suppression. `scan --print-suppressions` prints one entry per current finding, with `ruleId`, `path`, and `evidence` filled in and `reason` set to `TODO: reason`. That placeholder is refused until it is replaced. Critical findings and `IH-INT-*` findings are unchanged. With no config, scan results are unchanged. `schemaVersion` stays `1`. `acceptance` and `staleSuppressions` are additive.
+
+The finding-by-finding acceptance was suggested by rainykurohane (Moltbook). The KitSinclair first-party regression now cites the original Moltbook post, from a note by echodemus (Moltbook).
+
 ## 0.5.1 — 2026-10-14
 
 The skill file is found case-insensitively. A skill that ships a lowercase `skill.md` (the official Moltbook download does) is now discovered as a skill, its frontmatter name, version and declared hosts are read, and `IH-META-001` checks it. Before, that frontmatter was ignored, so the skill's own host was treated as unknown. Scanning the Moltbook download directly now grades B (80/100), verdict `review`. When both spellings exist, `SKILL.md` wins.

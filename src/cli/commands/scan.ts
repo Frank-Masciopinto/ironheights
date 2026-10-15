@@ -23,6 +23,11 @@ import {
   type SkillFingerprint,
 } from '../../core/scan-state.ts';
 import { applySinceBaseline } from '../../core/since-baseline.ts';
+import {
+  renderSuppressionConfig,
+  SUPPRESSION_REASON_PLACEHOLDER,
+  reconcileEvidenceDrift,
+} from '../../core/suppress.ts';
 import { blockingSkipCount, exitCodeFor, worstVerdict } from '../../core/verdict.ts';
 import { baselinePath } from '../../integrity/baseline.ts';
 import { LLM_RULE_ID, skipNote } from '../../llm/constants.ts';
@@ -61,6 +66,8 @@ export interface ScanFlags {
   dryRun?: boolean;
   /** Scan only skills whose content hash or version changed since their last scan. */
   changed?: boolean;
+  /** Print pasteable evidence-bound suppression entries instead of the report. */
+  printSuppressions?: boolean;
   paths: string[];
   env?: NodeJS.ProcessEnv;
   stdout?: (text: string) => void;
@@ -100,7 +107,13 @@ export function shouldShowStarHint(
   isTTY: boolean,
 ): boolean {
   if (verdict !== 'no-findings' || !isTTY) return false;
-  if (flags.quiet || flags.dryRun || flags.json || (flags.format && flags.format !== 'text')) {
+  if (
+    flags.quiet ||
+    flags.dryRun ||
+    flags.json ||
+    flags.printSuppressions ||
+    (flags.format && flags.format !== 'text')
+  ) {
     return false;
   }
   if (envFlag(env.IRONHEIGHTS_NO_STAR_HINT) || envFlag(env.CI)) return false;
@@ -211,6 +224,7 @@ export async function executeScan(flags: ScanFlags): Promise<ScanExecution> {
       scanMode,
     });
   }
+  skills = reconcileEvidenceDrift(skills, config.suppressions);
 
   const verdict = worstVerdict(skills.map((skill) => skill.verdict));
   const limitNote = scanMode === 'text' ? TEXT_SCAN_LIMIT : undefined;
@@ -218,7 +232,7 @@ export async function executeScan(flags: ScanFlags): Promise<ScanExecution> {
   const emitNotice = flags.stderr ?? ((text: string) => process.stderr.write(text));
   let reported = skills;
   let llmReport: LlmReviewReport | undefined;
-  if (flags.llm) {
+  if (flags.llm && !flags.printSuppressions) {
     if (flags.dryRun) {
       write(`Deterministic verdict: ${verdict}\nDry-run did not contact the model server.\n\n`);
     }
@@ -268,7 +282,12 @@ export async function executeScan(flags: ScanFlags): Promise<ScanExecution> {
     ...(advisory.note ? { advisory: advisory.note } : {}),
     ...(llmReport ? { llmReview: llmReport } : {}),
   };
-  if (format === 'json') {
+  if (flags.printSuppressions) {
+    write(renderSuppressionConfig(reported.flatMap((skill) => skill.findings)));
+    emitNotice(
+      `Replace "${SUPPRESSION_REASON_PLACEHOLDER}" with a reason of at least 8 characters. The placeholder does not suppress a finding.\n`,
+    );
+  } else if (format === 'json') {
     write(renderJson(reported, verdict, scannedAt, renderContext));
   } else if (format === 'html') {
     write(`${renderHtml(reported, verdict, scannedAt, scanMode, advisory.note, llmReport)}\n`);

@@ -8,6 +8,7 @@ import {
 } from '../../core/grade.ts';
 import type { ScanMode } from '../../core/grade.ts';
 import type { AdvisoryFeedNote, Finding, SkillReport, Verdict } from '../../core/types.ts';
+import { acceptanceLabel } from '../../core/suppress.ts';
 import { blockingDirectoryCount } from '../../core/verdict.ts';
 import type { LlmReviewReport } from '../../llm/review.ts';
 import { referenceTags } from '../../rules/references.ts';
@@ -95,6 +96,15 @@ export function renderHtml(
     parts.push(simpleList('Suppression ignored', skill.suppressionWarnings ?? []));
     parts.push(
       simpleList(
+        'Stale suppression',
+        (skill.staleSuppressions ?? []).map((item) => {
+          const wherePath = item.path ?? '*';
+          return `${item.ruleId} ${wherePath} evidence=${item.evidence} reason=${item.reason}`;
+        }),
+      ),
+    );
+    parts.push(
+      simpleList(
         'Omitted as pre-existing',
         (skill.sinceBaseline?.omitted ?? []).map((item) => `${item.ruleId} ${place(item)}`),
       ),
@@ -129,7 +139,8 @@ function findingsTable(findings: Finding[]): string {
   if (findings.length === 0) return '<p>No findings in this section.</p>';
   const rows = findings.map((finding) => {
     const tags = referenceTags(finding.ruleId).join(', ');
-    return `<tr><td class="${severityClass(finding.severity)}">${escapeHtml(finding.severity)}</td><td>${escapeHtml(finding.ruleId)}</td><td>${escapeHtml(place(finding))}</td><td>${escapeHtml(finding.evidence)}</td><td>${escapeHtml(finding.message)}</td><td>${escapeHtml(tags)}</td></tr>`;
+    const drift = finding.acceptance ? ` (${acceptanceLabel(finding.acceptance)})` : '';
+    return `<tr><td class="${severityClass(finding.severity)}">${escapeHtml(finding.severity)}</td><td>${escapeHtml(finding.ruleId)}</td><td>${escapeHtml(place(finding))}</td><td>${escapeHtml(finding.evidence)}</td><td>${escapeHtml(finding.message)}${escapeHtml(drift)}</td><td>${escapeHtml(tags)}</td></tr>`;
   });
   return `<table><thead><tr><th>Severity</th><th>Rule</th><th>Location</th><th>Evidence</th><th>Message</th><th>References</th></tr></thead><tbody>${rows.join('')}</tbody></table>`;
 }

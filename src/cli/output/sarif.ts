@@ -1,5 +1,6 @@
 import { gradeFromSkills } from '../../core/grade.ts';
 import type { ScanMode } from '../../core/grade.ts';
+import { acceptanceLabel } from '../../core/suppress.ts';
 import type { Finding, SkillReport, SkippedDirectory } from '../../core/types.ts';
 import { blockingDirectoryCount } from '../../core/verdict.ts';
 import { LLM_RULE_ID } from '../../llm/constants.ts';
@@ -57,10 +58,12 @@ export function renderSarif(skills: SkillReport[], scanMode: ScanMode = 'directo
         owaspAgentic: refs.owaspAgentic,
         mitreAtlas: refs.mitreAtlas,
         ...(finding.ruleId === LLM_RULE_ID ? { advisory: true } : {}),
+        ...(finding.acceptance ? { acceptance: acceptanceLabel(finding.acceptance) } : {}),
       },
     };
   });
   const suppressedCount = skills.reduce((sum, skill) => sum + (skill.suppressed?.length ?? 0), 0);
+  const staleSuppressions = skills.flatMap((skill) => skill.staleSuppressions ?? []);
   const skippedDirectories = skills.flatMap((skill) => skill.skippedDirectories ?? []);
   const blockingDirectories = skills.reduce((sum, skill) => sum + blockingDirectoryCount(skill), 0);
   const doc = {
@@ -82,6 +85,7 @@ export function renderSarif(skills: SkillReport[], scanMode: ScanMode = 'directo
           skippedFileCount: skills.reduce((sum, skill) => sum + skill.filesSkipped.length, 0),
           ...sarifDirectories(skippedDirectories, blockingDirectories),
           suppressedCount,
+          ...(staleSuppressions.length > 0 ? { staleSuppressions } : {}),
           gradeLetter: grade.letter,
           ...(grade.score !== undefined ? { gradeScore: grade.score } : {}),
           disclaimer: SAFETY_REMINDER,
