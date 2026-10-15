@@ -18,7 +18,7 @@ export const FETCH_HARD_MAX_FILES = 2000;
 const METADATA_MAX_BYTES = 2 * 1024 * 1024;
 
 export const NETWORK_BANNER =
-  'This command contacts the network. ironheights does not call the network unless you run fetch, safe-install, advisories update, --online, scan --llm, or review.\n';
+  'This command contacts the network. Scans stay local. Besides fetch, safe-install, advisories update, --online, scan --llm, and review, the only network call is a version check every 6 hours (off with IRONHEIGHTS_NO_UPDATE=1).\n';
 
 const REF =
   /^([A-Za-z0-9](?:[A-Za-z0-9-]{0,38}))\/([a-z0-9](?:[a-z0-9-]{0,63}))(?:@([0-9A-Za-z][0-9A-Za-z.+-]{0,63}))?$/;

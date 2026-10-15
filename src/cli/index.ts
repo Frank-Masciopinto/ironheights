@@ -15,6 +15,8 @@ import { runRules } from './commands/rules.ts';
 import { runSafeInstall } from './commands/safe-install.ts';
 import { runScan } from './commands/scan.ts';
 import { runWatch } from './commands/watch.ts';
+import { runUpdate } from './commands/update.ts';
+import { maybeStartBackgroundCheck, type AutoCheckHooks } from '../update/update.ts';
 import { IronheightsError, UsageError } from '../core/errors.ts';
 import { finishCommand } from '../util/flush.ts';
 import { TOOL_VERSION } from '../version.ts';
@@ -24,9 +26,14 @@ export interface MainHooks {
   fetchImpl?: typeof fetch;
   /** Test hook. Production uses the pinned advisory public key. */
   advisoryPublicKey?: Uint8Array | null;
+  /** Test hook for the 6-hourly background update check. */
+  autoCheck?: AutoCheckHooks | false;
 }
 
 export async function main(argv: string[], hooks: MainHooks = {}): Promise<number> {
+  if (hooks.autoCheck !== undefined ? hooks.autoCheck !== false : !process.env.VITEST) {
+    maybeStartBackgroundCheck(argv, hooks.autoCheck || {});
+  }
   const online = argv.includes('--online');
   const rest = argv.filter((arg) => arg !== '--online');
   const helpOrVersion = rest.some(
@@ -54,7 +61,7 @@ export async function main(argv: string[], hooks: MainHooks = {}): Promise<numbe
   program
     .name('ironheights')
     .description(
-      'Local-first security scanner for OpenClaw skills. Network is off unless you run fetch, safe-install, advisories update, --online, scan --llm, or review.',
+      'Local-first security scanner for OpenClaw skills. Scans are local. Network is used only by fetch, safe-install, advisories update, --online, scan --llm, review, and the 6-hourly version check (off with IRONHEIGHTS_NO_UPDATE=1).',
     )
     .version(TOOL_VERSION)
     .exitOverride();
@@ -327,6 +334,30 @@ export async function main(argv: string[], hooks: MainHooks = {}): Promise<numbe
         ...(hooks.advisoryPublicKey !== undefined
           ? { advisoryPublicKey: hooks.advisoryPublicKey }
           : {}),
+      });
+    });
+
+  program
+    .command('update')
+    .description(
+      'check npm and ClawHub for a newer Ironheights and install it (CLI only if installed globally, after verifying npm provenance; never downgrades)',
+    )
+    .option('--check', 'only report versions, change nothing')
+    .option('--json', 'print JSON')
+    .option(
+      '--auto',
+      'background mode used by the automatic check (logs to ~/.ironheights/update.log)',
+    )
+    .option('--disable', 'turn off automatic update checks')
+    .option('--enable', 'turn automatic update checks back on')
+    .action(async (opts: Record<string, boolean | undefined>) => {
+      process.exitCode = await runUpdate({
+        check: Boolean(opts.check),
+        json: Boolean(opts.json),
+        auto: Boolean(opts.auto),
+        disable: Boolean(opts.disable),
+        enable: Boolean(opts.enable),
+        ...(hooks.fetchImpl ? { fetchImpl: hooks.fetchImpl } : {}),
       });
     });
 
