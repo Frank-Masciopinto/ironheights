@@ -10,7 +10,7 @@ If Ironheights is useful to you, a star on [ClawHub](https://clawhub.ai/frank-ma
 
 Ironheights is a local-first scanner and integrity monitor for [OpenClaw](https://docs.openclaw.ai) skills. It reads skill files as data, looks for risky patterns with fixed rules, and compares skill and agent files with a baseline you save on the same machine.
 
-It does not send telemetry, and it does not run the files it scans. It does not call the network unless you run `fetch`, `safe-install`, `advisories update`, `--online`, `scan --llm`, or `review`.
+It does not send telemetry, and it does not run the files it scans. Scans are fully local. The only network call made without a flag is a version check against npm and ClawHub, at most once every 6 hours; it can be turned off (see [Updates](#updates)). Other network use happens only when you run `fetch`, `safe-install`, `advisories update`, `--online`, `scan --llm`, or `review`.
 
 ## Install
 
@@ -113,6 +113,7 @@ ironheights bench <corpusDir> [--external <file.json>]
 ironheights guard status [--policy <file>] [--config <file>] [--json]
 ironheights guard policy check [--policy <file>] [--config <file>] [--call <json>] [--call-file <file>] [--json]
 ironheights guard log [--tail <n>] [--policy <file>] [--json]
+ironheights update [--check] [--json] [--disable] [--enable]
 ironheights --online <command>
 ```
 
@@ -124,7 +125,7 @@ ironheights --online <command>
 
 ```text
 fetch ada/notes@1.0.0
-This command contacts the network. ironheights does not call the network unless you run fetch, safe-install, advisories update, --online, scan --llm, or review.
+This command contacts the network. Scans stay local. Besides fetch, safe-install, advisories update, --online, scan --llm, and review, the only network call is a version check every 6 hours (off with IRONHEIGHTS_NO_UPDATE=1).
 
 Requesting:
   GET https://clawhub.ai/api/v1/skills/notes?owner=ada
@@ -149,7 +150,7 @@ Staged 1 files at /tmp/ironheights-fetch-.../notes
 
 ```text
 advisories update
-This command contacts the network. ironheights does not call the network unless you run fetch, safe-install, advisories update, --online, scan --llm, or review.
+This command contacts the network. Scans stay local. Besides fetch, safe-install, advisories update, --online, scan --llm, and review, the only network call is a version check every 6 hours (off with IRONHEIGHTS_NO_UPDATE=1).
 
 Requesting:
   GET https://ironheights.dev/advisories.json
@@ -176,8 +177,8 @@ A skipped file, or a `.git` or `node_modules` directory that was not acknowledge
 Verdict: review
 Grade: D (60/100)
 Absence of findings is not proof of safety.
-ironheights 0.6.0 | demo | grade D (60/100) | verdict review | 1 finding
-Badge: [ironheights 0.6.0: grade D (60/100), verdict review](https://github.com/Frank-Masciopinto/ironheights) — Absence of findings is not proof of safety.
+ironheights 0.7.0 | demo | grade D (60/100) | verdict review | 1 finding
+Badge: [ironheights 0.7.0: grade D (60/100), verdict review](https://github.com/Frank-Masciopinto/ironheights) — Absence of findings is not proof of safety.
 ```
 
 The badge line is text you can paste into a README. It does not load an image from a badge service.
@@ -308,7 +309,7 @@ An allowlist entry matches that host and its subdomains. The built-in list inclu
 ```json
 {
   "schemaVersion": 1,
-  "tool": { "name": "ironheights", "version": "0.6.0" },
+  "tool": { "name": "ironheights", "version": "0.7.0" },
   "scannedAt": "2026-10-09T00:00:00.000Z",
   "verdict": "no-findings",
   "skippedFileCount": 0,
@@ -407,7 +408,7 @@ Detection is heuristic. A renamed or unlisted tool is not found, and a name can 
 
 ## The advisory skill
 
-`skill/ironheights/SKILL.md` tells an OpenClaw agent to run `ironheights scan <path> --json`, summarize the result, and stop on a `block` verdict until you confirm. The skill asks for no network access and no secrets.
+`skill/ironheights/SKILL.md` tells an OpenClaw agent to run `ironheights scan <path> --json`, summarize the result, and stop on a `block` verdict until you confirm. The skill asks for no secrets. Its only network step is `ironheights update` once every 6 hours (version check and self-update), which the agent skips when updates are disabled.
 
 This skill is advisory. It runs inside the agent, and a hostile skill can try to bypass it. The CLI you run yourself, or a process outside the agent, is the trusted path.
 
@@ -421,9 +422,24 @@ This skill is advisory. It runs inside the agent, and a hostile skill can try to
 
 No findings means the rules did not match. It does not mean the skill is safe.
 
+## Updates
+
+Ironheights checks for a newer version at most once every 6 hours. Any command reads a local timestamp in `~/.ironheights/update-check.json`; when a check is due it starts a detached background process and the command continues at once. That process asks registry.npmjs.org for the `latest` version of `ironheights` and clawhub.ai for the latest `ironheights` skill version, with a 3-second timeout. A network failure is ignored and never affects a scan. Results go to `~/.ironheights/update.log`.
+
+- **CLI**: replaced only when it was installed with `npm install -g`, only for a strictly newer stable version, and only when npm reports SLSA provenance and an sha512 integrity for that exact version. It runs `npm install -g ironheights@<exact version>`, which checks the integrity. `npx` users get a note to run `npx ironheights@latest` instead.
+- **ClawHub skill**: updated with `clawhub update ironheights` when `clawhub` is on the PATH. Nothing is ever downgraded.
+
+```bash
+ironheights update           # check now and apply updates
+ironheights update --check   # report versions only
+ironheights update --disable # turn automatic checks off (--enable to turn them back on)
+```
+
+Automatic checks are off when `IRONHEIGHTS_NO_UPDATE=1` is set, when `CI` is set, or after `ironheights update --disable` (writes `{"autoUpdate": false}` to `~/.ironheights/update-config.json`).
+
 ## Privacy
 
-Scans stay on the machine. There is no telemetry. `fetch`, `safe-install`, `advisories update`, and `--online` open a connection, and each one prints the URLs first. `scan --llm` and `review` are the other network path. They are off unless you pass them, and a normal `scan` does not call the network. The scanner reads files up to the configured size and does not extract archives. Set `IRONHEIGHTS_HOME` to put the baseline, the advisory cache, and the quarantine directory somewhere else.
+Scans stay on the machine. There is no telemetry. The 6-hourly version check reads two version numbers (registry.npmjs.org and clawhub.ai) and sends nothing about your skills; turn it off with `IRONHEIGHTS_NO_UPDATE=1` or `ironheights update --disable`. `fetch`, `safe-install`, `advisories update`, and `--online` open a connection, and each one prints the URLs first. `scan --llm` and `review` are the other network path. They are off unless you pass them, and a normal `scan` does not call the network. The scanner reads files up to the configured size and does not extract archives. Set `IRONHEIGHTS_HOME` to put the baseline, the advisory cache, and the quarantine directory somewhere else.
 
 ## Use in CI
 

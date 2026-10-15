@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.7.0 — 2026-10-15
+
+Automatic updates. At most once every 6 hours, any command starts a detached background check of the npm `latest` version of `ironheights` and the latest ClawHub `ironheights` skill version (3-second timeout, silent on network failure, never blocks or changes a scan). A newer CLI is installed with `npm install -g ironheights@<exact version>` only when the running copy is a global npm install and npm reports SLSA provenance and an sha512 integrity for that version; otherwise it prints the `npx ironheights@latest` note. The skill is updated with `clawhub update ironheights`. Nothing is downgraded, and prereleases are ignored.
+
+New command `ironheights update` (`--check` reports only, `--json`, `--disable`/`--enable`). Automatic checks are off with `IRONHEIGHTS_NO_UPDATE=1`, when `CI` is set, or with `{"autoUpdate": false}` in `~/.ironheights/update-config.json`. State lives in `~/.ironheights/update-check.json`, the log in `~/.ironheights/update.log`.
+
+The skill tells the agent to run `ironheights update` when 6 hours have passed since the last check, so skill-only installs update too. The README and SKILL.md wording changes from "no network" to: scans stay fully local, and the only network call made without a flag is the version check, which can be disabled.
+
 ## 0.6.0 — 2026-10-15
 
 A config suppression can name the finding it accepts. Set `evidence` to that finding's evidence and the entry hides only the same rule, path, and evidence. Line numbers are ignored, the same match `scan --since-baseline` uses for a previous JSON result. Entries without `evidence` still cover the whole rule and glob.

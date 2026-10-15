@@ -1,6 +1,6 @@
 {
   "name": "ironheights",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "Local-first security scanner and integrity monitor for OpenClaw skills.",
   "homepage": "https://www.ironheights.dev",
   "bugs": {

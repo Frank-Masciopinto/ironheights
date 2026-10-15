@@ -10,7 +10,7 @@ The host is `clawhub.ai` and the scheme is `https`. Redirects are refused. The C
 
 ```text
 fetch ada/notes@1.0.0
-This command contacts the network. ironheights does not call the network unless you run fetch, safe-install, advisories update, --online, scan --llm, or review.
+This command contacts the network. Scans stay local. Besides fetch, safe-install, advisories update, --online, scan --llm, and review, the only network call is a version check every 6 hours (off with IRONHEIGHTS_NO_UPDATE=1).
 
 Requesting:
   GET https://clawhub.ai/api/v1/skills/notes?owner=ada
