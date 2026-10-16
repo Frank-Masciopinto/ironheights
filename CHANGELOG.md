@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.8.0 — 2026-10-16
+
+Wider `IH-INJ-004` (remote or self-updating instructions). On 26 hand-verified ClawHub skills that pull instruction text from the web, 0.7.0 flagged 13; 0.8.0 flags 25. Newly caught:
+
+- downloads that use an output flag instead of `>`: `curl -o PATH URL`, `curl URL -o PATH`, `--create-dirs -o`, `wget -O`, `-OutFile`, including commands split across lines with a trailing backslash;
+- a relative target (`> skill.md`) and lowercase `skill.md` / `heartbeat.md`;
+- `>>` appends of a remote fragment into `SOUL.md`, `HEARTBEAT.md`, `AGENTS.md` or `SKILL.md`, with its own message;
+- plain-English fetch-and-follow: a line that names a remote `heartbeat.md` / `soul.md` URL and says to fetch or follow it, add it to `HEARTBEAT.md`, or run it as a routine. A remote `skill.md` also needs a schedule nearby, so one-time install links and plain doc links stay quiet.
+
+The one miss left is a vague "read the canonical skill.md first" nudge with no instruction to follow it.
+
+Fewer `IH-CRED-002` (hard-coded secret) false positives. On the same 2,827-skill registry scan, 17 of the 27 skills it flagged (about 63% of hits) were docs, not secrets. These are now quiet:
+
+- a private-key header quoted in prose, or followed by `...`, `\n...`, `your-private-key-here` or another placeholder instead of key material;
+- a public `0x` + 40-hex token or contract address.
+
+A header followed by base64 key material (on the next line or after a literal `\n`) is still critical, and so is a bare header on its own line. Live payment keys and other high-entropy values are unchanged. New: a `0x` + 64-hex value assigned to a key-like name (an EVM private key) is flagged; hex never reached the entropy threshold before. Registry-wide: 108 hits in 27 skills became 76 hits in 13 skills, every real-looking key from before is still caught, and 3 more skills with hard-coded wallet keys are caught. The 20-skill benchmark is unchanged (review recall 1.000, 0 false flags on the clean set).
+
+Both fixes come from [yuigui on Moltbook](https://www.moltbook.com/post/16f89e3b-fe65-40dd-b4da-f9e3cb9bd66a): a content-hash pin says nothing about a file the skill fetches at runtime, so we counted every skill that does it and found where our own rule fell short.
+
 ## 0.7.0 — 2026-10-15
 
 Automatic updates. At most once every 6 hours, any command starts a detached background check of the npm `latest` version of `ironheights` and the latest ClawHub `ironheights` skill version (3-second timeout, silent on network failure, never blocks or changes a scan). A newer CLI is installed with `npm install -g ironheights@<exact version>` only when the running copy is a global npm install and npm reports SLSA provenance and an sha512 integrity for that version; otherwise it prints the `npx ironheights@latest` note. The skill is updated with `clawhub update ironheights`. Nothing is downgraded, and prereleases are ignored.

@@ -12,6 +12,13 @@ import { hasSensitiveMarker } from './network.ts';
  */
 
 const PEM = /-----BEGIN (?:RSA |EC |OPENSSH |DSA |ENCRYPTED )?PRIVATE KEY-----/;
+/** Base64 key material: a PEM body line, or the same text after a literal \\n escape. */
+const PEM_BODY_LINE = /^\s*["'`]?\s*[A-Za-z0-9+/]{40,}={0,2}\s*(?:\\n)?["'`,]*\s*$/;
+const PEM_BODY_INLINE = /PRIVATE KEY-----(?:\\n|\s)+[A-Za-z0-9+/]{40,}/;
+/** A public EVM address (0x + 40 hex) is not a secret; a 0x + 64 hex private key still is. */
+const PUBLIC_ADDRESS = /^0x[0-9a-fA-F]{40}$/;
+/** 0x + 64 hex assigned to a secret-like name: an EVM private key (hex entropy stays under 4 bits). */
+const HEX_PRIVATE_KEY = /^0x[0-9a-fA-F]{64}$/;
 const AWS = /\b(AKIA[0-9A-Z]{16})\b/;
 const GITHUB = /\b(ghp_[A-Za-z0-9]{20,80}|github_pat_[A-Za-z0-9_]{20,80}|gho_[A-Za-z0-9]{20,80})\b/;
 const SLACK = /\b(xox[baprs]-[A-Za-z0-9-]{10,80})\b/;
@@ -80,8 +87,17 @@ export const cred002: Rule = {
   remediation: 'Remove the secret, rotate it, and load it from the environment or a secret store.',
   appliesTo: ['any'],
   examples: {
-    matches: ['-----BEGIN PRIVATE KEY-----', 'aws_key = "AKIAIOSFODNN7EXAMPLE"'],
-    nonMatches: ['-----BEGIN PUBLIC KEY-----', 'token = "short"'],
+    matches: [
+      '-----BEGIN PRIVATE KEY-----',
+      '-----BEGIN PRIVATE KEY-----\\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC7',
+      'aws_key = "AKIAIOSFODNN7EXAMPLE"',
+    ],
+    nonMatches: [
+      '-----BEGIN PUBLIC KEY-----',
+      'token = "short"',
+      'The file starts with -----BEGIN PRIVATE KEY----- and ends with the END line.',
+      'token: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"',
+    ],
   },
   check: checkCred002,
 };
@@ -108,11 +124,43 @@ const CHAT_SECRET =
 const ASK_SECRET =
   /\bask (?:the user|them) (?:to )?(?:paste|enter|provide) (?:their |the )?(?:api[_ -]?key|token|password|secret)\b/i;
 
+const PEM_PLACEHOLDER =
+  /^\s*["'`]?\s*(?:\.{2,}|\u2026|<[^>]*>|\[[^\]]*\]|your[\w -]*|paste\b|\(.*\)|#|-----END\b)/i;
+const PEM_STANDALONE_PREFIX = /^\s*(?:(?:export\s+)?[\w.-]+\s*[:=]\s*)?["'`]?\s*$/;
+const PEM_STANDALONE_SUFFIX = /^\s*(?:\\n)?\s*["'`,]*\s*$/;
+
+/**
+ * A private-key header counts when key material follows it, inline or on the next
+ * line, or when it stands alone on its line and is not followed by a placeholder.
+ * A header quoted in prose ("should start with -----BEGIN PRIVATE KEY-----") or
+ * followed by "..." or "your-private-key-here" is documentation, not a key.
+ */
+function isRealPem(lines: readonly string[], index: number, header: RegExpExecArray): boolean {
+  const line = lines[index] ?? '';
+  if (PEM_BODY_INLINE.test(line)) return true;
+  const prefix = line.slice(0, header.index);
+  const suffix = line.slice(header.index + header[0].length);
+  if (/^\s*\\n/.test(suffix)) {
+    const rest = suffix.replace(/^\s*\\n/, '');
+    if (PEM_PLACEHOLDER.test(rest) || rest.trim() === '' || /^["'`,]/.test(rest.trim()))
+      return false;
+  }
+  if (!PEM_STANDALONE_PREFIX.test(prefix) || !PEM_STANDALONE_SUFFIX.test(suffix)) return false;
+  for (let j = index + 1; j < Math.min(lines.length, index + 3); j += 1) {
+    const next = lines[j] ?? '';
+    if (next.trim() === '') continue;
+    if (PEM_BODY_LINE.test(next)) return true;
+    return !PEM_PLACEHOLDER.test(next);
+  }
+  return true;
+}
+
 function checkCred002(file: ScannedFile): Finding[] {
   const findings: Finding[] = [];
+  const allLines = file.text.split(/\r?\n/);
   eachLine(file.text, (line, lineNumber) => {
     const pem = PEM.exec(line);
-    if (pem) {
+    if (pem && isRealPem(allLines, lineNumber - 1, pem)) {
       pushUnique(
         findings,
         createFinding(cred002, file, {
@@ -147,7 +195,12 @@ function checkCred002(file: ScannedFile): Finding[] {
     }
     const assigned = ASSIGN.exec(line);
     const value = assigned?.[2];
-    if (value && value.length >= ENTROPY_MIN_LENGTH && shannonEntropy(value) >= ENTROPY_THRESHOLD) {
+    if (
+      value &&
+      !PUBLIC_ADDRESS.test(value) &&
+      (HEX_PRIVATE_KEY.test(value) ||
+        (value.length >= ENTROPY_MIN_LENGTH && shannonEntropy(value) >= ENTROPY_THRESHOLD))
+    ) {
       pushUnique(
         findings,
         createFinding(cred002, file, {
