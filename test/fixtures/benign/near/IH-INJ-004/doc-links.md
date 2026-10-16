@@ -1,0 +1,2 @@
+- [viem](https://example.com/skills/viem/SKILL.md) - TypeScript client with fee currency support
+- [Canonical skill manual](https://example.com/skills/op/SKILL.md)

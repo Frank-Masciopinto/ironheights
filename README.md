@@ -177,8 +177,8 @@ A skipped file, or a `.git` or `node_modules` directory that was not acknowledge
 Verdict: review
 Grade: D (60/100)
 Absence of findings is not proof of safety.
-ironheights 0.7.0 | demo | grade D (60/100) | verdict review | 1 finding
-Badge: [ironheights 0.7.0: grade D (60/100), verdict review](https://github.com/Frank-Masciopinto/ironheights) — Absence of findings is not proof of safety.
+ironheights 0.8.0 | demo | grade D (60/100) | verdict review | 1 finding
+Badge: [ironheights 0.8.0: grade D (60/100), verdict review](https://github.com/Frank-Masciopinto/ironheights) — Absence of findings is not proof of safety.
 ```
 
 The badge line is text you can paste into a README. It does not load an image from a badge service.
@@ -309,7 +309,7 @@ An allowlist entry matches that host and its subdomains. The built-in list inclu
 ```json
 {
   "schemaVersion": 1,
-  "tool": { "name": "ironheights", "version": "0.7.0" },
+  "tool": { "name": "ironheights", "version": "0.8.0" },
   "scannedAt": "2026-10-09T00:00:00.000Z",
   "verdict": "no-findings",
   "skippedFileCount": 0,
