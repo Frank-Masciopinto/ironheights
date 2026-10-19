@@ -1,4 +1,5 @@
 import { parse as parseYaml } from 'yaml';
+import { dependenciesFromFrontmatter, type UnscannedDependency } from '../core/dependencies.ts';
 
 export interface SkillFrontmatter {
   name?: string;
@@ -7,11 +8,13 @@ export interface SkillFrontmatter {
   allowDomains: string[];
   /** Hosts the skill declares as its own: `homepage`, plus homepage/api_base/url/network values in `metadata`. */
   declaredHosts?: string[];
+  /** Packages from `metadata.<agent>.install` entries. */
+  installDependencies?: UnscannedDependency[];
   malformed: boolean;
   missing: boolean;
 }
 
-export function parseSkillMarkdown(text: string): SkillFrontmatter {
+export function parseSkillMarkdown(text: string, file = 'SKILL.md'): SkillFrontmatter {
   if (!text.startsWith('---')) return { allowDomains: [], malformed: false, missing: true };
   const match = /^---\r?\n([\s\S]{0,65536}?)\r?\n---/.exec(text);
   if (!match) return { allowDomains: [], malformed: true, missing: false };
@@ -29,6 +32,7 @@ export function parseSkillMarkdown(text: string): SkillFrontmatter {
     return {
       allowDomains: allowDomainsFrom(record),
       declaredHosts: declaredHostsFrom(record),
+      installDependencies: dependenciesFromFrontmatter(record, file),
       malformed: false,
       missing: false,
       ...(name ? { name } : {}),

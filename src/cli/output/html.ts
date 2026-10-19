@@ -1,3 +1,4 @@
+import { describeDependency } from '../../core/dependencies.ts';
 import {
   formatGrade,
   gradeFromSkills,
@@ -107,6 +108,12 @@ export function renderHtml(
       simpleList(
         'Omitted as pre-existing',
         (skill.sinceBaseline?.omitted ?? []).map((item) => `${item.ruleId} ${place(item)}`),
+      ),
+    );
+    parts.push(
+      simpleList(
+        'Dependencies unscanned',
+        (skill.unscannedDependencies ?? []).map((dep) => describeDependency(dep)),
       ),
     );
     parts.push(

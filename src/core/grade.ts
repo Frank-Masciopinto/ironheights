@@ -27,7 +27,9 @@ export function gradeFromSkills(skills: SkillReport[]): Grade {
   const skipped = skills.reduce((sum, skill) => sum + blockingSkipCount(skill), 0);
   if (skipped > 0) return gradeFor(0, skipped);
   const risk = skills.reduce((max, skill) => Math.max(max, skill.gradeRisk ?? skill.score), 0);
-  return gradeFor(risk, 0);
+  const grade = gradeFor(risk, 0);
+  const deps = skills.reduce((sum, skill) => sum + (skill.unscannedDependencies?.length ?? 0), 0);
+  return deps > 0 ? { ...grade, unscannedDependencies: deps } : grade;
 }
 
 export function incompleteScanLine(files: number, directories: number): string {
@@ -42,7 +44,10 @@ export function incompleteScanLine(files: number, directories: number): string {
 
 export function formatGrade(grade: Grade): string {
   if (grade.letter === 'incomplete' || grade.score === undefined) return 'incomplete';
-  return `${grade.letter} (${grade.score}/100)`;
+  const base = `${grade.letter} (${grade.score}/100)`;
+  const deps = grade.unscannedDependencies ?? 0;
+  if (deps === 0) return base;
+  return `${base}, skill files only: ${deps} ${deps === 1 ? 'dependency' : 'dependencies'} unscanned`;
 }
 
 export function skillLabel(skills: SkillReport[], scanMode: ScanMode): string {

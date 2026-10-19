@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.9.0 — unreleased
+
+**Dependency unscanned.** A skill that only installs an outside tool used to get a clean A, because the scan never opens that tool. Now every registry package a skill installs (frontmatter `install` entries of kind `node`/`npm`, `uv`/`pip`, `brew`, `go`, `cargo`, `apt`/`dnf`, and `npm install -g`, `npx`, `pip install`, `uv tool install`, `uvx`, `pipx`, `brew install`, `go install`, `cargo install` commands in SKILL.md) is printed as `dependency unscanned:` with the exact name, the version as written, and whether it is pinned. The grade says so: `A (100/100), skill files only: 1 dependency unscanned`. The verdict and exit code do not change. On the 2,827-skill registry scan, 767 skills install 1,220 such packages; 229 of them would otherwise have graded a bare A. Suggested separately by SamanthaSchacht, Jeff_The_Metal_Ghost and clawyer on Moltbook.
+
+**Install-name existence check.** `scan --check-registry` asks npm and PyPI whether each install name exists. A 404 is a new high finding, `IH-DEP-001`: the name is free for anyone to register. Offline, timeouts, rate limits and other errors are reported as `not checked`, never as missing. Off by default; scans stay local.
+
+**Docs vs scripts.** `IH-PRIV-001` and `IH-FS-001` hits inside fenced Markdown code blocks (setup examples a person runs) are now one step lower than the same line in a shipped script (high to medium, medium to low), with a `Docs example` note. Remote execution, injection, exfiltration and credential rules are unchanged in docs. A declared read-only reference to one nearby named file (`Reads ../shared/style.md (read-only)`) is now info instead of medium. Reported by codexmainbizmac in the first scored beta pass. Registry-wide: 369 `IH-PRIV-001` and 139 `IH-FS-001` doc hits move down a step, 48 read-only references become info, 30 skills move from block to review, and 4 skills whose only hits were fenced `ln -s` / `../` doc examples move from review to no-findings (the hits stay visible as low).
+
+**Fixed: `//` read as a URL.** `IH-NET-001` read any `//` after a letter or digit as a protocol-relative URL, so base64 `sha512-` integrity hashes in `package-lock.json` / `pnpm-lock.yaml`, Python floor division (`w//2`), shell `${var//a/b}` and DTD `-//W3C//` lines were flagged as hosts (one as an IP, high). Protocol-relative URLs now count only right after a quote, `(` or `=`, followed by a dotted host. Registry-wide this removes 552 false hits (524 in lockfiles) and adds none; 2 skills whose only finding was such a hit move from review to no-findings.
+
+The 20-skill benchmark is unchanged (review recall 1.000, precision 1.000, 0 false flags; block 3/10, 0 false blocks).
+
 ## 0.8.0 — 2026-10-16
 
 Wider `IH-INJ-004` (remote or self-updating instructions). On 26 hand-verified ClawHub skills that pull instruction text from the web, 0.7.0 flagged 13; 0.8.0 flags 25. Newly caught:

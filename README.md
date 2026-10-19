@@ -10,7 +10,7 @@ If Ironheights is useful to you, a star on [ClawHub](https://clawhub.ai/frank-ma
 
 Ironheights is a local-first scanner and integrity monitor for [OpenClaw](https://docs.openclaw.ai) skills. It reads skill files as data, looks for risky patterns with fixed rules, and compares skill and agent files with a baseline you save on the same machine.
 
-It does not send telemetry, and it does not run the files it scans. Scans are fully local. The only network call made without a flag is a version check against npm and ClawHub, at most once every 6 hours; it can be turned off (see [Updates](#updates)). Other network use happens only when you run `fetch`, `safe-install`, `advisories update`, `--online`, `scan --llm`, or `review`.
+It does not send telemetry, and it does not run the files it scans. Scans are fully local. The only network call made without a flag is a version check against npm and ClawHub, at most once every 6 hours; it can be turned off (see [Updates](#updates)). Other network use happens only when you run `fetch`, `safe-install`, `advisories update`, `--online`, `scan --llm`, `scan --check-registry`, or `review`.
 
 ## Install
 
@@ -93,7 +93,7 @@ Absence of findings is not proof of safety.
 ## Commands
 
 ```text
-ironheights scan <path> [--all] [--json] [--sarif <file>] [--md <file>] [--html <file>] [--format text|json|html] [--since-baseline [file]] [--print-suppressions] [--stdin] [--text <text>] [--fail-on <severity>] [--config <file>] [--allow-skipped] [--no-color] [--quiet] [--llm] [--llm-url <url>] [--llm-model <name>] [--llm-api ollama|openai] [--llm-consent] [--dry-run]
+ironheights scan <path> [--all] [--json] [--sarif <file>] [--md <file>] [--html <file>] [--format text|json|html] [--since-baseline [file]] [--print-suppressions] [--stdin] [--text <text>] [--fail-on <severity>] [--config <file>] [--allow-skipped] [--no-color] [--quiet] [--llm] [--llm-url <url>] [--llm-model <name>] [--llm-api ollama|openai] [--llm-consent] [--dry-run] [--check-registry]
 ironheights review <path> [the same flags as scan]
 ironheights fetch <owner>/<slug>[@version] [--out <dir>] [--json] [--sarif <file>] [--md <file>] [--fail-on <severity>] [--config <file>] [--allow-skipped] [--no-color] [--quiet]
 ironheights safe-install <owner>/<slug>[@version] [--dir <skills-dir>] [--accept-review] [--out <dir>] [--json] [--config <file>] [--no-color] [--quiet]
@@ -177,11 +177,21 @@ A skipped file, or a `.git` or `node_modules` directory that was not acknowledge
 Verdict: review
 Grade: D (60/100)
 Absence of findings is not proof of safety.
-ironheights 0.8.0 | demo | grade D (60/100) | verdict review | 1 finding
-Badge: [ironheights 0.8.0: grade D (60/100), verdict review](https://github.com/Frank-Masciopinto/ironheights) — Absence of findings is not proof of safety.
+ironheights 0.9.0 | demo | grade D (60/100) | verdict review | 1 finding
+Badge: [ironheights 0.9.0: grade D (60/100), verdict review](https://github.com/Frank-Masciopinto/ironheights) — Absence of findings is not proof of safety.
 ```
 
 The badge line is text you can paste into a README. It does not load an image from a badge service.
+
+### Dependencies unscanned
+
+The scan reads the skill's own files. When a skill installs a package from a registry (a `metadata.<agent>.install` entry in SKILL.md frontmatter of kind `node`, `npm`, `uv`, `pip`, `brew`, `go`, `cargo`, `apt`, or an install command in SKILL.md such as `npm install -g`, `npx`, `pip install`, `uvx`, `brew install`, `go install`), that package's code was not scanned. Each one is listed as `dependency unscanned:` with the exact package name, the version as written, and whether it is pinned to an exact version. The grade then reads, for example, `A (100/100), skill files only: 1 dependency unscanned`, so a wrapper skill no longer gets a bare clean A. The verdict and exit code are unchanged. JSON reports carry the list as `unscannedDependencies`.
+
+`scan --check-registry` also asks registry.npmjs.org and pypi.org whether each npm and PyPI install name exists. A name the registry does not know (HTTP 404) is a high `IH-DEP-001` finding: anyone could register it. Only a 404 counts. Offline, a timeout, a rate limit or any other status is reported as `not checked`, never as missing. Nothing about the skill is sent beyond the package name in the URL.
+
+### Docs examples
+
+`IH-PRIV-001` (sudo, broad chmod, disabling OS protections) and `IH-FS-001` (path traversal) hits inside a fenced code block in a Markdown file are graded one step lower than the same line in a shipped script, with a `Docs example` note: the docs tell a person to run it, a script runs it. Remote-execution, injection, exfiltration and credential rules keep full severity in docs. A line that names one nearby file (at most two `../`) and says it is only read, with no write, delete, walk, wildcard, network verb or sensitive target, is an info `IH-FS-001` finding.
 
 ## Rescan on update
 
@@ -309,7 +319,7 @@ An allowlist entry matches that host and its subdomains. The built-in list inclu
 ```json
 {
   "schemaVersion": 1,
-  "tool": { "name": "ironheights", "version": "0.8.0" },
+  "tool": { "name": "ironheights", "version": "0.9.0" },
   "scannedAt": "2026-10-09T00:00:00.000Z",
   "verdict": "no-findings",
   "skippedFileCount": 0,

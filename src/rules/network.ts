@@ -4,7 +4,13 @@ import type { Finding, Rule, ScanContext, ScannedFile, Severity } from '../core/
 import { eachLine } from '../util/text.ts';
 import { createFinding, pushUnique } from './helpers.ts';
 
-const URL_RE = /\b(?:https?:\/\/|\/\/)[^\s<>"'`)]{1,500}/gi;
+/**
+ * `http(s)://` URLs, plus protocol-relative `//host.tld` right after a quote, `(` or `=`
+ * (`src="//cdn.example"`). Before 0.9.0 the `//` branch matched after any word character, so
+ * base64 sha512 integrity hashes in lockfiles (`sha512-ab//cd==`) and Python floor division
+ * (`w//2`) were read as hosts.
+ */
+const URL_RE = /(?:\bhttps?:\/\/|(?<=["'(=])\/\/(?=[a-z0-9-]+\.[a-z]))[^\s<>"'`)]{1,500}/gi;
 
 export const net001: Rule = {
   id: 'IH-NET-001',

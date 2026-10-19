@@ -14,6 +14,32 @@ export function stripNonPathTokens(line: string): string {
   return line.replace(URL_TOKEN, ' ').replace(ROUTE_TOKEN, ' ').replace(ELLIPSIS, ' ');
 }
 
+const READ_ONLY_WORDS =
+  /\b(?:read[- ]only|readonly|reads?|reading|refer(?:s|ence)?|see|cat|less|open(?:s)?|loads?)\b/i;
+const WRITE_OR_WALK =
+  /\b(?:write|writes|writing|overwrite|append|delete|remove|rm|mv|cp|chmod|chown|walk|recurs\w*|find|glob|rsync|tar|zip|upload|send|post|curl|wget|ln|mkdir|touch|tee|sed\s+-i)\b|>|\*|\s-R\b|\s-r\b/i;
+/** `../` at most twice, then a named file with an extension and no wildcard. */
+const NAMED_NEARBY_FILE =
+  /(?<![\w/.~])(?:\.\.\/){1,2}(?:[\w@+-]+\/){0,3}[\w@+-]+\.[a-z0-9]{1,8}\b/gi;
+/** Paths a "read-only" label must never excuse. */
+const SENSITIVE_TARGET =
+  /\b(?:etc|ssh|\.ssh|aws|\.aws|gnupg|\.env|env|passwd|shadow|id_rsa|id_ed25519|credentials?|secrets?|tokens?|keychain|cookies?|wallet|\.git|openclaw\.json|config\.json)\b/i;
+
+/**
+ * A line that names one nearby file (at most two `../`) and says it is only read, with no write,
+ * delete, copy, recursive walk, wildcard or network verb, and no sensitive target.
+ * Reported as info so it is visible but does not change the verdict or grade.
+ */
+export function declaredReadOnlyReference(line: string): boolean {
+  if (!READ_ONLY_WORDS.test(line) || WRITE_OR_WALK.test(line) || SENSITIVE_TARGET.test(line)) {
+    return false;
+  }
+  const named = line.match(NAMED_NEARBY_FILE) ?? [];
+  if (named.length !== 1) return false;
+  const rest = line.replace(NAMED_NEARBY_FILE, ' ');
+  return !TRAVERSAL.test(rest);
+}
+
 export const fs001: Rule = {
   id: 'IH-FS-001',
   title: 'Suspicious filesystem access',
@@ -63,14 +89,19 @@ export const fs001: Rule = {
     }
     eachLine(file.text, (line, lineNumber) => {
       const scrubbed = stripNonPathTokens(line);
-      if (!TRAVERSAL.test(scrubbed) && !/\bln\s+-s\s+\//.test(line)) return;
+      const symlink = /\bln\s+-s\s+\//.test(line);
+      if (!TRAVERSAL.test(scrubbed) && !symlink) return;
+      const readOnly = !symlink && declaredReadOnlyReference(scrubbed);
       pushUnique(
         findings,
         createFinding(fs001, file, {
           line: lineNumber,
           evidence: line,
-          message: 'Path traversal or an absolute symlink is described in the file.',
-          confidence: 'medium',
+          ...(readOnly ? { severity: 'info' as const } : {}),
+          message: readOnly
+            ? 'Declared read-only reference to one named file outside the skill folder.'
+            : 'Path traversal or an absolute symlink is described in the file.',
+          confidence: readOnly ? 'low' : 'medium',
         }),
       );
     });
