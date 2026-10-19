@@ -113,14 +113,27 @@ export const cred003: Rule = {
     'Tell the user to set an environment variable or use the secret store, and do not echo the value.',
   appliesTo: ['markdown', 'any'],
   examples: {
-    matches: ['Ask the user for their api key and store it in memory.'],
-    nonMatches: ['Read the token from an environment variable.'],
+    matches: [
+      'Ask the user for their api key and store it in memory.',
+      'Store API key in TOOLS.md:',
+    ],
+    nonMatches: [
+      'Read the token from an environment variable.',
+      'Store tokens in an env var or secret store, never a source file; if one lands in a chat, tell the human.',
+      'Never save the API key to MEMORY.md.',
+    ],
   },
   check: checkCred003,
 };
 
 const CHAT_SECRET =
-  /\b(?:ask (?:the user|them) for|paste your|echo|print|log|store|save)\b[\s\S]{0,80}\b(?:api[_ -]?key|token|password|secret|seed phrase)\b[\s\S]{0,80}\b(?:chat|memory|context|transcript|conversation)\b/i;
+  /\b(?:ask (?:the user|them) for|paste your|echo|print|log|store|save)\b[\s\S]{0,80}\b(?:api[_ -]?key|token|password|secret|seed phrase)\b[\s\S]{0,80}\b(?:chat|memory|context|transcript|conversation|TOOLS\.md|MEMORY\.md)(?![\w-])/i;
+/** "Store tokens in an env var or secret store" is the advice we want, not a leak (openspender). */
+const SECRET_WORD = /\b(?:api[_ -]?key|token|password|secret|seed phrase|credentials?)\b/i;
+const SAFE_STORE =
+  /\b(?:store|keep|save|put|set)\b[^.\n]{0,40}\b(?:in|to|as)\s+(?:an?\s+|the\s+|your\s+)?(?:env(?:ironment)?\s+var(?:iable)?s?|secret\s+(?:store|manager)|keychain|keyring|vault)\b/i;
+const NEGATED_STORE =
+  /\b(?:never|do not|don't|dont|not)\b[^.\n]{0,30}\b(?:paste|save|store|put|write|log|print|echo|share)\b/i;
 const ASK_SECRET =
   /\bask (?:the user|them) (?:to )?(?:paste|enter|provide) (?:their |the )?(?:api[_ -]?key|token|password|secret)\b/i;
 
@@ -225,7 +238,11 @@ function checkCred003(file: ScannedFile): Finding[] {
       .slice(lineNumber - 1, lineNumber + 2)
       .join(' ');
     if (!CHAT_SECRET.test(window) && !ASK_SECRET.test(line)) return;
+    // Report the line that names the secret, not the two lines above it.
+    if (!ASK_SECRET.test(line) && !SECRET_WORD.test(line)) return;
     if (/\benvironment variable\b/i.test(line) && !ASK_SECRET.test(line)) return;
+    if (!ASK_SECRET.test(line) && (SAFE_STORE.test(line) || NEGATED_STORE.test(line))) return;
+    if (!ASK_SECRET.test(line) && !CHAT_SECRET.test(line) && SAFE_STORE.test(window)) return;
     pushUnique(
       findings,
       createFinding(cred003, file, {

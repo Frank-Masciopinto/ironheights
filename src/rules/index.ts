@@ -1,6 +1,7 @@
 import { configRules } from '../audit/rules.ts';
 import type { Rule } from '../core/types.ts';
 import { advisoryRules } from './advisory.ts';
+import { cred004, cred005, exec004 } from './accuracy.ts';
 import { bin001 } from './binary.ts';
 import { dep001 } from './dependency.ts';
 import { cred001, cred002, cred003 } from './credentials.ts';
@@ -21,11 +22,14 @@ export const contentRules: Rule[] = [
   exec001,
   exec002,
   exec003,
+  exec004,
   net001,
   net002,
   cred001,
   cred002,
   cred003,
+  cred004,
+  cred005,
   inj001,
   inj002,
   inj003,

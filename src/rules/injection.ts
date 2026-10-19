@@ -1,6 +1,7 @@
 import phrases from './data/injection-phrases.json' with { type: 'json' };
 import type { Finding, Rule, ScannedFile } from '../core/types.ts';
-import { eachLine, normalizeMatch } from '../util/text.ts';
+import { eachLine, fencedLineNumbers, normalizeMatch } from '../util/text.ts';
+import { hasApprovalSwitch } from './accuracy.ts';
 import { createFinding, pushUnique } from './helpers.ts';
 
 /**
@@ -85,19 +86,72 @@ export const inj003: Rule = {
   check: checkInj003,
 };
 
+/** Words that show a quoted phrase is shown as an attack to refuse, not an instruction. */
+const REFUSAL =
+  /\b(?:refuse[sd]?|reject(?:ed|s)?|never (?:follow|obey|execute|run|comply)|do not (?:follow|obey|comply)|don't (?:follow|obey|comply)|attack(?:er|s)?|malicious|injection|detect(?:ed|s|ion)?|block(?:ed|s)?|warning|red flags?|untrusted|phishing|treat (?:it|this|them) as data)\b|\u274c|\u{1f6ab}|\u26a0/iu;
+const SECURITY_HEADING =
+  /^\s{0,3}#{1,6}\s.*\b(?:security|safety|attacks?|injection|threats?|risks?|critical|warnings?|red flags?|malicious|defen[cs]e)\b/i;
+const QUOTED = /"[^"\n]{3,400}"|\u201c[^\u201d\n]{3,400}\u201d|`[^`\n]{3,400}`|'[^'\n]{8,400}'/g;
+
+/**
+ * Delivery-aware IH-INJ-001 for Markdown (kevinjobhunt, vectleagent):
+ * - bare prose: high (real payloads look like this);
+ * - inside a fence, quotes, inline code or a blockquote: medium;
+ * - quoted AND a refusal word (outside the quote) or a security heading within 3 lines: info.
+ * Marker words alone and quoting alone never drop a hit to info.
+ */
+function delivery(
+  file: ScannedFile,
+  lines: string[],
+  fenced: Set<number> | undefined,
+  lineNumber: number,
+  phrase: string,
+): 'bare' | 'quoted' | 'example' {
+  if (file.kind !== 'markdown') return 'bare';
+  const line = lines[lineNumber - 1] ?? '';
+  let quoted = fenced?.has(lineNumber) === true || /^\s{0,3}>/.test(line);
+  let rest = line;
+  for (const match of line.matchAll(QUOTED)) {
+    if (normalizeMatch(match[0]).includes(phrase)) {
+      quoted = true;
+      rest = rest.replace(match[0], ' ');
+    }
+  }
+  if (!quoted) return 'bare';
+  if (/^\s{0,3}>/.test(line) && rest === line) rest = '';
+  if (fenced?.has(lineNumber) && rest === line) rest = '';
+  const near = [
+    ...lines.slice(Math.max(0, lineNumber - 4), lineNumber - 1),
+    rest,
+    ...lines.slice(lineNumber, lineNumber + 3),
+  ];
+  const nearText = near.filter((item) => !normalizeMatch(item).includes(phrase)).join('\n');
+  if (REFUSAL.test(nearText) || near.some((item) => SECURITY_HEADING.test(item))) return 'example';
+  return 'quoted';
+}
+
 function checkInj001(file: ScannedFile): Finding[] {
   const findings: Finding[] = [];
+  const lines = file.text.split(/\r?\n/);
+  const fenced = file.kind === 'markdown' ? fencedLineNumbers(file.text) : undefined;
   eachLine(file.text, (line, lineNumber) => {
     const normalized = normalizeMatch(line);
     const phrase = PHRASES.find((item) => normalized.includes(item));
     if (!phrase) return;
+    const how = delivery(file, lines, fenced, lineNumber, phrase);
     pushUnique(
       findings,
       createFinding(inj001, file, {
         line: lineNumber,
         evidence: line,
-        message: `Instruction-override phrase detected: "${phrase}".`,
-        confidence: 'high',
+        severity: how === 'example' ? 'info' : how === 'quoted' ? 'medium' : 'high',
+        message:
+          how === 'example'
+            ? `Instruction-override phrase "${phrase}" is quoted as an attack example next to a refusal or security heading.`
+            : how === 'quoted'
+              ? `Instruction-override phrase "${phrase}" is quoted or in a code block. If it is an example, label it (for example under a Security heading or with "refuse").`
+              : `Instruction-override phrase detected: "${phrase}".`,
+        confidence: how === 'example' ? 'low' : 'high',
       }),
     );
   });
@@ -148,7 +202,10 @@ function checkInj002(file: ScannedFile): Finding[] {
 function checkInj003(file: ScannedFile): Finding[] {
   const findings: Finding[] = [];
   eachLine(file.text, (line, lineNumber) => {
-    if (!WEAKEN.test(line) && !EDIT_AGENT.test(line) && !STARTUP.test(line)) return;
+    const edit = EDIT_AGENT.test(line) || STARTUP.test(line);
+    if (!WEAKEN.test(line) && !edit) return;
+    // A documented CLI switch ("--yes | skip confirmation") is graded by IH-EXEC-004 instead.
+    if (!edit && hasApprovalSwitch(line)) return;
     pushUnique(
       findings,
       createFinding(inj003, file, {

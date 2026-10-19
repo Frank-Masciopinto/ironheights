@@ -73,6 +73,29 @@ Does not match:
 - `const value = calculated;`
 - `subprocess.run(["ls"])`
 
+## IH-EXEC-004 — Confirmations or agent approvals switched off
+
+- Severity: high
+- Category: exec
+- Priority: P1
+- Applies to: markdown, script, config
+- OWASP LLM: LLM06:2025
+- OWASP Agentic: ASI03:2026
+- MITRE ATLAS: none
+
+Launching a coding agent with --yolo, --dangerously-skip-permissions or bypassPermissions runs it with no approval step. Generic switches such as --no-input, --yes or auto_confirm skip the confirmation for updates, deletes or sends. A guard (never, do not, unless, only when, interactive) within 3 lines lowers the severity.
+
+Remediation: Keep approvals on, or run the agent in a disposable sandbox or container, and say when the switch is allowed (for example: only in CI, never on the user machine).
+
+Matches:
+- `tmux send-keys -t agent-1 "codex --yolo 'Fix bug X'" Enter`
+- `clawdhub update --all --no-input --force`
+
+Does not match:
+- `npx --yes create-thing`
+- `Never pass --yolo on the user machine.`
+- `git push --force`
+
 ## IH-NET-001 — Undeclared network destination
 
 - Severity: medium
@@ -199,9 +222,57 @@ Remediation: Tell the user to set an environment variable or use the secret stor
 
 Matches:
 - `Ask the user for their api key and store it in memory.`
+- `Store API key in TOOLS.md:`
 
 Does not match:
 - `Read the token from an environment variable.`
+- `Store tokens in an env var or secret store, never a source file; if one lands in a chat, tell the human.`
+- `Never save the API key to MEMORY.md.`
+
+## IH-CRED-004 — Credential file readable by others
+
+- Severity: medium
+- Category: credentials
+- Priority: P1
+- Applies to: script, markdown
+- OWASP LLM: LLM02:2025
+- OWASP Agentic: none
+- MITRE ATLAS: AML.T0055
+
+A token, key, or session file written without owner-only permissions (mode 600 / umask 077) is created 644 under the usual umask 022, so other local users and processes can read it. Saving through a temp file and rename resets an earlier chmod 600, and backup archives of ~/.openclaw or credentials made without umask 077 are world-readable.
+
+Remediation: Create the file owner-only: os.open(path, O_CREAT|O_WRONLY, 0o600) or writeFile(path, data, { mode: 0o600 }) plus chmod for existing files, umask 077 in shell scripts, and mkstemp before an atomic rename.
+
+Matches:
+- `with open(TOKEN_CACHE, "w", encoding="utf-8") as f:`
+- `echo "$API_KEY" > ~/.config/tool/token`
+- `tar czf backup.tgz ~/.openclaw`
+
+Does not match:
+- `await writeFile(CONFIG_FILE, data, { mode: 0o600 });`
+- `with open("notes.txt", "w") as f:`
+
+## IH-CRED-005 — Secret in a URL
+
+- Severity: low
+- Category: credentials
+- Priority: P1
+- Applies to: markdown, script, config
+- OWASP LLM: LLM02:2025
+- OWASP Agentic: none
+- MITRE ATLAS: none
+
+An API key or token placed in a URL query string or in user:token@host lands in shell history, proxy and server logs, error messages, and stored git remotes.
+
+Remediation: Send the key in a header (Authorization, x-api-key, x-goog-api-key) and use a credential helper instead of a token in a git remote URL.
+
+Matches:
+- `curl "https://api.example.com/v1/data?key=$GEMINI_API_KEY"`
+- `git remote add fork https://x-access-token:$GH_TOKEN@github.com/o/r.git`
+
+Does not match:
+- `curl "https://api.example.com/price?token=ETH"`
+- `curl -H "x-api-key: $KEY" https://api.example.com`
 
 ## IH-INJ-001 — Instruction override
 

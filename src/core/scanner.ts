@@ -267,7 +267,7 @@ export function scanFile(
  * in a script. Remote fetch, injection, exfiltration and credential rules are not listed:
  * malware hides in setup snippets, so they keep full severity everywhere.
  */
-const DOC_EXAMPLE_RULES = new Set(['IH-PRIV-001', 'IH-FS-001']);
+const DOC_EXAMPLE_RULES = new Set(['IH-PRIV-001', 'IH-FS-001', 'IH-CRED-004']);
 
 const ONE_STEP_DOWN: Record<Finding['severity'], Finding['severity']> = {
   critical: 'critical',
