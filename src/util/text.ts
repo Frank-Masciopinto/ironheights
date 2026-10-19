@@ -44,3 +44,29 @@ export function normalizeMatch(text: string): string {
     .replace(/\s+/g, ' ')
     .toLowerCase();
 }
+
+/**
+ * 1-based line numbers inside fenced Markdown code blocks (``` or ~~~), fence lines excluded.
+ * An unclosed fence runs to the end of the file.
+ */
+export function fencedLineNumbers(text: string): Set<number> {
+  const inside = new Set<number>();
+  const lines = text.split(/\r?\n/);
+  let fence: string | undefined;
+  for (let i = 0; i < lines.length; i += 1) {
+    const match = /^ {0,3}(`{3,}|~{3,})/.exec(lines[i] ?? '');
+    if (fence === undefined) {
+      if (match?.[1]) fence = match[1];
+      continue;
+    }
+    if (match?.[1] && match[1][0] === fence[0] && match[1].length >= fence.length) {
+      const rest = (lines[i] ?? '').trim().slice(match[1].length);
+      if (rest.trim() === '') {
+        fence = undefined;
+        continue;
+      }
+    }
+    inside.add(i + 1);
+  }
+  return inside;
+}

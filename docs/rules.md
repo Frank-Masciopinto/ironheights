@@ -832,6 +832,28 @@ Does not match:
 - `sandbox.mode omitted and tools.exec.security: "deny"`
 - `sandbox.mode: "off" and tools.elevated.enabled: false and tools.exec.security: "deny"`
 
+## IH-DEP-001 — Install names a package that does not exist
+
+- Severity: high
+- Category: integrity
+- Priority: P1
+- Applies to: markdown
+- OWASP LLM: LLM03:2025
+- OWASP Agentic: ASI04:2026
+- MITRE ATLAS: AML.T0010
+
+The skill installs an npm or PyPI package whose name the registry does not know (HTTP 404). Anyone can register that name and ship code that runs on the next install. Checked only with scan --check-registry; an offline or failed lookup is reported as not checked, never as missing.
+
+Remediation: Fix the package name, or publish and pin the real package. Do not install the skill until the name resolves to the intended publisher.
+
+Matches:
+- `metadata install entry kind: node, package: name-nobody-registered`
+- `npm install -g name-nobody-registered (registry returns 404)`
+
+Does not match:
+- `npm install -g typescript (registry returns 200)`
+- `registry lookup timed out (reported as not checked)`
+
 ## IH-LLM-001 — Advisory model review
 
 - Severity: info

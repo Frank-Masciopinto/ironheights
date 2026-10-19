@@ -13,6 +13,14 @@ import {
   worstVerdict,
 } from './verdict.ts';
 import { walkSkill } from './walker.ts';
+import { clip, fencedLineNumbers } from '../util/text.ts';
+import {
+  dependenciesFromInstructions,
+  describeDependency,
+  type UnscannedDependency,
+} from './dependencies.ts';
+import { checkRegistry } from '../net/registry.ts';
+import { dep001 } from '../rules/dependency.ts';
 import type { Verdict } from './types.ts';
 
 export interface ScanPathResult {
@@ -23,7 +31,7 @@ export interface ScanPathResult {
 export async function scanPath(
   root: string,
   config: ResolvedConfig,
-  options: { now?: Date; allowSkipped?: boolean } = {},
+  options: { now?: Date; allowSkipped?: boolean } & RegistryOptions = {},
 ): Promise<ScanPathResult & { scannedAt: string }> {
   const abs = resolve(root);
   const skillRoots = await discoverSkillRoots(abs);
@@ -37,6 +45,12 @@ export async function scanPath(
     verdict: worstVerdict(reconciled.map((skill) => skill.verdict)),
     scannedAt: (options.now ?? new Date()).toISOString(),
   };
+}
+
+export interface RegistryOptions {
+  /** Ask npm and PyPI whether install names exist. Off by default: scans are local. */
+  checkRegistry?: boolean;
+  fetchImpl?: typeof fetch;
 }
 
 export async function discoverSkillRoots(root: string): Promise<string[]> {
@@ -81,7 +95,7 @@ async function hasSkillFile(dir: string): Promise<boolean> {
 export async function scanSkill(
   root: string,
   config: ResolvedConfig,
-  options: { allowSkipped?: boolean } = {},
+  options: { allowSkipped?: boolean } & RegistryOptions = {},
 ): Promise<SkillReport> {
   const walked = await walkSkill(root, config.limits, config.ignoreGlobs, config.ignoreDirs);
   const frontmatter = await readSkillFrontmatter(root, walked.files);
@@ -97,7 +111,27 @@ export async function scanSkill(
   for (const file of walked.files) {
     raw.push(...scanFile(file, ctx));
   }
-  return finishSkill(
+  const deps = skillDependencies(walked.files, frontmatter);
+  let registryCheck: SkillReport['registryCheck'];
+  if (options.checkRegistry && deps.length > 0) {
+    const results = await checkRegistry(deps, options.fetchImpl);
+    const notes: string[] = [];
+    let missing = 0;
+    let notChecked = 0;
+    for (const result of results) {
+      if (result.status === 'missing') {
+        missing += 1;
+        raw.push(missingPackageFinding(result.dependency));
+      } else if (result.status === 'unknown') {
+        notChecked += 1;
+        notes.push(
+          `${result.dependency.manager} ${result.dependency.name}: not checked (${result.detail ?? 'unknown'})`,
+        );
+      }
+    }
+    registryCheck = { checked: results.length - notChecked, missing, notChecked, notes };
+  }
+  const report = finishSkill(
     skillName,
     root,
     walked.files.length,
@@ -108,6 +142,40 @@ export async function scanSkill(
     config,
     options.allowSkipped === true,
   );
+  if (deps.length > 0) report.unscannedDependencies = deps;
+  if (registryCheck) report.registryCheck = registryCheck;
+  return report;
+}
+
+function skillDependencies(
+  files: ScannedFile[],
+  frontmatter: SkillFrontmatter | undefined,
+): UnscannedDependency[] {
+  const top = files.filter((file) => isSkillFileName(file.relativePath));
+  const skill = top.find((file) => file.relativePath === 'SKILL.md') ?? top[0];
+  const fileName = skill?.relativePath ?? 'SKILL.md';
+  const out: UnscannedDependency[] = [];
+  const add = (dep: UnscannedDependency): void => {
+    if (out.some((item) => item.manager === dep.manager && item.name === dep.name)) return;
+    out.push(dep);
+  };
+  for (const dep of frontmatter?.installDependencies ?? []) add({ ...dep, file: fileName });
+  if (skill) for (const dep of dependenciesFromInstructions(skill.text, fileName)) add(dep);
+  return out.slice(0, 50);
+}
+
+function missingPackageFinding(dep: UnscannedDependency): Finding {
+  const registry = dep.manager === 'npm' ? 'npm' : 'PyPI';
+  return {
+    ruleId: dep001.id,
+    severity: dep001.severity,
+    confidence: 'high',
+    file: clip(dep.file, 300),
+    ...(dep.line !== undefined ? { line: dep.line } : {}),
+    evidence: clip(describeDependency(dep)),
+    message: `${registry} has no package named ${clip(dep.name, 120)}. Anyone can register it.`,
+    remediation: dep001.remediation,
+  };
 }
 
 export async function scanText(
@@ -175,16 +243,46 @@ export function scanFile(
   options: { textMode?: boolean } = {},
 ): Finding[] {
   const findings: Finding[] = [];
+  let fenced: Set<number> | undefined;
   for (const rule of allContentRules()) {
     const override = ctx.config.ruleOverrides[rule.id];
     if (override?.enabled === false) continue;
     if (!ruleApplies(rule, file, options.textMode === true)) continue;
-    for (const finding of rule.check(file, ctx)) {
+    for (const raw of rule.check(file, ctx)) {
+      let finding = raw;
+      if (file.kind === 'markdown' && DOC_EXAMPLE_RULES.has(rule.id) && raw.line !== undefined) {
+        fenced ??= fencedLineNumbers(file.text);
+        if (fenced.has(raw.line)) finding = asDocExample(raw);
+      }
       const severity = override?.severity ?? finding.severity;
       findings.push(severity === finding.severity ? finding : { ...finding, severity });
     }
   }
   return findings;
+}
+
+/**
+ * Rules whose hit in a fenced Markdown example means "the docs tell a person to run this",
+ * not "a shipped script runs this". Those hits are graded one step lower than the same line
+ * in a script. Remote fetch, injection, exfiltration and credential rules are not listed:
+ * malware hides in setup snippets, so they keep full severity everywhere.
+ */
+const DOC_EXAMPLE_RULES = new Set(['IH-PRIV-001', 'IH-FS-001']);
+
+const ONE_STEP_DOWN: Record<Finding['severity'], Finding['severity']> = {
+  critical: 'critical',
+  high: 'medium',
+  medium: 'low',
+  low: 'low',
+  info: 'info',
+};
+
+function asDocExample(finding: Finding): Finding {
+  const severity = ONE_STEP_DOWN[finding.severity];
+  if (severity === finding.severity) return finding;
+  const note =
+    'Docs example: this line is in a fenced code block in Markdown, so the docs tell someone to run it. The same line in a shipped script is graded one step higher.';
+  return { ...finding, severity, note: finding.note ? `${finding.note} ${note}` : note };
 }
 
 function finishSkill(

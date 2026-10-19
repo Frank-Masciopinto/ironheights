@@ -68,6 +68,10 @@ export interface ScanFlags {
   changed?: boolean;
   /** Print pasteable evidence-bound suppression entries instead of the report. */
   printSuppressions?: boolean;
+  /** Ask npm and PyPI whether install names exist (network). */
+  checkRegistry?: boolean;
+  /** Test seam for --check-registry. */
+  registryFetch?: typeof fetch;
   paths: string[];
   env?: NodeJS.ProcessEnv;
   stdout?: (text: string) => void;
@@ -205,6 +209,8 @@ export async function executeScan(flags: ScanFlags): Promise<ScanExecution> {
       const result = await scanPath(target, config, {
         ...(flags.now ? { now: flags.now } : {}),
         allowSkipped: flags.allowSkipped === true,
+        ...(flags.checkRegistry ? { checkRegistry: true } : {}),
+        ...(flags.registryFetch ? { fetchImpl: flags.registryFetch } : {}),
       });
       scannedAt = result.scannedAt;
       skills.push(...result.skills);

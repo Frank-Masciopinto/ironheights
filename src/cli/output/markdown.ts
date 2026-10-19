@@ -1,3 +1,4 @@
+import { describeDependency } from '../../core/dependencies.ts';
 import {
   formatGrade,
   gradeFromSkills,
@@ -83,6 +84,9 @@ export function renderMarkdown(
     for (const item of skill.sinceBaseline?.omitted ?? []) {
       const where = item.line ? `${item.file}:${item.line}` : item.file;
       lines.push(`- pre-existing \`${item.ruleId}\` ${where}`);
+    }
+    for (const dep of skill.unscannedDependencies ?? []) {
+      lines.push(`- dependency unscanned: ${describeDependency(dep)}`);
     }
     for (const skipped of skill.filesSkipped) {
       lines.push(`- warning: skipped \`${skipped.file}\` (${skipped.reason})`);

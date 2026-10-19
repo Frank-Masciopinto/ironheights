@@ -1,3 +1,4 @@
+import type { UnscannedDependency } from './dependencies.ts';
 export type Severity = 'info' | 'low' | 'medium' | 'high' | 'critical';
 export type Confidence = 'low' | 'medium' | 'high';
 export type Category =
@@ -159,6 +160,8 @@ export interface EvidenceMatch {
 export interface Grade {
   letter: 'A' | 'B' | 'C' | 'D' | 'F' | 'incomplete';
   score?: number;
+  /** Registry packages the skills install whose code was not scanned. */
+  unscannedDependencies?: number;
   disclaimer: string;
 }
 
@@ -199,6 +202,13 @@ export interface SkillReport {
   sinceBaseline?: SinceBaselineNote;
   /** Set when the folder or SKILL.md name equals a listed security tool. Not verified. */
   knownSecurityTool?: KnownSecurityToolNote;
+  /**
+   * Packages the skill installs from a registry (frontmatter install entries and install commands
+   * in SKILL.md). Their code was not scanned, so a clean grade covers the skill's files only.
+   */
+  unscannedDependencies?: UnscannedDependency[];
+  /** Set by `scan --check-registry`. */
+  registryCheck?: { checked: number; missing: number; notChecked: number; notes: string[] };
 }
 
 export interface KnownSecurityToolNote {

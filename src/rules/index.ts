@@ -2,6 +2,7 @@ import { configRules } from '../audit/rules.ts';
 import type { Rule } from '../core/types.ts';
 import { advisoryRules } from './advisory.ts';
 import { bin001 } from './binary.ts';
+import { dep001 } from './dependency.ts';
 import { cred001, cred002, cred003 } from './credentials.ts';
 import { exec001, exec002, exec003 } from './exec.ts';
 import { fs001 } from './filesystem.ts';
@@ -46,7 +47,7 @@ export function allContentRules(): Rule[] {
 }
 
 export function allRules(): Rule[] {
-  return [...contentRules, ...integrityRules, ...advisoryRules, ...configRules, llm001];
+  return [...contentRules, ...integrityRules, ...advisoryRules, ...configRules, dep001, llm001];
 }
 
 export function ruleById(id: string): Rule | undefined {

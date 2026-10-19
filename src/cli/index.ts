@@ -61,7 +61,7 @@ export async function main(argv: string[], hooks: MainHooks = {}): Promise<numbe
   program
     .name('ironheights')
     .description(
-      'Local-first security scanner for OpenClaw skills. Scans are local. Network is used only by fetch, safe-install, advisories update, --online, scan --llm, review, and the 6-hourly version check (off with IRONHEIGHTS_NO_UPDATE=1).',
+      'Local-first security scanner for OpenClaw skills. Scans are local. Network is used only by fetch, safe-install, advisories update, --online, scan --llm, scan --check-registry, review, and the 6-hourly version check (off with IRONHEIGHTS_NO_UPDATE=1).',
     )
     .version(TOOL_VERSION)
     .exitOverride();
@@ -463,6 +463,10 @@ function registerScan(program: Command, name: 'scan' | 'review', hooks: MainHook
       '--allow-skipped',
       'accept skipped files and directories and return the finding verdict instead of incomplete',
     )
+    .option(
+      '--check-registry',
+      'ask npm and PyPI whether the packages a skill installs exist (network; offline is reported as not checked)',
+    )
     .option('--llm', 'ask a model for an advisory second opinion')
     .option('--llm-url <url>', 'model server base URL')
     .option('--llm-model <name>', 'model name')
@@ -504,6 +508,7 @@ function registerScan(program: Command, name: 'scan' | 'review', hooks: MainHook
         dryRun: Boolean(opts.dryRun),
         changed: Boolean(opts.changed),
         printSuppressions: Boolean(opts.printSuppressions),
+        checkRegistry: Boolean(opts.checkRegistry),
         ...(hooks.advisoryPublicKey !== undefined
           ? { advisoryPublicKey: hooks.advisoryPublicKey }
           : {}),

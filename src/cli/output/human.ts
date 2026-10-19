@@ -13,6 +13,7 @@ import { blockingDirectoryCount, compareSeverity } from '../../core/verdict.ts';
 import { LLM_RULE_ID } from '../../llm/constants.ts';
 import type { LlmReviewReport } from '../../llm/review.ts';
 import { clip } from '../../util/text.ts';
+import { describeDependency } from '../../core/dependencies.ts';
 import { paint } from '../../util/terminal.ts';
 import { NO_FINDINGS_LABEL, SAFETY_REMINDER } from '../../version.ts';
 import { llmStatusLines } from './llm-status.ts';
@@ -89,6 +90,18 @@ export function renderHuman(
       }
       const warning = `warning: skipped directory ${dir.path} (${dir.reason})`;
       lines.push(`  ${paint(color, '33', warning)}`);
+    }
+    for (const dep of skill.unscannedDependencies ?? []) {
+      lines.push(
+        `  ${paint(color, '33', 'dependency unscanned:')} ${clip(describeDependency(dep), 300)}`,
+      );
+    }
+    if (skill.registryCheck) {
+      const check = skill.registryCheck;
+      lines.push(
+        `  registry check: ${check.checked} checked, ${check.missing} missing, ${check.notChecked} not checked`,
+      );
+      for (const note of check.notes.slice(0, 10)) lines.push(`    ${clip(note, 200)}`);
     }
     if (skill.verdict === 'incomplete') {
       lines.push(
