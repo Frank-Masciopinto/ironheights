@@ -518,6 +518,27 @@ name: notes
 description: Take notes.
 ---`
 
+## IH-REF-001 — Referenced script is not in the package
+
+- Severity: medium
+- Category: meta
+- Priority: P1
+- Applies to: markdown
+- OWASP LLM: LLM03:2025
+- OWASP Agentic: ASI04:2026
+- MITRE ATLAS: none
+
+SKILL.md tells the agent to run a script or file that the skill does not ship. The agent may improvise, fetch a replacement, or run whatever later appears at that path. A command or code block is graded above a passing mention.
+
+Remediation: Ship the file in the skill, fix the path, or remove the instruction. Agents should stop and ask the user when a referenced script is missing.
+
+Matches:
+- `python3 scripts/sync.py --all   (scripts/sync.py not in the skill)`
+
+Does not match:
+- `python3 scripts/sync.py   (file present)`
+- `python3 path/to/your_script.py`
+
 ## IH-MCP-001 — MCP server launched from a remote command
 
 - Severity: high

@@ -209,6 +209,10 @@ const PACKAGE_MANAGER =
   /\b(?:apt|apt-get|dnf|yum|zypper|pacman|apk|npx|npm|pnpm|yarn|bun|pip3?|pipx|uv|conda|mamba|brew|choco|winget|scoop|gcloud|sdkmanager|terraform|tofu)\b/;
 const RISKY =
   /\b(?:update|upgrade|delete|remove|rm|send|overwrite|publish|push|deploy|destroy|drop|transfer|pay)\b|--(?:all|force)\b/i;
+const DELETE_VERB = /\b(?:delete|remove|rm|destroy|drop|purge|wipe|erase|uninstall)\b/i;
+/** Prose that asks for confirmation before a destructive step ("confirm with the user before every DELETE"). */
+const CONFIRM_RULE =
+  /\b(?:confirm\w*|approv\w*|ask (?:the user|first|before)|explicit(?:ly)? (?:ok|consent|yes|approval)|last chance)\b/i;
 const GUARD =
   /\b(?:never|do not|don't|dont|avoid|refuse|unless|only (?:when|if)|ask (?:the user|first)|confirm (?:with|first)|not recommended|wrong)\b|(?<!non-)\binteractive(?:ly)?\b/i;
 
@@ -247,12 +251,31 @@ export const exec004: Rule = {
       const token = AGENT_SWITCH.exec(line)?.[0] ?? confirmSwitch(line);
       if (token) policy.add(token);
     });
+    // 0.12.0: docs that tell the agent to confirm before deleting, while their own examples pass
+    // --yes, -y or --force to a delete, contradict themselves (Maton template, 65 skills). The
+    // example is what the agent copies, so it is a real finding and a prose guard elsewhere does
+    // not demote it.
+    const confirmDocs =
+      policy.size > 0 ||
+      lines.some(
+        (line, index) =>
+          !fenced?.has(index + 1) && CONFIRM_RULE.test(line) && DELETE_VERB.test(line),
+      );
     eachLine(file.text, (line, lineNumber) => {
       const agent = AGENT_SWITCH.exec(line);
-      const confirm = agent ? undefined : confirmSwitch(line);
+      const example = fenced?.has(lineNumber) === true;
+      let confirm = agent ? undefined : confirmSwitch(line);
+      const destructiveExample = !agent && example && confirmDocs && DELETE_VERB.test(line);
+      if (!agent && !confirm && destructiveExample) {
+        confirm = /(?:^|\s)(-y|--force)(?=\s|$)/.exec(line)?.[1];
+      }
       if (!agent && !confirm) return;
       const window = lines.slice(Math.max(0, lineNumber - 4), lineNumber + 3).join('\n');
-      const guarded = GUARD.test(window);
+      const contradicts =
+        destructiveExample &&
+        !GUARD.test(line) &&
+        !/\b(?:after|once) (?:verify|confirm|the user|approv)/i.test(line);
+      const guarded = !contradicts && GUARD.test(window);
       let severity: Severity;
       if (agent) {
         // The agent follows SKILL.md commands itself, so fenced docs are not demoted here;
@@ -260,7 +283,9 @@ export const exec004: Rule = {
         if (guarded || testPath) severity = 'low';
         else severity = file.kind === 'markdown' ? 'medium' : 'high';
       } else {
-        if (guarded || testPath) severity = 'info';
+        if (testPath) severity = 'info';
+        else if (contradicts) severity = 'medium';
+        else if (guarded) severity = 'info';
         else if (confirm && policy.has(confirm)) severity = 'low';
         else severity = RISKY.test(line) ? 'medium' : 'low';
       }
@@ -272,7 +297,9 @@ export const exec004: Rule = {
           severity,
           message: agent
             ? `A coding agent is started with approvals off (${agent[0]}).${guarded ? ' A guard nearby limits when it is used.' : ''}`
-            : `A switch turns off confirmation (${confirm}).${guarded ? ' A guard nearby limits when it is used.' : ''}`,
+            : contradicts
+              ? `The docs say to confirm before deleting, but this example skips the confirmation (${confirm}). The agent copies examples.`
+              : `A switch turns off confirmation (${confirm}).${guarded ? ' A guard nearby limits when it is used.' : ''}`,
           confidence: guarded ? 'low' : 'medium',
         }),
       );

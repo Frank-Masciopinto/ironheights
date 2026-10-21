@@ -9,8 +9,8 @@ exports[`output snapshots > renders human, json, and sarif 1`] = `
 Verdict: review
 Grade: D (60/100)
 Absence of findings is not proof of safety.
-ironheights 0.11.0 | demo | grade D (60/100) | verdict review | 1 finding
-Badge: [ironheights 0.11.0: grade D (60/100), verdict review](https://github.com/Frank-Masciopinto/ironheights) — Absence of findings is not proof of safety."
+ironheights 0.12.0 | demo | grade D (60/100) | verdict review | 1 finding
+Badge: [ironheights 0.12.0: grade D (60/100), verdict review](https://github.com/Frank-Masciopinto/ironheights) — Absence of findings is not proof of safety."
 `;
 
 exports[`output snapshots > renders human, json, and sarif 2`] = `
@@ -29,8 +29,8 @@ exports[`output snapshots > renders human, json, and sarif 2`] = `
     "disclaimer": "Absence of findings is not proof of safety."
   },
   "scanMode": "directory",
-  "summary": "ironheights 0.11.0 | demo | grade D (60/100) | verdict review | 1 finding",
-  "badge": "[ironheights 0.11.0: grade D (60/100), verdict review](https://github.com/Frank-Masciopinto/ironheights) — Absence of findings is not proof of safety.",
+  "summary": "ironheights 0.12.0 | demo | grade D (60/100) | verdict review | 1 finding",
+  "badge": "[ironheights 0.12.0: grade D (60/100), verdict review](https://github.com/Frank-Masciopinto/ironheights) — Absence of findings is not proof of safety.",
   "skills": [
     {
       "skillName": "demo",

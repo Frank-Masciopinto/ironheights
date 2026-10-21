@@ -80,7 +80,7 @@ describe('0.10.0 IH-EXEC-004 confirm-off switches (ironheights census, atlas-mem
       '> Do not pass `--yes` in an interactive session: it skips the confirmation prompt.\n\n## Delete\n\nMore text.\n\nAnother line.\n\n```bash\nmaton function delete {id} --yes\n```\n';
     expect(hits('SKILL.md', md, 'IH-EXEC-004').map((f) => [f.line, f.severity])).toEqual([
       [1, 'info'],
-      [10, 'low'],
+      [10, 'medium'], // 0.12.0: the example contradicts the confirm policy,
     ]);
   });
   it('package-manager --yes is ignored', () => {

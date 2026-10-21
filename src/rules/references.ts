@@ -101,6 +101,7 @@ export const RULE_REFERENCES: Record<string, RuleReferences> = {
   },
   'IH-FS-001': { owaspLlm: [], owaspAgentic: [], mitreAtlas: [] },
   'IH-META-001': { owaspLlm: [], owaspAgentic: [], mitreAtlas: [] },
+  'IH-REF-001': { owaspLlm: ['LLM03:2025'], owaspAgentic: ['ASI04:2026'], mitreAtlas: [] },
   'IH-INT-001': {
     owaspLlm: ['LLM03:2025'],
     owaspAgentic: ['ASI04:2026'],

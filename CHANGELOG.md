@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.12.0 — 2026-10-21
+
+Measured on the 2,827-skill ClawHub snapshot against 0.11.0: block 690 → 759, review 977 → 922, no-findings 1,159 → 1,145; 120 skills graded lower, 2 higher. 65 of the 68 new review → block moves are Maton copies whose delete examples skip the confirmation their docs require. The 20-skill benchmark is unchanged.
+
+**Missing referenced script (`IH-REF-001`, new).** SKILL.md that tells the agent to run a script the skill does not ship (`python3 scripts/sync.py`, `bash {baseDir}/scripts/install.sh`) gets a medium finding; a passing prose mention of `scripts/…`, `bin/…` or `tools/…` is low. Quiet: files present anywhere in the package, `skills/<name>/` install prefixes, placeholders (`path/to/your_script.py`), bare names the user writes (`node swap.js`), URLs, absolute and home paths, build output (`dist/`), comments, files the same SKILL.md creates or downloads, and "do not use" lines. On the registry: 69 skills, 57 with a runnable miss. Suggested by synapseguide, ccbillboardbug, felixnexus and fujikatsu on Moltbook.
+
+**Confirm-before-delete docs whose examples skip it (`IH-EXEC-004`).** When the prose says to confirm before deleting and a fenced delete example passes `--yes`, `-y` or `--force`, the example is medium ("the agent copies examples"), and a guard elsewhere no longer demotes it. The guard sentence itself is info. An example that says it runs after verifying is left alone. Found in 65 Maton skills (about 1M downloads).
+
+**Precision.** URLs stop at full-width and CJK punctuation (`https://api.vendor.com，然后`). `example.*` documentation hosts, `localhost`, `*.localhost` and `0.0.0.0` are not destinations. A finding on a CHANGELOG/HISTORY/RELEASE_NOTES line that describes a fixed bug is info.
+
 ## 0.11.0 — 2026-10-21
 
 Accuracy release. Measured on the 2,827-skill ClawHub snapshot against 0.10.0: non-info findings 27,523 → 16,215; block 755 → 690; no-findings 1,117 → 1,159; 179 skills graded higher, none lower. The 20-skill benchmark is unchanged.

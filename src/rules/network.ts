@@ -10,7 +10,9 @@ import { createFinding, pushUnique } from './helpers.ts';
  * base64 sha512 integrity hashes in lockfiles (`sha512-ab//cd==`) and Python floor division
  * (`w//2`) were read as hosts.
  */
-const URL_RE = /(?:\bhttps?:\/\/|(?<=["'(=])\/\/(?=[a-z0-9-]+\.[a-z]))[^\s<>"'`)]{1,500}/gi;
+/** Full-width and CJK punctuation ends a URL (`https://api.vendor.com，然后`): 0.12.0. */
+const URL_RE =
+  /(?:\bhttps?:\/\/|(?<=["'(=])\/\/(?=[a-z0-9-]+\.[a-z]))[^\s<>"'`)\u3000-\u303f\uff01-\uff0f\uff1a-\uff20\uff3b-\uff40\uff5b-\uff65\u2018-\u201f\u2026]{1,500}/gi;
 
 export const net001: Rule = {
   id: 'IH-NET-001',
@@ -138,6 +140,8 @@ function checkNet001(file: ScannedFile, ctx: ScanContext): Finding[] {
   for (const url of extractUrls(file.text)) {
     if (hostAllowed(url.host, allow)) continue;
     const raised = badHost(url.host, url.raw);
+    // Documentation hosts (RFC 2606 example.*, .test, .example) never receive anything (0.12.0).
+    if (!raised && isPlaceholderHost(url.host)) continue;
     if (!raised && declaredHost(url.host, declared)) continue;
     const line = lines[url.line - 1] ?? '';
     const previous = previousNonEmpty(lines, url.line - 1);
@@ -349,7 +353,8 @@ function previousNonEmpty(lines: string[], index: number): string {
 
 function isLoopback(host: string): boolean {
   const bare = host.replace(/^\[|\]$/g, '');
-  if (bare === '::1') return true;
+  if (bare === '::1' || bare === '0.0.0.0') return true;
+  if (bare === 'localhost' || bare.endsWith('.localhost')) return true;
   const parts = host.split('.');
   if (parts.length !== 4 || parts[0] !== '127') return false;
   return parts.every((part) => /^\d{1,3}$/.test(part) && Number(part) <= 255);

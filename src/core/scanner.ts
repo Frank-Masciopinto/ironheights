@@ -255,6 +255,7 @@ export function scanFile(
         if (fenced.has(raw.line)) finding = asDocExample(raw);
       }
       if (isRegistrySkillCard(file.relativePath)) finding = asRegistryCard(finding);
+      else if (isChangelog(file.relativePath)) finding = asChangelogFix(finding, file.text);
       const severity = override?.severity ?? finding.severity;
       findings.push(severity === finding.severity ? finding : { ...finding, severity });
     }
@@ -299,8 +300,34 @@ function asRegistryCard(finding: Finding): Finding {
   const severity: Finding['severity'] = finding.severity === 'critical' ? 'medium' : 'info';
   if (severity === finding.severity) return finding;
   const note =
-    'Registry skill card: ClawHub generates skill-card.md, so this is read as notes, not as the author\'s code.';
+    "Registry skill card: ClawHub generates skill-card.md, so this is read as notes, not as the author's code.";
   return { ...finding, severity, note: finding.note ? `${finding.note} ${note}` : note };
+}
+
+/** CHANGELOG.md, CHANGES, HISTORY.md, RELEASE_NOTES.md and the like, at any depth. */
+export function isChangelog(relativePath: string): boolean {
+  const name = relativePath.split('/').pop() ?? '';
+  return /^(?:changelog|changes|history|release[-_ ]?notes|news)(?:\.(?:md|markdown|txt|rst))?$/i.test(
+    name,
+  );
+}
+
+const FIXED_BUG =
+  /\b(?:fix(?:e[ds])?|fixing|resolved?|patch(?:ed)?|bug ?fix|no longer|regression|was (?:broken|wrong))\b/i;
+
+/**
+ * A changelog line that describes a fixed bug ("Fixed: rm -rf ran on the wrong folder") names the
+ * old behaviour, not what the skill does now (0.12.0, IH-EXEC-003 false positive on
+ * email-to-calendar). Those hits become info; other changelog lines keep their severity.
+ */
+function asChangelogFix(finding: Finding, text: string): Finding {
+  if (finding.line === undefined || finding.severity === 'info' || finding.severity === 'critical')
+    return finding;
+  const line = text.split(/\r?\n/)[finding.line - 1] ?? '';
+  if (!FIXED_BUG.test(line)) return finding;
+  const note =
+    'Changelog line about a fixed bug: it describes old behaviour, so it is reported as info.';
+  return { ...finding, severity: 'info', note: finding.note ? `${finding.note} ${note}` : note };
 }
 
 function finishSkill(

@@ -22,7 +22,7 @@ describe('detection rules', () => {
       expect(negatives.length).toBeGreaterThanOrEqual(3);
 
       for (const name of positives) {
-        const relative = rule.id === 'IH-META-001' ? 'SKILL.md' : name;
+        const relative = rule.id === 'IH-META-001' || rule.id === 'IH-REF-001' ? 'SKILL.md' : name;
         const file = await scannedFromFile(join(positiveDir, name), relative);
         if (rule.id === 'IH-BIN-001')
           file.text = new TextDecoder().decode(await readFile(join(positiveDir, name)));
@@ -39,7 +39,8 @@ describe('detection rules', () => {
 
       for (const name of negatives) {
         const relative =
-          rule.id === 'IH-META-001' && name.endsWith('.md') && name.startsWith('1')
+          (rule.id === 'IH-META-001' && name.endsWith('.md') && name.startsWith('1')) ||
+          rule.id === 'IH-REF-001'
             ? 'SKILL.md'
             : name;
         const file = await scannedFromFile(join(negativeDir, name), relative);
