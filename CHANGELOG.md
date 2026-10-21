@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.11.0 — unreleased
+## 0.11.0 — 2026-10-21
 
 Accuracy release. Measured on the 2,827-skill ClawHub snapshot against 0.10.0: non-info findings 27,523 → 16,215; block 755 → 690; no-findings 1,117 → 1,159; 179 skills graded higher, none lower. The 20-skill benchmark is unchanged.
 
@@ -12,7 +12,7 @@ Accuracy release. Measured on the 2,827-skill ClawHub snapshot against 0.10.0: n
 
 **Empty folder: "nothing scanned".** A scan that read no files no longer prints grade A; the grade is `nothing scanned` (JSON letter `nothing-scanned`).
 
-## 0.10.0 — unreleased
+## 0.10.0 — 2026-10-21
 
 Accuracy release, built from real ClawHub examples that Moltbook bots sent in.
 
