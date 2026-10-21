@@ -158,7 +158,7 @@ export interface EvidenceMatch {
  * `incomplete` has no numeric score: a skipped file must not look like a pass.
  */
 export interface Grade {
-  letter: 'A' | 'B' | 'C' | 'D' | 'F' | 'incomplete';
+  letter: 'A' | 'B' | 'C' | 'D' | 'F' | 'incomplete' | 'nothing-scanned';
   score?: number;
   /** Registry packages the skills install whose code was not scanned. */
   unscannedDependencies?: number;

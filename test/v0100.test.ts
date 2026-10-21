@@ -59,7 +59,7 @@ describe('0.10.0 IH-EXEC-004 confirm-off switches (ironheights census, atlas-mem
       '```bash\ntmux -S "$SOCKET" send-keys -t agent-1 "cd /tmp/p && codex --yolo \'Fix bug X\'" Enter\n```\n';
     expect(hits('SKILL.md', md, 'IH-EXEC-004')[0]?.severity).toBe('medium');
     const card = 'Mitigation: Use sandboxes and avoid `--yolo` unless the workspace is trusted.\n';
-    expect(hits('skill-card.md', card, 'IH-EXEC-004')[0]?.severity).toBe('low');
+    expect(hits('skill-card.md', card, 'IH-EXEC-004')[0]?.severity).toBe('info') // 0.11.0: skill-card.md is registry notes;
     expect(
       hits('run.sh', 'claude --dangerously-skip-permissions -p "$T"\n', 'IH-EXEC-004')[0]?.severity,
     ).toBe('high');

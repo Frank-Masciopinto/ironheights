@@ -427,6 +427,7 @@ Matches:
 
 Does not match:
 - `Run the command as the current user.`
+- `Never use sudo with this installer.`
 
 ## IH-BIN-001 — Bundled executable or archive
 

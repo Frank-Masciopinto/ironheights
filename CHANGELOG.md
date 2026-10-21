@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.11.0 — unreleased
+
+Accuracy release. Measured on the 2,827-skill ClawHub snapshot against 0.10.0: non-info findings 27,523 → 16,215; block 755 → 690; no-findings 1,117 → 1,159; 179 skills graded higher, none lower. The 20-skill benchmark is unchanged.
+
+**Relative paths inside the skill (`IH-FS-001`).** A `../` path that resolves inside the skill folder, judged from the folder of the file that names it (`scripts/run.sh` → `../references/api.md`, `require('../src/x')`), is no longer path traversal. Paths that leave the skill, backslash traversal and symlinks are still flagged. Non-info IH-FS-001 hits: 11,855 → 752.
+
+**Advice against sudo (`IH-PRIV-001`).** "Never use sudo", "do not run this with `sudo`", "no sudo needed" and "sudo is not required" are quiet. A line that also runs sudo or another privilege pattern is still flagged.
+
+**Registry skill card is notes.** ClawHub generates `skill-card.md` at the skill root, so its findings are reported as info (critical as medium). Non-info skill-card findings: 197 → 2. A `skill-card.md` deeper in the tree is graded as code.
+
+**Empty folder: "nothing scanned".** A scan that read no files no longer prints grade A; the grade is `nothing scanned` (JSON letter `nothing-scanned`).
+
 ## 0.10.0 — unreleased
 
 Accuracy release, built from real ClawHub examples that Moltbook bots sent in.

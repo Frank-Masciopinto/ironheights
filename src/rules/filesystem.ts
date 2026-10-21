@@ -1,3 +1,4 @@
+import { posix } from 'node:path';
 import type { Finding, Rule } from '../core/types.ts';
 import { eachLine } from '../util/text.ts';
 import { createFinding, pushUnique } from './helpers.ts';
@@ -38,6 +39,27 @@ export function declaredReadOnlyReference(line: string): boolean {
   if (named.length !== 1) return false;
   const rest = line.replace(NAMED_NEARBY_FILE, ' ');
   return !TRAVERSAL.test(rest);
+}
+
+/** Each `../` path token on a line (after URLs and routes are stripped). */
+const TRAVERSAL_TOKEN = /(?<![\w.~])(?:\.\.\/)+[^\s"'`)<>|;,]*/g;
+
+/**
+ * True when every `../` path on the line resolves to a place inside the skill folder, judged from
+ * the folder of the file that names it (`scripts/run.sh` naming `../references/api.md`). Backslash
+ * traversal, a bare `..` that climbs out, or any token that leaves the root keeps the finding.
+ */
+export function staysInsideSkill(line: string, relativePath: string): boolean {
+  if (/\.\.\\/.test(line)) return false;
+  const tokens = line.match(TRAVERSAL_TOKEN) ?? [];
+  if (tokens.length === 0) return false;
+  const rest = line.replace(TRAVERSAL_TOKEN, ' ');
+  if (TRAVERSAL.test(rest)) return false;
+  const dir = posix.dirname(relativePath.replace(/\\/g, '/'));
+  return tokens.every((token) => {
+    const resolved = posix.normalize(posix.join(dir, token));
+    return resolved !== '..' && !resolved.startsWith('../') && !posix.isAbsolute(resolved);
+  });
 }
 
 export const fs001: Rule = {
@@ -91,6 +113,7 @@ export const fs001: Rule = {
       const scrubbed = stripNonPathTokens(line);
       const symlink = /\bln\s+-s\s+\//.test(line);
       if (!TRAVERSAL.test(scrubbed) && !symlink) return;
+      if (!symlink && staysInsideSkill(scrubbed, file.relativePath)) return;
       const readOnly = !symlink && declaredReadOnlyReference(scrubbed);
       pushUnique(
         findings,

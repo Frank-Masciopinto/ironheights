@@ -26,6 +26,9 @@ export function gradeFor(riskScore: number, filesSkipped: number): Grade {
 export function gradeFromSkills(skills: SkillReport[]): Grade {
   const skipped = skills.reduce((sum, skill) => sum + blockingSkipCount(skill), 0);
   if (skipped > 0) return gradeFor(0, skipped);
+  // An empty folder (or no skills at all) earns no grade: an A would claim a review that never happened.
+  const scanned = skills.reduce((sum, skill) => sum + skill.filesScanned, 0);
+  if (scanned === 0) return { letter: 'nothing-scanned', disclaimer: SAFETY_REMINDER };
   const risk = skills.reduce((max, skill) => Math.max(max, skill.gradeRisk ?? skill.score), 0);
   const grade = gradeFor(risk, 0);
   const deps = skills.reduce((sum, skill) => sum + (skill.unscannedDependencies?.length ?? 0), 0);
@@ -43,6 +46,7 @@ export function incompleteScanLine(files: number, directories: number): string {
 }
 
 export function formatGrade(grade: Grade): string {
+  if (grade.letter === 'nothing-scanned') return 'nothing scanned';
   if (grade.letter === 'incomplete' || grade.score === undefined) return 'incomplete';
   const base = `${grade.letter} (${grade.score}/100)`;
   const deps = grade.unscannedDependencies ?? 0;

@@ -254,6 +254,7 @@ export function scanFile(
         fenced ??= fencedLineNumbers(file.text);
         if (fenced.has(raw.line)) finding = asDocExample(raw);
       }
+      if (isRegistrySkillCard(file.relativePath)) finding = asRegistryCard(finding);
       const severity = override?.severity ?? finding.severity;
       findings.push(severity === finding.severity ? finding : { ...finding, severity });
     }
@@ -282,6 +283,23 @@ function asDocExample(finding: Finding): Finding {
   if (severity === finding.severity) return finding;
   const note =
     'Docs example: this line is in a fenced code block in Markdown, so the docs tell someone to run it. The same line in a shipped script is graded one step higher.';
+  return { ...finding, severity, note: finding.note ? `${finding.note} ${note}` : note };
+}
+
+/**
+ * ClawHub writes `skill-card.md` next to every published skill (2,760 of 2,819 in the registry,
+ * including ours, which only shipped SKILL.md). It is the registry's summary and warnings, not the
+ * author's code, so its hits are reported as notes. Critical hits stay visible at medium.
+ */
+export function isRegistrySkillCard(relativePath: string): boolean {
+  return relativePath.toLowerCase() === 'skill-card.md';
+}
+
+function asRegistryCard(finding: Finding): Finding {
+  const severity: Finding['severity'] = finding.severity === 'critical' ? 'medium' : 'info';
+  if (severity === finding.severity) return finding;
+  const note =
+    'Registry skill card: ClawHub generates skill-card.md, so this is read as notes, not as the author\'s code.';
   return { ...finding, severity, note: finding.note ? `${finding.note} ${note}` : note };
 }
 
