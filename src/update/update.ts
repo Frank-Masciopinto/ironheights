@@ -1,7 +1,6 @@
-import { spawn, spawnSync } from 'node:child_process';
-import { mkdirSync, readFileSync, realpathSync, writeFileSync } from 'node:fs';
-import { join, sep } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { spawn } from 'node:child_process';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { ironheightsHome } from '../core/config.ts';
 import { TOOL_VERSION, REPOSITORY_URL } from '../version.ts';
 
@@ -237,83 +236,38 @@ export async function checkVersions(opts: UpdateEnv = {}): Promise<CheckResult> 
   return result;
 }
 
-export type Runner = (cmd: string, args: string[]) => { status: number | null; stdout: string };
-
-export const defaultRunner: Runner = (cmd, args) => {
-  const r = spawnSync(cmd, args, {
-    encoding: 'utf8',
-    timeout: 180_000,
-    shell: process.platform === 'win32',
-    stdio: ['ignore', 'pipe', 'pipe'],
-  });
-  return { status: r.error ? null : r.status, stdout: r.stdout ?? '' };
-};
-
-/** True when this running CLI lives under `npm root -g`. */
-export function installedGlobally(run: Runner = defaultRunner, entry?: string): boolean {
-  try {
-    const here = realpathSync(entry ?? fileURLToPath(import.meta.url));
-    const r = run('npm', ['root', '-g']);
-    if (r.status !== 0) return false;
-    const root = realpathSync(r.stdout.trim());
-    return here.startsWith(root + sep);
-  } catch {
-    return false;
-  }
-}
-
-export interface ApplyOptions {
-  run?: Runner;
+export interface OfferOptions {
   log: (line: string) => void;
-  globalInstall?: boolean;
-  env?: NodeJS.ProcessEnv;
 }
 
 /**
- * Apply updates found by checkVersions. Never downgrades. The CLI is only
- * replaced when npm reports SLSA provenance and an sha512 integrity for the
- * exact version, and the install pins that exact version. Returns true when
- * every attempted step succeeded.
+ * Report updates found by checkVersions and print the commands the user can
+ * run. Offer-only: this never installs, updates or runs anything. Never
+ * offers a downgrade, and only offers a CLI version that npm reports with
+ * SLSA provenance and an sha512 integrity. Returns the offered commands.
  */
-export function applyUpdates(check: CheckResult, opts: ApplyOptions): boolean {
-  const run = opts.run ?? defaultRunner;
-  const env = opts.env ?? process.env;
-  let ok = true;
+export function offerUpdates(check: CheckResult, opts: OfferOptions): string[] {
+  const commands: string[] = [];
   if (check.cliUpdate && check.npmLatest && isNewer(check.npmLatest, TOOL_VERSION)) {
     if (!check.npmProvenance || !check.npmIntegrity?.startsWith('sha512-')) {
       opts.log(
-        `ironheights ${check.npmLatest} has no npm provenance or sha512 integrity; not installing it.`,
-      );
-      ok = false;
-    } else if (!(opts.globalInstall ?? installedGlobally(run))) {
-      opts.log(
-        `ironheights ${check.npmLatest} is available (you have ${TOOL_VERSION}). Not a global install, so nothing was changed; npx users get it with: npx ironheights@latest`,
+        `ironheights ${check.npmLatest} is on npm but has no npm provenance or sha512 integrity; not offering it.`,
       );
     } else {
+      const cmd = `npm install -g ironheights@${check.npmLatest}`;
+      commands.push(cmd);
       opts.log(
-        `Updating ironheights ${TOOL_VERSION} -> ${check.npmLatest} (npm provenance verified)...`,
+        `ironheights ${check.npmLatest} is available (you have ${TOOL_VERSION}, npm provenance verified). To update, run: ${cmd} (or npx ironheights@${check.npmLatest})`,
       );
-      const r = run('npm', ['install', '-g', `ironheights@${check.npmLatest}`]);
-      if (r.status === 0) opts.log(`ironheights ${check.npmLatest} installed.`);
-      else {
-        opts.log('npm install failed; the current version is unchanged.');
-        ok = false;
-      }
     }
   }
   if (check.skillUpdate && check.skillLatest) {
-    const r = run('clawhub', ['--no-input', 'update', 'ironheights']);
-    if (r.status === 0) {
-      writeState({ ...readState(env), skillInstalled: check.skillLatest }, env);
-      opts.log(`ClawHub skill ironheights is at ${check.skillLatest}.`);
-    } else if (r.status === null) {
-      opts.log(`ClawHub skill ${check.skillLatest} is available; run: clawhub update ironheights`);
-    } else {
-      opts.log(`clawhub update ironheights did not succeed; the installed skill is unchanged.`);
-      ok = false;
-    }
+    const cmd = 'clawhub update ironheights';
+    commands.push(cmd);
+    opts.log(`ClawHub skill ironheights ${check.skillLatest} is available. To update, run: ${cmd}`);
   }
-  return ok;
+  if (commands.length) opts.log('Nothing was changed. Ironheights never updates itself.');
+  return commands;
 }
 
 export interface AutoCheckHooks {

@@ -2,12 +2,11 @@ import { appendFileSync, mkdirSync } from 'node:fs';
 import { ironheightsHome } from '../../core/config.ts';
 import { TOOL_VERSION } from '../../version.ts';
 import {
-  applyUpdates,
   autoCheckDisabledReason,
   checkVersions,
   setAutoUpdate,
+  offerUpdates,
   updateLogPath,
-  type Runner,
 } from '../../update/update.ts';
 
 export interface UpdateFlags {
@@ -18,8 +17,6 @@ export interface UpdateFlags {
   enable?: boolean;
   env?: NodeJS.ProcessEnv;
   fetchImpl?: typeof fetch;
-  run?: Runner;
-  globalInstall?: boolean;
   stdout?: (t: string) => void;
 }
 
@@ -67,11 +64,6 @@ export async function runUpdate(flags: UpdateFlags): Promise<number> {
     if (!flags.auto && !flags.json) log('Up to date.');
     return 0;
   }
-  const ok = applyUpdates(check, {
-    log,
-    env,
-    ...(flags.run ? { run: flags.run } : {}),
-    ...(flags.globalInstall !== undefined ? { globalInstall: flags.globalInstall } : {}),
-  });
-  return flags.auto ? 0 : ok ? 0 : 1;
+  offerUpdates(check, { log });
+  return 0;
 }

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.13.0 — 2026-10-22
+
+**Updates are offer-only.** `ironheights update` and the 6-hourly background check no longer install anything: no `npm install -g`, no `clawhub update`. When a newer CLI (with npm provenance and sha512 integrity) or ClawHub skill exists, it prints the exact command for the user to run, for example `npm install -g ironheights@0.13.0` or `clawhub update ironheights`. The skill tells the agent never to run an update on its own; it may run `ironheights update --check` when asked and show the command. Nothing is downgraded.
+
+**Install from ClawHub first.** README and SKILL.md lead with `clawhub install ironheights`; SKILL.md install commands are pinned to the exact CLI version and updated automatically by `npm version`.
+
 ## 0.12.0 — 2026-10-21
 
 Measured on the 2,827-skill ClawHub snapshot against 0.11.0: block 690 → 759, review 977 → 922, no-findings 1,159 → 1,145; 120 skills graded lower, 2 higher. 65 of the 68 new review → block moves are Maton copies whose delete examples skip the confirmation their docs require. The 20-skill benchmark is unchanged.

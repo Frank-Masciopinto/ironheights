@@ -61,7 +61,7 @@ export async function main(argv: string[], hooks: MainHooks = {}): Promise<numbe
   program
     .name('ironheights')
     .description(
-      'Local-first security scanner for OpenClaw skills. Scans are local. Network is used only by fetch, safe-install, advisories update, --online, scan --llm, scan --check-registry, review, and the 6-hourly version check (off with IRONHEIGHTS_NO_UPDATE=1).',
+      'Local-first security scanner for OpenClaw skills. Scans are local. Network is used only by fetch, safe-install, advisories update, --online, scan --llm, scan --check-registry, review, and the 6-hourly version check, which only reports new versions (off with IRONHEIGHTS_NO_UPDATE=1).',
     )
     .version(TOOL_VERSION)
     .exitOverride();
@@ -340,9 +340,9 @@ export async function main(argv: string[], hooks: MainHooks = {}): Promise<numbe
   program
     .command('update')
     .description(
-      'check npm and ClawHub for a newer Ironheights and install it (CLI only if installed globally, after verifying npm provenance; never downgrades)',
+      'check npm and ClawHub for a newer Ironheights and print the update commands (offer-only: never installs or updates anything)',
     )
-    .option('--check', 'only report versions, change nothing')
+    .option('--check', 'only report versions (same as update; kept for compatibility)')
     .option('--json', 'print JSON')
     .option(
       '--auto',

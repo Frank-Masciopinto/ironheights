@@ -6,13 +6,13 @@ import { runUpdate } from '../src/cli/commands/update.ts';
 import { main } from '../src/cli/index.ts';
 import {
   CHECK_INTERVAL_MS,
-  applyUpdates,
   autoCheckDisabledReason,
   checkIsDue,
   checkVersions,
   compareVersions,
   isNewer,
   maybeStartBackgroundCheck,
+  offerUpdates,
   readState,
   setAutoUpdate,
   writeState,
@@ -144,15 +144,12 @@ describe('network failure', () => {
   it('records errors, changes nothing and returns 0 for --check', async () => {
     const env = await home();
     const out: string[] = [];
-    const runs: string[][] = [];
     const code = await runUpdate({
       env,
       fetchImpl: fakeFetch(new Error('offline'), new Error('offline')),
-      run: (c, a) => (runs.push([c, ...a]), { status: 0, stdout: '' }),
       stdout: (t) => out.push(t),
     });
     expect(code).toBe(0);
-    expect(runs).toHaveLength(0);
     expect(out.join('')).toMatch(/Scans are unaffected/);
   });
   it('checkVersions never throws on bad JSON', async () => {
@@ -163,7 +160,7 @@ describe('network failure', () => {
   });
 });
 
-describe('applying updates', () => {
+describe('offer-only updates', () => {
   const base = (over: Partial<CheckResult>): CheckResult => ({
     current: TOOL_VERSION,
     cliUpdate: false,
@@ -171,25 +168,18 @@ describe('applying updates', () => {
     errors: [],
     ...over,
   });
-  it('never downgrades the CLI', async () => {
+  it('never offers a CLI downgrade', async () => {
     const env = await home();
-    const runs: string[][] = [];
     const r = await checkVersions({
       env,
       fetchImpl: fakeFetch(npmBody('0.1.0'), skillBody('1.0.0')),
     });
     expect(r.cliUpdate).toBe(false);
-    applyUpdates(
-      { ...r, cliUpdate: true, skillUpdate: false },
-      {
-        log: () => undefined,
-        globalInstall: true,
-        run: (c, a) => (runs.push([c, ...a]), { status: 0, stdout: '' }),
-      },
-    );
-    expect(runs).toHaveLength(0);
+    expect(
+      offerUpdates({ ...r, cliUpdate: true, skillUpdate: false }, { log: () => undefined }),
+    ).toEqual([]);
   });
-  it('never downgrades the skill once its version is known', async () => {
+  it('never offers a skill downgrade once its version is known', async () => {
     const env = await home();
     writeState({ skillInstalled: '1.2.0' }, env);
     const r = await checkVersions({
@@ -198,76 +188,62 @@ describe('applying updates', () => {
     });
     expect(r.skillUpdate).toBe(false);
   });
-  it('installs the exact newer version globally only with provenance', () => {
-    const runs: string[][] = [];
-    const run = (c: string, a: string[]) => (runs.push([c, ...a]), { status: 0, stdout: '' });
+  it('offers the exact pinned CLI version only with provenance', () => {
     const logs: string[] = [];
-    applyUpdates(
-      base({
-        cliUpdate: true,
-        npmLatest: '99.0.0',
-        npmProvenance: false,
-        npmIntegrity: 'sha512-x',
-      }),
-      {
-        log: (l) => logs.push(l),
-        globalInstall: true,
-        run,
-      },
-    );
-    expect(runs).toHaveLength(0);
+    expect(
+      offerUpdates(
+        base({
+          cliUpdate: true,
+          npmLatest: '99.0.0',
+          npmProvenance: false,
+          npmIntegrity: 'sha512-x',
+        }),
+        { log: (l) => logs.push(l) },
+      ),
+    ).toEqual([]);
     expect(logs.join()).toMatch(/provenance/);
-    applyUpdates(
-      base({ cliUpdate: true, npmLatest: '99.0.0', npmProvenance: true, npmIntegrity: 'sha512-x' }),
-      {
-        log: () => undefined,
-        globalInstall: true,
-        run,
-      },
-    );
-    expect(runs).toEqual([['npm', 'install', '-g', 'ironheights@99.0.0']]);
+    expect(
+      offerUpdates(
+        base({
+          cliUpdate: true,
+          npmLatest: '99.0.0',
+          npmProvenance: true,
+          npmIntegrity: 'sha512-x',
+        }),
+        { log: () => undefined },
+      ),
+    ).toEqual(['npm install -g ironheights@99.0.0']);
   });
-  it('prints the npx note instead of installing when not global', () => {
-    const runs: string[][] = [];
+  it('offers clawhub update for the skill without recording it as installed', async () => {
+    const env = await home();
     const logs: string[] = [];
-    applyUpdates(
-      base({ cliUpdate: true, npmLatest: '99.0.0', npmProvenance: true, npmIntegrity: 'sha512-x' }),
-      {
-        log: (l) => logs.push(l),
-        globalInstall: false,
-        run: (c, a) => (runs.push([c, ...a]), { status: 0, stdout: '' }),
-      },
-    );
-    expect(runs).toHaveLength(0);
-    expect(logs.join()).toMatch(/npx ironheights@latest/);
+    expect(
+      offerUpdates(base({ skillUpdate: true, skillLatest: '1.2.0' }), { log: (l) => logs.push(l) }),
+    ).toEqual(['clawhub update ironheights']);
+    expect(logs.join('\n')).toMatch(/Nothing was changed/);
+    expect(readState(env).skillInstalled).toBeUndefined();
   });
-  it('updates the skill through clawhub and records the version', async () => {
+  it('update reports, offers commands, returns 0 and installs nothing', async () => {
     const env = await home();
-    const runs: string[][] = [];
-    applyUpdates(base({ skillUpdate: true, skillLatest: '1.2.0' }), {
-      log: () => undefined,
-      env,
-      run: (c, a) => (runs.push([c, ...a]), { status: 0, stdout: '' }),
-    });
-    expect(runs).toEqual([['clawhub', '--no-input', 'update', 'ironheights']]);
-    expect(readState(env).skillInstalled).toBe('1.2.0');
-  });
-  it('--check reports and changes nothing', async () => {
-    const env = await home();
-    const runs: string[][] = [];
     const out: string[] = [];
-    await runUpdate({
-      check: true,
+    const code = await runUpdate({
       env,
       fetchImpl: fakeFetch(npmBody('99.0.0'), skillBody('9.0.0')),
-      run: (c, a) => (runs.push([c, ...a]), { status: 0, stdout: '' }),
       stdout: (t) => out.push(t),
     });
-    expect(runs).toHaveLength(0);
-    expect(out.join('')).toMatch(/99\.0\.0 on npm \(update available\)/);
+    expect(code).toBe(0);
+    const text = out.join('');
+    expect(text).toMatch(/99\.0\.0 on npm \(update available\)/);
+    expect(text).toMatch(/run: npm install -g ironheights@99\.0\.0/);
+    expect(text).toMatch(/run: clawhub update ironheights/);
+    expect(text).toMatch(/never updates itself/);
     expect(
       JSON.parse(await readFile(join(env.IRONHEIGHTS_HOME ?? '', 'update-check.json'), 'utf8'))
         .npmLatest,
     ).toBe('99.0.0');
+  });
+  it('the source has no code path that spawns npm or clawhub', async () => {
+    const src = await readFile(join(process.cwd(), 'src/update/update.ts'), 'utf8');
+    expect(src).not.toMatch(/spawnSync|'install', '-g'|'update', 'ironheights'/);
   });
 });

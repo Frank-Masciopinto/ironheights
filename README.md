@@ -10,13 +10,21 @@ If Ironheights is useful to you, a star on [ClawHub](https://clawhub.ai/frank-ma
 
 Ironheights is a local-first scanner and integrity monitor for [OpenClaw](https://docs.openclaw.ai) skills. It reads skill files as data, looks for risky patterns with fixed rules, and compares skill and agent files with a baseline you save on the same machine.
 
-It does not send telemetry, and it does not run the files it scans. Scans are fully local. The only network call made without a flag is a version check against npm and ClawHub, at most once every 6 hours; it can be turned off (see [Updates](#updates)). Other network use happens only when you run `fetch`, `safe-install`, `advisories update`, `--online`, `scan --llm`, `scan --check-registry`, or `review`.
+It does not send telemetry, and it does not run the files it scans. Scans are fully local. The only network call made without a flag is a version check against npm and ClawHub, at most once every 6 hours; it only reports new versions, never installs anything, and can be turned off (see [Updates](#updates)). Other network use happens only when you run `fetch`, `safe-install`, `advisories update`, `--online`, `scan --llm`, `scan --check-registry`, or `review`.
 
 ## Install
 
-Ironheights requires Node.js 20 or newer on macOS, Linux, and Windows.
+Install the OpenClaw skill from ClawHub (recommended):
+
+```bash
+clawhub install ironheights
+```
+
+The skill uses the `ironheights` CLI, which requires Node.js 20 or newer on macOS, Linux, and Windows.
 
 OpenClaw 2026.9.3 requires Node.js `>=24.16.0 <25 || >=26.1.0`. `ironheights doctor` prints whether the current runtime is inside that range.
+
+Then install the CLI, or run it once with npx:
 
 ```bash
 npx ironheights scan ./path/to/skill
@@ -418,7 +426,7 @@ Detection is heuristic. A renamed or unlisted tool is not found, and a name can 
 
 ## The advisory skill
 
-`skill/ironheights/SKILL.md` tells an OpenClaw agent to run `ironheights scan <path> --json`, summarize the result, and stop on a `block` verdict until you confirm. The skill asks for no secrets. Its only network step is `ironheights update` once every 6 hours (version check and self-update), which the agent skips when updates are disabled.
+`skill/ironheights/SKILL.md` tells an OpenClaw agent to run `ironheights scan <path> --json`, summarize the result, and stop on a `block` verdict until you confirm. The skill asks for no secrets. Updates are offer-only: the agent never runs `ironheights update`, `clawhub update` or a global npm install on its own. When asked, it runs `ironheights update --check` and shows you the update command to run yourself. Install the skill with `clawhub install ironheights`.
 
 This skill is advisory. It runs inside the agent, and a hostile skill can try to bypass it. The CLI you run yourself, or a process outside the agent, is the trusted path.
 
@@ -436,12 +444,14 @@ No findings means the rules did not match. It does not mean the skill is safe.
 
 Ironheights checks for a newer version at most once every 6 hours. Any command reads a local timestamp in `~/.ironheights/update-check.json`; when a check is due it starts a detached background process and the command continues at once. That process asks registry.npmjs.org for the `latest` version of `ironheights` and clawhub.ai for the latest `ironheights` skill version, with a 3-second timeout. A network failure is ignored and never affects a scan. Results go to `~/.ironheights/update.log`.
 
-- **CLI**: replaced only when it was installed with `npm install -g`, only for a strictly newer stable version, and only when npm reports SLSA provenance and an sha512 integrity for that exact version. It runs `npm install -g ironheights@<exact version>`, which checks the integrity. `npx` users get a note to run `npx ironheights@latest` instead.
-- **ClawHub skill**: updated with `clawhub update ironheights` when `clawhub` is on the PATH. Nothing is ever downgraded.
+Updates are offer-only. Ironheights never installs, updates or replaces anything. When a newer version exists, `ironheights update` prints it and the command to run yourself:
+
+- **CLI**: offered only for a strictly newer stable version, and only when npm reports SLSA provenance and an sha512 integrity for that exact version: `npm install -g ironheights@<exact version>` (or `npx ironheights@<exact version>`).
+- **ClawHub skill**: `clawhub update ironheights`. Nothing is ever downgraded.
 
 ```bash
-ironheights update           # check now and apply updates
-ironheights update --check   # report versions only
+ironheights update           # check now and print any update commands (changes nothing)
+ironheights update --check   # same; kept for compatibility
 ironheights update --disable # turn automatic checks off (--enable to turn them back on)
 ```
 

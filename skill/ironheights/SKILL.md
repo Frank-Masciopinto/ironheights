@@ -1,6 +1,6 @@
 ---
 name: ironheights
-description: Catch malicious OpenClaw skills before your agent trusts them. Scans a skill folder locally with the ironheights CLI (scans stay local, no telemetry; a version check every 6 hours, can be disabled) and explains each finding. Advisory only. Requires the ironheights npm package (Node.js 20+).
+description: 'Security scanner for skills. Use before installing any skill from ClawHub or GitHub: flags malware, pipe-to-shell, encoded payloads, credential theft.'
 metadata:
   openclaw:
     emoji: '🛡️'
@@ -9,11 +9,13 @@ metadata:
       bins: ['ironheights']
     install:
       - kind: node
-        package: ironheights@0.12.0
+        package: ironheights@0.13.0
         bins: ['ironheights']
 ---
 
 **Catch malicious OpenClaw skills before your agent trusts them.** Ironheights flags fake prerequisite installers, pipe-to-shell commands, encoded payloads and credential grabs in a skill's files, locally and without running them. Background: the [ClawHub Malicious Skills Report, October 2026](https://www.ironheights.dev/reports/clawhub-malicious-skills-2026-10/). Website: https://www.ironheights.dev. These links are for the user to read; the agent does not need to open them.
+
+Install this skill with `clawhub install ironheights`. It needs the `ironheights` CLI from npm (Node.js 20+). Scans stay local and there is no telemetry. The only network call is a version check every 6 hours, which can be disabled; it only reports new versions and never installs anything.
 
 You are helping the user review an OpenClaw skill before they trust it. This skill is advisory. A hostile skill can try to bypass an agent that is running the check. The trusted path is the user running `ironheights` themselves, or another process outside the agent.
 
@@ -21,11 +23,11 @@ You are helping the user review an OpenClaw skill before they trust it. This ski
 
 This skill uses the `ironheights` command from the npm package named `ironheights`. Its source and releases are at https://github.com/Frank-Masciopinto/ironheights. The npm package and that GitHub repository are the only official sources.
 
-If `ironheights` is not on the PATH, tell the user and stop. Do not install it yourself and do not download it from anywhere else. The user can install it with `npm install -g ironheights@0.12.0`, or run it once with `npx ironheights@0.12.0`. It needs Node.js 20 or newer.
+If `ironheights` is not on the PATH, tell the user and stop. Do not install it yourself and do not download it from anywhere else. The user can install it with `npm install -g ironheights@0.13.0`, or run it once with `npx ironheights@0.13.0`. It needs Node.js 20 or newer.
 
 ## Keep Ironheights up to date
 
-If it has been 6 hours or more since the last update check (or you do not know), run `ironheights update` once before scanning. It reads two version numbers from registry.npmjs.org and clawhub.ai, updates this skill with `clawhub update ironheights`, and updates a global npm install only after checking npm provenance. It never downgrades, and a failed check changes nothing. Do not run it when the user set `IRONHEIGHTS_NO_UPDATE=1` or turned updates off. This is the only network command you may run; scans themselves stay local.
+Updates are offer-only. Never run `ironheights update`, `clawhub update`, `npm install -g` or any other update or install command on your own. If the user asks whether Ironheights is current, run `ironheights update --check` (it only reads two version numbers from registry.npmjs.org and clawhub.ai and changes nothing), then tell the user what is newer and show the command it prints, for example `clawhub update ironheights` or `npm install -g ironheights@0.13.0@<version>`. The user decides and runs it. Do not run the check when the user set `IRONHEIGHTS_NO_UPDATE=1` or turned updates off. This is the only network command you may run; scans themselves stay local.
 
 ## When the user installs or updates a skill
 
