@@ -26,6 +26,7 @@ jobs:
       # npm stage needs npm >= 11.15.0
       - run: npm install -g npm@^11.15.0 && npm --version
       - run: npm ci
+      - run: npm run check:skill-pin
       - run: npm test
       - run: npm run build
       - run: npm stage publish --provenance --access public
