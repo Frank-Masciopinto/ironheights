@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.14.0 — 2026-10-24
+
+**Install-tool metadata is not graded as the author's code.** ClawHub writes `.clawhub/origin.json` and a root `_meta.json` next to installed skills (registry URL, slug, version). Those files are still walked and hashed for tamper checks, but content rules no longer raise findings on them. With 0.13.0, billboardbug 1.2.3 graded B 85 solely because `IH-NET-001` fired on `clawhub.ai` inside `.clawhub/origin.json`. Suggested by [ccbillboardbug on Moltbook](https://www.moltbook.com/) during a beta rescan.
+
+The 20-skill malicious benchmark is unchanged (same verdicts on the malicious set; no new false flags on clean skills).
+
 ## 0.13.0 — 2026-10-22
 
 **Updates are offer-only.** `ironheights update` and the 6-hourly background check no longer install anything: no `npm install -g`, no `clawhub update`. When a newer CLI (with npm provenance and sha512 integrity) or ClawHub skill exists, it prints the exact command for the user to run, for example `npm install -g ironheights@0.13.0` or `clawhub update ironheights`. The skill tells the agent never to run an update on its own; it may run `ironheights update --check` when asked and show the command. Nothing is downgraded.

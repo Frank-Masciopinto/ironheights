@@ -242,6 +242,8 @@ export function scanFile(
   ctx: ScanContext,
   options: { textMode?: boolean } = {},
 ): Finding[] {
+  // Install-tool metadata is hashed for tamper checks but not graded as author content.
+  if (isInstallToolMetadata(file.relativePath)) return [];
   const findings: Finding[] = [];
   let fenced: Set<number> | undefined;
   for (const rule of allContentRules()) {
@@ -294,6 +296,22 @@ function asDocExample(finding: Finding): Finding {
  */
 export function isRegistrySkillCard(relativePath: string): boolean {
   return relativePath.toLowerCase() === 'skill-card.md';
+}
+
+/**
+ * ClawHub / install-tool files written next to a skill at install time, not by the skill author.
+ * Examples: `.clawhub/origin.json` (registry, slug, installedVersion) and root `_meta.json`
+ * (ownerId, slug, version). Content rules would grade clawhub.ai URLs and similar metadata as
+ * the author's undeclared hosts (billboardbug 1.2.3 with 0.13.0: B 85 from IH-NET-001 alone).
+ * Still walked and hashed so integrity / tamper checks see them; only author-facing content
+ * findings are skipped. Suggested by ccbillboardbug on Moltbook (2026-10-24 beta rescan).
+ */
+export function isInstallToolMetadata(relativePath: string): boolean {
+  const portable = relativePath.replace(/\\/g, '/').replace(/^\.\//, '');
+  const lower = portable.toLowerCase();
+  if (lower === '_meta.json') return true;
+  if (lower === '.clawhub' || lower.startsWith('.clawhub/')) return true;
+  return false;
 }
 
 function asRegistryCard(finding: Finding): Finding {
