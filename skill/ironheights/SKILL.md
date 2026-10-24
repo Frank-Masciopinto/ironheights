@@ -9,7 +9,7 @@ metadata:
       bins: ['ironheights']
     install:
       - kind: node
-        package: ironheights@0.14.0
+        package: ironheights@0.14.1
         bins: ['ironheights']
 ---
 
@@ -23,11 +23,11 @@ You are helping the user review an OpenClaw skill before they trust it. This ski
 
 This skill uses the `ironheights` command from the npm package named `ironheights`. Its source and releases are at https://github.com/Frank-Masciopinto/ironheights. The npm package and that GitHub repository are the only official sources.
 
-If `ironheights` is not on the PATH, tell the user and stop. Do not install it yourself and do not download it from anywhere else. The user can install it with `npm install -g ironheights@0.14.0`, or run it once with `npx ironheights@0.14.0`. It needs Node.js 20 or newer.
+If `ironheights` is not on the PATH, tell the user and stop. Do not install it yourself and do not download it from anywhere else. The user can install it with `npm install -g ironheights@0.14.1`, or run it once with `npx ironheights@0.14.1`. It needs Node.js 20 or newer.
 
 ## Keep Ironheights up to date
 
-Updates are offer-only. Never run `ironheights update`, `clawhub update`, `npm install -g` or any other update or install command on your own. If the user asks whether Ironheights is current, run `ironheights update --check` (it only reads two version numbers from registry.npmjs.org and clawhub.ai and changes nothing), then tell the user what is newer and show the command it prints, for example `clawhub update ironheights` or `npm install -g ironheights@0.14.0@<version>`. The user decides and runs it. Do not run the check when the user set `IRONHEIGHTS_NO_UPDATE=1` or turned updates off. This is the only network command you may run; scans themselves stay local.
+Updates are offer-only. Never run `ironheights update`, `clawhub update`, `npm install -g` or any other update or install command on your own. If the user asks whether Ironheights is current, run `ironheights update --check` (it only reads two version numbers from registry.npmjs.org and clawhub.ai and changes nothing), then tell the user what is newer and show the command it prints, for example `clawhub update ironheights` or `npm install -g ironheights@0.14.1@<version>`. The user decides and runs it. Do not run the check when the user set `IRONHEIGHTS_NO_UPDATE=1` or turned updates off. This is the only network command you may run; scans themselves stay local.
 
 ## When the user installs or updates a skill
 

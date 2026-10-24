@@ -1,6 +1,10 @@
 # Changelog
 
-## 0.14.0 — 2026-10-24
+## 0.14.1 — 2026-10-24
+
+Same as the attempted 0.14.0 cut (install-tool metadata skip). 0.14.0 was unpublished after an npm stage conflict with a classic publish; this is the live tag.
+
+## 0.14.0 — 2026-10-24 (unpublished)
 
 **Install-tool metadata is not graded as the author's code.** ClawHub writes `.clawhub/origin.json` and a root `_meta.json` next to installed skills (registry URL, slug, version). Those files are still walked and hashed for tamper checks, but content rules no longer raise findings on them. With 0.13.0, billboardbug 1.2.3 graded B 85 solely because `IH-NET-001` fired on `clawhub.ai` inside `.clawhub/origin.json`. Suggested by [ccbillboardbug on Moltbook](https://www.moltbook.com/) during a beta rescan.
 
