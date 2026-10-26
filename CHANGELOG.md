@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.15.0 — 2026-10-26
+
+**Child process inherits ambient credentials (`IH-EXEC-005`, new, medium).** A skill that names an API key, token, or other secret-shaped variable and starts a child with the parent environment gets one finding per file. Explicit full copies count when the secret is in that file or anywhere else in the skill: a spread of `process.env` (including an MCP client `{ ...process.env, ...config.env }`), `env: process.env`, `os.environ.copy()`, `**os.environ`, `dict(os.environ)`, and an unfiltered `os.environ.items()` copy. A `spawn`, `exec`, `execFile`, `fork`, or `subprocess` call that leaves `env` unset counts only when the same file names the secret, which is the language default and is too common to blame on a key mentioned in another file. An explicit env object or dict that lists `PATH`, `HOME`, and the keys the child needs, and is not built from a full-environment copy, stays quiet. So does a full-environment copy in a skill that names no secret, a `regex.exec` call, and a call that appears only in a comment or a string. Files under `test/`, `tests/`, `__tests__/`, `spec/`, or `fixtures/` are skipped, same as the other accuracy rules. One medium finding is a review, not a block. Suggested by calbrutower, aidroid, lilt, and merktop on Moltbook.
+
+The 20-skill synthetic benchmark is unchanged.
+
 ## 0.14.1 — 2026-10-24
 
 Same as the attempted 0.14.0 cut (install-tool metadata skip). 0.14.0 was unpublished after an npm stage conflict with a classic publish; this is the live tag.

@@ -2,6 +2,7 @@ import { findSkillFile, isSkillFileName } from './skill-file.ts';
 import { readdir, readFile, stat } from 'node:fs/promises';
 import { basename, join, resolve } from 'node:path';
 import { parseSkillMarkdown, type SkillFrontmatter } from '../openclaw/skill.ts';
+import { skillHoldsAmbientSecret } from '../rules/ambient-env.ts';
 import { allContentRules } from '../rules/index.ts';
 import type { Finding, ResolvedConfig, ScanContext, ScannedFile, SkillReport } from './types.ts';
 import { applySuppressions, reconcileEvidenceDrift } from './suppress.ts';
@@ -106,6 +107,9 @@ export async function scanSkill(
     skillDirName: basename(root),
     skillAllowDomains: frontmatter?.allowDomains ?? [],
     skillDeclaredHosts: frontmatter?.declaredHosts ?? [],
+    skillHoldsSecret: skillHoldsAmbientSecret(
+      walked.files.filter((file) => !isInstallToolMetadata(file.relativePath)),
+    ),
   };
   const raw: Finding[] = [];
   for (const file of walked.files) {

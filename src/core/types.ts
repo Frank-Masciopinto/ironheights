@@ -44,6 +44,13 @@ export interface ScanContext {
   skillAllowDomains: string[];
   /** Hosts the skill declares as its own (frontmatter `homepage`, metadata api_base/homepage/network). */
   skillDeclaredHosts?: string[];
+  /**
+   * True when a non-test file in this skill names a secret-shaped variable.
+   * The scanner sets it. IH-EXEC-005 uses it so an explicit full-environment
+   * copy is flagged even when the key lives in a different file. Omitted means
+   * the rule looks at this file only.
+   */
+  skillHoldsSecret?: boolean;
 }
 
 export interface RuleExamples {

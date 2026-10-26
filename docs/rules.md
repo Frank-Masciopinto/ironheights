@@ -96,6 +96,30 @@ Does not match:
 - `Never pass --yolo on the user machine.`
 - `git push --force`
 
+## IH-EXEC-005 — Child process inherits ambient credentials
+
+- Severity: medium
+- Category: exec
+- Priority: P1
+- Applies to: any
+- OWASP LLM: LLM02:2025
+- OWASP Agentic: ASI03:2026
+- MITRE ATLAS: AML.T0055
+
+A skill that names an API key, token, or other secret-shaped variable and starts a child process with the parent environment gives that child every secret in the environment. A spread of process.env (including an MCP client `{ ...process.env, ...config.env }`), env: process.env, os.environ.copy(), **os.environ, and a spawn, exec, fork, or subprocess call that omits env all count. The secret may sit in the same file, or, for an explicit full-environment copy, in another file of the skill. An explicit env object or dict that lists the keys the child needs, and is not built from a full-environment copy, is quiet. A spawn in a file that names no secret is quiet. Files under test/ or fixtures/ are skipped. One finding is reported per file.
+
+Remediation: Build a minimal environment for the child: PATH, HOME, and only the keys that child needs. Pass that object as env. Do not spread process.env, pass process.env itself, copy os.environ, or leave env unset.
+
+Matches:
+- `spawn("node", ["srv.js"], { env: { ...process.env, ...config.env } })`
+- `subprocess.run(cmd, env=os.environ.copy())`
+- `spawn("helper") when the same file reads process.env.OPENAI_API_KEY`
+
+Does not match:
+- `spawn("helper", { env: { PATH: process.env.PATH, HOME: process.env.HOME, API_KEY: process.env.API_KEY } })`
+- `env = {k: os.environ[k] for k in ("PATH", "HOME", "API_KEY")}`
+- `spawn("helper", { env: { ...process.env } }) when the skill names no secret`
+
 ## IH-NET-001 — Undeclared network destination
 
 - Severity: medium
