@@ -6,6 +6,8 @@
 
 The 20-skill synthetic benchmark is unchanged.
 
+**Dependency.** `zod` 4.1.12 → 4.6.7. Node 24's `npm audit --audit-level=high` already failed on 0.14.1 for [GHSA-mrhx-c7xc-m3w5](https://github.com/advisories/GHSA-mrhx-c7xc-m3w5) (zod before 4.6.6). Scanner behavior is unchanged.
+
 ## 0.14.1 — 2026-10-24
 
 Same as the attempted 0.14.0 cut (install-tool metadata skip). 0.14.0 was unpublished after an npm stage conflict with a classic publish; this is the live tag.
