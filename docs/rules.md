@@ -298,6 +298,32 @@ Does not match:
 - `curl "https://api.example.com/price?token=ETH"`
 - `curl -H "x-api-key: $KEY" https://api.example.com`
 
+## IH-CRED-006 — Hard-coded environment fallback
+
+- Severity: high
+- Category: credentials
+- Priority: P0
+- Applies to: script
+- OWASP LLM: LLM02:2025
+- OWASP Agentic: ASI04:2026
+- MITRE ATLAS: AML.T0055
+
+A credential used as the default of an environment-variable lookup is shipped in the package. os.getenv, os.environ.get, getenv(...) or, process.env || or ??, and ${VAR:-...} count, including when the call is split across lines. A known key prefix of length at least 16 is enough in a code file. Other literals need Shannon entropy of at least 3.5, length at least 20, and a secret-like variable name. A 42-character 0x address is not a secret. Markdown is not scanned, so transaction hashes there are ignored. An env var falling back to another env var is not this rule.
+
+Remediation: Remove the fallback secret, rotate it, and read the environment variable with no default.
+
+Matches:
+- `os.getenv("GOOGLE_API_KEY", "AIzaSyFAKEWeatherKeyNotReal00000Wxyz")`
+- `process.env.PRIVATE_KEY || '0x0123456789abcdeffedcba9876543210aaaabbbbccccdddd1111222233334444'`
+- `${OPENAI_API_KEY:-sk-FAKEshellFallbackNotReal0123456789abcd}`
+
+Does not match:
+- `os.getenv("API_KEY", "your-api-key-here")`
+- `process.env.TOKEN || "changeme"`
+- `process.env.API_KEY || process.env.BACKUP_API_KEY`
+- `process.env.PRIVATE_KEY || "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"`
+- `${TOKEN:-$OTHER_TOKEN}`
+
 ## IH-INJ-001 — Instruction override
 
 - Severity: high

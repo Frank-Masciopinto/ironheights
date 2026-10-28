@@ -39,4 +39,17 @@ export default tseslint.config(
     files: ['test/**/*.ts', 'bench/**/*.ts', 'vitest.config.ts', 'tsup.config.ts'],
     rules: { 'no-console': 'off' },
   },
+  {
+    files: ['test/fixtures/**/*.{js,mjs,cjs}'],
+    languageOptions: {
+      globals: {
+        console: 'readonly',
+        process: 'readonly',
+      },
+    },
+    rules: {
+      'no-unused-vars': 'off',
+      '@typescript-eslint/no-unused-vars': 'off',
+    },
+  },
 );

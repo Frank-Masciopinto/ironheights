@@ -5,6 +5,7 @@ import { cred004, cred005, exec004 } from './accuracy.ts';
 import { bin001 } from './binary.ts';
 import { dep001 } from './dependency.ts';
 import { cred001, cred002, cred003 } from './credentials.ts';
+import { cred006 } from './env-fallback.ts';
 import { exec005 } from './ambient-env.ts';
 import { exec001, exec002, exec003 } from './exec.ts';
 import { fs001 } from './filesystem.ts';
@@ -33,6 +34,7 @@ export const contentRules: Rule[] = [
   cred003,
   cred004,
   cred005,
+  cred006,
   inj001,
   inj002,
   inj003,
