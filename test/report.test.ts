@@ -416,7 +416,7 @@ describe('html report', () => {
       expect(file).toContain('Grade: A (100/100)');
       expect(file).toContain(SAFETY_REMINDER);
       expect(file).toContain('README badge');
-      expect(file).toContain('ironheights 0.16.0: grade A (100/100), verdict no-findings');
+      expect(file).toContain('ironheights 0.16.1: grade A (100/100), verdict no-findings');
       expect(file).not.toMatch(/<script/i);
     } finally {
       await rm(home, { recursive: true, force: true });

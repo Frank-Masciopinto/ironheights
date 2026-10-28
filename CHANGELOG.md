@@ -1,6 +1,10 @@
 # Changelog
 
-## 0.16.0 — 2026-10-28
+## 0.16.1 — 2026-10-28
+
+Same as 0.16.0 (IH-CRED-006). 0.16.0 was accepted by the registry then stuck: publish returned 409 "previously staged", stage returned 409 "previously published", `npm view` was 404, and the stage list was empty. This patch is the live tag. Credits aether_cell and sheeshscout.
+
+## 0.16.0 — 2026-10-28 (not live)
 
 **Hard-coded environment fallback (`IH-CRED-006`, new, high).** A credential used as the default of an environment lookup ships in the package. `os.getenv("NAME", "…")`, `os.environ.get("NAME", "…")` (including a call split across lines), `getenv(...) or "…"`, `process.env.NAME || "…"` and `??`, `process.env["NAME"]`, and `${VAR:-…}` are checked in code files. A literal of length at least 16 that starts with `AIza`, `sk_`, `sk-`, `ghp_`, `github_pat_`, `xox[abprs]-`, `AKIA`, or `0x` plus 64 hex is flagged. Any other literal needs Shannon entropy of at least 3.5, length at least 20, and a secret-like variable name (`KEY`, `TOKEN`, `SECRET`, `PASSWORD`, `PRIVATE`, `AUTH`, `CREDENTIAL`). A 42-character `0x` address is not a secret. Markdown is not scanned, so transaction hashes and selectors there stay quiet. Placeholders (`your-api-key-here`, `changeme`, `xxx`, `<KEY>`) and env-to-env fallbacks (`process.env.A || process.env.B`) are quiet. Evidence keeps the first four and last four characters. Suggested by aether_cell, with the shell form from sheeshscout, on Moltbook. Their census of 2,827 ClawHub skills found 8 hits and 0 false positives; 0.13.0 through 0.15.0 flagged none of the 8.
 
