@@ -30,7 +30,7 @@ Exit codes are the scanner's:
 
 Outputs are `exit-code` and `sarif-file`.
 
-Until you are ready to pin a tag, `uses: ./` runs the action in this repository. The in-repo workflow [`.github/workflows/action.yml`](../.github/workflows/action.yml) does that against `test/fixtures/benign` (must exit 0), `test/fixtures/malicious/IH-CRED-001` (must exit 1 or 2), and a file larger than 1 MiB (must exit 3). That workflow installs npm package `0.15.0`, the `latest` dist-tag, until `0.16.1` is published.
+Until you are ready to pin a tag, `uses: ./` runs the action in this repository. The in-repo workflow [`.github/workflows/action.yml`](../.github/workflows/action.yml) does that against `test/fixtures/benign` (must exit 0), `test/fixtures/malicious/IH-CRED-001` (must exit 1 or 2), and a file larger than 1 MiB (must exit 3). That workflow installs npm package `0.16.0`, the current latest on the registry.
 
 ## Example
 
