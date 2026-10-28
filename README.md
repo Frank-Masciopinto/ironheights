@@ -353,9 +353,11 @@ Scoring is critical 100, high 40, medium 15, low 5, info 0. The verdict is `bloc
 
 ## Rules
 
-The full list is generated in [docs/rules.md](docs/rules.md), including OWASP LLM Top 10 2025, OWASP Agentic Top 10 2026, and MITRE ATLAS ids. `none` means no defensible mapping was recorded. P0 rules cover remote shells, prerequisite installs, undeclared hosts, credential paths, hard-coded secrets, instruction overrides, hidden text, bundled executables, persistence, and MCP launch and secret checks. P1 rules cover dynamic execution, exfiltration shape, secrets in chat, weakened approvals, ambient credential inheritance to a child process, obfuscation, privilege bypass, filesystem tricks, skill metadata, and broad MCP filesystem roots. Integrity rules `IH-INT-001` through `IH-INT-004` come from `verify`, not from a content scan. `IH-ADV-001` comes from the cached advisory feed, not from a content pattern. Config rules `IH-CFG-001` through `IH-CFG-009` come from `audit-config`, not from a skill scan. `IH-LLM-001` is an advisory model note. It is not a pattern rule, and it appears only after `scan --llm` or `review`.
+The full list is generated in [docs/rules.md](docs/rules.md), including OWASP LLM Top 10 2025, OWASP Agentic Top 10 2026, and MITRE ATLAS ids. `none` means no defensible mapping was recorded. P0 rules cover remote shells, prerequisite installs, undeclared hosts, credential paths, hard-coded secrets, hard-coded environment fallbacks, instruction overrides, hidden text, bundled executables, persistence, and MCP launch and secret checks. P1 rules cover dynamic execution, exfiltration shape, secrets in chat, weakened approvals, ambient credential inheritance to a child process, obfuscation, privilege bypass, filesystem tricks, skill metadata, and broad MCP filesystem roots. Integrity rules `IH-INT-001` through `IH-INT-004` come from `verify`, not from a content scan. `IH-ADV-001` comes from the cached advisory feed, not from a content pattern. Config rules `IH-CFG-001` through `IH-CFG-009` come from `audit-config`, not from a skill scan. `IH-LLM-001` is an advisory model note. It is not a pattern rule, and it appears only after `scan --llm` or `review`.
 
 `IH-CRED-002` uses Shannon entropy. A quoted value assigned to a key-like name is reported when it is at least 20 characters and at least 4 bits per character. Evidence keeps the first four characters and masks the rest.
+
+`IH-CRED-006` flags a credential used as the default of an environment lookup (`os.getenv`, `os.environ.get`, `getenv(...) or`, `process.env` with `||` or `??`, and `${VAR:-...}`), including when the call is split across lines. A known key prefix (`AIza`, `sk_`, `sk-`, `ghp_`, `github_pat_`, `xox[abprs]-`, `AKIA`, or `0x` plus 64 hex) of length at least 16 is enough in a code file. Other literals need Shannon entropy of at least 3.5, length at least 20, and a secret-like variable name. A 42-character `0x` address is not a secret. Markdown is not scanned. Evidence keeps the first four and last four characters.
 
 ## OpenClaw locations
 
@@ -482,7 +484,7 @@ jobs:
           fail-on: high
 ```
 
-This repository's [action workflow](.github/workflows/action.yml) runs that action against a benign fixture (exit 0), a malicious fixture (exit 1 or 2), and an oversized file (exit 3). It installs npm package `0.15.0`, the current latest on the registry. The action file in this commit is what the workflow executes.
+This repository's [action workflow](.github/workflows/action.yml) runs that action against a benign fixture (exit 0), a malicious fixture (exit 1 or 2), and an oversized file (exit 3). It installs npm package `0.15.0`, the last release on the registry, until `0.16.0` is published. The action file in this commit is what the workflow executes.
 
 ## Windows
 
