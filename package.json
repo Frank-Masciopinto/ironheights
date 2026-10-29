@@ -1,7 +1,7 @@
 {
   "name": "ironheights",
   "version": "0.16.0",
-  "description": "Local-first security scanner and integrity monitor for OpenClaw skills.",
+  "description": "Local-first security scanner for AI agent skills (OpenClaw, Claude, Grok Bot, Codex, Cursor), with an integrity monitor for OpenClaw.",
   "homepage": "https://www.ironheights.dev",
   "bugs": {
     "url": "https://github.com/Frank-Masciopinto/ironheights/issues"
@@ -62,5 +62,13 @@
     "typescript": "5.9.3",
     "typescript-eslint": "8.48.0",
     "vitest": "4.1.11"
-  }
+  },
+  "keywords": [
+    "claude",
+    "claude-skills",
+    "grok",
+    "grok-bot",
+    "agent-skills",
+    "skill-scanner"
+  ]
 }
