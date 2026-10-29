@@ -4,11 +4,11 @@
 [![GitHub stars](https://img.shields.io/github/stars/Frank-Masciopinto/ironheights?style=flat&logo=github&label=Star%20on%20GitHub)](https://github.com/Frank-Masciopinto/ironheights)
 [![npm](https://img.shields.io/npm/v/ironheights?logo=npm)](https://www.npmjs.com/package/ironheights)
 
-If Ironheights is useful to you, a star on [ClawHub](https://clawhub.ai/frank-masciopinto/skills/ironheights) or GitHub helps other OpenClaw users find it.
+If Ironheights is useful to you, a star on [ClawHub](https://clawhub.ai/frank-masciopinto/skills/ironheights) or GitHub helps other OpenClaw, Claude and Grok Bot users find it.
 
-**Ironheights is an open-source, local-first security scanner for OpenClaw agent skills.** Website: [www.ironheights.dev](https://www.ironheights.dev)
+**Ironheights is an open-source, local-first security scanner for AI agent skills: OpenClaw, Claude (Claude Code, Claude.ai), Grok Bot, Codex and Cursor.** Website: [www.ironheights.dev](https://www.ironheights.dev)
 
-Ironheights is a local-first scanner and integrity monitor for [OpenClaw](https://docs.openclaw.ai) skills. It reads skill files as data, looks for risky patterns with fixed rules, and compares skill and agent files with a baseline you save on the same machine.
+Ironheights scans any skill folder with a `SKILL.md`, whichever agent it is for, and adds an integrity monitor and runtime guard for [OpenClaw](https://docs.openclaw.ai). To check a Claude or Grok Bot skill, run `npx ironheights scan ./path/to/skill` before you upload or install it. Auto-discovery of installed skills, baselines, the guard, `audit-config` and `safe-install` are OpenClaw/ClawHub-only for now. It reads skill files as data, looks for risky patterns with fixed rules, and compares skill and agent files with a baseline you save on the same machine.
 
 It does not send telemetry, and it does not run the files it scans. Scans are fully local. The only network call made without a flag is a version check against npm and ClawHub, at most once every 6 hours; it only reports new versions, never installs anything, and can be turned off (see [Updates](#updates)). Other network use happens only when you run `fetch`, `safe-install`, `advisories update`, `--online`, `scan --llm`, `scan --check-registry`, or `review`.
 
