@@ -7,6 +7,7 @@ import { runAuditConfig } from './commands/audit-config.ts';
 import { runBaseline, runVerify } from './commands/baseline.ts';
 import { runBenchCommand } from './commands/bench.ts';
 import { runCoexist } from './commands/coexist.ts';
+import { runDrift } from './commands/drift.ts';
 import { runDoctor } from './commands/doctor.ts';
 import { runFetch } from './commands/fetch.ts';
 import { runGuardLog, runGuardPolicyCheck, runGuardStatus } from './commands/guard.ts';
@@ -95,6 +96,39 @@ export async function main(argv: string[], hooks: MainHooks = {}): Promise<numbe
         quiet: Boolean(opts.quiet),
       });
     });
+
+  const collect = (v: string, prev: string[] = []): string[] => [...prev, v];
+  program
+    .command('drift [action] [paths...]')
+    .description(
+      'approve skills and MCP tools, then detect changes after approval (rug pull): file hashes, SKILL.md description, new hosts, new credential paths, MCP server entries and tool descriptions. Actions: approve, check, watch. Local only.',
+    )
+    .option('--all', 'every configured skill directory')
+    .option('--mcp <file>', 'MCP config JSON (mcpServers); repeatable', collect)
+    .option('--tools <file>', 'saved MCP tools/list JSON; repeatable', collect)
+    .option('--ledger <file>', 'approval ledger path (default: <ironheights home>/approvals.json)')
+    .option('--interval <seconds>', 'seconds between checks for watch', '60')
+    .option('--json', 'print JSON to stdout')
+    .option('--config <file>', 'config file')
+    .action(
+      async (
+        action: string | undefined,
+        paths: string[],
+        opts: Record<string, string | string[] | boolean | undefined>,
+      ) => {
+        process.exitCode = await runDrift({
+          action,
+          paths,
+          all: Boolean(opts.all),
+          json: Boolean(opts.json),
+          ...(Array.isArray(opts.mcp) ? { mcp: opts.mcp } : {}),
+          ...(Array.isArray(opts.tools) ? { tools: opts.tools } : {}),
+          ...(typeof opts.ledger === 'string' ? { ledger: opts.ledger } : {}),
+          ...(typeof opts.interval === 'string' ? { interval: opts.interval } : {}),
+          ...(typeof opts.config === 'string' ? { config: opts.config } : {}),
+        });
+      },
+    );
 
   program
     .command('baseline [action]')
