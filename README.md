@@ -49,9 +49,13 @@ node dist/cli/index.js scan test/fixtures/benign
 
 `ironheights drift approve <skills>` records what you reviewed; `ironheights drift check` (or `watch`) flags any later change: file hashes, the SKILL.md description, new URL hosts, new credential paths, MCP server entries and MCP tool descriptions. Local only, no telemetry. See [docs/drift.md](docs/drift.md).
 
+## Posture report
+
+`ironheights report <repo-or-org-folder> --html posture.html` lists every installed skill with its grade, threat-model coverage, drift since approval and an OWASP LLM Top 10 mapping, with a trend over runs (`--history`). See [docs/report.md](docs/report.md).
+
 ## MCP server
 
-`npx -y ironheights@0.20.0 mcp` runs Ironheights as an MCP server, so Claude, Cursor, VS Code, Grok Bot or any MCP client can call `check_skill` (grade, findings, drift) before installing a skill, plus `drift_status`, `threatmodel_check` and `get_rule`. Read-only. See [docs/mcp.md](docs/mcp.md).
+`npx -y ironheights@0.21.0 mcp` runs Ironheights as an MCP server, so Claude, Cursor, VS Code, Grok Bot or any MCP client can call `check_skill` (grade, findings, drift) before installing a skill, plus `drift_status`, `threatmodel_check` and `get_rule`. Read-only. See [docs/mcp.md](docs/mcp.md).
 
 ## Threat model as code (checked on every PR)
 

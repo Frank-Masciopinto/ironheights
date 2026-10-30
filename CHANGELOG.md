@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.21.0 — 2026-10-30
+
+**`ironheights report`: agent security posture report.** Ironheights protects any AI bot that installs it, and now it can report on a whole repository or an organisation folder of repositories in one go: a skill inventory with grade, verdict, finding count and top rules; threat-model coverage and violations per repository (0.19.0); drift since approval with `--ledger` (0.18.0); findings and skills per OWASP Top 10 for LLM Applications 2025 risk; and a trend over runs with `--history <file.jsonl>`. `--html` writes one self-contained page (no scripts, no external assets) for an audit pack, `--json` / `--json-file` the same data, and `--fail-on-block` exits 2 when any skill is blocked. Local only, no telemetry. See `docs/report.md`.
+
+Scanner rules and detection are unchanged; the 20-skill synthetic benchmark is unchanged.
+
 ## 0.20.0 — 2026-10-30
 
 **`ironheights mcp`: Ironheights as an MCP server.** Ironheights protects any AI bot that installs it, and now any MCP client can ask it about a skill before installing it. Run `npx -y ironheights@0.20.0 mcp` (stdio). Tools: `check_skill` (a local `path`, or a ClawHub `skill` reference downloaded to a temp folder and never executed) returns the A-F grade, score, verdict, findings with OWASP LLM ids and rule pages, drift status and plain advice; `drift_status` reports changes since `drift approve`; `threatmodel_check` runs the 0.19.0 threat model check; `get_rule` explains a rule with OWASP, MITRE ATLAS and OpenCRE ids. All tools are read-only. Protocol versions 2025-06-18, 2025-03-26 and 2024-11-05. No new dependencies. `server.json` and `mcpName` describe it for the MCP Registry as `io.github.Frank-Masciopinto/ironheights`. See `docs/mcp.md`.

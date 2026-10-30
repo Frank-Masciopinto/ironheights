@@ -10,6 +10,7 @@ import { runCoexist } from './commands/coexist.ts';
 import { runDrift } from './commands/drift.ts';
 import { runThreatModel } from './commands/threatmodel.ts';
 import { serveStdio } from '../mcp/server.ts';
+import { runReport } from './commands/report.ts';
 import { runDoctor } from './commands/doctor.ts';
 import { runFetch } from './commands/fetch.ts';
 import { runGuardLog, runGuardPolicyCheck, runGuardStatus } from './commands/guard.ts';
@@ -131,6 +132,35 @@ export async function main(argv: string[], hooks: MainHooks = {}): Promise<numbe
         });
       },
     );
+
+  program
+    .command('report [targets...]')
+    .description(
+      'agent security posture report for a repo or an org folder of repos: skill inventory with grades, drift since approval, threat-model coverage, OWASP LLM Top 10 mapping and a trend over runs. JSON or self-contained HTML. Local only.',
+    )
+    .option('--title <text>', 'report title')
+    .option('--ledger <file>', 'drift approval ledger to include')
+    .option('--history <file>', 'JSONL file: read earlier runs for the trend and append this run')
+    .option('--html <file>', 'write a self-contained HTML report')
+    .option('--json-file <file>', 'write the JSON report to a file')
+    .option('--json', 'print JSON to stdout')
+    .option('--fail-on-block', 'exit 2 when any skill is blocked')
+    .option('--config <file>', 'config file')
+    .action(async (targets: string[], opts: Record<string, string | boolean | undefined>) => {
+      const s = (k: string): string | undefined =>
+        typeof opts[k] === 'string' ? (opts[k] as string) : undefined;
+      process.exitCode = await runReport({
+        targets,
+        ...(s('title') ? { title: s('title') } : {}),
+        ...(s('ledger') ? { ledger: s('ledger') } : {}),
+        ...(s('history') ? { history: s('history') } : {}),
+        ...(s('html') ? { html: s('html') } : {}),
+        ...(s('jsonFile') ? { jsonFile: s('jsonFile') } : {}),
+        ...(s('config') ? { config: s('config') } : {}),
+        json: Boolean(opts.json),
+        failOnBlock: Boolean(opts.failOnBlock),
+      });
+    });
 
   program
     .command('mcp')
