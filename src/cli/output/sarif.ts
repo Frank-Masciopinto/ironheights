@@ -5,7 +5,12 @@ import type { Finding, SkillReport, SkippedDirectory } from '../../core/types.ts
 import { blockingDirectoryCount } from '../../core/verdict.ts';
 import { LLM_RULE_ID } from '../../llm/constants.ts';
 import { allRules } from '../../rules/index.ts';
-import { referencesFor, referenceTags } from '../../rules/references.ts';
+import {
+  referenceLinks,
+  referencesFor,
+  referenceTags,
+  rulePageUrl,
+} from '../../rules/references.ts';
 import { REPOSITORY_URL, SAFETY_REMINDER, TOOL_NAME, TOOL_VERSION } from '../../version.ts';
 
 export function renderSarif(skills: SkillReport[], scanMode: ScanMode = 'directory'): string {
@@ -29,7 +34,9 @@ export function renderSarif(skills: SkillReport[], scanMode: ScanMode = 'directo
           owaspLlm: refs.owaspLlm,
           owaspAgentic: refs.owaspAgentic,
           mitreAtlas: refs.mitreAtlas,
+          openCre: refs.openCre,
         },
+        helpUri: rulePageUrl(rule.id),
       };
     });
   const results = findings.map((finding) => {
@@ -57,6 +64,8 @@ export function renderSarif(skills: SkillReport[], scanMode: ScanMode = 'directo
         owaspLlm: refs.owaspLlm,
         owaspAgentic: refs.owaspAgentic,
         mitreAtlas: refs.mitreAtlas,
+        openCre: refs.openCre,
+        links: referenceLinks(finding.ruleId),
         ...(finding.ruleId === LLM_RULE_ID ? { advisory: true } : {}),
         ...(finding.acceptance ? { acceptance: acceptanceLabel(finding.acceptance) } : {}),
       },

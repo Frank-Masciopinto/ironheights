@@ -1,3 +1,4 @@
+import { openCreUrl, referencesFor, standardsLine } from '../../rules/references.ts';
 import {
   formatGrade,
   gradeFromSkills,
@@ -140,6 +141,9 @@ function findingLines(finding: Finding, color: boolean): string[] {
   if (finding.acceptance) lines.push(`    ${acceptanceLabel(finding.acceptance)}`);
   if (finding.ruleId === LLM_RULE_ID) lines.push(`    ${finding.message}`);
   lines.push(`    ${finding.remediation}`);
+  const standards = standardsLine(finding.ruleId);
+  const cre = referencesFor(finding.ruleId).openCre[0];
+  if (standards) lines.push(`    ${standards}${cre ? ` → ${openCreUrl(cre)}` : ''}`);
   if (finding.note) lines.push(`    note: ${clip(finding.note, 300)}`);
   return lines;
 }

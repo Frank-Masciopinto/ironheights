@@ -10,7 +10,7 @@ import type {
   Verdict,
 } from '../../core/types.ts';
 import type { LlmReviewReport } from '../../llm/review.ts';
-import { referencesFor } from '../../rules/references.ts';
+import { referenceLinks, referencesFor } from '../../rules/references.ts';
 import { SCHEMA_VERSION, TOOL_NAME, TOOL_VERSION } from '../../version.ts';
 
 export interface RenderContext {
@@ -87,12 +87,17 @@ function stableSkill(skill: SkillReport): JsonSkillReport {
   };
 }
 
-function stableFinding(
-  finding: Finding,
-): Finding & { references?: ReturnType<typeof referencesFor> } {
+function stableFinding(finding: Finding): Finding & {
+  references?: ReturnType<typeof referencesFor>;
+  links?: ReturnType<typeof referenceLinks>;
+} {
   const references = referencesFor(finding.ruleId);
   const known =
-    references.owaspLlm.length + references.owaspAgentic.length + references.mitreAtlas.length;
+    references.owaspLlm.length +
+    references.owaspAgentic.length +
+    references.mitreAtlas.length +
+    references.openCre.length;
+  const links = referenceLinks(finding.ruleId);
   return {
     ruleId: finding.ruleId,
     severity: finding.severity,
@@ -106,6 +111,7 @@ function stableFinding(
     ...(finding.note ? { note: finding.note } : {}),
     ...(finding.acceptance ? { acceptance: finding.acceptance } : {}),
     ...(known > 0 || finding.ruleId.startsWith('IH-') ? { references } : {}),
+    ...(links.length > 0 ? { links } : {}),
   };
 }
 

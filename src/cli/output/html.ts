@@ -12,7 +12,7 @@ import type { AdvisoryFeedNote, Finding, SkillReport, Verdict } from '../../core
 import { acceptanceLabel } from '../../core/suppress.ts';
 import { blockingDirectoryCount } from '../../core/verdict.ts';
 import type { LlmReviewReport } from '../../llm/review.ts';
-import { referenceTags } from '../../rules/references.ts';
+import { openCreUrl, referencesFor, referenceTags } from '../../rules/references.ts';
 import { SAFETY_REMINDER, TOOL_VERSION } from '../../version.ts';
 import { llmStatusLines } from './llm-status.ts';
 
@@ -147,9 +147,22 @@ function findingsTable(findings: Finding[]): string {
   const rows = findings.map((finding) => {
     const tags = referenceTags(finding.ruleId).join(', ');
     const drift = finding.acceptance ? ` (${acceptanceLabel(finding.acceptance)})` : '';
-    return `<tr><td class="${severityClass(finding.severity)}">${escapeHtml(finding.severity)}</td><td>${escapeHtml(finding.ruleId)}</td><td>${escapeHtml(place(finding))}</td><td>${escapeHtml(finding.evidence)}</td><td>${escapeHtml(finding.message)}${escapeHtml(drift)}</td><td>${escapeHtml(tags)}</td></tr>`;
+    return `<tr><td class="${severityClass(finding.severity)}">${escapeHtml(finding.severity)}</td><td>${escapeHtml(finding.ruleId)}</td><td>${escapeHtml(place(finding))}</td><td>${escapeHtml(finding.evidence)}</td><td>${escapeHtml(finding.message)}${escapeHtml(drift)}</td><td>${escapeHtml(tags)}${creLinks(finding.ruleId)}</td></tr>`;
   });
   return `<table><thead><tr><th>Severity</th><th>Rule</th><th>Location</th><th>Evidence</th><th>Message</th><th>References</th></tr></thead><tbody>${rows.join('')}</tbody></table>`;
+}
+
+function creLinks(ruleId: string): string {
+  const ids = referencesFor(ruleId).openCre;
+  if (ids.length === 0) return '';
+  const anchors = ids.map(
+    (id) => `<a href="${escapeHtml(openCreUrl(id))}" rel="noopener">CRE ${escapeHtml(id)}</a>`,
+  );
+  return `${tagsSeparator(ruleId)}${anchors.join(', ')}`;
+}
+
+function tagsSeparator(ruleId: string): string {
+  return referenceTags(ruleId).length > 0 ? ', ' : '';
 }
 
 function simpleList(title: string, items: string[]): string {
