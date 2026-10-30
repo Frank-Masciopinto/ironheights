@@ -9,6 +9,7 @@ import { runBenchCommand } from './commands/bench.ts';
 import { runCoexist } from './commands/coexist.ts';
 import { runDrift } from './commands/drift.ts';
 import { runThreatModel } from './commands/threatmodel.ts';
+import { serveStdio } from '../mcp/server.ts';
 import { runDoctor } from './commands/doctor.ts';
 import { runFetch } from './commands/fetch.ts';
 import { runGuardLog, runGuardPolicyCheck, runGuardStatus } from './commands/guard.ts';
@@ -130,6 +131,15 @@ export async function main(argv: string[], hooks: MainHooks = {}): Promise<numbe
         });
       },
     );
+
+  program
+    .command('mcp')
+    .description(
+      'run Ironheights as an MCP server over stdio: check_skill (grade, verdict, findings, drift), drift_status, threatmodel_check, get_rule. Add to any MCP client with: npx -y ironheights@<version> mcp',
+    )
+    .action(async () => {
+      process.exitCode = await serveStdio();
+    });
 
   program
     .command('threatmodel [action]')
