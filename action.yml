@@ -1,8 +1,12 @@
-name: Ironheights
+name: Ironheights AI Skill Scanner
 description: >
-  Scan a path with a pinned ironheights release. The scanner does not use the
-  network. SARIF upload is opt-in and uses the calling workflow token, not a
-  secret you configure.
+  npm audit for AI skills. Grade agent skills (OpenClaw, Claude, Grok Bot,
+  Codex, Cursor, MCP) A-F with a pinned ironheights release. No network scan,
+  no secrets, no telemetry.
+author: Frank Masciopinto
+branding:
+  icon: shield
+  color: green
 inputs:
   version:
     description: Exact ironheights version, for example 0.3.0. Ranges and latest are rejected.
@@ -31,6 +35,14 @@ inputs:
     description: Upload SARIF to GitHub code scanning. The workflow needs security-events write. No repository secret.
     required: false
     default: 'false'
+  badge-file:
+    description: Write a shields.io endpoint JSON (grade and score) to this path, for a README or hub listing badge.
+    required: false
+    default: ''
+  job-summary:
+    description: Write the grade, verdict and top findings to the job summary.
+    required: false
+    default: 'true'
   node-version:
     description: Node.js version used to run npx.
     required: false
@@ -42,6 +54,21 @@ outputs:
   sarif-file:
     description: SARIF path when a file was written.
     value: ${{ steps.scan.outputs.sarif-file }}
+  grade:
+    description: Letter grade A-F, empty when the scan did not produce a result.
+    value: ${{ steps.report.outputs.grade }}
+  score:
+    description: Score 0-100, empty when the scan did not produce a result.
+    value: ${{ steps.report.outputs.score }}
+  verdict:
+    description: no-findings, review, block or incomplete.
+    value: ${{ steps.report.outputs.verdict }}
+  findings:
+    description: Number of findings.
+    value: ${{ steps.report.outputs.findings }}
+  json-file:
+    description: Path of the full JSON result.
+    value: ${{ steps.scan.outputs.json-file }}
 runs:
   using: composite
   steps:
@@ -104,13 +131,23 @@ runs:
         fi
         # Run outside this checkout. A package.json named ironheights makes
         # npx execute the local (often unbuilt) bin instead of the pin.
+        json="${RUNNER_TEMP:-/tmp}/ironheights-result.json"
+        args+=(--json)
         work="$(mktemp -d)"
         set +e
-        (cd "$work" && npx --yes "ironheights@${IH_VERSION}" "${args[@]}")
+        (cd "$work" && npx --yes "ironheights@${IH_VERSION}" "${args[@]}" > "$json")
         code=$?
         set -e
         rm -rf "$work"
+        echo "json-file=$json" >> "$GITHUB_OUTPUT"
         record "$code" "$sarif"
+    - id: report
+      shell: bash
+      env:
+        IH_JSON: ${{ steps.scan.outputs.json-file }}
+        IH_BADGE: ${{ inputs.badge-file }}
+        IH_SUMMARY: ${{ inputs.job-summary }}
+      run: node "${GITHUB_ACTION_PATH}/scripts/action-report.mjs"
     - name: Upload SARIF
       if: inputs.upload-sarif == 'true'
       uses: github/codeql-action/upload-sarif@v3
