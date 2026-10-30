@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.20.0 — 2026-10-30
+
+**`ironheights mcp`: Ironheights as an MCP server.** Ironheights protects any AI bot that installs it, and now any MCP client can ask it about a skill before installing it. Run `npx -y ironheights@0.20.0 mcp` (stdio). Tools: `check_skill` (a local `path`, or a ClawHub `skill` reference downloaded to a temp folder and never executed) returns the A-F grade, score, verdict, findings with OWASP LLM ids and rule pages, drift status and plain advice; `drift_status` reports changes since `drift approve`; `threatmodel_check` runs the 0.19.0 threat model check; `get_rule` explains a rule with OWASP, MITRE ATLAS and OpenCRE ids. All tools are read-only. Protocol versions 2025-06-18, 2025-03-26 and 2024-11-05. No new dependencies. `server.json` and `mcpName` describe it for the MCP Registry as `io.github.Frank-Masciopinto/ironheights`. See `docs/mcp.md`.
+
+Scanner rules and detection are unchanged; the 20-skill synthetic benchmark is unchanged.
+
 ## 0.19.0 — 2026-10-30
 
 **`ironheights threatmodel`: agent threat model as code, checked on every PR.** Ironheights protects any AI bot that installs it, and now it can hold a repo to a reviewed model of what each skill and MCP server may touch. `ironheights.threatmodel.yml` lists the trusted skills and MCP servers and, per skill, the allowed network hosts (`*.suffix` wildcards), filesystem globs, environment variables, secret-shaped tokens, shell use and a minimum scan grade. `threatmodel init` writes a first model from the skills and MCP configs in the repo; `threatmodel check` reports every host, path, env var, token, shell use, low grade, unknown skill or unknown/changed MCP server outside it (high exits 2, medium exits 1); `threatmodel diff --base <ref>` reads the base commit with `git archive`, reports only what the PR adds and lists every widening of the model for the reviewer. `--markdown` writes a PR comment, `--sarif` writes SARIF 2.1.0, `--json` prints the report, and `--ledger` folds in `ironheights drift` changes. JSON Schema: `docs/threatmodel.schema.json`, also at https://www.ironheights.dev/api/v1/threatmodel.schema.json. Local only: no network, no telemetry, environment variables matched by name only. Inspired by continuous threat modeling. See `docs/threatmodel.md` and `examples/threatmodel`.

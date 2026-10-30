@@ -1,0 +1,18 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-09-29/server.schema.json",
+  "name": "io.github.Frank-Masciopinto/ironheights",
+  "title": "Ironheights",
+  "description": "Check an AI agent skill before installing it: A-F grade, findings, drift and threat model. Local.",
+  "websiteUrl": "https://www.ironheights.dev/docs/mcp/",
+  "repository": { "url": "https://github.com/Frank-Masciopinto/ironheights", "source": "github" },
+  "version": "0.20.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "ironheights",
+      "version": "0.20.0",
+      "transport": { "type": "stdio" },
+      "packageArguments": [{ "type": "positional", "value": "mcp" }]
+    }
+  ]
+}

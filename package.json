@@ -1,6 +1,6 @@
 {
   "name": "ironheights",
-  "version": "0.19.0",
+  "version": "0.20.0",
   "description": "Local-first security scanner for AI agent skills (OpenClaw, Claude, Grok Bot, Codex, Cursor), with an integrity monitor for OpenClaw.",
   "homepage": "https://www.ironheights.dev",
   "bugs": {
@@ -71,6 +71,11 @@
     "grok",
     "grok-bot",
     "agent-skills",
-    "skill-scanner"
-  ]
+    "skill-scanner",
+    "mcp",
+    "mcp-server",
+    "model-context-protocol",
+    "threat-model"
+  ],
+  "mcpName": "io.github.Frank-Masciopinto/ironheights"
 }
