@@ -42,7 +42,8 @@
     "format:check": "prettier --check .",
     "docs:rules": "tsup scripts/generate-rules-doc.ts --no-config --format esm --target node20 --out-dir dist-scripts --clean --silent && node dist-scripts/generate-rules-doc.js",
     "version": "node scripts/pin-skill-version.mjs && git add skill/ironheights/SKILL.md",
-    "check:skill-pin": "node scripts/pin-skill-version.mjs --check"
+    "check:skill-pin": "node scripts/pin-skill-version.mjs --check",
+    "data:rules-json": "tsup scripts/generate-rules-json.ts --no-config --format esm --target node20 --out-dir dist-scripts --clean --silent && node dist-scripts/generate-rules-json.js"
   },
   "dependencies": {
     "commander": "14.0.3",
