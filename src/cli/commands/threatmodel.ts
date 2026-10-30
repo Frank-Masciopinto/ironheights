@@ -216,23 +216,18 @@ async function diff(
   let baseViolations: Violation[] = [];
   let modelChanges: Violation[] = [];
   try {
-    const { stdout: top } = await run('git', ['-C', dir, 'rev-parse', '--show-toplevel']);
-    const repo = top.trim();
-    const sub = toPosix(relative(repo, dir));
-    const archive = join(tmp, 'base.tar');
-    await run('git', [
-      '-C',
-      repo,
-      'archive',
-      '--format=tar',
-      '-o',
-      archive,
-      flags.base,
-      '--',
-      sub || '.',
-    ]);
-    await run('tar', ['-xf', archive, '-C', tmp]);
-    const baseDir = join(tmp, sub);
+    // --show-prefix avoids comparing long and short (8.3) temp paths on Windows.
+    const { stdout: prefix } = await run('git', ['-C', dir, 'rev-parse', '--show-prefix']);
+    const { stdout: cdup } = await run('git', ['-C', dir, 'rev-parse', '--show-cdup']);
+    const sub = prefix.trim().replace(/\/+$/, '');
+    const treeish = sub ? `${flags.base}:${sub}` : flags.base;
+    // Run from the top level (relative --show-cdup avoids long vs 8.3 paths on Windows):
+    // git archive inside a subdirectory only archives that subdirectory.
+    await run('git', ['archive', '--format=tar', '-o', join(tmp, 'base.tar'), treeish], {
+      cwd: resolve(dir, cdup.trim() || '.'),
+    });
+    await run('tar', ['-xf', 'base.tar'], { cwd: tmp });
+    const baseDir = tmp;
     const baseModelPath = join(baseDir, modelFile);
     if (await exists(baseModelPath)) {
       const baseModel = parseModel(
