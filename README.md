@@ -45,6 +45,10 @@ npm run build
 node dist/cli/index.js scan test/fixtures/benign
 ```
 
+## Drift watch (rug-pull detection)
+
+`ironheights drift approve <skills>` records what you reviewed; `ironheights drift check` (or `watch`) flags any later change: file hashes, the SKILL.md description, new URL hosts, new credential paths, MCP server entries and MCP tool descriptions. Local only, no telemetry. See [docs/drift.md](docs/drift.md).
+
 ## 60-second quickstart
 
 ```bash
