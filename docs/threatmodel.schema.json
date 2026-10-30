@@ -1,0 +1,167 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "version": {
+      "type": "number",
+      "const": 1
+    },
+    "name": {
+      "type": "string"
+    },
+    "skillDirs": {
+      "default": ["skills"],
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "mcpConfigs": {
+      "default": [],
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "defaults": {
+      "default": {
+        "unknownSkill": "deny",
+        "unknownMcpServer": "deny"
+      },
+      "type": "object",
+      "properties": {
+        "unknownSkill": {
+          "default": "deny",
+          "type": "string",
+          "enum": ["deny", "warn"]
+        },
+        "unknownMcpServer": {
+          "default": "deny",
+          "type": "string",
+          "enum": ["deny", "warn"]
+        },
+        "minGrade": {
+          "type": "string",
+          "enum": ["A", "B", "C", "D", "F"]
+        }
+      },
+      "additionalProperties": false
+    },
+    "skills": {
+      "default": {},
+      "type": "object",
+      "propertyNames": {
+        "type": "string"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Skill directory, relative to the model file."
+          },
+          "owner": {
+            "type": "string"
+          },
+          "purpose": {
+            "type": "string"
+          },
+          "network": {
+            "default": [],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "filesystem": {
+            "default": [],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "env": {
+            "default": [],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "tokens": {
+            "default": [],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "shell": {
+            "default": false,
+            "type": "boolean"
+          },
+          "minGrade": {
+            "type": "string",
+            "enum": ["A", "B", "C", "D", "F"]
+          },
+          "dataBoundaries": {
+            "default": [],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": ["path"],
+        "additionalProperties": false
+      }
+    },
+    "mcpServers": {
+      "default": {},
+      "type": "object",
+      "propertyNames": {
+        "type": "string"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "command": {
+            "type": "string"
+          },
+          "args": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "url": {
+            "type": "string"
+          },
+          "env": {
+            "default": [],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "tools": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "purpose": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["version"],
+  "additionalProperties": false,
+  "$id": "https://www.ironheights.dev/api/v1/threatmodel.schema.json",
+  "title": "Ironheights agent threat model (ironheights.threatmodel.yml)"
+}

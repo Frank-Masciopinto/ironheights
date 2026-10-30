@@ -43,6 +43,30 @@ inputs:
     description: Write the grade, verdict and top findings to the job summary.
     required: false
     default: 'true'
+  mode:
+    description: 'scan (default), threatmodel, or both. threatmodel checks ironheights.threatmodel.yml.'
+    required: false
+    default: scan
+  threatmodel-file:
+    description: Threat model path, relative to path.
+    required: false
+    default: ironheights.threatmodel.yml
+  threatmodel-base:
+    description: Git base ref for threatmodel diff. Defaults to the pull request base SHA; empty outside PRs runs a full check. The checkout needs fetch-depth 0 (or the base commit).
+    required: false
+    default: ''
+  threatmodel-ledger:
+    description: Optional drift approval ledger (from ironheights drift approve) to report drift too.
+    required: false
+    default: ''
+  comment:
+    description: On pull requests, post or update one threat model summary comment. Needs pull-requests write.
+    required: false
+    default: 'true'
+  github-token:
+    description: Token used for the PR comment.
+    required: false
+    default: ${{ github.token }}
   node-version:
     description: Node.js version used to run npx.
     required: false
@@ -69,6 +93,12 @@ outputs:
   json-file:
     description: Path of the full JSON result.
     value: ${{ steps.scan.outputs.json-file }}
+  threatmodel-exit-code:
+    description: '0 inside the model, 1 review, 2 out-of-model change, 64 usage.'
+    value: ${{ steps.threatmodel.outputs.exit-code }}
+  threatmodel-violations:
+    description: Number of violations the threat model check reported (new ones only for PRs).
+    value: ${{ steps.threatmodel.outputs.violations }}
 runs:
   using: composite
   steps:
@@ -76,6 +106,7 @@ runs:
       with:
         node-version: ${{ inputs.node-version }}
     - id: scan
+      if: inputs.mode != 'threatmodel'
       shell: bash
       env:
         IH_VERSION: ${{ inputs.version }}
@@ -142,6 +173,7 @@ runs:
         echo "json-file=$json" >> "$GITHUB_OUTPUT"
         record "$code" "$sarif"
     - id: report
+      if: inputs.mode != 'threatmodel'
       shell: bash
       env:
         IH_JSON: ${{ steps.scan.outputs.json-file }}
@@ -149,12 +181,74 @@ runs:
         IH_SUMMARY: ${{ inputs.job-summary }}
       run: node "${GITHUB_ACTION_PATH}/scripts/action-report.mjs"
     - name: Upload SARIF
-      if: inputs.upload-sarif == 'true'
+      if: inputs.upload-sarif == 'true' && inputs.mode != 'threatmodel'
       uses: github/codeql-action/upload-sarif@v3
       with:
         sarif_file: ${{ steps.scan.outputs.sarif-file }}
+    - id: threatmodel
+      if: inputs.mode == 'threatmodel' || inputs.mode == 'both'
+      shell: bash
+      env:
+        IH_VERSION: ${{ inputs.version }}
+        IH_PATH: ${{ inputs.path }}
+        IH_MODEL: ${{ inputs.threatmodel-file }}
+        IH_BASE: ${{ inputs.threatmodel-base || github.event.pull_request.base.sha }}
+        IH_LEDGER: ${{ inputs.threatmodel-ledger }}
+        IH_CONFIG: ${{ inputs.config }}
+      run: |
+        set -euo pipefail
+        if [[ ! "$IH_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+          echo "ironheights version must be an exact x.y.z pin" >&2
+          echo "exit-code=64" >> "$GITHUB_OUTPUT"; echo "violations=0" >> "$GITHUB_OUTPUT"; exit 0
+        fi
+        case "$IH_PATH" in /*) dir="$IH_PATH" ;; *) dir="${GITHUB_WORKSPACE}/${IH_PATH}" ;; esac
+        tmp="${RUNNER_TEMP:-/tmp}"
+        json="$tmp/ironheights-threatmodel.json"
+        md="$tmp/ironheights-threatmodel.md"
+        sarif="$tmp/ironheights-threatmodel.sarif"
+        args=(threatmodel check --dir "$dir" --model "$IH_MODEL" --json --markdown "$md" --sarif "$sarif")
+        if [[ -n "$IH_BASE" ]]; then
+          git -C "$dir" cat-file -e "${IH_BASE}^{commit}" 2>/dev/null || git -C "$dir" fetch --no-tags --depth=1 origin "$IH_BASE" || true
+          args=(threatmodel diff --base "$IH_BASE" --dir "$dir" --model "$IH_MODEL" --json --markdown "$md" --sarif "$sarif")
+        fi
+        if [[ -n "$IH_LEDGER" ]]; then args+=(--ledger "$IH_LEDGER"); fi
+        if [[ -n "$IH_CONFIG" ]]; then args+=(--config "$IH_CONFIG"); fi
+        work="$(mktemp -d)"
+        set +e
+        (cd "$work" && npx --yes "ironheights@${IH_VERSION}" "${args[@]}" > "$json")
+        code=$?
+        set -e
+        rm -rf "$work"
+        count="$(node -e 'try{const r=require(process.argv[1]);process.stdout.write(String((r.introduced??r.violations).filter(v=>v.severity!=="info").length))}catch{process.stdout.write("0")}' "$json")"
+        echo "exit-code=$code" >> "$GITHUB_OUTPUT"
+        echo "violations=$count" >> "$GITHUB_OUTPUT"
+        echo "markdown=$md" >> "$GITHUB_OUTPUT"
+        if [[ -f "$md" ]]; then cat "$md" >> "$GITHUB_STEP_SUMMARY"; fi
+    - name: Threat model PR comment
+      if: (inputs.mode == 'threatmodel' || inputs.mode == 'both') && inputs.comment == 'true' && github.event.pull_request.number
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.github-token }}
+        GH_REPO: ${{ github.repository }}
+        PR: ${{ github.event.pull_request.number }}
+        MD: ${{ steps.threatmodel.outputs.markdown }}
+      run: |
+        set -uo pipefail
+        [[ -f "$MD" ]] || exit 0
+        id="$(gh api "repos/$GH_REPO/issues/$PR/comments" --paginate --jq '.[] | select(.body | startswith("<!-- ironheights-threatmodel -->")) | .id' | head -n1)"
+        if [[ -n "$id" ]]; then
+          gh api -X PATCH "repos/$GH_REPO/issues/comments/$id" -F body=@"$MD" >/dev/null || echo "::warning::could not update the threat model comment"
+        else
+          gh api -X POST "repos/$GH_REPO/issues/$PR/comments" -F body=@"$MD" >/dev/null || echo "::warning::could not post the threat model comment (needs pull-requests: write)"
+        fi
+    - name: Apply threat model exit code
+      if: steps.threatmodel.outputs.exit-code != '' && steps.threatmodel.outputs.exit-code != '0'
+      shell: bash
+      env:
+        IH_CODE: ${{ steps.threatmodel.outputs.exit-code }}
+      run: exit "$IH_CODE"
     - name: Apply scanner exit code
-      if: steps.scan.outputs.exit-code != '0'
+      if: inputs.mode != 'threatmodel' && steps.scan.outputs.exit-code != '0'
       shell: bash
       env:
         IH_CODE: ${{ steps.scan.outputs.exit-code }}

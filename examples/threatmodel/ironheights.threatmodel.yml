@@ -1,0 +1,34 @@
+# Ironheights agent threat model. Checked on every PR by `ironheights threatmodel check`.
+# Each skill and MCP server lists what it may touch. Anything else fails the check.
+# Schema: https://www.ironheights.dev/api/v1/threatmodel.schema.json
+# Docs: https://www.ironheights.dev/docs/threatmodel/
+$schema: https://www.ironheights.dev/api/v1/threatmodel.schema.json
+version: 1
+skillDirs:
+  - skills
+mcpConfigs:
+  - .mcp.json
+defaults:
+  unknownSkill: deny
+  unknownMcpServer: deny
+skills:
+  weather:
+    path: skills/weather
+    purpose: Read-only forecasts. Never sends user data anywhere but api.weather.gov.
+    network:
+      - api.weather.gov
+    filesystem: []
+    env:
+      - WEATHER_CONTACT
+    tokens: []
+    shell: false
+    minGrade: A
+    dataBoundaries: [no-user-data-egress]
+mcpServers:
+  github:
+    command: npx
+    args:
+      - -y
+      - '@modelcontextprotocol/server-github'
+    env:
+      - GITHUB_PERSONAL_ACCESS_TOKEN

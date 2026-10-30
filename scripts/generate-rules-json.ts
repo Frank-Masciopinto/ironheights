@@ -22,6 +22,10 @@ const rules = allRules().map((rule) => {
 const out = process.argv[2] ?? 'rules.json';
 writeFileSync(
   out,
-  JSON.stringify({ tool: 'ironheights', version: TOOL_VERSION, license: 'Apache-2.0', rules }, null, 2) + '\n',
+  JSON.stringify(
+    { tool: 'ironheights', version: TOOL_VERSION, license: 'Apache-2.0', rules },
+    null,
+    2,
+  ) + '\n',
 );
 console.log(`wrote ${rules.length} rules to ${out}`);
