@@ -12,7 +12,7 @@ jobs:
         uses: ./
         with:
           # Pinned to the current npm latest.
-          version: '0.18.0'
+          version: '0.21.0'
           path: test/fixtures/benign
       - name: Benign fixture passes
         shell: bash
@@ -33,7 +33,7 @@ jobs:
         continue-on-error: true
         with:
           # Pinned to the current npm latest.
-          version: '0.18.0'
+          version: '0.21.0'
           path: test/fixtures/malicious/IH-CRED-001
           badge-file: ironheights-badge.json
       - name: Malicious fixture fails with a grade and a badge
@@ -71,7 +71,7 @@ jobs:
         continue-on-error: true
         with:
           # Pinned to the current npm latest.
-          version: '0.18.0'
+          version: '0.21.0'
           path: ${{ runner.temp }}/padded-skill
       - name: Skipped file exits 3
         shell: bash
@@ -80,5 +80,28 @@ jobs:
         run: |
           if [[ "$CODE" != "3" ]]; then
             echo "expected exit 3, got $CODE"
+            exit 1
+          fi
+  threatmodel:
+    name: action threat model example
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - id: tm
+        uses: ./
+        with:
+          # Pinned to the current npm latest.
+          version: '0.21.0'
+          path: examples/threatmodel
+          mode: threatmodel
+          threatmodel-base: ''
+          comment: 'false'
+      - name: Example repo is inside its threat model
+        shell: bash
+        env:
+          CODE: ${{ steps.tm.outputs.threatmodel-exit-code }}
+        run: |
+          if [[ "$CODE" != "0" ]]; then
+            echo "expected exit 0, got $CODE"
             exit 1
           fi
