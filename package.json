@@ -1,6 +1,6 @@
 {
   "name": "ironheights",
-  "version": "0.20.0",
+  "version": "0.21.0",
   "description": "Local-first security scanner for AI agent skills (OpenClaw, Claude, Grok Bot, Codex, Cursor), with an integrity monitor for OpenClaw.",
   "homepage": "https://www.ironheights.dev",
   "bugs": {

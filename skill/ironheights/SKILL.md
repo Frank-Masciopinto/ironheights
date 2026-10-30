@@ -9,7 +9,7 @@ metadata:
       bins: ['ironheights']
     install:
       - kind: node
-        package: ironheights@0.20.0
+        package: ironheights@0.21.0
         bins: ['ironheights']
 ---
 
@@ -23,7 +23,7 @@ You are helping the user review an OpenClaw skill before they trust it. This ski
 
 This skill uses the `ironheights` command from the npm package named `ironheights`. Its source and releases are at https://github.com/Frank-Masciopinto/ironheights. The npm package and that GitHub repository are the only official sources.
 
-If `ironheights` is not on the PATH, tell the user and stop. Do not install it yourself and do not download it from anywhere else. The user can install it with `npm install -g ironheights@0.20.0`, or run it once with `npx ironheights@0.20.0`. It needs Node.js 20 or newer.
+If `ironheights` is not on the PATH, tell the user and stop. Do not install it yourself and do not download it from anywhere else. The user can install it with `npm install -g ironheights@0.21.0`, or run it once with `npx ironheights@0.21.0`. It needs Node.js 20 or newer.
 
 ## Keep Ironheights up to date
 

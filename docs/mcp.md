@@ -12,13 +12,13 @@ a skill **before** installing it.
   "mcpServers": {
     "ironheights": {
       "command": "npx",
-      "args": ["-y", "ironheights@0.20.0", "mcp"]
+      "args": ["-y", "ironheights@0.21.0", "mcp"]
     }
   }
 }
 ```
 
-- Claude Code: `claude mcp add ironheights -- npx -y ironheights@0.20.0 mcp`
+- Claude Code: `claude mcp add ironheights -- npx -y ironheights@0.21.0 mcp`
 - Cursor: `~/.cursor/mcp.json` or `.cursor/mcp.json` with the block above.
 - VS Code: `.vscode/mcp.json` with `"servers"` instead of `"mcpServers"`.
 
