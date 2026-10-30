@@ -12,7 +12,13 @@ import { applySuppressions } from '../src/core/suppress.ts';
 import { createBaseline, writeBaseline } from '../src/integrity/baseline.ts';
 import { allRules } from '../src/rules/index.ts';
 import { mcp001, mcp002, mcp003 } from '../src/rules/mcp.ts';
-import { RULE_REFERENCES, referencesFor } from '../src/rules/references.ts';
+import {
+  OPENCRE_NAMES,
+  RULE_REFERENCES,
+  referenceLinks,
+  referencesFor,
+  standardsLine,
+} from '../src/rules/references.ts';
 import { SAFETY_REMINDER } from '../src/version.ts';
 import { context, scannedText } from './support.ts';
 import type { Finding, SkillReport } from '../src/core/types.ts';
@@ -83,6 +89,7 @@ describe('references', () => {
       owaspLlm: [],
       owaspAgentic: [],
       mitreAtlas: [],
+      openCre: ['265-800', '611-158'],
     });
     expect(referencesFor('IH-FS-001').owaspLlm).toEqual([]);
     expect(referencesFor('IH-META-001').owaspAgentic).toEqual([]);
@@ -416,7 +423,7 @@ describe('html report', () => {
       expect(file).toContain('Grade: A (100/100)');
       expect(file).toContain(SAFETY_REMINDER);
       expect(file).toContain('README badge');
-      expect(file).toContain('ironheights 0.16.0: grade A (100/100), verdict no-findings');
+      expect(file).toContain('ironheights 0.17.0: grade A (100/100), verdict no-findings');
       expect(file).not.toMatch(/<script/i);
     } finally {
       await rm(home, { recursive: true, force: true });
@@ -602,3 +609,26 @@ function sampleFinding(ruleId: string, severity: Finding['severity']): Finding {
     remediation: 'fix',
   };
 }
+
+describe('OpenCRE mapping', () => {
+  it('cites only OpenCRE ids with a recorded name', () => {
+    for (const refs of Object.values(RULE_REFERENCES)) {
+      for (const id of refs.openCre) {
+        expect(id).toMatch(/^\d{3}-\d{3}$/);
+        expect(OPENCRE_NAMES[id]).toBeTruthy();
+      }
+    }
+  });
+  it('maps skill-borne injection to indirect prompt injection', () => {
+    expect(referencesFor('IH-INJ-001').openCre).toEqual(['012-625']);
+    expect(standardsLine('IH-INJ-001')).toBe('OWASP LLM01:2025 · CRE 012-625');
+  });
+  it('builds static links only', () => {
+    const links = referenceLinks('IH-CRED-002');
+    expect(links.map((link) => link.url)).toEqual([
+      'https://genai.owasp.org/llmrisk/llm022025-sensitive-information-disclosure/',
+      'https://www.opencre.org/cre/774-888',
+    ]);
+    expect(referenceLinks('IH-META-001')).toEqual([]);
+  });
+});

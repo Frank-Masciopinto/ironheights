@@ -5,6 +5,7 @@ Generated from rule metadata. Do not edit by hand. Run `npm run docs:rules` to r
 OWASP LLM ids are from the OWASP Top 10 for LLM Applications 2025 (`LLMnn:2025`).
 OWASP Agentic ids are from the OWASP Top 10 for Agentic Applications 2026 (`ASInn:2026`).
 MITRE ATLAS ids are technique ids. `none` means no defensible mapping was recorded.
+OpenCRE ids are Common Requirement Enumeration ids from https://www.opencre.org, checked against its public API. Each links to the OpenCRE page with the fix guidance from mapped standards.
 
 ## IH-EXEC-001 — Remote content piped into an interpreter
 
@@ -15,6 +16,7 @@ MITRE ATLAS ids are technique ids. `none` means no defensible mapping was record
 - OWASP LLM: LLM03:2025
 - OWASP Agentic: ASI05:2026
 - MITRE ATLAS: AML.T0053
+- OpenCRE: [307-507 Allow only trusted sources both build time and runtime; therefore perform integrity checks on all resources and code](https://www.opencre.org/cre/307-507), [715-223 Ensure trusted origin of third party resources](https://www.opencre.org/cre/715-223)
 
 Fetching remote text and passing it straight to a shell or runtime executes attacker-controlled code.
 
@@ -37,6 +39,7 @@ Does not match:
 - OWASP LLM: LLM03:2025
 - OWASP Agentic: ASI04:2026
 - MITRE ATLAS: AML.T0010
+- OpenCRE: [307-507 Allow only trusted sources both build time and runtime; therefore perform integrity checks on all resources and code](https://www.opencre.org/cre/307-507), [715-223 Ensure trusted origin of third party resources](https://www.opencre.org/cre/715-223)
 
 Skills sometimes tell the agent to install a tool from a URL or git link before doing anything else. Each command is reported once, on the line that contains it.
 
@@ -60,6 +63,7 @@ Source: https://github.com/example/widget`
 - OWASP LLM: LLM05:2025
 - OWASP Agentic: ASI05:2026
 - MITRE ATLAS: none
+- OpenCRE: [317-743 Do not use eval or dynamic code execution functions](https://www.opencre.org/cre/317-743)
 
 eval, the Function constructor, and shell-enabled subprocess calls run strings as code.
 
@@ -82,6 +86,7 @@ Does not match:
 - OWASP LLM: LLM06:2025
 - OWASP Agentic: ASI03:2026
 - MITRE ATLAS: none
+- OpenCRE: [202-604 Human AI oversight](https://www.opencre.org/cre/202-604), [333-480 Impact limitation of unwanted model behaviour](https://www.opencre.org/cre/333-480)
 
 Launching a coding agent with --yolo, --dangerously-skip-permissions or bypassPermissions runs it with no approval step. Generic switches such as --no-input, --yes or auto_confirm skip the confirmation for updates, deletes or sends. A guard (never, do not, unless, only when, interactive) within 3 lines lowers the severity.
 
@@ -105,6 +110,7 @@ Does not match:
 - OWASP LLM: LLM02:2025
 - OWASP Agentic: ASI03:2026
 - MITRE ATLAS: AML.T0055
+- OpenCRE: [123-124 Minimize permissions](https://www.opencre.org/cre/123-124), [368-633 Enforce least privilege](https://www.opencre.org/cre/368-633)
 
 A skill that names an API key, token, or other secret-shaped variable and starts a child process with the parent environment gives that child every secret in the environment. A spread of process.env (including an MCP client `{ ...process.env, ...config.env }`), env: process.env, os.environ.copy(), **os.environ, and a spawn, exec, fork, or subprocess call that omits env all count. The secret may sit in the same file, or, for an explicit full-environment copy, in another file of the skill. An explicit env object or dict that lists the keys the child needs, and is not built from a full-environment copy, is quiet. A spawn in a file that names no secret is quiet. Files under test/ or fixtures/ are skipped. One finding is reported per file.
 
@@ -129,6 +135,7 @@ Does not match:
 - OWASP LLM: LLM06:2025
 - OWASP Agentic: none
 - MITRE ATLAS: none
+- OpenCRE: [814-322 Whitelist data sources and sinks](https://www.opencre.org/cre/814-322)
 
 A skill that contacts a host outside the allowlist can send data somewhere the user did not expect. A download, install, or fetch instruction is a contact, and so is a paste site or a file-drop host. A homepage field, a license URL, a schema link, or an official API host in prose is not a contact. Hosts the skill declares as its own (frontmatter homepage, metadata homepage/api_base/network) are not flagged unless they are high-risk. Repeated hits on one host in a file are one finding with a count.
 
@@ -158,6 +165,7 @@ Does not match:
 - OWASP LLM: LLM02:2025
 - OWASP Agentic: ASI02:2026
 - MITRE ATLAS: AML.T0025
+- OpenCRE: [814-322 Whitelist data sources and sinks](https://www.opencre.org/cre/814-322)
 
 A sensitive read and an outbound request in the same few lines can move credentials off the machine. Telling the agent to send a credential path to a URL counts.
 
@@ -181,6 +189,7 @@ Does not match:
 - OWASP LLM: LLM02:2025
 - OWASP Agentic: none
 - MITRE ATLAS: AML.T0055
+- OpenCRE: [368-633 Enforce least privilege](https://www.opencre.org/cre/368-633), [881-321 Store credentials securely](https://www.opencre.org/cre/881-321)
 
 References to keys, browser stores, wallets, shell history, or OpenClaw auth files expose credentials. A credential directory such as ~/.ssh, ~/.aws, ~/.gnupg, or ~/.azure counts with or without a file name after it. Windows forms count too: ~\.ssh, %USERPROFILE%\.ssh, and AppData paths for Chrome, Firefox, or the credential store.
 
@@ -214,6 +223,7 @@ Does not match:
 - OWASP LLM: LLM02:2025
 - OWASP Agentic: ASI04:2026
 - MITRE ATLAS: AML.T0055
+- OpenCRE: [774-888 Do not store secrets in the code](https://www.opencre.org/cre/774-888)
 
 Private keys and live tokens checked into a skill can be copied by anyone who reads the skill.
 
@@ -239,6 +249,7 @@ Does not match:
 - OWASP LLM: LLM02:2025
 - OWASP Agentic: none
 - MITRE ATLAS: none
+- OpenCRE: [340-375 Use a dedicated secrets management solution](https://www.opencre.org/cre/340-375)
 
 Asking the user to paste a secret into chat or memory stores it in the transcript.
 
@@ -262,6 +273,7 @@ Does not match:
 - OWASP LLM: LLM02:2025
 - OWASP Agentic: none
 - MITRE ATLAS: AML.T0055
+- OpenCRE: [881-321 Store credentials securely](https://www.opencre.org/cre/881-321), [123-124 Minimize permissions](https://www.opencre.org/cre/123-124)
 
 A token, key, or session file written without owner-only permissions (mode 600 / umask 077) is created 644 under the usual umask 022, so other local users and processes can read it. Saving through a temp file and rename resets an earlier chmod 600, and backup archives of ~/.openclaw or credentials made without umask 077 are world-readable.
 
@@ -285,6 +297,7 @@ Does not match:
 - OWASP LLM: LLM02:2025
 - OWASP Agentic: none
 - MITRE ATLAS: none
+- OpenCRE: [333-888 Do not expose data through API URLs](https://www.opencre.org/cre/333-888)
 
 An API key or token placed in a URL query string or in user:token@host lands in shell history, proxy and server logs, error messages, and stored git remotes.
 
@@ -307,6 +320,7 @@ Does not match:
 - OWASP LLM: LLM02:2025
 - OWASP Agentic: ASI04:2026
 - MITRE ATLAS: AML.T0055
+- OpenCRE: [774-888 Do not store secrets in the code](https://www.opencre.org/cre/774-888), [813-610 Do not use static secrets](https://www.opencre.org/cre/813-610)
 
 A credential used as the default of an environment-variable lookup is shipped in the package. os.getenv, os.environ.get, getenv(...) or, process.env || or ??, and ${VAR:-...} count, including when the call is split across lines. A known key prefix of length at least 16 is enough in a code file. Other literals need Shannon entropy of at least 3.5, length at least 20, and a secret-like variable name. A 42-character 0x address is not a secret. Markdown is not scanned, so transaction hashes there are ignored. An env var falling back to another env var is not this rule.
 
@@ -333,6 +347,7 @@ Does not match:
 - OWASP LLM: LLM01:2025
 - OWASP Agentic: ASI01:2026
 - MITRE ATLAS: AML.T0051, AML.T0051.001
+- OpenCRE: [012-625 Indirect prompt injection](https://www.opencre.org/cre/012-625)
 
 Phrases that tell the agent to ignore prior rules are a common way to hide malicious steps.
 
@@ -353,6 +368,7 @@ Does not match:
 - OWASP LLM: LLM01:2025
 - OWASP Agentic: ASI01:2026
 - MITRE ATLAS: AML.T0051.001, AML.T0068
+- OpenCRE: [012-625 Indirect prompt injection](https://www.opencre.org/cre/012-625)
 
 Invisible characters, HTML comments, and huge base64 blobs can hide instructions from a person reading the file.
 
@@ -374,6 +390,7 @@ Does not match:
 - OWASP LLM: LLM06:2025
 - OWASP Agentic: ASI03:2026, ASI06:2026
 - MITRE ATLAS: none
+- OpenCRE: [012-625 Indirect prompt injection](https://www.opencre.org/cre/012-625), [202-604 Human AI oversight](https://www.opencre.org/cre/202-604)
 
 Instructions to disable approvals or edit agent files change the trust boundary of the assistant.
 
@@ -394,6 +411,7 @@ Does not match:
 - OWASP LLM: LLM01:2025
 - OWASP Agentic: ASI04:2026
 - MITRE ATLAS: none
+- OpenCRE: [012-625 Indirect prompt injection](https://www.opencre.org/cre/012-625), [307-507 Allow only trusted sources both build time and runtime; therefore perform integrity checks on all resources and code](https://www.opencre.org/cre/307-507)
 
 A skill that tells the agent to fetch a remote file on a schedule and follow it, or to overwrite its own skill files from the network, can change behavior after it was reviewed. A scan covers only the copy on disk.
 
@@ -424,6 +442,7 @@ Does not match:
 - OWASP LLM: none
 - OWASP Agentic: none
 - MITRE ATLAS: none
+- OpenCRE: [265-800 Check source code and third party libraries to not contain malicious code](https://www.opencre.org/cre/265-800), [611-158 Use static analysis tooling to detect potentially malicious actions](https://www.opencre.org/cre/611-158)
 
 Packed or encoded payloads are used to hide a command from a person reviewing the skill.
 
@@ -445,6 +464,7 @@ Does not match:
 - OWASP LLM: none
 - OWASP Agentic: none
 - MITRE ATLAS: none
+- OpenCRE: [838-636 Check source code and third party libraries to not contain backdoors](https://www.opencre.org/cre/838-636)
 
 Scheduled tasks, login hooks, and shell startup files keep code running after the skill is closed.
 
@@ -466,6 +486,7 @@ Does not match:
 - OWASP LLM: LLM06:2025
 - OWASP Agentic: ASI03:2026
 - MITRE ATLAS: none
+- OpenCRE: [368-633 Enforce least privilege](https://www.opencre.org/cre/368-633), [330-281 Use least privilege OS accounts for system (components)](https://www.opencre.org/cre/330-281)
 
 sudo, broad chmod, and commands that turn off Gatekeeper or firewall protections weaken the host.
 
@@ -488,6 +509,7 @@ Does not match:
 - OWASP LLM: LLM03:2025
 - OWASP Agentic: ASI04:2026
 - MITRE ATLAS: AML.T0010
+- OpenCRE: [171-222 Check binary integrity before deployment](https://www.opencre.org/cre/171-222), [265-800 Check source code and third party libraries to not contain malicious code](https://www.opencre.org/cre/265-800)
 
 Executables and archives shipped inside a skill can hide an installer. Archives are flagged and never extracted.
 
@@ -510,6 +532,7 @@ Does not match:
 - OWASP LLM: LLM03:2025
 - OWASP Agentic: ASI04:2026
 - MITRE ATLAS: none
+- OpenCRE: [265-800 Check source code and third party libraries to not contain malicious code](https://www.opencre.org/cre/265-800), [611-158 Use static analysis tooling to detect potentially malicious actions](https://www.opencre.org/cre/611-158)
 
 Compiled bytecode or object files (.pyc, .class, .wasm, .node and similar) run like code but cannot be read by a text scanner. A .pyc next to a clean .py can hold different code, and Python may load it.
 
@@ -533,6 +556,7 @@ Does not match:
 - OWASP LLM: none
 - OWASP Agentic: none
 - MITRE ATLAS: none
+- OpenCRE: none
 
 Symlinks that leave the skill, path traversal, and hidden files can read or hide data outside the skill.
 
@@ -554,6 +578,7 @@ Does not match:
 - OWASP LLM: none
 - OWASP Agentic: none
 - MITRE ATLAS: none
+- OpenCRE: none
 
 OpenClaw discovers a skill from SKILL.md frontmatter. Missing fields make the skill harder to identify and review.
 
@@ -577,6 +602,7 @@ description: Take notes.
 - OWASP LLM: LLM03:2025
 - OWASP Agentic: ASI04:2026
 - MITRE ATLAS: none
+- OpenCRE: none
 
 SKILL.md tells the agent to run a script or file that the skill does not ship. The agent may improvise, fetch a replacement, or run whatever later appears at that path. A command or code block is graded above a passing mention.
 
@@ -598,6 +624,7 @@ Does not match:
 - OWASP LLM: LLM03:2025
 - OWASP Agentic: ASI04:2026
 - MITRE ATLAS: AML.T0010.005
+- OpenCRE: [307-507 Allow only trusted sources both build time and runtime; therefore perform integrity checks on all resources and code](https://www.opencre.org/cre/307-507), [613-287 Dependency integrity](https://www.opencre.org/cre/613-287)
 
 An MCP config that starts a server with curl piped into a shell, or with npx of a package that is not pinned to a version, runs code the operator has not reviewed. A shell pipe is critical. A pinned package such as name@1.2.3, a local path, and a local node script are not.
 
@@ -622,6 +649,7 @@ Does not match:
 - OWASP LLM: LLM02:2025
 - OWASP Agentic: none
 - MITRE ATLAS: AML.T0055
+- OpenCRE: [774-888 Do not store secrets in the code](https://www.opencre.org/cre/774-888)
 
 A literal secret in an MCP server env block is copied onto disk and into the server process. A reference such as ${API_KEY} is not a literal.
 
@@ -645,6 +673,7 @@ Does not match:
 - OWASP LLM: LLM06:2025
 - OWASP Agentic: ASI02:2026
 - MITRE ATLAS: none
+- OpenCRE: [123-124 Minimize permissions](https://www.opencre.org/cre/123-124)
 
 A filesystem MCP server pointed at /, a drive root, or a home directory can read far more than the project. A subdirectory such as ./notes or /home/alex/projects/notes is not a broad root.
 
@@ -669,6 +698,7 @@ Does not match:
 - OWASP LLM: LLM03:2025
 - OWASP Agentic: ASI04:2026
 - MITRE ATLAS: AML.T0010
+- OpenCRE: [307-507 Allow only trusted sources both build time and runtime; therefore perform integrity checks on all resources and code](https://www.opencre.org/cre/307-507)
 
 A file in an installed skill no longer matches the saved baseline.
 
@@ -689,6 +719,7 @@ Does not match:
 - OWASP LLM: LLM03:2025
 - OWASP Agentic: ASI04:2026
 - MITRE ATLAS: AML.T0010
+- OpenCRE: [307-507 Allow only trusted sources both build time and runtime; therefore perform integrity checks on all resources and code](https://www.opencre.org/cre/307-507)
 
 A file or skill directory appeared after the baseline was created.
 
@@ -709,6 +740,7 @@ Does not match:
 - OWASP LLM: LLM03:2025
 - OWASP Agentic: ASI04:2026
 - MITRE ATLAS: AML.T0010
+- OpenCRE: [307-507 Allow only trusted sources both build time and runtime; therefore perform integrity checks on all resources and code](https://www.opencre.org/cre/307-507)
 
 A file that was in the baseline is gone.
 
@@ -729,6 +761,7 @@ Does not match:
 - OWASP LLM: none
 - OWASP Agentic: ASI06:2026
 - MITRE ATLAS: none
+- OpenCRE: [418-853 Monitor unusual activities on system](https://www.opencre.org/cre/418-853)
 
 An agent instruction, personality, memory, or config file changed since the baseline.
 
@@ -750,6 +783,7 @@ Does not match:
 - OWASP LLM: LLM03:2025
 - OWASP Agentic: none
 - MITRE ATLAS: none
+- OpenCRE: [265-800 Check source code and third party libraries to not contain malicious code](https://www.opencre.org/cre/265-800)
 
 The cached signed advisory feed lists this skill name, a file content hash, or an indicator host. The match is reported only when a local cache is present. Scan does not contact the network to refresh the feed.
 
@@ -774,6 +808,7 @@ Does not match:
 - OWASP LLM: LLM06:2025
 - OWASP Agentic: ASI05:2026
 - MITRE ATLAS: none
+- OpenCRE: [515-021 Sandbox, containerize and/or isolate applications at the network level](https://www.opencre.org/cre/515-021), [233-748 Configuration hardening](https://www.opencre.org/cre/233-748)
 
 gateway.bind is lan, tailnet, custom, auto, or an all-interfaces address, or gateway.tailscale.mode is funnel. OpenClaw's native check gateway.bind_no_auth covers a remote bind without a shared secret, and gateway.tailscale_funnel covers public Funnel. This rule only reads the config value. It does not probe the listener. auto is medium because the effective bind is chosen at runtime. Funnel and 0.0.0.0 are critical.
 
@@ -798,6 +833,7 @@ Does not match:
 - OWASP LLM: LLM06:2025
 - OWASP Agentic: none
 - MITRE ATLAS: none
+- OpenCRE: [065-183 Disallow default credentials](https://www.opencre.org/cre/065-183), [233-748 Configuration hardening](https://www.opencre.org/cre/233-748)
 
 gateway.auth.mode is none or trusted-proxy, a non-loopback bind has no auth object, or the token or password in the file is empty or a known placeholder. Native checks gateway.bind_no_auth, gateway.loopback_no_auth, gateway.token_placeholder_value, and gateway.trusted_proxy_auth overlap this rule. A loopback bind that omits auth is not flagged: OpenClaw's default is authenticated, and the token may live in OPENCLAW_GATEWAY_TOKEN, which this command does not read. trusted-proxy is critical because the proxy becomes the auth boundary; proxy IPs and headers are left to the native audit.
 
@@ -823,6 +859,7 @@ Does not match:
 - OWASP LLM: LLM06:2025
 - OWASP Agentic: ASI05:2026
 - MITRE ATLAS: none
+- OpenCRE: [746-705 Limit/authorize user's access to functionality](https://www.opencre.org/cre/746-705)
 
 A channel dmPolicy (or dm.policy) is open, so anyone can DM the agent. This matches the native check channels.<channel>.dm.open. Mutable allowFrom entries and name matching are not reimplemented.
 
@@ -846,6 +883,7 @@ Does not match:
 - OWASP LLM: LLM06:2025
 - OWASP Agentic: ASI05:2026
 - MITRE ATLAS: none
+- OpenCRE: [746-705 Limit/authorize user's access to functionality](https://www.opencre.org/cre/746-705)
 
 A channel groupPolicy is open, so any member of a group can talk to the agent. Severity rises to critical when the same config also enables host exec, elevated tools, or an open DM policy. Native security.exposure.open_groups_with_elevated and security.exposure.open_channels_with_exec cover the live combination; this rule only reads the file.
 
@@ -868,6 +906,7 @@ Does not match:
 - OWASP LLM: LLM02:2025
 - OWASP Agentic: none
 - MITRE ATLAS: AML.T0055
+- OpenCRE: [881-321 Store credentials securely](https://www.opencre.org/cre/881-321), [340-375 Use a dedicated secrets management solution](https://www.opencre.org/cre/340-375)
 
 A token, password, secret, or API key is a literal string in the config file. ${ENV} references and SecretRef objects (source env, file, exec, or store) are not literals. Placeholder literals are reported as IH-CFG-002 instead. Evidence is the key path plus <redacted>. Native config.secrets.gateway_password_in_config and config.secrets.hooks_token_in_config are the overlapping checks; other secret keys in the file are reported here too.
 
@@ -891,6 +930,7 @@ Does not match:
 - OWASP LLM: LLM02:2025
 - OWASP Agentic: none
 - MITRE ATLAS: AML.T0055
+- OpenCRE: [123-124 Minimize permissions](https://www.opencre.org/cre/123-124), [233-748 Configuration hardening](https://www.opencre.org/cre/233-748)
 
 On POSIX, the config file is group-writable, world-writable, world-readable, or group-readable. A symlink is reported at medium severity because OpenClaw documents that a symlinked openclaw.json is unsupported. Native checks fs.config.perms_world_readable, fs.config.perms_writable, fs.config.perms_group_readable, and fs.config.symlink. Windows ACLs are not Unix mode bits. This rule does not report permission findings on Windows and does not run icacls. OpenClaw's audit does.
 
@@ -914,6 +954,7 @@ Does not match:
 - OWASP LLM: LLM06:2025
 - OWASP Agentic: ASI05:2026
 - MITRE ATLAS: none
+- OpenCRE: [202-604 Human AI oversight](https://www.opencre.org/cre/202-604), [368-633 Enforce least privilege](https://www.opencre.org/cre/368-633)
 
 tools.exec.security or an agent exec security is full, exec ask is off while security is not deny, or tools.elevated is enabled. Elevated allowFrom containing * is critical. Native tools.exec.security_full_configured and tools.elevated.allowFrom.<channel>.wildcard overlap this rule. Interpreter allowlists, safeBins, and approval-file drift are left to the native audit.
 
@@ -938,6 +979,7 @@ Does not match:
 - OWASP LLM: LLM03:2025
 - OWASP Agentic: ASI04:2026
 - MITRE ATLAS: none
+- OpenCRE: [307-507 Allow only trusted sources both build time and runtime; therefore perform integrity checks on all resources and code](https://www.opencre.org/cre/307-507)
 
 skills.load.extraDirs or skills.load.allowSymlinkTargets is set. Extra directories are the lowest-precedence skill roots and are trusted by the operator. OpenClaw tells you to keep allowSymlinkTargets narrow. A home directory, a filesystem root, or a path that contains .. is critical. Other extra directories are medium. The native audit does not have this check; it does have skills.workspace.symlink_escape, which walks the workspace and is not repeated here.
 
@@ -961,6 +1003,7 @@ Does not match:
 - OWASP LLM: LLM06:2025
 - OWASP Agentic: ASI05:2026
 - MITRE ATLAS: none
+- OpenCRE: [333-480 Impact limitation of unwanted model behaviour](https://www.opencre.org/cre/333-480), [515-021 Sandbox, containerize and/or isolate applications at the network level](https://www.opencre.org/cre/515-021)
 
 Sandbox mode is off, or sandbox.docker is set while mode is off, and the file also enables host exec, elevated tools, or an open room. A personal agent with sandbox off and tools.exec.security deny is a documented OpenClaw pattern and stays quiet. Native sandbox.docker_config_mode_off and the security.exposure.open_groups_with_runtime_or_fs checks overlap the noisy cases. Docker bind mounts, seccomp, and AppArmor are not reimplemented.
 
@@ -984,6 +1027,7 @@ Does not match:
 - OWASP LLM: LLM03:2025
 - OWASP Agentic: ASI04:2026
 - MITRE ATLAS: AML.T0010
+- OpenCRE: [613-287 Dependency integrity](https://www.opencre.org/cre/613-287), [613-286 Dependency management](https://www.opencre.org/cre/613-286)
 
 The skill installs an npm or PyPI package whose name the registry does not know (HTTP 404). Anyone can register that name and ship code that runs on the next install. Checked only with scan --check-registry; an offline or failed lookup is reported as not checked, never as missing.
 
@@ -1006,6 +1050,7 @@ Does not match:
 - OWASP LLM: none
 - OWASP Agentic: none
 - MITRE ATLAS: none
+- OpenCRE: none
 
 An optional language-model review added a note. This is not a pattern rule and it does not scan files by itself. The model sees redacted skill text and the deterministic findings, and it can be wrong. The note never changes the verdict or the exit code. It appears only after `scan --llm` or `review`, and only when the model output matched the review schema.
 

@@ -124,6 +124,8 @@ export interface RuleReferences {
   owaspLlm: string[];
   owaspAgentic: string[];
   mitreAtlas: string[];
+  /** OpenCRE common requirement ids, linked as https://www.opencre.org/cre/<id>. */
+  openCre: string[];
 }
 
 export interface SuppressedFinding {
@@ -233,7 +235,9 @@ export interface JsonSkillReport extends SkillReport {
   skippedFileCount: number;
   suppressedCount: number;
   suppressionRefusedCount: number;
-  findings: Array<Finding & { references?: RuleReferences }>;
+  findings: Array<
+    Finding & { references?: RuleReferences; links?: Array<{ label: string; url: string }> }
+  >;
 }
 
 export interface AdvisoryFeedNote {

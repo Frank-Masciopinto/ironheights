@@ -11,7 +11,7 @@ import type { AdvisoryFeedNote, SkillReport, Verdict } from '../../core/types.ts
 import { acceptanceLabel } from '../../core/suppress.ts';
 import { blockingDirectoryCount } from '../../core/verdict.ts';
 import type { LlmReviewReport } from '../../llm/review.ts';
-import { referenceTags } from '../../rules/references.ts';
+import { referenceLinks, referencesFor, referenceTags } from '../../rules/references.ts';
 import { NO_FINDINGS_LABEL, SAFETY_REMINDER } from '../../version.ts';
 import { llmStatusLines } from './llm-status.ts';
 
@@ -55,7 +55,10 @@ export function renderMarkdown(
     }
     for (const finding of skill.findings) {
       const where = finding.line ? `${finding.file}:${finding.line}` : finding.file;
-      const tags = referenceTags(finding.ruleId);
+      const tags = [
+        ...referenceTags(finding.ruleId),
+        ...referencesFor(finding.ruleId).openCre.map((id) => `CRE ${id}`),
+      ];
       const suffix = tags.length > 0 ? ` (${tags.join(', ')})` : '';
       lines.push(`- **${finding.severity}** \`${finding.ruleId}\` ${where}${suffix}`);
       lines.push(`  - ${finding.message}`);
@@ -63,6 +66,12 @@ export function renderMarkdown(
       if (finding.acceptance) lines.push(`  - ${acceptanceLabel(finding.acceptance)}`);
       lines.push(`  - ${finding.remediation}`);
       if (finding.note) lines.push(`  - Note: ${finding.note}`);
+      const links = referenceLinks(finding.ruleId);
+      if (links.length > 0) {
+        lines.push(
+          `  - Standards: ${links.map((link) => `[${link.label}](${link.url})`).join(', ')}`,
+        );
+      }
     }
     for (const item of skill.suppressed ?? []) {
       const where = item.line ? `${item.file}:${item.line}` : item.file;

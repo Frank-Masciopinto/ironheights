@@ -5,12 +5,13 @@ exports[`output snapshots > renders human, json, and sarif 1`] = `
   [high] IH-CRED-001 SKILL.md:1
     example
     fix it
+    OWASP LLM02:2025 · CRE 368-633 · CRE 881-321 → https://www.opencre.org/cre/368-633
 
 Verdict: review
 Grade: D (60/100)
 Absence of findings is not proof of safety.
-ironheights 0.16.0 | demo | grade D (60/100) | verdict review | 1 finding
-Badge: [ironheights 0.16.0: grade D (60/100), verdict review](https://github.com/Frank-Masciopinto/ironheights) — Absence of findings is not proof of safety."
+ironheights 0.17.0 | demo | grade D (60/100) | verdict review | 1 finding
+Badge: [ironheights 0.17.0: grade D (60/100), verdict review](https://github.com/Frank-Masciopinto/ironheights) — Absence of findings is not proof of safety."
 `;
 
 exports[`output snapshots > renders human, json, and sarif 2`] = `
@@ -18,7 +19,7 @@ exports[`output snapshots > renders human, json, and sarif 2`] = `
   "schemaVersion": 1,
   "tool": {
     "name": "ironheights",
-    "version": "0.16.0"
+    "version": "0.17.0"
   },
   "scannedAt": "2026-10-09T00:00:00.000Z",
   "verdict": "review",
@@ -29,8 +30,8 @@ exports[`output snapshots > renders human, json, and sarif 2`] = `
     "disclaimer": "Absence of findings is not proof of safety."
   },
   "scanMode": "directory",
-  "summary": "ironheights 0.16.0 | demo | grade D (60/100) | verdict review | 1 finding",
-  "badge": "[ironheights 0.16.0: grade D (60/100), verdict review](https://github.com/Frank-Masciopinto/ironheights) — Absence of findings is not proof of safety.",
+  "summary": "ironheights 0.17.0 | demo | grade D (60/100) | verdict review | 1 finding",
+  "badge": "[ironheights 0.17.0: grade D (60/100), verdict review](https://github.com/Frank-Masciopinto/ironheights) — Absence of findings is not proof of safety.",
   "skills": [
     {
       "skillName": "demo",
@@ -55,8 +56,26 @@ exports[`output snapshots > renders human, json, and sarif 2`] = `
             "owaspAgentic": [],
             "mitreAtlas": [
               "AML.T0055"
+            ],
+            "openCre": [
+              "368-633",
+              "881-321"
             ]
-          }
+          },
+          "links": [
+            {
+              "label": "OWASP LLM02:2025 Sensitive Information Disclosure",
+              "url": "https://genai.owasp.org/llmrisk/llm022025-sensitive-information-disclosure/"
+            },
+            {
+              "label": "OpenCRE 368-633 Enforce least privilege",
+              "url": "https://www.opencre.org/cre/368-633"
+            },
+            {
+              "label": "OpenCRE 881-321 Store credentials securely",
+              "url": "https://www.opencre.org/cre/881-321"
+            }
+          ]
         }
       ],
       "suppressed": [],
@@ -80,7 +99,7 @@ exports[`output snapshots > renders human, json, and sarif 3`] = `
       "tool": {
         "driver": {
           "name": "ironheights",
-          "version": "0.16.0",
+          "version": "0.17.0",
           "informationUri": "https://github.com/Frank-Masciopinto/ironheights",
           "rules": [
             {
@@ -111,8 +130,13 @@ exports[`output snapshots > renders human, json, and sarif 3`] = `
                 "owaspAgentic": [],
                 "mitreAtlas": [
                   "AML.T0055"
+                ],
+                "openCre": [
+                  "368-633",
+                  "881-321"
                 ]
-              }
+              },
+              "helpUri": "https://www.ironheights.dev/rules/ih-cred-001"
             }
           ]
         }
@@ -152,6 +176,24 @@ exports[`output snapshots > renders human, json, and sarif 3`] = `
             "owaspAgentic": [],
             "mitreAtlas": [
               "AML.T0055"
+            ],
+            "openCre": [
+              "368-633",
+              "881-321"
+            ],
+            "links": [
+              {
+                "label": "OWASP LLM02:2025 Sensitive Information Disclosure",
+                "url": "https://genai.owasp.org/llmrisk/llm022025-sensitive-information-disclosure/"
+              },
+              {
+                "label": "OpenCRE 368-633 Enforce least privilege",
+                "url": "https://www.opencre.org/cre/368-633"
+              },
+              {
+                "label": "OpenCRE 881-321 Store credentials securely",
+                "url": "https://www.opencre.org/cre/881-321"
+              }
             ]
           }
         }

@@ -41,9 +41,7 @@ describe('0.14.0 install-tool metadata is not graded as author content (ccbillbo
       }),
     });
     const result = await scanPath(root, emptyConfig());
-    const net = result.skills
-      .flatMap((s) => s.findings)
-      .filter((f) => f.ruleId === 'IH-NET-001');
+    const net = result.skills.flatMap((s) => s.findings).filter((f) => f.ruleId === 'IH-NET-001');
     expect(net).toEqual([]);
     expect(result.skills[0]?.filesScanned).toBeGreaterThanOrEqual(2);
   });

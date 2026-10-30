@@ -1,5 +1,5 @@
 export const TOOL_NAME = 'ironheights';
-export const TOOL_VERSION = '0.16.0';
+export const TOOL_VERSION = '0.17.0';
 export const REPOSITORY_URL = 'https://github.com/Frank-Masciopinto/ironheights';
 export const SCHEMA_VERSION = 1;
 

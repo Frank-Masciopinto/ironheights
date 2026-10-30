@@ -63,7 +63,9 @@ describe('0.11.0: advice against sudo', () => {
     'Never use sudo. chmod 777 ./bin',
   ])('flagged: %s', (line) => expect(negatedSudoOnly(line)).toBe(false));
   it('end to end', async () => {
-    const root = await skillDir({ 'SKILL.md': `${SKILL}\nNever use sudo to install this skill.\n` });
+    const root = await skillDir({
+      'SKILL.md': `${SKILL}\nNever use sudo to install this skill.\n`,
+    });
     expect(rules(await scanPath(root, emptyConfig()), 'IH-PRIV-001')).toEqual([]);
   });
 });
@@ -80,7 +82,10 @@ describe('0.11.0: registry skill card is notes', () => {
     for (const f of card) expect(f.severity).toBe('info');
   });
   it('a skill-card.md deeper in the tree is still graded as code', async () => {
-    const root = await skillDir({ 'SKILL.md': SKILL, 'lib/skill-card.md': 'sudo bash install.sh\n' });
+    const root = await skillDir({
+      'SKILL.md': SKILL,
+      'lib/skill-card.md': 'sudo bash install.sh\n',
+    });
     const f = rules(await scanPath(root, emptyConfig()), 'IH-PRIV-001');
     expect(f[0]?.severity).toBe('high');
   });

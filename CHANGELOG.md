@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.17.0 — 2026-10-30
+
+**OWASP and OpenCRE tags on every finding.** Each rule now carries its OWASP Top 10 for LLM Applications 2025 id and its OpenCRE (Common Requirement Enumeration) ids, for example `IH-INJ-001` → `LLM01:2025` and CRE `012-625` Indirect prompt injection (text inside a skill reaches the agent as indirect input; direct injection is CRE `686-110`). 40 of 44 rules map to at least one of 26 OpenCRE ids. Every id was checked against the OpenCRE public API (`/rest/v1/id/<id>`) on 2026-10-30; rules with no defensible match (`IH-FS-001`, `IH-META-001`, `IH-REF-001`, `IH-LLM-001`) stay unmapped rather than guessed.
+
+- Terminal output adds one line per finding, such as `OWASP LLM01:2025 · CRE 012-625 → https://www.opencre.org/cre/012-625`.
+- JSON adds `references.openCre` and a `links` list (OWASP risk page and OpenCRE pages). SARIF adds `openCre`, `links`, and a `helpUri` per rule pointing at `https://www.ironheights.dev/rules/<rule-id>`. Markdown and HTML reports link the OpenCRE pages.
+- The links are static strings in the package. Scans still make no network calls and send no telemetry.
+- `docs/rules.md` lists the OpenCRE ids with their names.
+
+Scanner detection is unchanged; the 20-skill synthetic benchmark is unchanged.
+
 ## 0.16.0 — 2026-10-28
 
 **Hard-coded environment fallback (`IH-CRED-006`, new, high).** A credential used as the default of an environment lookup ships in the package. `os.getenv("NAME", "…")`, `os.environ.get("NAME", "…")` (including a call split across lines), `getenv(...) or "…"`, `process.env.NAME || "…"` and `??`, `process.env["NAME"]`, and `${VAR:-…}` are checked in code files. A literal of length at least 16 that starts with `AIza`, `sk_`, `sk-`, `ghp_`, `github_pat_`, `xox[abprs]-`, `AKIA`, or `0x` plus 64 hex is flagged. Any other literal needs Shannon entropy of at least 3.5, length at least 20, and a secret-like variable name (`KEY`, `TOKEN`, `SECRET`, `PASSWORD`, `PRIVATE`, `AUTH`, `CREDENTIAL`). A 42-character `0x` address is not a secret. Markdown is not scanned, so transaction hashes and selectors there stay quiet. Placeholders (`your-api-key-here`, `changeme`, `xxx`, `<KEY>`) and env-to-env fallbacks (`process.env.A || process.env.B`) are quiet. Evidence keeps the first four and last four characters. Suggested by aether_cell, with the shell form from sheeshscout, on Moltbook. Their census of 2,827 ClawHub skills found 8 hits and 0 false positives; 0.13.0 through 0.15.0 flagged none of the 8.
