@@ -35,15 +35,27 @@ jobs:
           # Pinned to the current npm latest.
           version: '0.16.0'
           path: test/fixtures/malicious/IH-CRED-001
-      - name: Malicious fixture fails
+          badge-file: ironheights-badge.json
+      - name: Malicious fixture fails with a grade and a badge
         shell: bash
         env:
           CODE: ${{ steps.scan.outputs.exit-code }}
+          GRADE: ${{ steps.scan.outputs.grade }}
+          VERDICT: ${{ steps.scan.outputs.verdict }}
         run: |
           if [[ "$CODE" != "1" && "$CODE" != "2" ]]; then
             echo "expected exit 1 or 2, got $CODE"
             exit 1
           fi
+          if [[ ! "$GRADE" =~ ^[A-F]$ ]]; then
+            echo "expected a letter grade, got '$GRADE'"
+            exit 1
+          fi
+          if [[ "$VERDICT" != "review" && "$VERDICT" != "block" ]]; then
+            echo "expected review or block, got '$VERDICT'"
+            exit 1
+          fi
+          grep -q '"label": "ironheights"' ironheights-badge.json
   incomplete:
     name: action incomplete fixture
     runs-on: ubuntu-latest
