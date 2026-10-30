@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.18.0 — 2026-10-30
+
+**`ironheights drift`: catch a skill or MCP tool that changes after you approved it (rug pull).** `drift approve` records each skill's file hashes, its SKILL.md description, the URL hosts and credential paths its text names, MCP server entries (`--mcp`, for example `~/.cursor/mcp.json`) and MCP tool descriptions and schemas from a saved `tools/list` response (`--tools`). `drift check` and `drift watch` report what moved since. A changed description, a new host, a new credential path, a changed MCP server entry or a changed tool description is high (exit 2). An added or changed file, or an unapproved skill, server or tool, is medium (exit 1). Key order and whitespace in JSON are not drift. Local only, no network, no telemetry. The ledger is `<ironheights home>/approvals.json` (mode `0600`). Works for skills from any agent (OpenClaw, Claude, Grok Bot, Codex, Cursor). See `docs/drift.md`.
+
+**GitHub Action for skill hubs and repos.** New outputs `grade`, `score`, `verdict`, `findings` and `json-file`; `badge-file` writes a shields.io endpoint badge; the job summary lists the top findings with links to each rule page (`job-summary: 'false'` turns it off). Marketplace name "Ironheights AI Skill Scanner" with branding. `docs/hubs.md`: add Ironheights to your skill hub in one line.
+
+Scanner rules and detection are unchanged; the 20-skill synthetic benchmark is unchanged.
+
 ## 0.17.0 — 2026-10-30
 
 **OWASP and OpenCRE tags on every finding.** Each rule now carries its OWASP Top 10 for LLM Applications 2025 id and its OpenCRE (Common Requirement Enumeration) ids, for example `IH-INJ-001` → `LLM01:2025` and CRE `012-625` Indirect prompt injection (text inside a skill reaches the agent as indirect input; direct injection is CRE `686-110`). 40 of 44 rules map to at least one of 26 OpenCRE ids. Every id was checked against the OpenCRE public API (`/rest/v1/id/<id>`) on 2026-10-30; rules with no defensible match (`IH-FS-001`, `IH-META-001`, `IH-REF-001`, `IH-LLM-001`) stay unmapped rather than guessed.
