@@ -9,9 +9,9 @@ Ironheights is the npm audit for AI skills. A hub (ClawHub, grokpot, Claude Duet
 ## 1. Skill repositories: the GitHub Action
 
 ```yaml
-- uses: Frank-Masciopinto/ironheights@v0.17.0
+- uses: Frank-Masciopinto/ironheights@v0.18.0
   with:
-    version: '0.17.0'
+    version: '0.18.0'
     path: skills
     badge-file: ironheights-badge.json
 ```
@@ -23,7 +23,7 @@ Outputs: `grade` (A-F), `score` (0-100), `verdict` (`no-findings`, `review`, `bl
 Run this in your ingest worker, in a sandbox with no network if you can:
 
 ```bash
-npx --yes ironheights@0.17.0 scan ./uploaded-skill --json > result.json
+npx --yes ironheights@0.18.0 scan ./uploaded-skill --json > result.json
 ```
 
 `result.json` has `grade.letter`, `grade.score`, `verdict` and, per skill, `skills[].findings[]` with `ruleId`, `severity`, `file`, `line`, `message`, `remediation` and `links` (OWASP and OpenCRE). Exit code `0` no findings, `1` review, `2` block, `3` incomplete. Pin an exact version so grades do not move under you; bump it when you are ready to re-grade.
