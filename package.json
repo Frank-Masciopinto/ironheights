@@ -1,6 +1,6 @@
 {
   "name": "ironheights",
-  "version": "0.18.0",
+  "version": "0.19.0",
   "description": "Local-first security scanner for AI agent skills (OpenClaw, Claude, Grok Bot, Codex, Cursor), with an integrity monitor for OpenClaw.",
   "homepage": "https://www.ironheights.dev",
   "bugs": {
@@ -43,7 +43,8 @@
     "docs:rules": "tsup scripts/generate-rules-doc.ts --no-config --format esm --target node20 --out-dir dist-scripts --clean --silent && node dist-scripts/generate-rules-doc.js",
     "version": "node scripts/pin-skill-version.mjs && git add skill/ironheights/SKILL.md",
     "check:skill-pin": "node scripts/pin-skill-version.mjs --check",
-    "data:rules-json": "tsup scripts/generate-rules-json.ts --no-config --format esm --target node20 --out-dir dist-scripts --clean --silent && node dist-scripts/generate-rules-json.js"
+    "data:rules-json": "tsup scripts/generate-rules-json.ts --no-config --format esm --target node20 --out-dir dist-scripts --clean --silent && node dist-scripts/generate-rules-json.js",
+    "docs:threatmodel-schema": "tsup scripts/generate-threatmodel-schema.ts --no-config --format esm --target node20 --out-dir dist-scripts --clean --silent && node dist-scripts/generate-threatmodel-schema.js"
   },
   "dependencies": {
     "commander": "14.0.3",

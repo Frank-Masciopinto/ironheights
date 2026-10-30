@@ -45,3 +45,7 @@ Ironheights does not start MCP servers. To track tool descriptions, save a serve
 ## What happens at run time
 
 For OpenClaw, the [runtime guard](guard.md) watches tool calls as they happen and flags credential reads, download-and-execute, undeclared network hosts and writes to skill folders, and can block them. Other agents do not expose a pre-tool-call hook to plugins today, so for them drift watch checks what the skill and tool definitions say, not what a process does.
+
+## Threat model
+
+`ironheights threatmodel check --ledger <approvals.json>` adds every drift change to the threat model report, so one PR check covers both. See [threatmodel.md](threatmodel.md).

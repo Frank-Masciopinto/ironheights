@@ -49,6 +49,10 @@ node dist/cli/index.js scan test/fixtures/benign
 
 `ironheights drift approve <skills>` records what you reviewed; `ironheights drift check` (or `watch`) flags any later change: file hashes, the SKILL.md description, new URL hosts, new credential paths, MCP server entries and MCP tool descriptions. Local only, no telemetry. See [docs/drift.md](docs/drift.md).
 
+## Threat model as code (checked on every PR)
+
+Keep an `ironheights.threatmodel.yml` in your repo that lists the skills and MCP servers your agent trusts and what each may touch: network hosts, filesystem paths, environment variables, tokens, shell and a minimum grade. `ironheights threatmodel init` writes the first version from what is installed, `threatmodel check` fails on anything outside it, and `threatmodel diff --base origin/main` reports only what a pull request adds. The GitHub Action (`mode: threatmodel` or `both`) posts one summary comment per PR. Local only. See [docs/threatmodel.md](docs/threatmodel.md) and [examples/threatmodel](examples/threatmodel).
+
 ## 60-second quickstart
 
 ```bash

@@ -8,6 +8,7 @@ import { runBaseline, runVerify } from './commands/baseline.ts';
 import { runBenchCommand } from './commands/bench.ts';
 import { runCoexist } from './commands/coexist.ts';
 import { runDrift } from './commands/drift.ts';
+import { runThreatModel } from './commands/threatmodel.ts';
 import { runDoctor } from './commands/doctor.ts';
 import { runFetch } from './commands/fetch.ts';
 import { runGuardLog, runGuardPolicyCheck, runGuardStatus } from './commands/guard.ts';
@@ -126,6 +127,52 @@ export async function main(argv: string[], hooks: MainHooks = {}): Promise<numbe
           ...(typeof opts.ledger === 'string' ? { ledger: opts.ledger } : {}),
           ...(typeof opts.interval === 'string' ? { interval: opts.interval } : {}),
           ...(typeof opts.config === 'string' ? { config: opts.config } : {}),
+        });
+      },
+    );
+
+  program
+    .command('threatmodel [action]')
+    .description(
+      'agent threat model as code: init writes ironheights.threatmodel.yml from the skills and MCP servers in a repo, check fails when a skill or MCP server reaches outside it (hosts, paths, env, tokens, shell, grade), diff --base <ref> reports only what a PR adds. Local only.',
+    )
+    .option('--dir <dir>', 'repository directory', '.')
+    .option('--model <file>', 'model file relative to --dir', 'ironheights.threatmodel.yml')
+    .option(
+      '--skills <dir>',
+      'skill directory; repeatable (default: skillDirs in the model)',
+      collect,
+    )
+    .option('--mcp <file>', 'MCP config JSON; repeatable', collect)
+    .option('--base <ref>', 'git base ref for diff')
+    .option('--ledger <file>', 'also report drift since drift approve')
+    .option('--no-grade', 'skip the scan grade (faster)')
+    .option('--force', 'overwrite an existing model on init')
+    .option('--markdown <file>', 'write a Markdown summary (PR comment)')
+    .option('--sarif <file>', 'write SARIF 2.1.0')
+    .option('--json', 'print JSON to stdout')
+    .option('--config <file>', 'config file')
+    .action(
+      async (
+        action: string | undefined,
+        opts: Record<string, string | string[] | boolean | undefined>,
+      ) => {
+        const str = (k: string): string | undefined =>
+          typeof opts[k] === 'string' ? (opts[k] as string) : undefined;
+        process.exitCode = await runThreatModel({
+          action,
+          ...(str('dir') ? { dir: str('dir') } : {}),
+          ...(str('model') ? { model: str('model') } : {}),
+          ...(Array.isArray(opts.skills) ? { skillDirs: opts.skills } : {}),
+          ...(Array.isArray(opts.mcp) ? { mcp: opts.mcp } : {}),
+          ...(str('base') ? { base: str('base') } : {}),
+          ...(str('ledger') ? { ledger: str('ledger') } : {}),
+          ...(str('markdown') ? { markdown: str('markdown') } : {}),
+          ...(str('sarif') ? { sarif: str('sarif') } : {}),
+          ...(str('config') ? { config: str('config') } : {}),
+          noGrade: opts.grade === false,
+          force: Boolean(opts.force),
+          json: Boolean(opts.json),
         });
       },
     );
