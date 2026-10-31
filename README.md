@@ -3,6 +3,8 @@
 [![Star on ClawHub](https://img.shields.io/badge/ClawHub-star%20the%20skill-f59e0b?logo=data:image/svg%2bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0id2hpdGUiIGQ9Ik0xMiAyIDE1LjEgOC4zIDIyIDkuMyAxNyAxNC4xIDE4LjIgMjEgMTIgMTcuOCA1LjggMjEgNyAxNC4xIDIgOS4zIDguOSA4LjN6Ii8+PC9zdmc+)](https://clawhub.ai/frank-masciopinto/skills/ironheights)
 [![GitHub stars](https://img.shields.io/github/stars/Frank-Masciopinto/ironheights?style=flat&logo=github&label=Star%20on%20GitHub)](https://github.com/Frank-Masciopinto/ironheights)
 [![npm](https://img.shields.io/npm/v/ironheights?logo=npm)](https://www.npmjs.com/package/ironheights)
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/Frank-Masciopinto/ironheights/badge)](https://scorecard.dev/viewer/?uri=github.com/Frank-Masciopinto/ironheights)
+[![Socket](https://socket.dev/api/badge/npm/package/ironheights)](https://socket.dev/npm/package/ironheights)
 
 If Ironheights is useful to you, a star on [ClawHub](https://clawhub.ai/frank-masciopinto/skills/ironheights) or GitHub helps other OpenClaw, Claude and Grok Bot users find it.
 
