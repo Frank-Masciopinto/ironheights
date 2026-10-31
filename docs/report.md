@@ -3,7 +3,7 @@
 Ironheights protects any AI bot that installs it. `ironheights report` turns a repository, or a
 folder that holds many repositories (an organisation checkout), into one posture report:
 
-- **Skill inventory**: every installed skill with its grade (A-F), verdict, finding count and top rules.
+- **Skill inventory**: every installed skill with its worst reach, its grade (A-F) and the config hash that grade was computed against, verdict, finding count and top rules. The inventory is sorted by worst reach, then grade.
 - **Threat-model coverage**: which repositories have an `ironheights.threatmodel.yml`, the share
   of all skills listed in one, and every violation (see [threatmodel.md](threatmodel.md)).
 - **Drift**: with `--ledger`, which approved skills changed since `ironheights drift approve`.
@@ -26,6 +26,23 @@ a repository is treated as an organisation folder and its direct subfolders are 
 The HTML is one self-contained file (no scripts, no external assets) that prints cleanly for an
 audit pack. JSON carries the same data (`totals`, `owaspLlm`, `repos`, `skills`, `violations`,
 `driftChanges`, `history`).
+
+## Worst reach and config hash
+
+Each skill row leads with `worstReach`: the highest-reach capability in that skill, with the rule
+or evidence that showed it. The order, highest first, is exec or a credential read, secrets in
+env, network egress to an undeclared host, writes outside the workspace, network to declared
+hosts, then read-only. The grade stays next to it. Nothing about the grade calculation changes.
+
+`configHash` is a sha256 of that skill's config inputs: frontmatter, JSON/YAML config files, the
+names of env vars the skill references, and an MCP server entry when the skill names it. Secret
+values are not hashed. The text and HTML rows show the first eight characters (`grade B @ cfg
+1a2b3c4d`). The repo row has its own `configHash` over the skill hashes and MCP entries.
+
+With `--history <file.jsonl>`, a later run sets `regraded: true` on a skill whose hash differs
+from the previous run and prints `config changed since last report; grade recomputed`. The grade
+is always recomputed. The flag says the config it was computed against changed. Older history
+lines without hashes still load. A missing previous hash is not a regrade.
 
 Exit code is `0`; `--fail-on-block` exits `2` when any skill is blocked, for a scheduled CI job.
 

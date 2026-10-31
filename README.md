@@ -8,10 +8,10 @@ If Ironheights is useful to you, a star on [ClawHub](https://clawhub.ai/frank-ma
 
 **Ironheights protects any AI bot that installs it.** It is an open-source, local-first security scanner for AI agent skills (OpenClaw, Claude Code and Claude.ai, Grok Bot, Codex, Cursor, MCP), plus:
 
-- **Threat model as code:** `ironheights threatmodel` checks every pull request against `ironheights.threatmodel.yml` ([docs](docs/threatmodel.md)).
+- **Threat model as code:** `ironheights threatmodel` checks every pull request against `ironheights.threatmodel.yml`, and reports each claim as passed, violated or untested ([docs](docs/threatmodel.md)).
 - **MCP server:** `ironheights mcp` lets any MCP client call `check_skill` before installing a skill ([docs](docs/mcp.md)).
-- **Drift guard:** `ironheights drift` flags a skill or MCP tool that changes after you approved it ([docs](docs/drift.md)).
-- **Posture report:** `ironheights report` covers grades, drift, threat-model coverage and the OWASP LLM Top 10 across a repo or org ([docs](docs/report.md)).
+- **Drift guard:** `ironheights drift` flags a skill or MCP tool that changes after you approved it, including config keys that were added or restrictions that were loosened ([docs](docs/drift.md)).
+- **Posture report:** `ironheights report` covers worst reach, grades, a config hash, drift, threat-model coverage and the OWASP LLM Top 10 across a repo or org ([docs](docs/report.md)).
 
 Website: [www.ironheights.dev](https://www.ironheights.dev)
 
@@ -54,11 +54,11 @@ node dist/cli/index.js scan test/fixtures/benign
 
 ## Drift watch (rug-pull detection)
 
-`ironheights drift approve <skills>` records what you reviewed; `ironheights drift check` (or `watch`) flags any later change: file hashes, the SKILL.md description, new URL hosts, new credential paths, MCP server entries and MCP tool descriptions. Local only, no telemetry. See [docs/drift.md](docs/drift.md).
+`ironheights drift approve <skills>` records what you reviewed; `ironheights drift check` (or `watch`) flags any later change: file hashes, the SKILL.md description, new URL hosts, new credential paths, MCP server entries, MCP tool descriptions, and config-key drift (a new key, a removed restriction, or a restriction whose value got looser). Local only, no telemetry. See [docs/drift.md](docs/drift.md).
 
 ## Posture report
 
-`ironheights report <repo-or-org-folder> --html posture.html` lists every installed skill with its grade, threat-model coverage, drift since approval and an OWASP LLM Top 10 mapping, with a trend over runs (`--history`). See [docs/report.md](docs/report.md).
+`ironheights report <repo-or-org-folder> --html posture.html` lists every installed skill with its worst reach, grade, config hash, threat-model coverage, drift since approval and an OWASP LLM Top 10 mapping, with a trend over runs (`--history`). A skill whose config hash changed since the last history line is marked regraded. See [docs/report.md](docs/report.md).
 
 ## MCP server
 
@@ -66,7 +66,7 @@ node dist/cli/index.js scan test/fixtures/benign
 
 ## Threat model as code (checked on every PR)
 
-Keep an `ironheights.threatmodel.yml` in your repo that lists the skills and MCP servers your agent trusts and what each may touch: network hosts, filesystem paths, environment variables, tokens, shell and a minimum grade. `ironheights threatmodel init` writes the first version from what is installed, `threatmodel check` fails on anything outside it, and `threatmodel diff --base origin/main` reports only what a pull request adds. The GitHub Action (`mode: threatmodel` or `both`) posts one summary comment per PR. Local only. See [docs/threatmodel.md](docs/threatmodel.md) and [examples/threatmodel](examples/threatmodel).
+Keep an `ironheights.threatmodel.yml` in your repo that lists the skills and MCP servers your agent trusts and what each may touch: network hosts, filesystem paths, environment variables, tokens, shell and a minimum grade. `ironheights threatmodel init` writes the first version from what is installed, `threatmodel check` fails on anything outside it, and `threatmodel diff --base origin/main` reports only what a pull request adds. Each claim is `passed`, `violated` or `untested` (a check that matched nothing is not a pass). Capabilities the model never names are listed as uncovered, with a suggested claim; they fail the check only with `--fail-on-uncovered` or `defaults.uncovered: fail`. A built-in `remote-instructions` claim reuses `IH-INJ-004`. The GitHub Action (`mode: threatmodel` or `both`) posts one summary comment per PR. Local only. See [docs/threatmodel.md](docs/threatmodel.md) and [examples/threatmodel](examples/threatmodel).
 
 ## 60-second quickstart
 

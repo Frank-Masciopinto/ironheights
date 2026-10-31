@@ -20,6 +20,8 @@ defaults:
   unknownSkill: deny # deny (high, exit 2) or warn (medium, exit 1)
   unknownMcpServer: deny
   minGrade: B # optional default for every skill
+  uncovered: report # report (default) or fail. fail exits 2 on a capability the model never names
+  remoteInstructions: report # report (info), warn (medium) or deny (high). See below.
 skills:
   weather:
     path: skills/weather
@@ -31,7 +33,8 @@ skills:
     tokens: [WEATHER_API_KEY] # secret-shaped names (KEY, TOKEN, SECRET, ...)
     shell: false # child processes, subprocess, bash blocks
     minGrade: A # Ironheights scan grade A-F
-    dataBoundaries: [no-user-data-egress] # free-form labels for reviewers
+    dataBoundaries: [no-user-data-egress] # free-form labels for reviewers; not enforced
+    # remoteInstructions: true # allow the built-in remote-instructions claim for this skill
 mcpServers:
   github:
     command: npx
@@ -39,29 +42,79 @@ mcpServers:
     env: [GITHUB_PERSONAL_ACCESS_TOKEN]
 ```
 
-`dataBoundaries`, `purpose` and `owner` are documentation for reviewers; they are not enforced.
-Everything else is.
+`dataBoundaries`, `purpose` and `owner` are documentation for reviewers. They show up in the
+claims list as `unenforced` and cannot fail the check. Everything else is a claim that can pass,
+fail, or come back `untested`.
 
 ## What is checked
 
 For each skill folder, Ironheights reads every text file (no execution) and profiles:
 
-| Capability         | How it is detected                                                                                                      | Violation             | Severity                    |
-| ------------------ | ----------------------------------------------------------------------------------------------------------------------- | --------------------- | --------------------------- |
-| Network            | URL hosts (`https://`, `wss://`, `ftp://`)                                                                              | `host-not-allowed`    | high                        |
-| Filesystem         | `~/...`, `$HOME/...`, `/etc`, `/var`, `/home`, `/Users`, `/root`, `/tmp`, `/proc` ... and known credential paths        | `path-not-allowed`    | high                        |
-| Secrets            | env names containing KEY, TOKEN, SECRET, PASSWORD, PRIVATE, AUTH, CREDENTIAL, COOKIE, SESSION                           | `token-not-allowed`   | high                        |
-| Environment        | `process.env.X`, `os.environ["X"]`, `os.getenv`, `Deno.env.get`, `$X`, `${X}` (common names like HOME and PATH ignored) | `env-not-allowed`     | medium                      |
-| Shell              | `child_process`, `execSync`, `subprocess.*`, `os.system`, `Bun.spawn`, `Deno.Command`, bash code blocks, `curl \| sh`   | `shell-not-allowed`   | high                        |
-| Grade              | `ironheights scan` grade below `minGrade` (or incomplete)                                                               | `grade-below-minimum` | high                        |
-| Unknown skill      | skill folder not listed                                                                                                 | `unknown-skill`       | high (deny) / medium (warn) |
-| Missing skill      | listed but not present                                                                                                  | `skill-missing`       | info                        |
-| MCP server         | server name not listed                                                                                                  | `unknown-mcp-server`  | high (deny) / medium (warn) |
-| MCP command        | `command`, `args` or `url` differ from the model                                                                        | `mcp-command-changed` | high                        |
-| MCP env            | env key not listed                                                                                                      | `mcp-env-not-allowed` | high                        |
-| Drift (`--ledger`) | anything `ironheights drift check` reports                                                                              | `drift`               | as drift                    |
+| Capability           | How it is detected                                                                                                      | Violation              | Severity                    |
+| -------------------- | ----------------------------------------------------------------------------------------------------------------------- | ---------------------- | --------------------------- |
+| Network              | URL hosts (`https://`, `wss://`, `ftp://`)                                                                              | `host-not-allowed`     | high                        |
+| Filesystem           | `~/...`, `$HOME/...`, `/etc`, `/var`, `/home`, `/Users`, `/root`, `/tmp`, `/proc` ... and known credential paths        | `path-not-allowed`     | high                        |
+| Secrets              | env names containing KEY, TOKEN, SECRET, PASSWORD, PRIVATE, AUTH, CREDENTIAL, COOKIE, SESSION                           | `token-not-allowed`    | high                        |
+| Environment          | `process.env.X`, `os.environ["X"]`, `os.getenv`, `Deno.env.get`, `$X`, `${X}` (common names like HOME and PATH ignored) | `env-not-allowed`      | medium                      |
+| Shell                | `child_process`, `execSync`, `subprocess.*`, `os.system`, `Bun.spawn`, `Deno.Command`, bash code blocks, `curl \| sh`   | `shell-not-allowed`    | high                        |
+| Grade                | `ironheights scan` grade below `minGrade` (or incomplete)                                                               | `grade-below-minimum`  | high                        |
+| Unknown skill        | skill folder not listed                                                                                                 | `unknown-skill`        | high (deny) / medium (warn) |
+| Missing skill        | listed but not present                                                                                                  | `skill-missing`        | info                        |
+| MCP server           | server name not listed                                                                                                  | `unknown-mcp-server`   | high (deny) / medium (warn) |
+| MCP command          | `command`, `args` or `url` differ from the model                                                                        | `mcp-command-changed`  | high                        |
+| MCP env              | env key not listed                                                                                                      | `mcp-env-not-allowed`  | high                        |
+| Drift (`--ledger`)   | anything `ironheights drift check` reports                                                                              | `drift`                | as drift                    |
+| Remote instructions  | scanner finding `IH-INJ-004` (fetch a URL and follow it)                                                                | `remote-instructions`  | info, medium, or high       |
+| Uncovered capability | a host, token, env var, MCP server or webhook no claim names (`--fail-on-uncovered` or `defaults.uncovered: fail`)      | `uncovered-capability` | high                        |
 
 Exit codes: `0` inside the model, `1` review (medium only), `2` out-of-model change, `64` usage.
+An `untested` claim and an uncovered capability in `report` mode do not change the exit code.
+
+## Claims
+
+`check` and `diff` add a `claims` array. One claim is one allow-list on one skill or MCP server:
+`network`, `filesystem`, `env`, `tokens`, `shell`, `minGrade`, and for an MCP server
+`command/args/url`, `env` and `tools`.
+
+| Status     | Meaning                                                                                                                                                 |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `passed`   | Every observed row is on the allow-list. `detail` is the distribution, for example `3 hosts in diff, 3 on allowlist` or `2 vars referenced, 2 allowed`. |
+| `violated` | At least one row contradicts the claim.                                                                                                                 |
+| `untested` | The claim matched zero rows. A skill that names no hosts, or a diff that adds none, is untested. A check that cannot fire is not a pass.                |
+
+Each claim has `enforcement` (where it is checked: network is egress/allowlist in diff, tokens are
+secret reads, filesystem is a workspace write). A free-text claim such as `dataBoundaries` or
+`purpose` is `unenforced`. MCP `tools` is unenforced too: the config does not list the calls a
+skill will make. Untested and unenforced claims are information. They do not change the exit code.
+
+## Uncovered capabilities
+
+A capability is uncovered when no claim in the model mentions it. That is different from a
+violation, which contradicts a claim that does exist. `check` and `diff --base` list them as
+`uncovered`: `{ target, kind, value, file?, suggestedClaim }`. `kind` is `host`, `token`, `env`,
+`mcp-server` or `webhook` (a `hooks.slack.com` URL, a `discord.com/api/webhooks` URL, or any URL
+whose host or path contains `webhook`). `suggestedClaim` is one YAML line, for example
+`skills.foo.network: [api.example.com]`.
+
+The text report and the `--markdown` comment have "Uncovered capabilities" and "Suggested claims"
+sections. By default this is a report only. Opt in to a failure with `--fail-on-uncovered` or
+`defaults.uncovered: fail`. Each uncovered value then becomes a high `uncovered-capability`
+violation (exit 2), unless a violation already names that same value. The Action input
+`threatmodel-fail-on-uncovered` (`false` by default) passes the flag.
+
+## Remote instructions
+
+A hash of `SKILL.md` pins the file on disk. It does not pin a page the file tells the agent to
+fetch and follow. The built-in `remote-instructions` claim reuses scanner finding `IH-INJ-004` on
+each skill. When the finding is present and the skill does not set `remoteInstructions: true`:
+
+| `defaults.remoteInstructions` | Claim      | Violation severity | Exit code                          |
+| ----------------------------- | ---------- | ------------------ | ---------------------------------- |
+| `report` (default)            | `violated` | info               | unchanged                          |
+| `warn`                        | `violated` | medium             | 1, unless something else is higher |
+| `deny`                        | `violated` | high               | 2                                  |
+
+`remoteInstructions: true` on that skill allows the finding. The claim is `passed`.
 
 Detection is text-based and conservative. A skill can still build a host or variable name at run
 time; pair this with `ironheights scan`, `ironheights drift` and the runtime guard. See
@@ -110,6 +163,7 @@ jobs:
           mode: both # scan + threat model; or threatmodel
           # threatmodel-file: ironheights.threatmodel.yml
           # threatmodel-ledger: .ironheights/approvals.json
+          # threatmodel-fail-on-uncovered: 'true'
           # comment: 'false'
 ```
 

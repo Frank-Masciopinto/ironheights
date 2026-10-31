@@ -4,12 +4,17 @@ import { loadConfig, ironheightsHome } from '../../core/config.ts';
 import { UsageError } from '../../core/errors.ts';
 import { discoverSkillRoots } from '../../core/scanner.ts';
 import {
+  configKeyChanges,
+  diffConfigKeys,
   diffSkill,
+  driftDecision,
   exitCodeFor,
   readJsonItems,
   readLedger,
+  readMcpDriftItems,
   snapshotSkill,
   writeLedger,
+  type ConfigKeyChange,
   type DriftChange,
   type DriftReport,
 } from '../../drift/drift.ts';
@@ -49,12 +54,12 @@ function ledgerPath(flags: DriftFlags): string {
 }
 
 async function items(flags: DriftFlags): Promise<{
-  mcp: Array<[string, string]>;
+  mcp: Awaited<ReturnType<typeof readMcpDriftItems>>;
   tools: Array<[string, string]>;
 }> {
-  const mcp: Array<[string, string]> = [];
+  const mcp: Awaited<ReturnType<typeof readMcpDriftItems>> = [];
   const tools: Array<[string, string]> = [];
-  for (const f of flags.mcp ?? []) mcp.push(...(await readJsonItems(f, 'mcp')));
+  for (const f of flags.mcp ?? []) mcp.push(...(await readMcpDriftItems(f)));
   for (const f of flags.tools ?? []) tools.push(...(await readJsonItems(f, 'tools')));
   return { mcp, tools };
 }
@@ -103,12 +108,13 @@ async function approve(flags: DriftFlags, out: (l: string) => void): Promise<num
     count += 1;
   }
   const { mcp, tools } = await items(flags);
-  for (const [key, body] of mcp) {
-    ledger.mcpServers[key] = {
-      key,
-      source: key.split('#')[0] as string,
+  for (const item of mcp) {
+    ledger.mcpServers[item.key] = {
+      key: item.key,
+      source: item.key.split('#')[0] as string,
       approvedAt: now.toISOString(),
-      sha256: await sha256(body),
+      sha256: await sha256(item.body),
+      configKeys: item.configKeys,
     };
   }
   for (const [key, body] of tools) {
@@ -132,6 +138,7 @@ async function check(
 ): Promise<{ code: number; report: DriftReport }> {
   const ledger = await readLedger(ledgerPath(flags));
   const changes: DriftChange[] = [];
+  const configKeys: ConfigKeyChange[] = [];
   const current = await roots(flags);
   for (const root of current) {
     const now = await snapshotSkill(root);
@@ -146,6 +153,9 @@ async function check(
       continue;
     }
     changes.push(...diffSkill(before, now));
+    const keys = diffConfigKeys(now.root, before.configKeys, now.configKeys ?? {});
+    configKeys.push(...keys);
+    changes.push(...configKeyChanges(keys));
   }
   if (flags.paths.length === 0 && flags.all) {
     const live = new Set(
@@ -162,23 +172,28 @@ async function check(
     }
   }
   const { mcp, tools } = await items(flags);
-  for (const [key, body] of mcp) {
-    const rec = ledger.mcpServers[key];
-    const hash = await sha256(body);
+  for (const item of mcp) {
+    const rec = ledger.mcpServers[item.key];
+    const hash = await sha256(item.body);
     if (!rec)
       changes.push({
         kind: 'mcp-server-added',
         severity: 'medium',
-        target: key,
+        target: item.key,
         detail: 'MCP server not approved',
       });
     else if (rec.sha256 !== hash)
       changes.push({
         kind: 'mcp-server-changed',
         severity: 'high',
-        target: key,
+        target: item.key,
         detail: 'command, args, url or env changed since approval',
       });
+    if (rec) {
+      const keys = diffConfigKeys(item.key, rec.configKeys, item.configKeys);
+      configKeys.push(...keys);
+      changes.push(...configKeyChanges(keys));
+    }
   }
   for (const [key, body] of tools) {
     const rec = ledger.mcpTools[key];
@@ -198,7 +213,12 @@ async function check(
         detail: 'tool description or input schema changed since approval (possible rug pull)',
       });
   }
-  const report: DriftReport = { checkedAt: (flags.now ?? new Date()).toISOString(), changes };
+  const report: DriftReport = {
+    checkedAt: (flags.now ?? new Date()).toISOString(),
+    changes,
+    configKeys,
+    decision: driftDecision(changes),
+  };
   if (flags.json) out(JSON.stringify(report, null, 2));
   else if (changes.length === 0) out('no drift since approval');
   else for (const c of changes) out(line(c));

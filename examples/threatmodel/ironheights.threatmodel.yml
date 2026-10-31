@@ -11,6 +11,8 @@ mcpConfigs:
 defaults:
   unknownSkill: deny
   unknownMcpServer: deny
+  uncovered: report
+  remoteInstructions: report
 skills:
   weather:
     path: skills/weather
