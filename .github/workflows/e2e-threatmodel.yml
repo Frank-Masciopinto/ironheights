@@ -1,0 +1,19 @@
+name: e2e threat model (throwaway)
+on:
+  pull_request:
+    branches: [e2e/tm-base]
+permissions:
+  contents: read
+  pull-requests: write
+jobs:
+  threatmodel:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: Frank-Masciopinto/ironheights@v0.21.0
+        with:
+          version: '0.21.0'
+          mode: threatmodel
+          path: e2e-tm

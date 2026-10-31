@@ -1,0 +1,33 @@
+# Ironheights agent threat model. Checked on every PR by `ironheights threatmodel check`.
+# Each skill and MCP server lists what it may touch. Anything else fails the check.
+# Schema: https://www.ironheights.dev/api/v1/threatmodel.schema.json
+# Docs: https://www.ironheights.dev/docs/threatmodel/
+$schema: https://www.ironheights.dev/api/v1/threatmodel.schema.json
+version: 1
+skillDirs:
+  - skills
+mcpConfigs: []
+defaults:
+  unknownSkill: deny
+  unknownMcpServer: deny
+skills:
+  notes:
+    path: skills/notes
+    network: []
+    filesystem: []
+    env: []
+    tokens: []
+    shell: false
+    minGrade: A
+    dataBoundaries: []
+  weather:
+    path: skills/weather
+    network:
+      - api.open-meteo.com
+    filesystem: []
+    env: []
+    tokens: []
+    shell: false
+    minGrade: B
+    dataBoundaries: []
+mcpServers: {}
