@@ -11,6 +11,8 @@ mcpConfigs:
 defaults:
   unknownSkill: deny
   unknownMcpServer: deny
+  # uncovered and remoteInstructions default to report in 0.22.0.
+  # They are omitted here so the published 0.21.1 Action pin still parses this file.
 skills:
   weather:
     path: skills/weather
