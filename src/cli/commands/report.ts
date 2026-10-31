@@ -30,7 +30,10 @@ export async function runReport(flags: ReportFlags): Promise<number> {
   const config = await loadConfig({ ...(flags.config ? { explicitPath: flags.config } : {}), env });
   const err = flags.err ?? ((l: string) => process.stderr.write(l + '\n'));
   for (const t of flags.targets) {
-    const ok = await stat(resolve(t)).then((s) => s.isDirectory(), () => false);
+    const ok = await stat(resolve(t)).then(
+      (s) => s.isDirectory(),
+      () => false,
+    );
     if (!ok) {
       err(`ironheights report: target is not a directory: ${t}`);
       return 1;
@@ -53,6 +56,13 @@ export async function runReport(flags: ReportFlags): Promise<number> {
   else {
     const t = report.totals;
     out(`${report.title}: ${t.repos} repo(s), ${t.skills} skill(s), ${t.findings} finding(s)`);
+    for (const s of report.skills) {
+      const cfg = s.configHash.slice(0, 8);
+      out(
+        `${s.worstReach.label}  grade ${s.grade} @ cfg ${cfg}  ${s.repo}/${s.skill}${s.worstReach.rule ? `  ${s.worstReach.rule}` : ''}`,
+      );
+      if (s.regraded) out('config changed since last report; grade recomputed');
+    }
     out(
       `verdicts: block ${t.verdicts.block ?? 0}, review ${t.verdicts.review ?? 0}, incomplete ${t.verdicts.incomplete ?? 0}, no findings ${t.verdicts['no-findings'] ?? 0}`,
     );

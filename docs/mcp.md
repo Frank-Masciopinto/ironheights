@@ -12,13 +12,13 @@ a skill **before** installing it.
   "mcpServers": {
     "ironheights": {
       "command": "npx",
-      "args": ["-y", "ironheights@0.21.1", "mcp"]
+      "args": ["-y", "ironheights@0.22.0", "mcp"]
     }
   }
 }
 ```
 
-- Claude Code: `claude mcp add ironheights -- npx -y ironheights@0.21.1 mcp`
+- Claude Code: `claude mcp add ironheights -- npx -y ironheights@0.22.0 mcp`
 - Cursor: `~/.cursor/mcp.json` or `.cursor/mcp.json` with the block above.
 - VS Code: `.vscode/mcp.json` with `"servers"` instead of `"mcpServers"`.
 
@@ -27,12 +27,12 @@ to turn off the 6-hourly version check.
 
 ## Tools
 
-| Tool                | Input                                                                                                             | Returns                                                                                                                    | Network                                               |
-| ------------------- | ----------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
-| `check_skill`       | `path` (local folder) **or** `skill` (ClawHub `owner/slug[@version]` or a clawhub.ai URL), optional `maxFindings` | grade A-F, score, verdict, findings (rule, severity, file, line, fix, OWASP LLM id, rule page), drift status, plain advice | only for `skill` (clawhub.ai, as `ironheights fetch`) |
-| `drift_status`      | `paths[]`, optional `ledger`                                                                                      | per skill: approved?, changes since `ironheights drift approve`                                                            | none                                                  |
-| `threatmodel_check` | optional `dir`, `model`                                                                                           | violations against `ironheights.threatmodel.yml`                                                                           | none                                                  |
-| `get_rule`          | optional `id`                                                                                                     | rule details with OWASP / MITRE ATLAS / OpenCRE ids; all rules when omitted                                                | none                                                  |
+| Tool                | Input                                                                                                             | Returns                                                                                                                                                                  | Network                                               |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------- |
+| `check_skill`       | `path` (local folder) **or** `skill` (ClawHub `owner/slug[@version]` or a clawhub.ai URL), optional `maxFindings` | grade A-F, score, verdict, findings (rule, severity, file, line, fix, OWASP LLM id, rule page), drift status, plain advice                                               | only for `skill` (clawhub.ai, as `ironheights fetch`) |
+| `drift_status`      | `paths[]`, optional `ledger`                                                                                      | per skill: approved?, changes since `ironheights drift approve`; `configKeys` for added keys and loosened or removed restrictions; `decision` of `block`, `warn` or `ok` | none                                                  |
+| `threatmodel_check` | optional `dir`, `model`                                                                                           | violations against `ironheights.threatmodel.yml`                                                                                                                         | none                                                  |
+| `get_rule`          | optional `id`                                                                                                     | rule details with OWASP / MITRE ATLAS / OpenCRE ids; all rules when omitted                                                                                              | none                                                  |
 
 All tools are read-only (`readOnlyHint`). A downloaded ClawHub skill is staged in a temp folder,
 scanned without running anything, and deleted. The server never installs, approves or edits

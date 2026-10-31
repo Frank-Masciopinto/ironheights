@@ -13,7 +13,16 @@ import { loadConfig, ironheightsHome } from '../core/config.ts';
 import { IronheightsError } from '../core/errors.ts';
 import { gradeFromSkills } from '../core/grade.ts';
 import { scanPath } from '../core/scanner.ts';
-import { diffSkill, readLedger, snapshotSkill } from '../drift/drift.ts';
+import {
+  configKeyChanges,
+  diffConfigKeys,
+  diffSkill,
+  driftDecision,
+  readLedger,
+  snapshotSkill,
+  type ConfigKeyChange,
+  type DriftChange,
+} from '../drift/drift.ts';
 import { downloadSkill, parseSkillRef } from '../net/clawhub.ts';
 import { referencesFor, rulePageUrl } from '../rules/references.ts';
 import { allRules, ruleById } from '../rules/index.ts';
@@ -57,7 +66,7 @@ export const TOOLS = [
     name: 'drift_status',
     title: 'Has a skill changed since it was approved?',
     description:
-      'Compare local skill folders with the Ironheights approval ledger (from `ironheights drift approve`) and list changes since approval: files, SKILL.md description, new hosts, new credential paths. Read-only, local.',
+      'Compare local skill folders with the Ironheights approval ledger (from `ironheights drift approve`) and list changes since approval: files, SKILL.md description, new hosts, new credential paths, and config-key drift (added keys, removed or loosened restrictions). Read-only, local.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -100,20 +109,37 @@ function text(value: unknown, isError = false): Record<string, unknown> {
   };
 }
 
-async function ledgerChanges(roots: string[], ledgerPath: string) {
+async function ledgerChanges(
+  roots: string[],
+  ledgerPath: string,
+): Promise<{
+  skills: Array<{ skill: string; approved: boolean; changes: DriftChange[] }>;
+  configKeys: ConfigKeyChange[];
+  decision: ReturnType<typeof driftDecision>;
+}> {
   const ledger = await readLedger(ledgerPath);
-  const out: Array<{ skill: string; approved: boolean; changes: ReturnType<typeof diffSkill> }> =
-    [];
+  const skills: Array<{ skill: string; approved: boolean; changes: DriftChange[] }> = [];
+  const configKeys: ConfigKeyChange[] = [];
+  const changes: DriftChange[] = [];
   for (const r of roots) {
     const now = await snapshotSkill(r);
     const before = ledger.skills[now.root];
-    out.push({
-      skill: now.root,
-      approved: Boolean(before),
-      changes: before ? diffSkill(before, now) : [],
-    });
+    const skillChanges = before ? diffSkill(before, now) : [];
+    const keys = before ? diffConfigKeys(now.root, before.configKeys, now.configKeys ?? {}) : [];
+    configKeys.push(...keys);
+    const withKeys = [...skillChanges, ...configKeyChanges(keys)];
+    if (!before) {
+      withKeys.push({
+        kind: 'skill-unapproved',
+        severity: 'medium',
+        target: now.root,
+        detail: 'not in the approval ledger',
+      });
+    }
+    changes.push(...withKeys);
+    skills.push({ skill: now.root, approved: Boolean(before), changes: withKeys });
   }
-  return out;
+  return { skills, configKeys, decision: driftDecision(changes) };
 }
 
 export async function callTool(
@@ -166,7 +192,7 @@ export async function callTool(
               result.skills.map((s) => s.root),
               defaultLedger,
             )
-          : [];
+          : { skills: [], configKeys: [], decision: 'ok' as const };
         return text({
           tool: `${TOOL_NAME} ${TOOL_VERSION}`,
           target: skill ?? dir,
@@ -180,7 +206,11 @@ export async function callTool(
           })),
           findingCount: findings.length,
           findings: findings.slice(0, max),
-          drift: drift.map((d) => ({ skill: d.skill, approved: d.approved, changes: d.changes })),
+          drift: drift.skills.map((d) => ({
+            skill: d.skill,
+            approved: d.approved,
+            changes: d.changes,
+          })),
           advice:
             result.verdict === 'block'
               ? 'Do not install or follow this skill unless the user explicitly confirms.'
@@ -204,12 +234,15 @@ export async function callTool(
       const paths = Array.isArray(args.paths) ? args.paths.map(String) : [];
       if (!paths.length) return text({ error: 'paths is required' }, true);
       const ledger = typeof args.ledger === 'string' ? resolve(args.ledger) : defaultLedger;
+      const status = await ledgerChanges(
+        paths.map((p) => resolve(p)),
+        ledger,
+      );
       return text({
         ledger,
-        skills: await ledgerChanges(
-          paths.map((p) => resolve(p)),
-          ledger,
-        ),
+        skills: status.skills,
+        configKeys: status.configKeys,
+        decision: status.decision,
       });
     }
     if (name === 'threatmodel_check') {

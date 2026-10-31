@@ -9,6 +9,12 @@ import { gradeFromSkills } from '../../core/grade.ts';
 import { discoverSkillRoots, scanSkill } from '../../core/scanner.ts';
 import { diffSkill, readLedger, snapshotSkill } from '../../drift/drift.ts';
 import {
+  assessClaims,
+  claimViolations,
+  type ClaimResult,
+  type UncoveredCapability,
+} from '../../threatmodel/claims.ts';
+import {
   MODEL_FILE,
   evaluate,
   exitCodeFor,
@@ -38,6 +44,8 @@ export interface ThreatModelFlags {
   base?: string;
   ledger?: string;
   noGrade?: boolean;
+  /** Exit 2 when a capability is not mentioned anywhere in the model. */
+  failOnUncovered?: boolean;
   force?: boolean;
   json?: boolean;
   markdown?: string;
@@ -58,6 +66,10 @@ export interface ThreatModelReport {
   violations: Violation[];
   /** Only for diff: violations that exist at head but not at base. */
   introduced?: Violation[];
+  /** Per-claim results. Untested claims do not change the exit code. */
+  claims?: ClaimResult[];
+  /** Capabilities no claim mentions. Informational unless failing is opted in. */
+  uncovered?: UncoveredCapability[];
   exitCode: number;
 }
 
@@ -83,18 +95,15 @@ async function collect(
     if (await exists(abs)) for (const r of await discoverSkillRoots(abs)) roots.add(r);
   }
   const profiles: SkillProfile[] = [];
-  const config = grade
-    ? await loadConfig({
-        ...(flags.config ? { explicitPath: flags.config } : {}),
-        env: flags.env ?? process.env,
-      })
-    : undefined;
+  const config = await loadConfig({
+    ...(flags.config ? { explicitPath: flags.config } : {}),
+    env: flags.env ?? process.env,
+  });
   for (const r of [...roots].sort()) {
     const p = await profileSkill(r, base);
-    if (config) {
-      const report = await scanSkill(r, config);
-      p.grade = gradeFromSkills([report]).letter;
-    }
+    const report = await scanSkill(r, config);
+    if (grade) p.grade = gradeFromSkills([report]).letter;
+    p.remoteInstructionsHit = report.findings.some((f) => f.ruleId === 'IH-INJ-004');
     profiles.push(p);
   }
   const mcp: McpServerDef[] = [];
@@ -110,7 +119,13 @@ async function checkAt(
   model: ThreatModel,
   modelFile: string,
   flags: ThreatModelFlags,
-): Promise<{ violations: Violation[]; skills: number; mcp: number }> {
+): Promise<{
+  violations: Violation[];
+  skills: number;
+  mcp: number;
+  profiles: SkillProfile[];
+  mcpServers: McpServerDef[];
+}> {
   const { profiles, mcp } = await collect(
     base,
     flags.skillDirs?.length ? flags.skillDirs : model.skillDirs,
@@ -134,7 +149,35 @@ async function checkAt(
         });
     }
   }
-  return { violations, skills: profiles.length, mcp: mcp.length };
+  return { violations, skills: profiles.length, mcp: mcp.length, profiles, mcpServers: mcp };
+}
+
+function withClaims(
+  model: ThreatModel,
+  flags: ThreatModelFlags,
+  head: { violations: Violation[]; profiles: SkillProfile[]; mcpServers: McpServerDef[] },
+  base: { profiles: SkillProfile[]; mcpServers: McpServerDef[] } | undefined,
+  diff: boolean,
+): { violations: Violation[]; claims: ClaimResult[]; uncovered: UncoveredCapability[] } {
+  const assessed = assessClaims({
+    model,
+    profiles: head.profiles,
+    mcp: head.mcpServers,
+    ...(base ? { baseProfiles: base.profiles, baseMcp: base.mcpServers } : {}),
+    diff,
+  });
+  const extra = claimViolations({
+    model,
+    claims: assessed.claims,
+    uncovered: assessed.uncovered,
+    existing: head.violations,
+    failOnUncovered: Boolean(flags.failOnUncovered),
+  });
+  return {
+    violations: [...head.violations, ...extra],
+    claims: assessed.claims,
+    uncovered: assessed.uncovered,
+  };
 }
 
 export async function runThreatModel(flags: ThreatModelFlags): Promise<number> {
@@ -147,6 +190,7 @@ export async function runThreatModel(flags: ThreatModelFlags): Promise<number> {
   if (action === 'check') {
     const model = await loadModel(modelPath);
     const r = await checkAt(dir, model, modelFile, flags);
+    const assessed = withClaims(model, flags, r, undefined, false);
     return emit(flags, out, {
       tool: TOOL_NAME,
       version: TOOL_VERSION,
@@ -154,8 +198,10 @@ export async function runThreatModel(flags: ThreatModelFlags): Promise<number> {
       checkedAt: new Date().toISOString(),
       skills: r.skills,
       mcpServers: r.mcp,
-      violations: r.violations,
-      exitCode: exitCodeFor(r.violations),
+      violations: assessed.violations,
+      claims: assessed.claims,
+      uncovered: assessed.uncovered,
+      exitCode: exitCodeFor(assessed.violations),
     });
   }
   if (action === 'diff') return diff(flags, dir, modelPath, modelFile, out);
@@ -213,7 +259,9 @@ async function diff(
   const headModel = await loadModel(modelPath);
   const head = await checkAt(dir, headModel, modelFile, flags);
   const tmp = await mkdtemp(join(tmpdir(), 'ih-tm-base-'));
-  let baseViolations: Violation[] = [];
+  let baseSnapshot:
+    | { violations: Violation[]; profiles: SkillProfile[]; mcpServers: McpServerDef[] }
+    | undefined;
   let modelChanges: Violation[] = [];
   try {
     // --show-prefix avoids comparing long and short (8.3) temp paths on Windows.
@@ -235,9 +283,13 @@ async function diff(
         `${flags.base}:${modelFile}`,
       );
       // Base skills measured against the head model, so a widened model does not hide anything.
-      baseViolations = (
-        await checkAt(baseDir, headModel, modelFile, { ...flags, ledger: undefined })
-      ).violations;
+      const base = await checkAt(baseDir, headModel, modelFile, { ...flags, ledger: undefined });
+      const baseAssessed = withClaims(headModel, flags, base, undefined, false);
+      baseSnapshot = {
+        violations: baseAssessed.violations,
+        profiles: base.profiles,
+        mcpServers: base.mcpServers,
+      };
       modelChanges = widened(baseModel, headModel, modelFile);
     } else {
       modelChanges = [
@@ -258,10 +310,11 @@ async function diff(
   } finally {
     await rm(tmp, { recursive: true, force: true });
   }
+  const headAssessed = withClaims(headModel, flags, head, baseSnapshot, true);
   const key = (v: Violation): string => `${v.kind}|${v.target}|${v.detail}`;
-  const before = new Set(baseViolations.map(key));
-  const introduced = head.violations.filter((v) => !before.has(key(v)));
-  const violations = [...head.violations, ...modelChanges];
+  const before = new Set((baseSnapshot?.violations ?? []).map(key));
+  const introduced = headAssessed.violations.filter((v) => !before.has(key(v)));
+  const violations = [...headAssessed.violations, ...modelChanges];
   return emit(flags, out, {
     tool: TOOL_NAME,
     version: TOOL_VERSION,
@@ -272,6 +325,8 @@ async function diff(
     mcpServers: head.mcp,
     violations,
     introduced: [...introduced, ...modelChanges],
+    claims: headAssessed.claims,
+    uncovered: headAssessed.uncovered,
     exitCode: exitCodeFor(introduced),
   });
 }
@@ -292,8 +347,30 @@ async function emit(
       );
     for (const v of list)
       out(`${v.severity.toUpperCase().padEnd(6)} ${v.kind}  ${v.target}  ${v.detail}`);
+    outClaims(out, r);
   }
   return r.exitCode;
+}
+
+function outClaims(out: (l: string) => void, r: ThreatModelReport): void {
+  const claims = r.claims ?? [];
+  if (claims.length) {
+    const count = (status: ClaimResult['status']): number =>
+      claims.filter((c) => c.status === status).length;
+    out(
+      `Claims: ${count('passed')} passed, ${count('violated')} violated, ${count('untested')} untested`,
+    );
+    for (const c of claims) {
+      const flag = c.unenforced ? ' unenforced' : '';
+      out(`  ${c.status.padEnd(9)} ${c.claim}  ${c.target}  ${c.detail}${flag}`);
+    }
+  }
+  const uncovered = r.uncovered ?? [];
+  if (!uncovered.length) return;
+  out('Uncovered capabilities');
+  for (const u of uncovered) out(`  ${u.kind}  ${u.target}  ${u.value}`);
+  out('Suggested claims');
+  for (const u of uncovered) out(`  ${u.suggestedClaim}`);
 }
 
 export const COMMENT_MARKER = '<!-- ironheights-threatmodel -->';
@@ -326,6 +403,39 @@ export function renderMarkdown(r: ThreatModelReport): string {
   if (info.length)
     lines.push('**Model changes and notes** (a reviewer should approve these)', '', ...table(info));
   if (!list.length) lines.push('No skill or MCP server reaches outside the model.', '');
+  if (r.claims?.length) {
+    const count = (status: ClaimResult['status']): number =>
+      r.claims?.filter((c) => c.status === status).length ?? 0;
+    lines.push(
+      '**Claims**',
+      '',
+      `${count('passed')} passed, ${count('violated')} violated, ${count('untested')} untested. Untested matched zero rows and does not change the exit code.`,
+      '',
+      '| Target | Claim | Status | Distribution |',
+      '| --- | --- | --- | --- |',
+      ...r.claims.map(
+        (c) =>
+          `| ${esc(c.target)} | \`${c.claim}\` | ${c.status}${c.unenforced ? ' (unenforced)' : ''} | ${esc(c.detail)} |`,
+      ),
+      '',
+    );
+  }
+  if (r.uncovered?.length) {
+    lines.push(
+      '**Uncovered capabilities**',
+      '',
+      '| Target | Kind | Value | Suggested claim |',
+      '| --- | --- | --- | --- |',
+      ...r.uncovered.map(
+        (u) => `| ${esc(u.target)} | ${u.kind} | ${esc(u.value)} | \`${esc(u.suggestedClaim)}\` |`,
+      ),
+      '',
+      '**Suggested claims**',
+      '',
+      ...r.uncovered.map((u) => `- \`${u.suggestedClaim}\``),
+      '',
+    );
+  }
   lines.push(
     `Fix: remove the access, or widen \`${r.modelFile}\` in this PR so a reviewer approves it. Docs: https://www.ironheights.dev/docs/threatmodel/`,
     '',

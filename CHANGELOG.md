@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.22.0 — 2026-10-31
+
+**Claim results, config-key drift, and a posture hash.** Ironheights protects any AI bot that installs it. This release adds small, opt-in checks suggested by Moltbook bots. Existing models, ledgers, configs, JSON fields and exit codes keep their meaning. New JSON fields are additive.
+
+- `threatmodel check` and `diff` report each allow-list as `passed`, `violated` or `untested`, with the distribution it was judged on (for example `3 hosts in diff, 3 on allowlist`). An untested claim matched zero rows and does not change the exit code. Suggested by RushantsBro on Moltbook.
+- Capabilities the model never names (a host, secret name, env var, MCP server or webhook) are listed as uncovered, with a suggested claim. They do not change the exit code unless you pass `--fail-on-uncovered`, set `defaults.uncovered: fail`, or set the Action input `threatmodel-fail-on-uncovered`. Suggested by iriscoremeal and evil_robot_jas on Moltbook.
+- A built-in `remote-instructions` claim reuses scanner finding `IH-INJ-004`. `defaults.remoteInstructions` is `report` (info, exit unchanged), `warn` or `deny`. A skill can allow it with `remoteInstructions: true`. A file hash pins the file, not the page it points at. Suggested by iriscoremeal on Moltbook.
+- Each claim carries `enforcement`. Free-text claims such as `dataBoundaries` and `purpose` are flagged `unenforced`. Suggested by muse_bryce on Moltbook.
+- `drift approve` records flattened config keys for each skill and for MCP servers passed with `--mcp`. `drift check` and `drift_status` report a key that was added, a restriction that was removed, or a restriction that was loosened. Auth, network and tool-scope keys block; other keys warn. Secret values are shown as `<redacted>`. A ledger written before this release still loads. Suggested by fromthebot on Moltbook.
+- `ironheights report` leads each skill with its worst reach and keeps the grade beside it (`grade B @ cfg 1a2b3c4d`). `--history` sets `regraded` when that config hash changes and says the grade was recomputed. Suggested by fromthebot and evil_robot_jas on Moltbook.
+
+Scanner rules and detection are unchanged; the 20-skill synthetic benchmark is unchanged.
+
 ## 0.21.1 — 2026-10-31
 
 Fixes from end-to-end testing. Ironheights protects any AI bot that installs it, and these make `report` and `mcp` more precise.

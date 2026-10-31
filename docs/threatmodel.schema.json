@@ -29,7 +29,9 @@
     "defaults": {
       "default": {
         "unknownSkill": "deny",
-        "unknownMcpServer": "deny"
+        "unknownMcpServer": "deny",
+        "uncovered": "report",
+        "remoteInstructions": "report"
       },
       "type": "object",
       "properties": {
@@ -46,6 +48,16 @@
         "minGrade": {
           "type": "string",
           "enum": ["A", "B", "C", "D", "F"]
+        },
+        "uncovered": {
+          "default": "report",
+          "type": "string",
+          "enum": ["report", "fail"]
+        },
+        "remoteInstructions": {
+          "default": "report",
+          "type": "string",
+          "enum": ["report", "warn", "deny"]
         }
       },
       "additionalProperties": false
@@ -112,6 +124,9 @@
             "items": {
               "type": "string"
             }
+          },
+          "remoteInstructions": {
+            "type": "boolean"
           }
         },
         "required": ["path"],

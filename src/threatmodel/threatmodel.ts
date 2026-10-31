@@ -32,6 +32,8 @@ const SkillEntry = z
     shell: z.boolean().default(false),
     minGrade: z.enum(GRADES).optional(),
     dataBoundaries: z.array(z.string()).default([]),
+    /** When true, the built-in remote-instructions claim allows IH-INJ-004. */
+    remoteInstructions: z.boolean().optional(),
   })
   .strict();
 
@@ -58,9 +60,21 @@ export const ThreatModelSchema = z
         unknownSkill: z.enum(['deny', 'warn']).default('deny'),
         unknownMcpServer: z.enum(['deny', 'warn']).default('deny'),
         minGrade: z.enum(GRADES).optional(),
+        /** `report` lists uncovered capabilities; `fail` makes them high violations. */
+        uncovered: z.enum(['report', 'fail']).default('report'),
+        /**
+         * Built-in remote-instructions claim (IH-INJ-004).
+         * `report` is info (exit unchanged), `warn` is medium, `deny` is high.
+         */
+        remoteInstructions: z.enum(['report', 'warn', 'deny']).default('report'),
       })
       .strict()
-      .default({ unknownSkill: 'deny', unknownMcpServer: 'deny' }),
+      .default({
+        unknownSkill: 'deny',
+        unknownMcpServer: 'deny',
+        uncovered: 'report',
+        remoteInstructions: 'report',
+      }),
     skills: z.record(z.string(), SkillEntry).default({}),
     mcpServers: z.record(z.string(), McpEntry).default({}),
   })
@@ -83,7 +97,9 @@ export type ViolationKind =
   | 'mcp-env-not-allowed'
   | 'mcp-tool-not-allowed'
   | 'drift'
-  | 'model-widened';
+  | 'model-widened'
+  | 'uncovered-capability'
+  | 'remote-instructions';
 
 export interface Violation {
   kind: ViolationKind;
@@ -103,7 +119,11 @@ export interface SkillProfile {
   env: string[];
   tokens: string[];
   shell: boolean;
+  /** Webhook-shaped URL host/path values named in the skill text. */
+  webhooks: string[];
   grade?: Letter | 'incomplete' | 'nothing-scanned';
+  /** Set when the skill scan reports IH-INJ-004. */
+  remoteInstructionsHit?: boolean;
 }
 
 export async function loadModel(path: string): Promise<ThreatModel> {
@@ -249,7 +269,34 @@ export async function profileSkill(root: string, base: string): Promise<SkillPro
     env: env.filter((n) => !isSecretName(n)),
     tokens: env.filter(isSecretName),
     shell: usesShell(all),
+    webhooks: extractWebhooks(all),
   };
+}
+
+const WEBHOOK_URL = /https?:\/\/[^\s)'"`<>]+/gi;
+
+/** Hosts and paths that look like a webhook: hooks.slack.com, discord.com/api/webhooks, or a webhook path. */
+export function extractWebhooks(text: string): string[] {
+  const out = new Set<string>();
+  for (const raw of text.matchAll(WEBHOOK_URL)) {
+    const cleaned = raw[0].replace(/[.,);]+$/, '');
+    let url: URL;
+    try {
+      url = new URL(cleaned);
+    } catch {
+      continue;
+    }
+    const host = url.hostname.toLowerCase();
+    const path = url.pathname.replace(/\/+$/, '') || '/';
+    const webhook =
+      host === 'hooks.slack.com' ||
+      ((host === 'discord.com' || host === 'discordapp.com') && path.includes('/api/webhooks')) ||
+      /webhook/i.test(host) ||
+      /\/webhooks?(?:\/|$)/i.test(path);
+    if (!webhook) continue;
+    out.add(path === '/' ? host : `${host}${path}`);
+  }
+  return [...out].sort();
 }
 
 export const toPosix = (p: string): string => p.split(sep).join('/');
@@ -463,6 +510,12 @@ export function widened(base: ThreatModel, head: ThreatModel, modelFile: string)
     add('defaults', 'unknownSkill deny -> warn');
   if (base.defaults.unknownMcpServer === 'deny' && head.defaults.unknownMcpServer === 'warn')
     add('defaults', 'unknownMcpServer deny -> warn');
+  const remoteRank = { deny: 0, warn: 1, report: 2 } as const;
+  const br = base.defaults.remoteInstructions;
+  const hr = head.defaults.remoteInstructions;
+  if (remoteRank[hr] > remoteRank[br]) add('defaults', `remoteInstructions ${br} -> ${hr}`);
+  if (base.defaults.uncovered === 'fail' && head.defaults.uncovered === 'report')
+    add('defaults', 'uncovered fail -> report');
   return v;
 }
 
@@ -510,7 +563,12 @@ export function modelFromProfiles(
     ...(opts.name ? { name: opts.name } : {}),
     skillDirs: opts.skillDirs,
     mcpConfigs: opts.mcpConfigs,
-    defaults: { unknownSkill: 'deny', unknownMcpServer: 'deny' },
+    defaults: {
+      unknownSkill: 'deny',
+      unknownMcpServer: 'deny',
+      uncovered: 'report',
+      remoteInstructions: 'report',
+    },
     skills,
     mcpServers,
   };

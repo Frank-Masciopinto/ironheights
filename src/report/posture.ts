@@ -11,17 +11,24 @@ import { basename, join, relative, resolve } from 'node:path';
 
 import { gradeFromSkills } from '../core/grade.ts';
 import { discoverSkillRoots, scanSkill } from '../core/scanner.ts';
-import type { ResolvedConfig, Severity, Verdict } from '../core/types.ts';
+import type { Finding, ResolvedConfig, Severity, Verdict } from '../core/types.ts';
+import { collectConfigKeys, fingerprintConfig } from '../drift/config-keys.ts';
 import { diffSkill, readLedger, snapshotSkill, type DriftChange } from '../drift/drift.ts';
+import { isCredentialPath } from '../guard/signals.ts';
+import { redactSecrets } from '../guard/redact.ts';
 import { escapeHtml } from '../cli/output/html.ts';
 import { referencesFor, rulePageUrl } from '../rules/references.ts';
 import {
   MODEL_FILE,
   evaluate,
+  hostAllowed,
   loadModel,
   profileSkill,
   readMcpServers,
   toPosix,
+  type McpServerDef,
+  type SkillEntryT,
+  type SkillProfile,
   type Violation,
 } from '../threatmodel/threatmodel.ts';
 import { TOOL_NAME, TOOL_VERSION } from '../version.ts';
@@ -41,11 +48,60 @@ export const OWASP_LLM_2025: Record<string, string> = {
 
 const SKILL_DIR_GUESSES = ['skills', '.claude/skills', '.cursor/skills', '.agents/skills', 'skill'];
 
+export type ReachLevel =
+  | 'exec'
+  | 'secrets'
+  | 'undeclared-network'
+  | 'outside-write'
+  | 'declared-network'
+  | 'read-only';
+
+export interface WorstReach {
+  level: ReachLevel;
+  label: string;
+  rule?: string;
+  evidence?: string;
+}
+
+const REACH_ORDER: Record<ReachLevel, number> = {
+  exec: 0,
+  secrets: 1,
+  'undeclared-network': 2,
+  'outside-write': 3,
+  'declared-network': 4,
+  'read-only': 5,
+};
+
+const REACH_LABEL: Record<ReachLevel, string> = {
+  exec: 'exec or credential read',
+  secrets: 'secrets in env',
+  'undeclared-network': 'network egress to undeclared host',
+  'outside-write': 'writes outside workspace',
+  'declared-network': 'network to declared hosts',
+  'read-only': 'read-only',
+};
+
+const GRADE_ORDER: Record<string, number> = {
+  F: 0,
+  D: 1,
+  C: 2,
+  B: 3,
+  A: 4,
+  incomplete: 5,
+  'nothing-scanned': 6,
+};
+
 export interface SkillRow {
   repo: string;
   skill: string;
   path: string;
+  /** Highest-reach capability. The inventory is sorted by this, then grade. */
+  worstReach: WorstReach;
   grade: string;
+  /** sha256 of config inputs. Secret values are not part of the hash. */
+  configHash: string;
+  /** True when `--history` shows a different configHash for this skill. */
+  regraded?: true;
   score?: number;
   verdict: Verdict;
   findings: number;
@@ -59,6 +115,7 @@ export interface RepoRow {
   repo: string;
   path: string;
   skills: number;
+  configHash: string;
   threatModel: { present: boolean; covered: number; violations: number; high: number } | null;
 }
 
@@ -94,6 +151,8 @@ export interface HistoryPoint {
   review: number;
   threatModelCoverage: number | null;
   driftChanged: number;
+  /** Per-skill config hashes from this run, keyed by `repo/path`. */
+  configHashes?: Record<string, string>;
 }
 
 async function isDir(p: string): Promise<boolean> {
@@ -111,6 +170,80 @@ async function exists(p: string): Promise<boolean> {
   } catch {
     return false;
   }
+}
+
+function previousConfigHashes(history: HistoryPoint[]): Record<string, string> | undefined {
+  for (let i = history.length - 1; i >= 0; i -= 1) {
+    const hashes = history[i]?.configHashes;
+    if (hashes && typeof hashes === 'object') return hashes;
+  }
+  return undefined;
+}
+
+function clipEvidence(value: string | undefined): string | undefined {
+  if (!value) return undefined;
+  const clean = redactSecrets(value).replace(/\s+/g, ' ').trim();
+  return clean.length > 160 ? `${clean.slice(0, 157)}...` : clean;
+}
+
+function worstReach(
+  findings: readonly Finding[],
+  profile: SkillProfile,
+  entry: SkillEntryT | undefined,
+  hasModel: boolean,
+): WorstReach {
+  const hits: Array<{ level: ReachLevel; rule?: string; evidence?: string }> = [];
+  const add = (level: ReachLevel, rule?: string, evidence?: string): void => {
+    hits.push({
+      level,
+      ...(rule ? { rule } : {}),
+      ...(clipEvidence(evidence) ? { evidence: clipEvidence(evidence) } : {}),
+    });
+  };
+  if (profile.shell) add('exec', undefined, 'shell or child process');
+  for (const f of findings) {
+    if (/^IH-EXEC|^IH-PRIV/.test(f.ruleId) || f.ruleId === 'IH-CRED-001')
+      add('exec', f.ruleId, f.evidence);
+  }
+  for (const path of profile.paths) if (isCredentialPath(path)) add('exec', undefined, path);
+  if (profile.tokens.length) add('secrets', undefined, profile.tokens.join(', '));
+  for (const f of findings) {
+    if (/^IH-CRED-(?!001\b)/.test(f.ruleId)) add('secrets', f.ruleId, f.evidence);
+  }
+  for (const f of findings) {
+    if (f.ruleId === 'IH-NET-001' || f.ruleId === 'IH-NET-002')
+      add('undeclared-network', f.ruleId, f.evidence);
+  }
+  if (hasModel) {
+    for (const host of profile.hosts) {
+      if (!entry || !hostAllowed(host, entry.network)) add('undeclared-network', undefined, host);
+    }
+  }
+  for (const f of findings) {
+    if (f.ruleId === 'IH-FS-001') add('outside-write', f.ruleId, f.evidence);
+  }
+  for (const path of profile.paths)
+    if (!isCredentialPath(path)) add('outside-write', undefined, path);
+  if (profile.hosts.length) add('declared-network', undefined, profile.hosts.join(', '));
+  add('read-only');
+  hits.sort((a, b) => REACH_ORDER[a.level] - REACH_ORDER[b.level]);
+  const best = hits[0] as { level: ReachLevel; rule?: string; evidence?: string };
+  return {
+    level: best.level,
+    label: REACH_LABEL[best.level],
+    ...(best.rule ? { rule: best.rule } : {}),
+    ...(best.evidence ? { evidence: best.evidence } : {}),
+  };
+}
+
+function modelEntry(
+  skills: Record<string, SkillEntryT> | undefined,
+  key: string,
+): SkillEntryT | undefined {
+  if (!skills) return undefined;
+  return Object.values(skills).find(
+    (entry) => toPosix(entry.path).replace(/^\.\//, '').replace(/\/+$/, '') === key,
+  );
 }
 
 /** A target is a repository when it has a threat model or one of the usual skill folders. */
@@ -165,6 +298,7 @@ export async function buildReport(opts: BuildOptions): Promise<PostureReport> {
   const owasp = new Map<string, { findings: number; skills: Set<string>; rules: Set<string> }>();
   const multi = repos.length > 1;
   const base = multi ? resolve(repos[0] as string, '..') : (repos[0] ?? resolve('.'));
+  const prevHashes = previousConfigHashes(opts.history ?? []);
 
   for (const repo of repos) {
     const name = multi ? toPosix(relative(base, repo)) || basename(repo) : basename(repo);
@@ -177,6 +311,11 @@ export async function buildReport(opts: BuildOptions): Promise<PostureReport> {
       if (await isDir(abs)) for (const r of await discoverSkillRoots(abs)) roots.add(r);
     }
     const profiles = [];
+    const mcp: McpServerDef[] = [];
+    for (const f of model?.mcpConfigs ?? []) {
+      const abs = resolve(repo, f);
+      if (await exists(abs)) mcp.push(...(await readMcpServers(abs, repo)));
+    }
     const modelPaths = new Set(
       Object.values(model?.skills ?? {}).map((e) =>
         toPosix(e.path).replace(/^\.\//, '').replace(/\/+$/, ''),
@@ -207,6 +346,20 @@ export async function buildReport(opts: BuildOptions): Promise<PostureReport> {
           owasp.set(id, o);
         }
       }
+      const entry = modelEntry(model?.skills, profile.key);
+      const keys = await collectConfigKeys(root);
+      const mcpExtra = mcp
+        .filter(
+          (s) =>
+            s.name === profile.name ||
+            profile.hosts.some((h) => (s.url ?? '').toLowerCase().includes(h.toLowerCase())),
+        )
+        .map((s) => `mcp:${s.name}:${s.command ?? ''}:${s.url ?? ''}:env=${s.env.join(',')}`);
+      const configHash = fingerprintConfig(keys, [...profile.env, ...profile.tokens], mcpExtra);
+      const hashId = `${name}/${profile.key}`;
+      const regraded = Boolean(
+        prevHashes && hashId in prevHashes && prevHashes[hashId] !== configHash,
+      );
       let drift: SkillRow['drift'] = null;
       if (ledger) {
         const now = await snapshotSkill(root);
@@ -223,7 +376,10 @@ export async function buildReport(opts: BuildOptions): Promise<PostureReport> {
         repo: name,
         skill: report.skillName,
         path: profile.key,
+        worstReach: worstReach(report.findings, profile, entry, Boolean(model)),
         grade: grade.letter,
+        configHash,
+        ...(regraded ? { regraded: true as const } : {}),
         ...(grade.score !== undefined ? { score: grade.score } : {}),
         verdict: report.verdict,
         findings: report.findings.length,
@@ -238,11 +394,6 @@ export async function buildReport(opts: BuildOptions): Promise<PostureReport> {
     }
     let tm: RepoRow['threatModel'] = null;
     if (model) {
-      const mcp = [];
-      for (const f of model.mcpConfigs) {
-        const abs = resolve(repo, f);
-        if (await exists(abs)) mcp.push(...(await readMcpServers(abs, repo)));
-      }
       const v = evaluate({ model, base: repo, profiles, mcp, modelFile: MODEL_FILE });
       for (const x of v) violations.push({ ...x, repo: name });
       tm = {
@@ -252,8 +403,29 @@ export async function buildReport(opts: BuildOptions): Promise<PostureReport> {
         high: v.filter((x) => x.severity === 'high').length,
       };
     }
-    repoRows.push({ repo: name, path: repo, skills: profiles.length, threatModel: tm });
+    const mine = skills.filter((s) => s.repo === name);
+    repoRows.push({
+      repo: name,
+      path: repo,
+      skills: profiles.length,
+      configHash: fingerprintConfig(
+        {},
+        [],
+        [
+          ...mine.map((s) => `${s.path}:${s.configHash}`),
+          ...mcp.map((s) => `mcp:${s.name}:${s.command ?? ''}:${s.url ?? ''}`),
+        ],
+      ),
+      threatModel: tm,
+    });
   }
+  skills.sort((a, b) => {
+    const byReach = REACH_ORDER[a.worstReach.level] - REACH_ORDER[b.worstReach.level];
+    if (byReach !== 0) return byReach;
+    const byGrade = (GRADE_ORDER[a.grade] ?? 9) - (GRADE_ORDER[b.grade] ?? 9);
+    if (byGrade !== 0) return byGrade;
+    return a.path.localeCompare(b.path) || a.repo.localeCompare(b.repo);
+  });
 
   const count = <T extends string>(vals: T[]): Record<string, number> =>
     vals.reduce<Record<string, number>>((acc, v) => ({ ...acc, [v]: (acc[v] ?? 0) + 1 }), {});
@@ -281,6 +453,7 @@ export async function buildReport(opts: BuildOptions): Promise<PostureReport> {
     review: totals.verdicts.review ?? 0,
     threatModelCoverage: totals.threatModelCoverage,
     driftChanged: totals.driftChanged,
+    configHashes: Object.fromEntries(skills.map((s) => [`${s.repo}/${s.path}`, s.configHash])),
   };
   return {
     tool: TOOL_NAME,
@@ -354,7 +527,7 @@ export function renderPostureHtml(r: PostureReport): string {
   const rows = r.skills
     .map(
       (s) =>
-        `<tr><td>${e(s.repo)}</td><td>${e(s.skill)}<div class="p">${e(s.path)}</div></td><td class="g g-${e(s.grade)}">${e(s.grade)}</td><td>${e(s.verdict)}</td><td>${s.findings}</td><td>${s.topRules.map((x) => `<a href="${e(rulePageUrl(x))}">${e(x)}</a>`).join(' ')}</td><td>${s.inThreatModel === null ? '—' : s.inThreatModel ? 'yes' : '<b>no</b>'}</td><td>${s.drift ? (s.drift.approved ? (s.drift.changes ? `<b>${s.drift.changes} change(s)</b>` : 'unchanged') : 'not approved') : '—'}</td></tr>`,
+        `<tr><td>${e(s.worstReach.label)}${s.worstReach.rule ? `<div class="p">${e(s.worstReach.rule)}</div>` : ''}</td><td class="g g-${e(s.grade)}">${e(s.grade)} @ cfg ${e(s.configHash.slice(0, 8))}${s.regraded ? '<div class="p">config changed since last report; grade recomputed</div>' : ''}</td><td>${e(s.repo)}</td><td>${e(s.skill)}<div class="p">${e(s.path)}</div></td><td>${e(s.verdict)}</td><td>${s.findings}</td><td>${s.topRules.map((x) => `<a href="${e(rulePageUrl(x))}">${e(x)}</a>`).join(' ')}</td><td>${s.inThreatModel === null ? '—' : s.inThreatModel ? 'yes' : '<b>no</b>'}</td><td>${s.drift ? (s.drift.approved ? (s.drift.changes ? `<b>${s.drift.changes} change(s)</b>` : 'unchanged') : 'not approved') : '—'}</td></tr>`,
     )
     .join('\n');
   const owasp = r.owaspLlm
@@ -421,7 +594,7 @@ ${card('Changed since approval', String(t.driftChanged), `${t.driftApproved} ski
 <h2>Repositories</h2>
 <table><thead><tr><th>Repo</th><th>Skills</th><th>In threat model</th><th>Violations</th></tr></thead><tbody>${repos}</tbody></table>
 <h2>Skill inventory</h2>
-<table><thead><tr><th>Repo</th><th>Skill</th><th>Grade</th><th>Verdict</th><th>Findings</th><th>Top rules</th><th>In model</th><th>Drift</th></tr></thead><tbody>${rows}</tbody></table>
+<table><thead><tr><th>Worst reach</th><th>Grade</th><th>Repo</th><th>Skill</th><th>Verdict</th><th>Findings</th><th>Top rules</th><th>In model</th><th>Drift</th></tr></thead><tbody>${rows}</tbody></table>
 <h2>Threat model violations</h2>${viol}
 <h2>Drift since approval</h2>${drift}
 ${hist.length > 1 ? `<h2>Trend</h2><table><thead><tr><th>Run</th><th>Skills</th><th>Findings</th><th>Block</th><th>Review</th><th>Coverage</th><th>Drifted</th></tr></thead><tbody>${hist.map((h) => `<tr><td>${e(h.at)}</td><td>${h.skills}</td><td>${h.findings}</td><td>${h.block}</td><td>${h.review}</td><td>${h.threatModelCoverage ?? '—'}</td><td>${h.driftChanged}</td></tr>`).join('')}</tbody></table>` : ''}

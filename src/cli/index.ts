@@ -187,6 +187,10 @@ export async function main(argv: string[], hooks: MainHooks = {}): Promise<numbe
     .option('--base <ref>', 'git base ref for diff')
     .option('--ledger <file>', 'also report drift since drift approve')
     .option('--no-grade', 'skip the scan grade (faster)')
+    .option(
+      '--fail-on-uncovered',
+      'exit 2 when a host, token, env var, MCP server or webhook is not mentioned in the model',
+    )
     .option('--force', 'overwrite an existing model on init')
     .option('--markdown <file>', 'write a Markdown summary (PR comment)')
     .option('--sarif <file>', 'write SARIF 2.1.0')
@@ -211,6 +215,7 @@ export async function main(argv: string[], hooks: MainHooks = {}): Promise<numbe
           ...(str('sarif') ? { sarif: str('sarif') } : {}),
           ...(str('config') ? { config: str('config') } : {}),
           noGrade: opts.grade === false,
+          failOnUncovered: Boolean(opts.failOnUncovered),
           force: Boolean(opts.force),
           json: Boolean(opts.json),
         });
