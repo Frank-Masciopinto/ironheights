@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.21.1 — 2026-10-31
+
+Fixes from end-to-end testing. Ironheights protects any AI bot that installs it, and these make `report` and `mcp` more precise.
+
+- `report`: an empty folder no longer counts as a phantom skill, and a missing target path now exits non-zero (#45).
+- `mcp`: `check_skill` returns an error for a missing `path` instead of a clean result, and ClawHub fetches remove their whole temp folder (#47).
+- Docs: the threat model Action example pins `v0.21.1`. npm keywords expanded.
+
+Scanner rules and detection are unchanged; the 20-skill synthetic benchmark is unchanged.
+
 ## 0.21.0 — 2026-10-30
 
 **`ironheights report`: agent security posture report.** Ironheights protects any AI bot that installs it, and now it can report on a whole repository or an organisation folder of repositories in one go: a skill inventory with grade, verdict, finding count and top rules; threat-model coverage and violations per repository (0.19.0); drift since approval with `--ledger` (0.18.0); findings and skills per OWASP Top 10 for LLM Applications 2025 risk; and a trend over runs with `--history <file.jsonl>`. `--html` writes one self-contained page (no scripts, no external assets) for an audit pack, `--json` / `--json-file` the same data, and `--fail-on-block` exits 2 when any skill is blocked. Local only, no telemetry. See `docs/report.md`.

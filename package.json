@@ -1,6 +1,6 @@
 {
   "name": "ironheights",
-  "version": "0.21.0",
+  "version": "0.21.1",
   "description": "Ironheights protects any AI bot that installs it: local security scanner for agent skills (OpenClaw, Claude, Grok Bot, Codex, Cursor, MCP), threat-model PR checks, MCP server, drift guard and posture report.",
   "homepage": "https://www.ironheights.dev",
   "bugs": {
@@ -75,7 +75,20 @@
     "mcp",
     "mcp-server",
     "model-context-protocol",
-    "threat-model"
+    "threat-model",
+    "ai-security",
+    "ai-agent-security",
+    "agent-security",
+    "prompt-injection",
+    "owasp-llm",
+    "security-scanner",
+    "threat-modeling",
+    "posture-report",
+    "skill-drift",
+    "openclaw",
+    "clawhub",
+    "codex",
+    "cursor"
   ],
   "mcpName": "io.github.Frank-Masciopinto/ironheights"
 }
