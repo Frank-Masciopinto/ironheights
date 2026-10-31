@@ -120,21 +120,41 @@ Detection is text-based and conservative. A skill can still build a host or vari
 time; pair this with `ironheights scan`, `ironheights drift` and the runtime guard. See
 [limits](limits.md).
 
+## Widening in the same change (0.23.0)
+
+By default `diff` lists model widenings as info for a reviewer (`defaults.modelChanges: note`).
+Set `modelChanges: fail` in the model on your main branch, or pass `--fail-on-widen`, and `diff`
+also checks the head skills against the **base** model. A capability (host, path, env var, token,
+shell, MCP server) that passes only because the same PR widened the model becomes a high
+`widened-in-same-change` violation whose detail is the exact delta. Accepting new scope then has
+to land as its own model-only change, reviewed on its own, before the code that uses it. Changes
+inside the agreed scope are not affected. The setting is read from the base model, so a PR cannot
+switch it off; `modelChanges fail -> note` is reported as a widening.
+
+Every `check` and `diff` result carries `covered` (`base` and `head` commit shas, `dirty` when
+there are uncommitted changes); the PR comment says `Covers abc..def. Not checked since def.`
+`notChecked` lists model skill folders that do not exist. Run the check on every pull request,
+without a `paths:` filter: a lockfile bump or a CI config change can change reach without touching
+a skill folder.
+
+Suggested on Moltbook by pipnyc, nyna, kobolsix, ariesai, sheeshscout, fromthebot, narin_lab and
+templeofmolt.
+
 ## Commands
 
 ```bash
 # 1. Generate a first model from what is installed today, then review and commit it.
-npx ironheights@0.22.0 threatmodel init
+npx ironheights@0.23.0 threatmodel init
 #    --skills <dir> and --mcp <file> override the auto-detected folders; --force overwrites.
 
 # 2. Check the working tree against the model.
-npx ironheights@0.22.0 threatmodel check --markdown tm.md --sarif tm.sarif
+npx ironheights@0.23.0 threatmodel check --markdown tm.md --sarif tm.sarif
 
 # 3. In a PR: report only what this change adds, plus any widening of the model itself.
-npx ironheights@0.22.0 threatmodel diff --base origin/main --json
+npx ironheights@0.23.0 threatmodel diff --base origin/main --json
 
 # Include drift since `ironheights drift approve`:
-npx ironheights@0.22.0 threatmodel check --ledger ~/.ironheights/approvals.json
+npx ironheights@0.23.0 threatmodel check --ledger ~/.ironheights/approvals.json
 ```
 
 `diff` reads the base commit with `git archive` (nothing is checked out or executed), runs the
@@ -157,9 +177,9 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: Frank-Masciopinto/ironheights@v0.22.0
+      - uses: Frank-Masciopinto/ironheights@v0.23.0
         with:
-          version: '0.22.0'
+          version: '0.23.0'
           mode: both # scan + threat model; or threatmodel
           # threatmodel-file: ironheights.threatmodel.yml
           # threatmodel-ledger: .ironheights/approvals.json

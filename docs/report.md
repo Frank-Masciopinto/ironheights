@@ -13,9 +13,9 @@ folder that holds many repositories (an organisation checkout), into one posture
   findings, blocked and review counts, coverage and drift over time.
 
 ```bash
-npx ironheights@0.22.0 report .                                   # one repo, terminal summary
-npx ironheights@0.22.0 report ~/src/my-org --html posture.html    # every repo in a folder
-npx ironheights@0.22.0 report . --json-file posture.json --history .ironheights/posture.jsonl \
+npx ironheights@0.23.0 report .                                   # one repo, terminal summary
+npx ironheights@0.23.0 report ~/src/my-org --html posture.html    # every repo in a folder
+npx ironheights@0.23.0 report . --json-file posture.json --history .ironheights/posture.jsonl \
   --ledger ~/.ironheights/approvals.json --title "Q4 agent security review"
 ```
 
@@ -23,7 +23,7 @@ A folder counts as a repository when it has an `ironheights.threatmodel.yml` or 
 `skills/`, `.claude/skills/`, `.cursor/skills/`, `.agents/skills/`, `skill/`. A target that is not
 a repository is treated as an organisation folder and its direct subfolders are checked.
 
-The HTML is one self-contained file (no scripts, no external assets) that prints cleanly for an
+The HTML is one self-contained file (no external assets; one inline script only marks the page expired) that prints cleanly for an
 audit pack. JSON carries the same data (`totals`, `owaspLlm`, `repos`, `skills`, `violations`,
 `driftChanges`, `history`).
 
@@ -44,6 +44,28 @@ from the previous run and prints `config changed since last report; grade recomp
 is always recomputed. The flag says the config it was computed against changed. Older history
 lines without hashes still load. A missing previous hash is not a regrade.
 
+## Coverage and incomplete (0.23.0)
+
+A grade is about the inspected surface only. A skill is **not fully inspected** when the scan
+skipped files or the skill fetches instructions at runtime (`IH-INJ-004`). Its row carries
+`coverage` (`complete`, `filesRead`, `filesSkipped`, `runtimeFetched` URLs and `reasons`; a fetch
+whose URL the scan could not read is a reason of its own). It is listed under **Not fully
+inspected**, with what it reads (`4 of 4 file(s), 0 of 1 fetched at runtime`), and is not
+averaged into anything.
+
+`totals.overall` is a letter only when every loaded skill was fully inspected; otherwise it is
+`incomplete`. `totals.result` always carries its denominator, for example `incomplete: 11 of 12
+loaded skill(s) fully inspected; not inspected: org/skills/x (network egress to undeclared host)`.
+`--fail-on-incomplete` exits `2` on any coverage gap.
+
+The report also has a `fingerprint` (sha256 over every skill's config hash, grade and coverage)
+and `validUntil` (`--valid-days`, default 7). The offline HTML shows both and greys itself out with
+an "expired" banner after that date, so a forwarded copy does not read as current. Re-run the
+report and compare fingerprints.
+
+Suggested on Moltbook by lobsternigel, proxima, lobsterroyale, vina, soleia42, clawyer,
+grokentra, moltbookrevenueagent, templeofmolt, aether_cell, annuntiato and evil_robot_jas.
+
 Exit code is `0`; `--fail-on-block` exits `2` when any skill is blocked, for a scheduled CI job.
 
 ## Scheduled in CI
@@ -56,7 +78,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: npx --yes ironheights@0.22.0 report . --html posture.html --json-file posture.json
+      - run: npx --yes ironheights@0.23.0 report . --html posture.html --json-file posture.json
       - uses: actions/upload-artifact@v4
         with: { name: agent-posture, path: 'posture.*' }
 ```

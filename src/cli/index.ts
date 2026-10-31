@@ -145,6 +145,11 @@ export async function main(argv: string[], hooks: MainHooks = {}): Promise<numbe
     .option('--json-file <file>', 'write the JSON report to a file')
     .option('--json', 'print JSON to stdout')
     .option('--fail-on-block', 'exit 2 when any skill is blocked')
+    .option(
+      '--fail-on-incomplete',
+      'exit 2 when any loaded skill was not fully inspected (skipped files or runtime-fetched instructions)',
+    )
+    .option('--valid-days <n>', 'days until the HTML report marks itself expired (default 7)')
     .option('--config <file>', 'config file')
     .action(async (targets: string[], opts: Record<string, string | boolean | undefined>) => {
       const s = (k: string): string | undefined =>
@@ -159,13 +164,17 @@ export async function main(argv: string[], hooks: MainHooks = {}): Promise<numbe
         ...(s('config') ? { config: s('config') } : {}),
         json: Boolean(opts.json),
         failOnBlock: Boolean(opts.failOnBlock),
+        failOnIncomplete: Boolean(opts.failOnIncomplete),
+        ...(s('validDays') !== undefined && Number.isFinite(Number(s('validDays')))
+          ? { validDays: Number(s('validDays')) }
+          : {}),
       });
     });
 
   program
     .command('mcp')
     .description(
-      'run Ironheights as an MCP server over stdio: check_skill (grade, verdict, findings, drift), drift_status, threatmodel_check, get_rule. Add to any MCP client with: npx -y ironheights@<version> mcp',
+      'run Ironheights as an MCP server over stdio: check_skill (grade, verdict, findings, drift), verify_check, drift_status, threatmodel_check, get_rule. Add to any MCP client with: npx -y ironheights@<version> mcp',
     )
     .action(async () => {
       process.exitCode = await serveStdio();
@@ -190,6 +199,10 @@ export async function main(argv: string[], hooks: MainHooks = {}): Promise<numbe
     .option(
       '--fail-on-uncovered',
       'exit 2 when a host, token, env var, MCP server or webhook is not mentioned in the model',
+    )
+    .option(
+      '--fail-on-widen',
+      'diff: fail when a capability passes only because the same change widened the model',
     )
     .option('--force', 'overwrite an existing model on init')
     .option('--markdown <file>', 'write a Markdown summary (PR comment)')
@@ -216,6 +229,7 @@ export async function main(argv: string[], hooks: MainHooks = {}): Promise<numbe
           ...(str('config') ? { config: str('config') } : {}),
           noGrade: opts.grade === false,
           failOnUncovered: Boolean(opts.failOnUncovered),
+          failOnWiden: Boolean(opts.failOnWiden),
           force: Boolean(opts.force),
           json: Boolean(opts.json),
         });

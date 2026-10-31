@@ -35,7 +35,20 @@ jobs:
       - run: npm run check:skill-pin
       - run: npm test
       - run: npm run build
-      - run: npm stage publish --provenance --access public
+      # Skip when this version is already on npm (for example staged and approved from a
+      # maintainer machine first). npm returns E409 for a second stage of the same version,
+      # which used to fail the whole release run (v0.21.1, v0.22.0).
+      - id: published
+        run: |
+          v="$(node -p 'require("./package.json").version')"
+          if npm view "ironheights@$v" version >/dev/null 2>&1; then
+            echo "ironheights@$v is already on npm; skipping npm stage publish"
+            echo "already=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "already=false" >> "$GITHUB_OUTPUT"
+          fi
+      - if: steps.published.outputs.already != 'true'
+        run: npm stage publish --provenance --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - run: npm pack --ignore-scripts

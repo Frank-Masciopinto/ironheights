@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.23.0 — 2026-10-31
+
+**Fail-closed MCP decisions with receipts, coverage-honest posture grades, and same-change widening checks.** Ironheights protects any AI bot that installs it. Every item below was suggested by bots on Moltbook. Existing fields, models and exit codes keep their meaning unless you opt in; new JSON fields are additive.
+
+- MCP `check_skill` returns `decision` (`allow`, `blocked_pending_approval`, `blocked`); review and incomplete wait for a human. Suggested by ecdys, Rios and templeofmolt.
+- MCP `check_skill` fails closed: an error, timeout or empty result is a failed call with `state: checker-unavailable`, `verdict: unknown`, `decision: blocked`, logged as its own event. Suggested by zoranmesh, fennwick, soleia42, nyna, kobolsix, openclawprime and SamanthaSchacht.
+- Required `provenance` on `check_skill`, `drift_status` and `threatmodel_check` (version, rule-set hash, time, content digest, subject producer), plus an opaque `checkId` anchor. Suggested by ledger-line-19, Kleinbot, ODEI, hz-assistant, vina, pennyworthatyourservice, evil_robot_jas, swordfish-ming and anp2_com.
+- Server-written receipts (`mcp-receipts.jsonl`) with each matched rule, file, line and that file's sha256, and what would change the decision. Suggested by ackedagents, KitSinclair, SamanthaSchacht, aiko3062, theagatha and thegreekgodhermes.
+- New MCP tool `verify_check`: `live`, `stale`, `absent` or `unverifiable`; only `live` keeps its decision. Suggested by entitylovestudio, vynderbot, miloforryan, lyra_reader and ODEI.
+- `check_skill` `view: "agent"` returns control state only; evidence stays in the receipt for the approver. Suggested by ecdys and Rios.
+- `ironheights report`: a letter grade only at full coverage, otherwise `incomplete` with `N of M` and the uninspected skills named; per-skill `coverage` (files read, skipped, runtime-fetched URLs, reasons); `--fail-on-incomplete`. Suggested by lobsternigel, proxima, lobsterroyale, vina, soleia42, clawyer, grokentra, moltbookrevenueagent, templeofmolt and aether_cell.
+- Report `fingerprint` and `validUntil` (`--valid-days`, default 7); the offline HTML greys itself out after expiry. Suggested by annuntiato, vina and evil_robot_jas.
+- `threatmodel diff` with `defaults.modelChanges: fail` (read from the base model) or `--fail-on-widen`: a capability allowed only by a model change in the same PR is a high `widened-in-same-change` violation; accept new scope in its own model-only PR. Action input `threatmodel-fail-on-widen`. Suggested by pipnyc, nyna, kobolsix, ariesai and sheeshscout.
+- `threatmodel check`/`diff` report the commits covered (`covered.base`, `covered.head`, `dirty`) and `notChecked` folders; docs say to run on every PR without a `paths:` filter. Suggested by fromthebot, narin_lab, nyna and templeofmolt.
+
+Not built, with reasons: [docs/ideas.md](docs/ideas.md#deferred-from-0230). Scanner rules and detection are unchanged; the 20-skill synthetic benchmark is unchanged.
+
 ## 0.22.0 — 2026-10-31
 
 **Claim results, config-key drift, and a posture hash.** Ironheights protects any AI bot that installs it. This release adds small, opt-in checks suggested by Moltbook bots. Existing models, ledgers, configs, JSON fields and exit codes keep their meaning. New JSON fields are additive.

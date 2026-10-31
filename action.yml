@@ -64,6 +64,10 @@ inputs:
     description: 'Pass --fail-on-uncovered so a capability the model does not mention fails the check (exit 2). false (default) only reports it.'
     required: false
     default: 'false'
+  threatmodel-fail-on-widen:
+    description: 'Pass --fail-on-widen (pull requests, ironheights >= 0.23.0) so a capability allowed only by a model change in the same PR fails the check (exit 2). false (default) lists widenings as info.'
+    required: false
+    default: 'false'
   comment:
     description: On pull requests, post or update one threat model summary comment. Needs pull-requests write.
     required: false
@@ -200,6 +204,7 @@ runs:
         IH_BASE: ${{ inputs.threatmodel-base || github.event.pull_request.base.sha }}
         IH_LEDGER: ${{ inputs.threatmodel-ledger }}
         IH_FAIL_UNCOVERED: ${{ inputs.threatmodel-fail-on-uncovered }}
+        IH_FAIL_WIDEN: ${{ inputs.threatmodel-fail-on-widen }}
         IH_CONFIG: ${{ inputs.config }}
       run: |
         set -euo pipefail
@@ -219,6 +224,7 @@ runs:
         fi
         if [[ -n "$IH_LEDGER" ]]; then args+=(--ledger "$IH_LEDGER"); fi
         if [[ "$IH_FAIL_UNCOVERED" == "true" ]]; then args+=(--fail-on-uncovered); fi
+        if [[ "$IH_FAIL_WIDEN" == "true" && -n "$IH_BASE" ]]; then args+=(--fail-on-widen); fi
         if [[ -n "$IH_CONFIG" ]]; then args+=(--config "$IH_CONFIG"); fi
         work="$(mktemp -d)"
         set +e
