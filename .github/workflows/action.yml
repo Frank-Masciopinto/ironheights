@@ -2,12 +2,15 @@ name: action
 on:
   push:
   pull_request:
+permissions:
+  contents: read
+
 jobs:
   benign:
     name: action benign fixture
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - id: scan
         uses: ./
         with:
@@ -27,7 +30,7 @@ jobs:
     name: action malicious fixture
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - id: scan
         uses: ./
         continue-on-error: true
@@ -60,7 +63,7 @@ jobs:
     name: action incomplete fixture
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - name: Create an oversized skill file
         shell: bash
         run: |
@@ -86,7 +89,7 @@ jobs:
     name: action threat model example
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - id: tm
         uses: ./
         with:
