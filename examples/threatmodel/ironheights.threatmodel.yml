@@ -11,8 +11,10 @@ mcpConfigs:
 defaults:
   unknownSkill: deny
   unknownMcpServer: deny
-  # uncovered and remoteInstructions default to report in 0.22.0.
-  # They are omitted here so the published 0.21.1 Action pin still parses this file.
+  # Since 0.22.0: report capabilities no claim mentions (set fail to block the PR)
+  uncovered: report
+  # Since 0.22.0: built-in claim, no instruction text tells the agent to fetch a URL and follow it
+  remoteInstructions: report
 skills:
   weather:
     path: skills/weather
