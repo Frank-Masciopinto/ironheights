@@ -1,0 +1,50 @@
+name: release-provenance
+# Backfills signed SLSA build provenance (Sigstore bundle, *.intoto.jsonl) onto
+# existing GitHub releases. Attests the assets already attached to each release;
+# it does not rebuild, retag, or publish anything to npm.
+on:
+  workflow_dispatch:
+    inputs:
+      tags:
+        description: 'JSON array of existing release tags, e.g. ["v0.21.1","v0.22.0"]'
+        required: true
+permissions:
+  contents: read
+
+jobs:
+  attest:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
+    strategy:
+      matrix:
+        tag: ${{ fromJSON(inputs.tags) }}
+    steps:
+      - name: Download existing release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          TAG: ${{ matrix.tag }}
+        run: |
+          mkdir assets
+          gh release download "$TAG" --dir assets --pattern 'ironheights-*.tgz' --pattern 'SHA256SUMS' --skip-existing || true
+          if ! ls assets/ironheights-*.tgz >/dev/null 2>&1; then
+            # Older releases have no tarball asset: attest the release source archive.
+            gh release download "$TAG" --dir assets --archive=tar.gz
+          fi
+          ls -l assets
+      - id: attest
+        uses: actions/attest-build-provenance@e8998f949152b193b063cb0ec769d69d929409be # v2.4.0
+        with:
+          subject-path: assets/*
+      - name: Attach provenance bundle to the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          TAG: ${{ matrix.tag }}
+        run: |
+          out="ironheights-${TAG#v}.intoto.jsonl"
+          cp "${{ steps.attest.outputs.bundle-path }}" "$out"
+          gh release upload "$TAG" "$out" --clobber

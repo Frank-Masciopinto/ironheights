@@ -14,3 +14,12 @@ bench/results/*
 !bench/results/.gitkeep
 *.tsbuildinfo
 .DS_Store
+# Generated at test time by test/support/binary-fixtures.ts (Scorecard Binary-Artifacts)
+test/fixtures/malicious/IH-BIN-001/*.exe
+test/fixtures/malicious/IH-BIN-001/*.so
+test/fixtures/malicious/IH-BIN-001/*.zip
+test/fixtures/malicious/IH-BIN-001/*.bin
+test/fixtures/malicious/IH-BIN-002/*.class
+test/fixtures/malicious/IH-BIN-002/*.wasm
+__pycache__/
+*.pyc
