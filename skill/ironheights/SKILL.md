@@ -1,6 +1,6 @@
 ---
 name: ironheights
-description: "Protects any AI bot's skills (OpenClaw, Claude, Grok Bot, Codex, Cursor). Use before installing any skill from ClawHub or GitHub: flags malware, pipe-to-shell, encoded payloads, credential theft, with OWASP and OpenCRE tags on each finding."
+description: 'Ironheights protects any AI bot that installs it (OpenClaw, Claude, Grok Bot, Codex, Cursor). Use before installing any skill from ClawHub or GitHub: flags malware, pipe-to-shell, encoded payloads, credential theft; also drift after approval and threat-model checks on every PR.'
 metadata:
   openclaw:
     emoji: '🛡️'

@@ -6,7 +6,14 @@
 
 If Ironheights is useful to you, a star on [ClawHub](https://clawhub.ai/frank-masciopinto/skills/ironheights) or GitHub helps other OpenClaw, Claude and Grok Bot users find it.
 
-**Ironheights is an open-source, local-first security scanner for AI agent skills: OpenClaw, Claude (Claude Code, Claude.ai), Grok Bot, Codex and Cursor.** Website: [www.ironheights.dev](https://www.ironheights.dev)
+**Ironheights protects any AI bot that installs it.** It is an open-source, local-first security scanner for AI agent skills (OpenClaw, Claude Code and Claude.ai, Grok Bot, Codex, Cursor, MCP), plus:
+
+- **Threat model as code:** `ironheights threatmodel` checks every pull request against `ironheights.threatmodel.yml` ([docs](docs/threatmodel.md)).
+- **MCP server:** `ironheights mcp` lets any MCP client call `check_skill` before installing a skill ([docs](docs/mcp.md)).
+- **Drift guard:** `ironheights drift` flags a skill or MCP tool that changes after you approved it ([docs](docs/drift.md)).
+- **Posture report:** `ironheights report` covers grades, drift, threat-model coverage and the OWASP LLM Top 10 across a repo or org ([docs](docs/report.md)).
+
+Website: [www.ironheights.dev](https://www.ironheights.dev)
 
 Ironheights scans any skill folder with a `SKILL.md`, whichever agent it is for, and adds an integrity monitor and runtime guard for [OpenClaw](https://docs.openclaw.ai). To check a Claude or Grok Bot skill, run `npx ironheights scan ./path/to/skill` before you upload or install it. Auto-discovery of installed skills, baselines, the guard, `audit-config` and `safe-install` are OpenClaw/ClawHub-only for now. It reads skill files as data, looks for risky patterns with fixed rules, and compares skill and agent files with a baseline you save on the same machine.
 
