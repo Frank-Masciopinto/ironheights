@@ -1,4 +1,4 @@
-import { writeFile } from 'node:fs/promises';
+import { stat, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { loadConfig } from '../../core/config.ts';
 import {
@@ -21,12 +21,21 @@ export interface ReportFlags {
   env?: NodeJS.ProcessEnv;
   now?: Date;
   out?: (line: string) => void;
+  err?: (line: string) => void;
 }
 
 export async function runReport(flags: ReportFlags): Promise<number> {
   const out = flags.out ?? ((l: string) => process.stdout.write(l + '\n'));
   const env = flags.env ?? process.env;
   const config = await loadConfig({ ...(flags.config ? { explicitPath: flags.config } : {}), env });
+  const err = flags.err ?? ((l: string) => process.stderr.write(l + '\n'));
+  for (const t of flags.targets) {
+    const ok = await stat(resolve(t)).then((s) => s.isDirectory(), () => false);
+    if (!ok) {
+      err(`ironheights report: target is not a directory: ${t}`);
+      return 1;
+    }
+  }
   const history = flags.history ? await readHistory(resolve(flags.history)) : [];
   const report = await buildReport({
     targets: flags.targets.length ? flags.targets : ['.'],
