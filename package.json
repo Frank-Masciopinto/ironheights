@@ -93,6 +93,8 @@
   ],
   "mcpName": "io.github.Frank-Masciopinto/ironheights",
   "overrides": {
-    "minimatch": "11.0.3"
+    "minimatch": "11.0.3",
+    "vite": "7.3.7",
+    "esbuild": "0.28.2"
   }
 }
