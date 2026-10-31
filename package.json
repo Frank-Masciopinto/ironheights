@@ -47,7 +47,7 @@
     "docs:threatmodel-schema": "tsup scripts/generate-threatmodel-schema.ts --no-config --format esm --target node20 --out-dir dist-scripts --clean --silent && node dist-scripts/generate-threatmodel-schema.js"
   },
   "dependencies": {
-    "commander": "14.0.3",
+    "commander": "15.0.0",
     "picomatch": "4.0.7",
     "yaml": "2.9.1",
     "zod": "4.6.7"
