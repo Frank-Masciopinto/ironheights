@@ -1,0 +1,8 @@
+{
+  "name": "ironheights-release-npm",
+  "private": true,
+  "description": "Pins the npm CLI used by release.yml (npm stage needs >= 11.15.0) with lockfile integrity.",
+  "dependencies": {
+    "npm": "11.21.1"
+  }
+}

@@ -17,7 +17,7 @@ jobs:
       contents: read
       id-token: write # npm --provenance
     steps:
-      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ inputs.tag || github.ref }}
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
@@ -26,8 +26,11 @@ jobs:
           node-version: '24'
           registry-url: https://registry.npmjs.org
           cache: npm
-      # npm stage needs npm >= 11.15.0
-      - run: npm install -g npm@^11.15.0 && npm --version
+      # npm stage needs npm >= 11.15.0. Installed from a committed lockfile
+      # (exact version + integrity hash) so the toolchain is pinned.
+      - run: npm ci --prefix .github/tools/npm-cli --ignore-scripts
+      - run: echo "$GITHUB_WORKSPACE/.github/tools/npm-cli/node_modules/.bin" >> "$GITHUB_PATH"
+      - run: npm --version
       - run: npm ci
       - run: npm run check:skill-pin
       - run: npm test
@@ -56,7 +59,8 @@ jobs:
         with:
           name: release-checksums
           path: ${{ github.workspace }}
-      - uses: actions/attest-build-provenance@e8998f949152b193b063cb0ec769d69d929409be # v2.4.0
+      - id: attest
+        uses: actions/attest-build-provenance@e8998f949152b193b063cb0ec769d69d929409be # v2.4.0
         with:
           subject-path: |
             SHA256SUMS
@@ -67,9 +71,11 @@ jobs:
           GH_REPO: ${{ github.repository }}
         run: |
           tag="${{ inputs.tag || github.ref_name }}"
+          # Signed SLSA provenance (Sigstore bundle) as a release asset.
+          cp "${{ steps.attest.outputs.bundle-path }}" "ironheights-${tag#v}.intoto.jsonl"
           notes="npm package staged with provenance (live after maintainer approval). Verify SHA256SUMS using docs/release-verification.md."
           if gh release view "$tag" >/dev/null 2>&1; then
-            gh release upload "$tag" SHA256SUMS ironheights-*.tgz --clobber
+            gh release upload "$tag" SHA256SUMS ironheights-*.tgz ironheights-*.intoto.jsonl --clobber
           else
-            gh release create "$tag" SHA256SUMS ironheights-*.tgz --title "$tag" --notes "$notes"
+            gh release create "$tag" SHA256SUMS ironheights-*.tgz ironheights-*.intoto.jsonl --title "$tag" --notes "$notes"
           fi
