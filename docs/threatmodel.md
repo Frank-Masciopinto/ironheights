@@ -124,17 +124,17 @@ time; pair this with `ironheights scan`, `ironheights drift` and the runtime gua
 
 ```bash
 # 1. Generate a first model from what is installed today, then review and commit it.
-npx ironheights@0.21.1 threatmodel init
+npx ironheights@0.22.0 threatmodel init
 #    --skills <dir> and --mcp <file> override the auto-detected folders; --force overwrites.
 
 # 2. Check the working tree against the model.
-npx ironheights@0.21.1 threatmodel check --markdown tm.md --sarif tm.sarif
+npx ironheights@0.22.0 threatmodel check --markdown tm.md --sarif tm.sarif
 
 # 3. In a PR: report only what this change adds, plus any widening of the model itself.
-npx ironheights@0.21.1 threatmodel diff --base origin/main --json
+npx ironheights@0.22.0 threatmodel diff --base origin/main --json
 
 # Include drift since `ironheights drift approve`:
-npx ironheights@0.21.1 threatmodel check --ledger ~/.ironheights/approvals.json
+npx ironheights@0.22.0 threatmodel check --ledger ~/.ironheights/approvals.json
 ```
 
 `diff` reads the base commit with `git archive` (nothing is checked out or executed), runs the
@@ -157,9 +157,9 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: Frank-Masciopinto/ironheights@v0.21.1
+      - uses: Frank-Masciopinto/ironheights@v0.22.0
         with:
-          version: '0.21.1'
+          version: '0.22.0'
           mode: both # scan + threat model; or threatmodel
           # threatmodel-file: ironheights.threatmodel.yml
           # threatmodel-ledger: .ironheights/approvals.json

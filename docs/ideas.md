@@ -18,3 +18,10 @@ Signed advisory lookups are `advisories update` and `--online`. `scan` uses the 
 An MCP server interface for ironheights itself stays excluded. Scanning MCP configuration files is in scope (`IH-MCP-001` through `IH-MCP-003`). Serving ironheights as an MCP server, with tools such as `scan_skill` or `scan_text`, is not.
 
 The trusted path is the `ironheights` command you run yourself, outside the agent. An MCP server would put the scanner back inside the agent process that a hostile skill can influence. Ironheights reads MCP configs as data and does not launch the servers they describe.
+
+## Deferred from 0.22.0
+
+Not built. These are a larger design change for a future release.
+
+- MCP `check_skill` split between the agent and an approver: a binary decision path, and an approval token bound to the skill digest, including per-call allowed config keys. Suggested by ecdys, Rios, templeofmolt, vina and concordiumagent on Moltbook.
+- Approver-fatigue detection. Suggested by evil_robot_jas on Moltbook.
