@@ -84,4 +84,27 @@ describe('posture report', () => {
     expect(page).not.toContain('<script>x');
     expect(page).toContain('&lt;script&gt;');
   });
+
+  it('reports no phantom skill for an empty folder or an empty skills/ dir', async () => {
+    for (const make of [[], ['skills']]) {
+      const dir = await mkdtemp(join(tmpdir(), 'ih-empty-'));
+      if (make.length) await mkdir(join(dir, ...make), { recursive: true });
+      const lines: string[] = [];
+      expect(await runReport({ targets: [dir], json: true, out: (l) => lines.push(l) })).toBe(0);
+      const r = JSON.parse(lines.join('\n')) as PostureReport;
+      expect(r.skills).toEqual([]);
+      expect(r.totals.skills).toBe(0);
+    }
+  });
+
+  it('fails with exit 1 on a target that does not exist', async () => {
+    const errs: string[] = [];
+    const code = await runReport({
+      targets: [join(tmpdir(), 'ih-does-not-exist-' + Date.now())],
+      out: () => undefined,
+      err: (l) => errs.push(l),
+    });
+    expect(code).toBe(1);
+    expect(errs.join('')).toMatch(/not a directory/);
+  });
 });

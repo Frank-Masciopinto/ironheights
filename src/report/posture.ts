@@ -185,6 +185,8 @@ export async function buildReport(opts: BuildOptions): Promise<PostureReport> {
     for (const root of [...roots].sort()) {
       const report = await scanSkill(root, opts.config);
       const grade = gradeFromSkills([report]);
+      // discoverSkillRoots falls back to the folder itself; an empty folder is not a skill.
+      if (grade.letter === 'nothing-scanned') continue;
       const profile = await profileSkill(root, repo);
       profile.grade = grade.letter;
       profiles.push(profile);
