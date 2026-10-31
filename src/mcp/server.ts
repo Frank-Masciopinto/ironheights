@@ -7,8 +7,8 @@
  * a ClawHub reference uses the network (clawhub.ai, same as `ironheights fetch`).
  */
 import { createInterface } from 'node:readline';
-import { rm } from 'node:fs/promises';
-import { join, resolve } from 'node:path';
+import { rm, stat } from 'node:fs/promises';
+import { basename, dirname, join, resolve } from 'node:path';
 import { loadConfig, ironheightsHome } from '../core/config.ts';
 import { IronheightsError } from '../core/errors.ts';
 import { gradeFromSkills } from '../core/grade.ts';
@@ -131,6 +131,10 @@ export async function callTool(
       const config = await loadConfig({ env });
       let dir = path ? resolve(path) : '';
       let staged: string | undefined;
+      if (path) {
+        const st = await stat(dir).catch(() => undefined);
+        if (!st?.isDirectory()) return text({ error: `not a directory: ${dir}` }, true);
+      }
       if (skill) {
         const res = await downloadSkill({
           ref: parseSkillRef(skill.replace(/^https?:\/\/(www\.)?clawhub\.ai\//, '')),
@@ -187,7 +191,13 @@ export async function callTool(
                   : 'No findings were reported. Absence of findings is not proof of safety.',
         });
       } finally {
-        if (staged) await rm(staged, { recursive: true, force: true });
+        if (staged) {
+          const parent = dirname(staged);
+          await rm(basename(parent).startsWith('ironheights-fetch-') ? parent : staged, {
+            recursive: true,
+            force: true,
+          });
+        }
       }
     }
     if (name === 'drift_status') {
