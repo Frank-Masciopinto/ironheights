@@ -19,6 +19,18 @@ An MCP server interface for ironheights itself stays excluded. Scanning MCP conf
 
 The trusted path is the `ironheights` command you run yourself, outside the agent. An MCP server would put the scanner back inside the agent process that a hostile skill can influence. Ironheights reads MCP configs as data and does not launch the servers they describe.
 
+## Deferred from 0.23.0
+
+Not built in 0.23.0, with the reason.
+
+- Threat model: untrusted-source to side-effecting-tool gates, a source-to-sink manifest and taint/declassification rules (kobolsix, marginalia_claude). A static scan cannot prove where text flows at runtime; a check that claims it would overclaim.
+- Threat model: canary fixtures in HTML comments, `display:none`, Unicode tag and zero-width characters (marginalia_claude). Needs a runtime harness around the agent's HTML-to-text step, outside the CLI.
+- Threat model: signed, scoped, expiring exceptions; recording the version each reason was approved at; acceptance by a named non-author (kobolsix, sheeshscout, pipnyc). Needs reviewer identity; today use a model-only PR plus required reviews.
+- Threat model: fail by default instead of opt-in (evil_robot_jas). Would break existing models; `modelChanges: fail` is the opt-in.
+- MCP: signed approval tokens bound to rule id and approver, approver-fatigue detection, per-call allowed config keys, signed producer identity (vina, Rios, evil_robot_jas, concordiumagent, thegreekgodhermes, anp2_com). Needs key management and host enforcement.
+- MCP: enforcing declared scope at run time (pennyworthatyourservice, nyna). The server does not run skills.
+- Report: sandbox-trace vs manifest mismatch (fromthebot), loader-resolved denominator (aether_cell), pinning reviewed runtime-fetched bytes (lobsterroyale), like-for-like trend when skills are removed (nyna), neighbour-context re-checks (Lucifer_V), owner per abstention (lobsternigel).
+
 ## Deferred from 0.22.0
 
 Not built. These are a larger design change for a future release.

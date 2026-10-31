@@ -46,6 +46,8 @@ export interface ThreatModelFlags {
   noGrade?: boolean;
   /** Exit 2 when a capability is not mentioned anywhere in the model. */
   failOnUncovered?: boolean;
+  /** diff: fail when a capability passes only because the same change widened the model. */
+  failOnWiden?: boolean;
   force?: boolean;
   json?: boolean;
   markdown?: string;
@@ -61,6 +63,10 @@ export interface ThreatModelReport {
   modelFile: string;
   checkedAt: string;
   base?: string;
+  /** Commits this result covers (git). Anything after `head` was not checked. */
+  covered?: { base?: string; head?: string; dirty?: boolean };
+  /** Model skill folders that do not exist, so nothing in them was checked. */
+  notChecked?: string[];
   skills: number;
   mcpServers: number;
   violations: Violation[];
@@ -71,6 +77,35 @@ export interface ThreatModelReport {
   /** Capabilities no claim mentions. Informational unless failing is opted in. */
   uncovered?: UncoveredCapability[];
   exitCode: number;
+}
+
+async function gitSha(dir: string, ref: string): Promise<string | undefined> {
+  try {
+    const { stdout } = await run('git', ['-C', dir, 'rev-parse', '--verify', `${ref}^{commit}`]);
+    return stdout.trim() || undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+async function coveredRange(dir: string, base?: string): Promise<ThreatModelReport['covered']> {
+  const head = await gitSha(dir, 'HEAD');
+  if (!head) return undefined;
+  let dirty = false;
+  try {
+    const { stdout } = await run('git', ['-C', dir, 'status', '--porcelain']);
+    dirty = stdout.trim().length > 0;
+  } catch {
+    dirty = false;
+  }
+  const b = base ? await gitSha(dir, base) : undefined;
+  return { ...(b ? { base: b } : {}), head, ...(dirty ? { dirty } : {}) };
+}
+
+async function missingDirs(dir: string, dirs: string[]): Promise<string[]> {
+  const out: string[] = [];
+  for (const d of dirs) if (!(await exists(resolve(dir, d)))) out.push(d);
+  return out;
 }
 
 async function exists(p: string): Promise<boolean> {
@@ -191,11 +226,18 @@ export async function runThreatModel(flags: ThreatModelFlags): Promise<number> {
     const model = await loadModel(modelPath);
     const r = await checkAt(dir, model, modelFile, flags);
     const assessed = withClaims(model, flags, r, undefined, false);
+    const covered = await coveredRange(dir);
+    const notChecked = await missingDirs(
+      dir,
+      flags.skillDirs?.length ? flags.skillDirs : model.skillDirs,
+    );
     return emit(flags, out, {
       tool: TOOL_NAME,
       version: TOOL_VERSION,
       modelFile,
       checkedAt: new Date().toISOString(),
+      ...(covered ? { covered } : {}),
+      ...(notChecked.length ? { notChecked } : {}),
       skills: r.skills,
       mcpServers: r.mcp,
       violations: assessed.violations,
@@ -263,6 +305,7 @@ async function diff(
     | { violations: Violation[]; profiles: SkillProfile[]; mcpServers: McpServerDef[] }
     | undefined;
   let modelChanges: Violation[] = [];
+  let sameChange: Violation[] = [];
   try {
     // --show-prefix avoids comparing long and short (8.3) temp paths on Windows.
     const { stdout: prefix } = await run('git', ['-C', dir, 'rev-parse', '--show-prefix']);
@@ -291,6 +334,29 @@ async function diff(
         mcpServers: base.mcpServers,
       };
       modelChanges = widened(baseModel, headModel, modelFile);
+      if (flags.failOnWiden || baseModel.defaults.modelChanges === 'fail') {
+        // Head skills against the base model, minus what the base already violated there.
+        const headVsBase = await checkAt(dir, baseModel, modelFile, {
+          ...flags,
+          ledger: undefined,
+        });
+        const baseVsBase = await checkAt(baseDir, baseModel, modelFile, {
+          ...flags,
+          ledger: undefined,
+        });
+        const k = (v: Violation): string => `${v.kind}|${v.target}|${v.detail}`;
+        const known = new Set(baseVsBase.violations.map(k));
+        const headKeys = new Set(head.violations.map(k));
+        sameChange = headVsBase.violations
+          .filter((v) => v.severity !== 'info' && !known.has(k(v)) && !headKeys.has(k(v)))
+          .map((v) => ({
+            kind: 'widened-in-same-change' as const,
+            severity: 'high' as const,
+            target: v.target,
+            detail: `${v.kind}: ${v.detail} (allowed only by a model change in this same PR; land the model change on its own first)`,
+            file: v.file ?? modelFile,
+          }));
+      }
     } else {
       modelChanges = [
         {
@@ -313,14 +379,21 @@ async function diff(
   const headAssessed = withClaims(headModel, flags, head, baseSnapshot, true);
   const key = (v: Violation): string => `${v.kind}|${v.target}|${v.detail}`;
   const before = new Set((baseSnapshot?.violations ?? []).map(key));
-  const introduced = headAssessed.violations.filter((v) => !before.has(key(v)));
-  const violations = [...headAssessed.violations, ...modelChanges];
+  const introduced = [...headAssessed.violations.filter((v) => !before.has(key(v))), ...sameChange];
+  const violations = [...headAssessed.violations, ...sameChange, ...modelChanges];
+  const covered = await coveredRange(dir, flags.base);
+  const notChecked = await missingDirs(
+    dir,
+    flags.skillDirs?.length ? flags.skillDirs : headModel.skillDirs,
+  );
   return emit(flags, out, {
     tool: TOOL_NAME,
     version: TOOL_VERSION,
     modelFile,
     checkedAt: new Date().toISOString(),
     base: flags.base,
+    ...(covered ? { covered } : {}),
+    ...(notChecked.length ? { notChecked } : {}),
     skills: head.skills,
     mcpServers: head.mcp,
     violations,
@@ -347,6 +420,11 @@ async function emit(
       );
     for (const v of list)
       out(`${v.severity.toUpperCase().padEnd(6)} ${v.kind}  ${v.target}  ${v.detail}`);
+    if (r.covered?.head)
+      out(
+        `covers ${r.covered.base ? `${r.covered.base.slice(0, 12)}..` : ''}${r.covered.head.slice(0, 12)}${r.covered.dirty ? ' + uncommitted' : ''}; not checked since`,
+      );
+    if (r.notChecked?.length) out(`not checked (folder missing): ${r.notChecked.join(', ')}`);
     outClaims(out, r);
   }
   return r.exitCode;
@@ -391,6 +469,18 @@ export function renderMarkdown(r: ThreatModelReport): string {
     '',
     `Checked ${r.skills} skill(s) and ${r.mcpServers} MCP server(s) against \`${r.modelFile}\`${r.base ? ` (base \`${r.base}\`)` : ''}.`,
     '',
+    ...(r.covered?.head
+      ? [
+          `Covers ${r.covered.base ? `\`${r.covered.base.slice(0, 12)}\`..` : ''}\`${r.covered.head.slice(0, 12)}\`${r.covered.dirty ? ' plus uncommitted changes' : ''}. Not checked since \`${r.covered.head.slice(0, 12)}\`.`,
+          '',
+        ]
+      : []),
+    ...(r.notChecked?.length
+      ? [
+          `Not checked (folder missing): ${r.notChecked.map((d) => `\`${esc(d)}\``).join(', ')}.`,
+          '',
+        ]
+      : []),
   ];
   const table = (rows: Violation[]): string[] => [
     '| Severity | Check | Target | Detail |',

@@ -31,7 +31,8 @@
         "unknownSkill": "deny",
         "unknownMcpServer": "deny",
         "uncovered": "report",
-        "remoteInstructions": "report"
+        "remoteInstructions": "report",
+        "modelChanges": "note"
       },
       "type": "object",
       "properties": {
@@ -58,6 +59,11 @@
           "default": "report",
           "type": "string",
           "enum": ["report", "warn", "deny"]
+        },
+        "modelChanges": {
+          "default": "note",
+          "type": "string",
+          "enum": ["note", "fail"]
         }
       },
       "additionalProperties": false

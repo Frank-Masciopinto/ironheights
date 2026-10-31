@@ -67,6 +67,13 @@ export const ThreatModelSchema = z
          * `report` is info (exit unchanged), `warn` is medium, `deny` is high.
          */
         remoteInstructions: z.enum(['report', 'warn', 'deny']).default('report'),
+        /**
+         * `diff` only. `note` lists model widenings for a reviewer (info). `fail` checks the
+         * head skills against the base model too: a capability that passes only because the
+         * same change widened the model is a high violation, so accepting new scope has to land
+         * as its own model-only change first. Read from the base model, so a PR cannot turn it off.
+         */
+        modelChanges: z.enum(['note', 'fail']).default('note'),
       })
       .strict()
       .default({
@@ -74,6 +81,7 @@ export const ThreatModelSchema = z
         unknownMcpServer: 'deny',
         uncovered: 'report',
         remoteInstructions: 'report',
+        modelChanges: 'note',
       }),
     skills: z.record(z.string(), SkillEntry).default({}),
     mcpServers: z.record(z.string(), McpEntry).default({}),
@@ -98,6 +106,7 @@ export type ViolationKind =
   | 'mcp-tool-not-allowed'
   | 'drift'
   | 'model-widened'
+  | 'widened-in-same-change'
   | 'uncovered-capability'
   | 'remote-instructions';
 
@@ -516,6 +525,8 @@ export function widened(base: ThreatModel, head: ThreatModel, modelFile: string)
   if (remoteRank[hr] > remoteRank[br]) add('defaults', `remoteInstructions ${br} -> ${hr}`);
   if (base.defaults.uncovered === 'fail' && head.defaults.uncovered === 'report')
     add('defaults', 'uncovered fail -> report');
+  if (base.defaults.modelChanges === 'fail' && head.defaults.modelChanges === 'note')
+    add('defaults', 'modelChanges fail -> note');
   return v;
 }
 
@@ -567,6 +578,7 @@ export function modelFromProfiles(
       unknownSkill: 'deny',
       unknownMcpServer: 'deny',
       uncovered: 'report',
+      modelChanges: 'note',
       remoteInstructions: 'report',
     },
     skills,

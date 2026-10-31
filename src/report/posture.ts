@@ -6,6 +6,7 @@
  * Top 10 for LLM Applications 2025, and a trend from earlier runs (`--history`). JSON and a
  * self-contained HTML page for audits. Local only: no network, no telemetry.
  */
+import { createHash } from 'node:crypto';
 import { appendFile, readFile, stat } from 'node:fs/promises';
 import { basename, join, relative, resolve } from 'node:path';
 
@@ -109,6 +110,19 @@ export interface SkillRow {
   topRules: string[];
   inThreatModel: boolean | null;
   drift: { approved: boolean; changes: number; high: number } | null;
+  /**
+   * What the grade is about. `complete` is false when files were skipped or the skill fetches
+   * instructions at runtime; the grade then covers only the inspected files (0.23.0).
+   */
+  coverage: {
+    complete: boolean;
+    filesRead: number;
+    filesSkipped: number;
+    /** URLs the skill fetches and follows at runtime; the scan did not read those bytes. */
+    runtimeFetched: string[];
+    /** Why the skill is not fully inspected. Empty when complete. */
+    reasons: string[];
+  };
 }
 
 export interface RepoRow {
@@ -134,7 +148,20 @@ export interface PostureReport {
     threatModelCoverage: number | null;
     driftChanged: number;
     driftApproved: number;
+    /** Skills fully inspected vs skills loaded (0.23.0). */
+    coverage: { inspected: number; loaded: number; complete: boolean };
+    /**
+     * Worst grade among fully inspected skills, or `incomplete` when any loaded skill was not
+     * fully inspected. A letter is only issued when coverage is total.
+     */
+    overall: string;
+    /** One line that always carries its denominator. */
+    result: string;
   };
+  /** Report fingerprint: sha256 over every skill config hash and coverage state. */
+  fingerprint: string;
+  /** After this time the HTML page marks itself expired. */
+  validUntil: string;
   owaspLlm: Array<{ id: string; name: string; findings: number; skills: number; rules: string[] }>;
   repos: RepoRow[];
   skills: SkillRow[];
@@ -279,8 +306,24 @@ export async function resolveRepos(targets: string[]): Promise<string[]> {
   return [...new Set(repos)].sort();
 }
 
+const URL_RE = /https?:\/\/[^\s)`'"<>\]]+/g;
+
+function runtimeFetchUrls(findings: readonly Finding[]): { urls: string[]; unnamed: number } {
+  const urls = new Set<string>();
+  let unnamed = 0;
+  for (const f of findings) {
+    if (f.ruleId !== 'IH-INJ-004') continue;
+    const found = (f.evidence ?? '').match(URL_RE) ?? [];
+    if (!found.length) unnamed += 1;
+    for (const u of found) urls.add(u.replace(/[.,;:]+$/, ''));
+  }
+  return { urls: [...urls].sort(), unnamed };
+}
+
 export interface BuildOptions {
   targets: string[];
+  /** Days until the HTML page marks itself expired (default 7). */
+  validDays?: number;
   config: ResolvedConfig;
   title?: string;
   ledger?: string;
@@ -372,6 +415,20 @@ export async function buildReport(opts: BuildOptions): Promise<PostureReport> {
           high: changes.filter((c) => c.severity === 'high').length,
         };
       }
+      const fetched = runtimeFetchUrls(report.findings);
+      const reasons: string[] = [];
+      const nSkipped = report.filesSkipped.length;
+      if (nSkipped)
+        reasons.push(
+          `${nSkipped} file(s) not read: ${report.filesSkipped
+            .slice(0, 3)
+            .map((x) => `${x.file} (${x.reason})`)
+            .join(', ')}${nSkipped > 3 ? ', ...' : ''}`,
+        );
+      if (fetched.urls.length)
+        reasons.push(`fetches instructions at runtime: ${fetched.urls.join(', ')}`);
+      if (fetched.unnamed)
+        reasons.push('fetches instructions at runtime from a URL the scan could not read');
       skills.push({
         repo: name,
         skill: report.skillName,
@@ -390,6 +447,13 @@ export async function buildReport(opts: BuildOptions): Promise<PostureReport> {
           .map(([r]) => r),
         inThreatModel: model ? modelPaths.has(profile.key) : null,
         drift,
+        coverage: {
+          complete: reasons.length === 0,
+          filesRead: report.filesScanned,
+          filesSkipped: nSkipped,
+          runtimeFetched: fetched.urls,
+          reasons,
+        },
       });
     }
     let tm: RepoRow['threatModel'] = null;
@@ -443,8 +507,45 @@ export async function buildReport(opts: BuildOptions): Promise<PostureReport> {
     threatModelCoverage: skills.length ? coverage : null,
     driftChanged: skills.filter((s) => s.drift && s.drift.changes > 0).length,
     driftApproved: skills.filter((s) => s.drift?.approved).length,
+    coverage: { inspected: 0, loaded: skills.length, complete: true },
+    overall: 'nothing-scanned',
+    result: '',
   };
-  const generatedAt = (opts.now ?? new Date()).toISOString();
+  const inspected = skills.filter((s) => s.coverage.complete && s.grade !== 'incomplete');
+  totals.coverage = {
+    inspected: inspected.length,
+    loaded: skills.length,
+    complete: inspected.length === skills.length,
+  };
+  const worst = inspected
+    .map((s) => s.grade)
+    .sort((a, b) => (GRADE_ORDER[a] ?? 9) - (GRADE_ORDER[b] ?? 9))[0];
+  totals.overall = !skills.length
+    ? 'nothing-scanned'
+    : totals.coverage.complete
+      ? (worst ?? 'incomplete')
+      : 'incomplete';
+  const missing = skills.filter((s) => !inspected.includes(s));
+  totals.result = !skills.length
+    ? 'nothing scanned: 0 skills found'
+    : totals.coverage.complete
+      ? `grade ${totals.overall}: ${inspected.length} of ${skills.length} loaded skill(s) fully inspected`
+      : `incomplete: ${inspected.length} of ${skills.length} loaded skill(s) fully inspected; not inspected: ${missing
+          .map((s) => `${s.repo}/${s.path} (${s.worstReach.label})`)
+          .join(', ')}`;
+  const now = opts.now ?? new Date();
+  const generatedAt = now.toISOString();
+  const validUntil = new Date(
+    now.getTime() + Math.max(0, opts.validDays ?? 7) * 86_400_000,
+  ).toISOString();
+  const fingerprint = createHash('sha256')
+    .update(
+      skills
+        .map((s) => `${s.repo}/${s.path}:${s.configHash}:${s.grade}:${s.coverage.complete ? 1 : 0}`)
+        .sort()
+        .join('\n'),
+    )
+    .digest('hex');
   const point: HistoryPoint = {
     at: generatedAt,
     skills: totals.skills,
@@ -461,6 +562,8 @@ export async function buildReport(opts: BuildOptions): Promise<PostureReport> {
     title: opts.title ?? 'Agent security posture',
     generatedAt,
     totals,
+    fingerprint,
+    validUntil,
     owaspLlm: Object.entries(OWASP_LLM_2025).map(([id, name]) => {
       const o = owasp.get(id);
       return {
@@ -550,6 +653,15 @@ export function renderPostureHtml(r: PostureReport): string {
         )
         .join('')}</tbody></table>`
     : '<p>No threat model violations.</p>';
+  const missing = r.skills.filter((s) => !s.coverage.complete);
+  const notInspected = missing.length
+    ? `<p>These skills are not part of the grade. Read them before an agent auto-installs or auto-runs them.</p><table><thead><tr><th>Skill</th><th>Worst reach</th><th>Read</th><th>Why</th></tr></thead><tbody>${missing
+        .map(
+          (s) =>
+            `<tr><td>${e(s.repo)}/${e(s.skill)}<div class="p">${e(s.path)}</div></td><td>${e(s.worstReach.label)}</td><td>${s.coverage.filesRead} of ${s.coverage.filesRead + s.coverage.filesSkipped} file(s), ${s.coverage.runtimeFetched.length ? `0 of ${s.coverage.runtimeFetched.length} fetched at runtime` : 'nothing fetched at runtime'}</td><td>${s.coverage.reasons.map((x) => e(x)).join('<br>')}</td></tr>`,
+        )
+        .join('')}</tbody></table>`
+    : `<p>All ${r.skills.length} loaded skill(s) were fully inspected.</p>`;
   const drift = r.driftChanges.length
     ? `<table><thead><tr><th>Repo</th><th>Severity</th><th>Change</th><th>Skill</th><th>Detail</th></tr></thead><tbody>${r.driftChanges
         .map(
@@ -570,11 +682,15 @@ table{width:100%;border-collapse:collapse;background:#fff;border:1px solid #e5e5
 th,td{text-align:left;padding:7px 9px;border-bottom:1px solid #eee;vertical-align:top}th{background:#f3f3f3}
 .p{color:#777;font-size:12px}.g{font-weight:700}.g-A{color:#15803d}.g-B{color:#4d7c0f}.g-C{color:#a16207}.g-D{color:#c2410c}.g-F{color:#b91c1c}
 code{font-size:13px}a{color:#1d4ed8}footer{margin-top:40px;color:#666;font-size:13px}
+.banner{background:#fde68a;border:1px solid #d97706;padding:10px 12px;border-radius:8px;margin:8px 0}.result{font-size:18px;font-weight:650;margin:6px 0}.result.inc{color:#b45309}body.expired main>*:not(#ih-expired){opacity:.45}
 @media print{body{background:#fff}.card,table{break-inside:avoid}}
 </style></head><body><main>
 <h1>${e(r.title)}</h1>
-<div class="meta">Generated ${e(r.generatedAt)} by ${e(r.tool)} ${e(r.version)} · ${t.repos} repo(s) · local scan, no telemetry</div>
+<div id="ih-expired" class="banner" hidden>This report expired on ${e(r.validUntil)}. It describes the skills as they were on ${e(r.generatedAt)}. Run <code>ironheights report</code> again and compare the fingerprint.</div>
+<div class="result ${t.coverage.complete ? '' : 'inc'}">${e(t.result)}</div>
+<div class="meta">Generated ${e(r.generatedAt)} by ${e(r.tool)} ${e(r.version)} · ${t.repos} repo(s) · local scan, no telemetry · valid until ${e(r.validUntil)} · fingerprint <code>${e(r.fingerprint.slice(0, 16))}</code></div>
 <div class="cards">
+${card('Overall', t.overall, `${t.coverage.inspected} of ${t.coverage.loaded} fully inspected`)}
 ${card('Skills installed', String(t.skills))}
 ${card('Blocked', String(t.verdicts.block ?? 0), hist.length > 1 ? sparkline(hist.map((h) => h.block)) : '')}
 ${card('Need review', String(t.verdicts.review ?? 0), hist.length > 1 ? sparkline(hist.map((h) => h.review)) : '')}
@@ -595,10 +711,11 @@ ${card('Changed since approval', String(t.driftChanged), `${t.driftApproved} ski
 <table><thead><tr><th>Repo</th><th>Skills</th><th>In threat model</th><th>Violations</th></tr></thead><tbody>${repos}</tbody></table>
 <h2>Skill inventory</h2>
 <table><thead><tr><th>Worst reach</th><th>Grade</th><th>Repo</th><th>Skill</th><th>Verdict</th><th>Findings</th><th>Top rules</th><th>In model</th><th>Drift</th></tr></thead><tbody>${rows}</tbody></table>
+<h2>Not fully inspected</h2>${notInspected}
 <h2>Threat model violations</h2>${viol}
 <h2>Drift since approval</h2>${drift}
 ${hist.length > 1 ? `<h2>Trend</h2><table><thead><tr><th>Run</th><th>Skills</th><th>Findings</th><th>Block</th><th>Review</th><th>Coverage</th><th>Drifted</th></tr></thead><tbody>${hist.map((h) => `<tr><td>${e(h.at)}</td><td>${h.skills}</td><td>${h.findings}</td><td>${h.block}</td><td>${h.review}</td><td>${h.threatModelCoverage ?? '—'}</td><td>${h.driftChanged}</td></tr>`).join('')}</tbody></table>` : ''}
 <footer>Ironheights protects any AI bot that installs it. A grade reports what the rules matched in the files scanned; no findings is not proof of safety. OWASP mapping from each rule's references. https://www.ironheights.dev</footer>
-</main></body></html>
+</main><script>(function(){var u=Date.parse(${JSON.stringify(r.validUntil)});if(Date.now()>u){document.body.className+=' expired';var b=document.getElementById('ih-expired');if(b)b.hidden=false;}})();</script></body></html>
 `;
 }
