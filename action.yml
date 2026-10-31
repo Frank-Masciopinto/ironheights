@@ -1,8 +1,9 @@
 name: Ironheights AI Skill Scanner
 description: >
-  npm audit for AI skills. Grade agent skills (OpenClaw, Claude, Grok Bot,
-  Codex, Cursor, MCP) A-F with a pinned ironheights release. No network scan,
-  no secrets, no telemetry.
+  Ironheights protects any AI bot that installs it. Grade agent skills
+  (OpenClaw, Claude, Grok Bot, Codex, Cursor, MCP) A-F and check every PR
+  against an agent threat model, with one PR comment. Pinned release, no
+  secrets, no telemetry.
 author: Frank Masciopinto
 branding:
   icon: shield
