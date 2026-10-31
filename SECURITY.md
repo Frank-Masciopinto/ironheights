@@ -2,16 +2,25 @@
 
 ## Supported versions
 
+Only the latest minor release line gets security fixes. Upgrade to the newest version on npm before reporting.
+
 | Version | Supported |
 | ------- | --------- |
-| 0.2.x   | yes       |
-| 0.1.x   | yes       |
+| 0.22.x  | yes       |
+| < 0.22  | no        |
 
 ## Reporting a vulnerability
 
-Open a private security advisory on the GitHub repository for Ironheights. Please include the rule id if one exists, a minimal skill that triggers the issue, and the Ironheights version from `ironheights --version`.
+Report privately through GitHub: open a [private security advisory](https://github.com/Frank-Masciopinto/ironheights/security/advisories/new). Do not open a public issue for a vulnerability. Please include the rule id if one exists, a minimal skill that triggers the issue, and the Ironheights version from `ironheights --version`.
 
-Give the maintainers time to ship a fix before writing about the issue in public. There is no bug bounty.
+What to expect:
+
+- Acknowledgement within 3 business days.
+- An initial assessment and severity rating within 7 days.
+- A fix or mitigation for high and critical issues within 30 days, sooner when possible. We will keep you updated in the advisory.
+- Coordinated disclosure: we publish the advisory and credit you (if you want) once a fixed release is on npm. Please wait for that before writing about the issue in public, or 90 days from your report, whichever comes first.
+
+There is no bug bounty.
 
 Do not send copies of real secrets or live malware. A synthetic snippet that matches the pattern is enough.
 
