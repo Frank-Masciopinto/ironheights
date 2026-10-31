@@ -62,7 +62,7 @@ node dist/cli/index.js scan test/fixtures/benign
 
 ## MCP server
 
-`npx -y ironheights@0.21.0 mcp` runs Ironheights as an MCP server, so Claude, Cursor, VS Code, Grok Bot or any MCP client can call `check_skill` (grade, findings, drift) before installing a skill, plus `drift_status`, `threatmodel_check` and `get_rule`. Read-only. See [docs/mcp.md](docs/mcp.md).
+`npx -y ironheights@0.21.1 mcp` runs Ironheights as an MCP server, so Claude, Cursor, VS Code, Grok Bot or any MCP client can call `check_skill` (grade, findings, drift) before installing a skill, plus `drift_status`, `threatmodel_check` and `get_rule`. Read-only. See [docs/mcp.md](docs/mcp.md).
 
 ## Threat model as code (checked on every PR)
 

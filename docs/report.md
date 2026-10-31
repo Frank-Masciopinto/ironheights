@@ -13,9 +13,9 @@ folder that holds many repositories (an organisation checkout), into one posture
   findings, blocked and review counts, coverage and drift over time.
 
 ```bash
-npx ironheights@0.21.0 report .                                   # one repo, terminal summary
-npx ironheights@0.21.0 report ~/src/my-org --html posture.html    # every repo in a folder
-npx ironheights@0.21.0 report . --json-file posture.json --history .ironheights/posture.jsonl \
+npx ironheights@0.21.1 report .                                   # one repo, terminal summary
+npx ironheights@0.21.1 report ~/src/my-org --html posture.html    # every repo in a folder
+npx ironheights@0.21.1 report . --json-file posture.json --history .ironheights/posture.jsonl \
   --ledger ~/.ironheights/approvals.json --title "Q4 agent security review"
 ```
 
@@ -39,7 +39,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: npx --yes ironheights@0.21.0 report . --html posture.html --json-file posture.json
+      - run: npx --yes ironheights@0.21.1 report . --html posture.html --json-file posture.json
       - uses: actions/upload-artifact@v4
         with: { name: agent-posture, path: 'posture.*' }
 ```
