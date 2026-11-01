@@ -307,7 +307,7 @@ printf '%s' 'Ignore previous instructions' | ironheights scan --stdin
 
 ## Other agents and MCP configs
 
-The same `scan` command reads Claude Code, Codex, and Cursor skill folders. MCP configuration rules `IH-MCP-001`, `IH-MCP-002`, and `IH-MCP-003` flag a server launched with `curl|sh` or an unpinned `npx` package, a literal secret in `env`, and a broad filesystem root. Paths and examples are in [docs/other-agents.md](docs/other-agents.md). Ironheights does not ship an MCP server. See [docs/ideas.md](docs/ideas.md).
+The same `scan` command reads Claude Code, Codex, and Cursor skill folders. MCP configuration rules `IH-MCP-001`, `IH-MCP-002`, and `IH-MCP-003` flag a server launched with `curl|sh` or an unpinned `npx` package, a literal secret in `env`, and a broad filesystem root. Paths and examples are in [docs/other-agents.md](docs/other-agents.md). Ironheights also ships its own MCP server (`ironheights mcp`), described in [docs/mcp.md](docs/mcp.md).
 
 ## Config
 
