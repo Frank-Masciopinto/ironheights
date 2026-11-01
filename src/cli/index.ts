@@ -20,7 +20,13 @@ import { runSafeInstall } from './commands/safe-install.ts';
 import { runScan } from './commands/scan.ts';
 import { runWatch } from './commands/watch.ts';
 import { runActivityWatch, runInstall, runSandbox, runVerifyActivity } from './commands/runtime.ts';
-import { runAttest, runReceipts } from './commands/premium.ts';
+import {
+  runAlerts,
+  runAttest,
+  runFleetInventory,
+  runPolicyInit,
+  runReceipts,
+} from './commands/premium.ts';
 import { runUpdate } from './commands/update.ts';
 import { maybeStartBackgroundCheck, type AutoCheckHooks } from '../update/update.ts';
 import { IronheightsError, UsageError } from '../core/errors.ts';
@@ -634,6 +640,69 @@ export async function main(argv: string[], hooks: MainHooks = {}): Promise<numbe
         ...(o('kind') ? { kind: o('kind') } : {}),
         ...(o('out') ? { out: o('out') } : {}),
         ...(o('bundle') ? { bundle: o('bundle') } : {}),
+      });
+    });
+
+  program
+    .command('alerts <action>')
+    .description('opt-in signed alerts on block, drift and failed verification: test, verify')
+    .option('--body <file>', 'verify: alert body as received')
+    .option('--signature <base64>', 'verify: x-ironheights-signature value')
+    .option(
+      '--public-key <file>',
+      'verify: sender public key (default IRONHEIGHTS_HOME/watch-key.pub.pem)',
+    )
+    .action(async (action: string, opts: Record<string, string | undefined>) => {
+      process.exitCode = await runAlerts({
+        action,
+        ...(opts.body ? { body: opts.body } : {}),
+        ...(opts.signature ? { signature: opts.signature } : {}),
+        ...(opts.publicKey ? { publicKey: opts.publicKey } : {}),
+        ...(hooks.fetchImpl ? { fetchImpl: hooks.fetchImpl } : {}),
+      });
+    });
+
+  program
+    .command('policy')
+    .description('policy templates')
+    .command('init')
+    .description(
+      'write ironheights.config.json and guard-policy.json from a template (strict, balanced, ci)',
+    )
+    .option('--template <name>', 'strict, balanced or ci')
+    .option('--dir <dir>', 'folder to write into (default .)')
+    .option('--force', 'overwrite existing files')
+    .option('--list', 'list templates')
+    .action(async (opts: { template?: string; dir?: string; force?: boolean; list?: boolean }) => {
+      process.exitCode = await runPolicyInit({
+        ...(opts.template ? { template: opts.template } : {}),
+        ...(opts.dir ? { dir: opts.dir } : {}),
+        force: Boolean(opts.force),
+        list: Boolean(opts.list),
+      });
+    });
+
+  program
+    .command('fleet')
+    .description('fleet tools')
+    .command('inventory [targets...]')
+    .description(
+      'signed inventory across bots: bot=dir targets on this host, plus inventory .json files from other hosts',
+    )
+    .option('--out <file>', 'write the signed inventory')
+    .option('--audit-export <file>', 'write inventory plus the retained receipts bundle, signed')
+    .option('--trust-key <file>', 'require imported inventories to be signed by this key')
+    .option('--config <file>', 'config file')
+    .option('--json', 'print JSON to stdout')
+    .action(async (targets: string[], opts: Record<string, string | boolean | undefined>) => {
+      const o = (k: string) => (typeof opts[k] === 'string' ? (opts[k] as string) : undefined);
+      process.exitCode = await runFleetInventory({
+        targets,
+        json: Boolean(opts.json),
+        ...(o('out') ? { out: o('out') } : {}),
+        ...(o('auditExport') ? { auditExport: o('auditExport') } : {}),
+        ...(o('trustKey') ? { trustKey: o('trustKey') } : {}),
+        ...(o('config') ? { config: o('config') } : {}),
       });
     });
 

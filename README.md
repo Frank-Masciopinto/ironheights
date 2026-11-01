@@ -82,6 +82,8 @@ New in 0.25.0. Ironheights protects any AI bot that installs it, and these three
 
 New in 0.26.0, open and opt-in. `ironheights receipts ingest` keeps every MCP check receipt and activity-log reference in a signed, append-only local store with configurable retention; `receipts export` and `receipts verify --bundle` prove it offline. `ironheights attest ./skill` writes a signed "verified by Ironheights" attestation and badge SVG. See [docs/receipts.md](docs/receipts.md).
 
+Also opt-in: signed alerts on block, drift and failed verification (`IRONHEIGHTS_ALERT_WEBHOOK`), `ironheights policy init --template strict|balanced|ci`, and `ironheights fleet inventory` across bots and hosts. See [docs/fleet.md](docs/fleet.md).
+
 ## 60-second quickstart
 
 ```bash
@@ -145,6 +147,9 @@ ironheights sandbox run <skill> [--model <file>] [--image <image>] [--trace <fil
 ironheights watch --activity <skills-dir> [--log <file>] [--events <file>] [--model <file>] [--check-budget <seconds>] [--once]
 ironheights watch --verify-log <file> [--public-key <file>]
 ironheights receipts <ingest|list|export|verify|prune> [--from <file>] [--activity <log>] [--retention-days <n>] [--since <date>] [--skill <name>] [--kind <kind>] [--out <file>] [--bundle <file>] [--json]
+ironheights alerts <test|verify> [--body <file>] [--signature <base64>] [--public-key <file>]
+ironheights policy init --template <strict|balanced|ci> [--dir <dir>] [--force] [--list]
+ironheights fleet inventory <bot=dir|inventory.json...> [--out <file>] [--audit-export <file>] [--trust-key <file>] [--json]
 ironheights attest <skill> [--out <file>] [--badge <file>] [--valid-days <n>] [--verify <file>] [--public-key <file>] [--json]
 ironheights install <skill-folder|owner/slug[@version]> (--lock <file> | --expect-digest <sha256> | --write-lock <file>) [--dir <skills-dir>] [--with-deps] [--accept-review] [--json]
 ironheights safe-install <owner>/<slug>[@version] [--dir <skills-dir>] [--accept-review] [--out <dir>] [--json] [--config <file>] [--no-color] [--quiet]

@@ -32,7 +32,8 @@ export type ActivityKind =
   | 'receipt'
   | 'activity-ref'
   | 'attestation'
-  | 'retention-prune';
+  | 'retention-prune'
+  | 'alert';
 
 export interface ActivityRecord {
   seq: number;

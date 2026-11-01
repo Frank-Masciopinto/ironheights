@@ -1,3 +1,4 @@
+import { emitAlert } from '../../premium/alerts.ts';
 import { stat, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { annotateKnownSecurityTools } from '../../coexist/annotate.ts';
@@ -127,6 +128,24 @@ export function shouldShowStarHint(
 export async function runScan(flags: ScanFlags): Promise<number> {
   const result = await executeScan(flags);
   const env = flags.env ?? process.env;
+  if (result.verdict === 'block')
+    await emitAlert(
+      'block',
+      `block verdict: ${result.skills
+        .filter((s) => s.verdict === 'block')
+        .map((s) => s.skillName)
+        .join(', ')}`,
+      {
+        skills: result.skills
+          .filter((s) => s.verdict === 'block')
+          .map((s) => ({
+            name: s.skillName,
+            root: s.root,
+            findings: s.findings.map((f) => f.ruleId),
+          })),
+      },
+      { env },
+    );
   const isTTY = flags.isTTY ?? Boolean(process.stdout.isTTY && process.stderr.isTTY);
   if (shouldShowStarHint(flags, result.verdict, env, isTTY)) {
     const emit = flags.stderr ?? ((text: string) => process.stderr.write(text));

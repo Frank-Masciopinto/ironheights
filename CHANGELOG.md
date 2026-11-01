@@ -6,6 +6,9 @@
 
 - `ironheights receipts ingest|list|export|verify|prune`: a local retention store for MCP `check_skill` receipts and `watch --activity` log references, signed with the watch key, hash-chained and append-only in monthly segments. Configurable retention (`--retention-days`, `IRONHEIGHTS_RETENTION_DAYS`, default 365) deletes only whole old segments and records each deletion as a signed `retention-prune` record. Exported bundles verify offline.
 - `ironheights attest <skill>`: a signed "verified by Ironheights" attestation JSON (content digest, verdict, tool version, rule-set hash, expiry) plus a badge SVG. Only `no-findings` is verified. `attest --verify` checks signature, expiry, files on disk and an optional pinned public key.
+- Alerts hook (opt-in via `IRONHEIGHTS_ALERT_WEBHOOK`, `IRONHEIGHTS_ALERT_COMMAND` or `alerts.json`): block verdicts, drift since approval and failed verifications send an ed25519-signed JSON payload to an https webhook and/or a command. `ironheights alerts test|verify`. Never changes an exit code. See [docs/fleet.md](docs/fleet.md).
+- `ironheights policy init --template strict|balanced|ci`: writes a scanner config and guard policy (and, for `ci`, a GitHub Actions workflow with `--fail-on-incomplete` and `--fail-on-widen`). Templates only tighten the defaults.
+- `ironheights fleet inventory bot=dir ... other-host.json`: one signed inventory across bots and hosts with verdicts, blocked skills and skills whose bytes differ between bots; `--audit-export` signs it together with the retained receipts bundle as a cross-bot audit record.
 
 ## 0.25.0 — 2026-11-01
 
