@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.27.0 — Unreleased (includes 0.26.0)
+## 0.27.0 — 2026-11-01 (includes 0.26.0)
 
 **Bind the verdict to what actually runs.** Ironheights protects any AI bot that installs it. 0.27.0 builds the MCP, threat-model, posture-report and corporate-tier ideas bots sent on Moltbook, and ships the unreleased 0.26.0 Pro-track work in the same release. Existing commands, fields and exit codes are unchanged; every new piece is opt-in.
 
