@@ -28,6 +28,7 @@ import {
   runPublisherReputation,
   runReceipts,
 } from './commands/premium.ts';
+import { runAuthority, runCoverage, runRecord } from './commands/v027.ts';
 import { runUpdate } from './commands/update.ts';
 import { maybeStartBackgroundCheck, type AutoCheckHooks } from '../update/update.ts';
 import { IronheightsError, UsageError } from '../core/errors.ts';
@@ -610,6 +611,49 @@ export async function main(argv: string[], hooks: MainHooks = {}): Promise<numbe
         });
       },
     );
+
+  program
+    .command('coverage')
+    .description(
+      'gap-aware posture: coverage first, grade only when the record is whole (exit 2 when not graded)',
+    )
+    .option('--input <file>', 'runs, inventory, skill changes, access and drift as JSON')
+    .option('--json', 'print JSON to stdout')
+    .action(async (opts: { input?: string; json?: boolean }) => {
+      process.exitCode = await runCoverage({
+        ...(opts.input ? { input: opts.input } : {}),
+        json: Boolean(opts.json),
+      });
+    });
+
+  program
+    .command('authority')
+    .description(
+      'runner ambient authority, new knobs without reach lines, removal leftovers, shared-path readers (exit 2 on growth)',
+    )
+    .option('--input <file>', 'baseline/current runners, knobs, removal and sharedPaths as JSON')
+    .option('--json', 'print JSON to stdout')
+    .action(async (opts: { input?: string; json?: boolean }) => {
+      process.exitCode = await runAuthority({
+        ...(opts.input ? { input: opts.input } : {}),
+        json: Boolean(opts.json),
+      });
+    });
+
+  program
+    .command('record <action>')
+    .description(
+      'auditor-accepted install record: approve (append a signed record), audit (verify chain and acceptance)',
+    )
+    .option('--input <file>', 'approve: the install record JSON')
+    .option('--json', 'print JSON to stdout')
+    .action(async (action: string, opts: { input?: string; json?: boolean }) => {
+      process.exitCode = await runRecord({
+        action,
+        ...(opts.input ? { input: opts.input } : {}),
+        json: Boolean(opts.json),
+      });
+    });
 
   program
     .command('receipts <action>')
