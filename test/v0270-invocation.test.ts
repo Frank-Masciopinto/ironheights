@@ -122,7 +122,10 @@ describe('0.27.0 check_invocation: verdict bound to the exact invocation', () =>
       argv: ['i'],
       cwd: w.work,
       resolvedSet: set,
-      fetchedSet: [set[0]!, { name: 'dep', sha256: 'c'.repeat(64) }],
+      fetchedSet: [
+        set[0] as { name: string; sha256: string },
+        { name: 'dep', sha256: 'c'.repeat(64) },
+      ],
       env: w.env,
     });
     expect(bad.findings.map((f) => f.code)).toContain('fetched-not-checked');

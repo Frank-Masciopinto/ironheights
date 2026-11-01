@@ -98,7 +98,7 @@ export const setHash = (items: ResolvedItem[]): string =>
     JSON.stringify(
       [...items]
         .map((i) => [i.name, i.sha256.toLowerCase()])
-        .sort((a, b) => (a[0]! < b[0]! ? -1 : 1)),
+        .sort((a, b) => (String(a[0]) < String(b[0]) ? -1 : 1)),
     ),
   );
 export const permHash = (p: string[]): string => sha(JSON.stringify([...new Set(p)].sort()));
@@ -120,7 +120,7 @@ const inside = (root: string, p: string): boolean => {
 /** First symlink on the way from root to p (inclusive), if any. */
 async function symlinkOnPath(p: string): Promise<string | undefined> {
   const parts = resolve(p).split(sep);
-  let cur = parts[0] === '' ? sep : parts[0]!;
+  let cur = parts[0] === '' ? sep : (parts[0] ?? sep);
   for (const part of parts.slice(1)) {
     if (!part) continue;
     cur = join(cur, part);
@@ -149,7 +149,7 @@ export async function checkInvocation(input: InvocationInput): Promise<Invocatio
   const cwd = await realpath(resolve(expandArg(input.cwd, env))).catch(() => resolve(input.cwd));
   const root = input.workspaceRoot
     ? await realpath(resolve(expandArg(input.workspaceRoot, env))).catch(() =>
-        resolve(input.workspaceRoot!),
+        resolve(input.workspaceRoot ?? cwd),
       )
     : cwd;
   if (!inside(root, cwd))
@@ -216,7 +216,7 @@ export async function checkInvocation(input: InvocationInput): Promise<Invocatio
           .filter((i) => want.get(i.name) !== i.sha256.toLowerCase())
           .map((i) => i.name);
         const missing = [...want.keys()].filter(
-          (n) => !input.fetchedSet!.some((i) => i.name === n),
+          (n) => !(input.fetchedSet ?? []).some((i) => i.name === n),
         );
         refuse(
           'fetched-not-checked',
