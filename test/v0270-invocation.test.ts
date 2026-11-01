@@ -41,7 +41,7 @@ describe('0.27.0 check_invocation: verdict bound to the exact invocation', () =>
   });
 
   it('expands ~ and $VAR before judging', () => {
-    expect(expandArg('~/x', { HOME: '/h' })).toBe('/h/x');
+    expect(expandArg('~/x', { HOME: '/h' })).toBe(join('/h', 'x'));
     expect(expandArg('$A/${B}', { A: '1', B: '2' })).toBe('1/2');
   });
 
