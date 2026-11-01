@@ -1,3 +1,4 @@
+import { emitAlert } from '../../premium/alerts.ts';
 import { createHash } from 'node:crypto';
 import { join } from 'node:path';
 import { loadConfig, ironheightsHome } from '../../core/config.ts';
@@ -76,7 +77,17 @@ export async function runDrift(flags: DriftFlags): Promise<number> {
   if (!hasSources)
     throw new UsageError('drift needs a path, --all, --mcp <file>, or --tools <file>');
   if (action === 'approve') return approve(flags, out);
-  if (action === 'check') return (await check(flags, out)).code;
+  if (action === 'check') {
+    const r = await check(flags, out);
+    if (r.report.changes.length)
+      await emitAlert(
+        'drift',
+        `drift since approval: ${r.report.changes.length} change(s)`,
+        { changes: r.report.changes, decision: r.report.decision },
+        { env: flags.env ?? process.env },
+      );
+    return r.code;
+  }
   const seconds = Number(flags.interval ?? '60');
   if (!Number.isFinite(seconds) || seconds < 5) {
     throw new UsageError('--interval must be a number of seconds, 5 or more');

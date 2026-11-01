@@ -8,6 +8,7 @@ import { UsageError } from '../../core/errors.ts';
 import { parseSkillRef } from '../../net/clawhub.ts';
 import { locateOpenClaw } from '../../openclaw/locate.ts';
 import { loadModel, MODEL_FILE, modelDir } from '../../threatmodel/threatmodel.ts';
+import { emitAlert } from '../../premium/alerts.ts';
 import { ActivityLog, loadOrCreateWatchKey, verifyActivityLog } from '../../runtime/activity.ts';
 import {
   buildLock,
@@ -198,6 +199,13 @@ export async function runVerifyActivity(
       ? `activity log verified: ${v.records.length} record(s)`
       : `activity log FAILED: ${v.problem}`,
   );
+  if (!v.ok)
+    await emitAlert(
+      'verify-failed',
+      `activity log failed verification: ${v.problem}`,
+      { file, problem: v.problem },
+      { env },
+    );
   return v.ok ? 0 : 2;
 }
 

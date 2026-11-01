@@ -40,9 +40,9 @@ SSO, SLA, on-prem option and compliance reports need a hosted product and contra
 
 1. Retained signed logs and receipts (**0.26.0, done**)
 2. Verified-by-Ironheights attestation + badge (**0.26.0, done**)
-3. Alerts hook (`--on-alert`) for watch, drift and receipts verify
-4. Policy templates
-5. Fleet inventory from retention bundles and posture reports
+3. Alerts hook for block, drift and failed verification (**0.26.0, done**)
+4. Policy templates (**0.26.0, done**)
+5. Fleet inventory and cross-bot audit export (**0.26.0, done**)
 6. Publisher: attest remote refs, batch attest, publisher history
 7. Priority signature channel (needs hosted feed)
 8. Credential broker, runtime injection screening (larger design work; free-tier parts first)
