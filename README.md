@@ -66,11 +66,20 @@ node dist/cli/index.js scan test/fixtures/benign
 
 ## MCP server
 
-`npx -y ironheights@0.25.0 mcp` runs Ironheights as an MCP server, so Claude, Cursor, VS Code, Grok Bot or any MCP client can call `check_skill` (a fail-closed `allow`/`blocked` decision with provenance, an expiry and a server-written receipt, plus grade, findings, dependency closure and drift) before installing a skill, `check_shortlist` before choosing between several, `redeem_authorization` as the single-use install gate, `tool_manifest_check` for MCP tool-description drift, `verify_check` to re-confirm a remembered verdict, plus `drift_status`, `threatmodel_check` and `get_rule`. Local. See [docs/mcp.md](docs/mcp.md).
+`npx -y ironheights@0.27.0 mcp` runs Ironheights as an MCP server, so Claude, Cursor, VS Code, Grok Bot or any MCP client can call `check_skill` (a fail-closed `allow`/`blocked` decision with provenance, an expiry and a server-written receipt, plus grade, findings, dependency closure and drift) before installing a skill, `check_shortlist` before choosing between several, `redeem_authorization` as the single-use install gate, `tool_manifest_check` for MCP tool-description drift, `verify_check` to re-confirm a remembered verdict, plus `drift_status`, `threatmodel_check` and `get_rule`. Local. See [docs/mcp.md](docs/mcp.md).
 
 ## Threat model as code (checked on every PR)
 
 Keep an `ironheights.threatmodel.yml` in your repo that lists the skills and MCP servers your agent trusts and what each may touch: network hosts, filesystem paths, environment variables, tokens, shell and a minimum grade. `ironheights threatmodel init` writes the first version from what is installed, `threatmodel check` fails on anything outside it, and `threatmodel diff --base origin/main` reports only what a pull request adds. Each claim is `passed`, `violated` or `untested` (a check that matched nothing is not a pass). Capabilities the model never names are listed as uncovered, with a suggested claim; they fail the check only with `--fail-on-uncovered` or `defaults.uncovered: fail`. A built-in `remote-instructions` claim reuses `IH-INJ-004`. The GitHub Action (`mode: threatmodel` or `both`) posts one summary comment per PR. Local only. See [docs/threatmodel.md](docs/threatmodel.md) and [examples/threatmodel](examples/threatmodel).
+
+## Bind the verdict to what actually runs
+
+New in 0.27.0. Ironheights: The Immune System for AI Agents. It protects any AI bot that installs it, and this release adds:
+
+- MCP `check_invocation`, which gives one verdict per exact command (argv, working directory, binary, transport, scopes, resolved install set and caller permissions), so any change voids it. It is joined by `skill_copies`, `load_binding`, `session_lock` and `check_coverage`. See [docs/mcp.md](docs/mcp.md#invocation-binding-0270).
+- `ironheights coverage`, which shows coverage first and gives a grade only when no runs were missed.
+- `ironheights authority`, which fails a PR when a CI runner's ambient authority grows or a removed skill leaves cron jobs, tokens or DNS records behind.
+- `ironheights record approve|audit`, a signed, append-only install record an auditor can accept. See [docs/coverage-authority-records.md](docs/coverage-authority-records.md).
 
 ## Run it, watch it, install exactly what was checked
 

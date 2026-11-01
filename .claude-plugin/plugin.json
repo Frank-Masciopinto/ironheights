@@ -1,7 +1,7 @@
 {
   "name": "ironheights",
   "displayName": "Ironheights",
-  "version": "0.25.0",
+  "version": "0.27.0",
   "description": "Ironheights: The Immune System for AI Agents. Protects any AI bot that installs it. Scans skills before install for malware, credential theft, pipe-to-shell, encoded payloads and drift.",
   "author": { "name": "Frank Masciopinto", "url": "https://github.com/Frank-Masciopinto" },
   "homepage": "https://www.ironheights.dev",
