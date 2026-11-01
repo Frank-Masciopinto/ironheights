@@ -35,6 +35,14 @@ import {
   type SignedInventory,
 } from '../../premium/fleet.ts';
 import { TEMPLATES } from '../../premium/policy.ts';
+import { createPublicKey, sign, verify } from 'node:crypto';
+import { parseSkillRef } from '../../net/clawhub.ts';
+import { rulesetHash } from '../../mcp/receipts.ts';
+import { isDir } from '../../runtime/sandbox.ts';
+import { TOOL_VERSION } from '../../version.ts';
+import { stable, type AttestationSource } from '../../premium/attest.ts';
+import { computeReputation, signReputation } from '../../premium/reputation.ts';
+import { stageSkill } from './fetch.ts';
 import { executeScan } from './scan.ts';
 
 type Out = (l: string) => void;
@@ -181,7 +189,7 @@ async function verifyBundle(
 }
 
 export interface AttestFlags {
-  skill: string;
+  skill?: string;
   out?: string;
   badge?: string;
   verify?: string;
@@ -189,23 +197,123 @@ export interface AttestFlags {
   validDays?: number;
   config?: string;
   json?: boolean;
+  /** Batch: a file listing skills (one per line, or a JSON array). */
+  batch?: string;
+  outDir?: string;
   env?: NodeJS.ProcessEnv;
   now?: Date;
+  fetchImpl?: typeof fetch;
   out_?: Out;
+}
+
+interface Subject {
+  dir: string;
+  source?: AttestationSource;
+  label: string;
+  cleanup: () => Promise<void>;
+}
+
+/** A local folder, or a ClawHub ref fetched read-only into a temp folder (nothing installed). */
+async function resolveSubject(
+  skill: string,
+  f: AttestFlags,
+  env: NodeJS.ProcessEnv,
+): Promise<Subject> {
+  if (await isDir(skill))
+    return { dir: resolve(skill), label: basename(resolve(skill)), cleanup: async () => undefined };
+  const ref = parseSkillRef(skill);
+  const tmp = await mkdtemp(join(tmpdir(), 'ih-attest-'));
+  const staged = await stageSkill({
+    skill,
+    quiet: true,
+    env,
+    out: join(tmp, 'skill'),
+    ...(f.config ? { config: f.config } : {}),
+    ...(f.fetchImpl ? { fetchImpl: f.fetchImpl } : {}),
+  });
+  const source: AttestationSource = {
+    registry: 'clawhub',
+    ref: `${ref.owner}/${ref.slug}@${staged.version}`,
+    owner: ref.owner,
+    slug: ref.slug,
+    version: staged.version,
+  };
+  return {
+    dir: staged.dir,
+    source,
+    label: `${ref.owner}-${ref.slug}@${staged.version}`,
+    cleanup: () => rm(tmp, { recursive: true, force: true }),
+  };
+}
+
+async function attestOne(
+  skill: string,
+  f: AttestFlags,
+  env: NodeJS.ProcessEnv,
+  store: RetentionStore,
+  outFileFor: (label: string) => string,
+): Promise<{ attestation: Attestation; file: string; badge: string }> {
+  const subj = await resolveSubject(skill, f, env);
+  try {
+    const scan = await executeScan({
+      paths: [subj.dir],
+      stdout: () => undefined,
+      quiet: true,
+      json: false,
+      allowSkipped: false,
+      noColor: true,
+      env,
+      ...(f.config ? { config: f.config } : {}),
+    });
+    const a = await buildAttestation({
+      dir: subj.dir,
+      name: scan.skills[0]?.skillName ?? subj.label,
+      verdict: scan.verdict,
+      findings: scan.skills.reduce((n, s) => n + s.findings.length, 0),
+      key: store.key,
+      ...(f.now ? { now: f.now } : {}),
+      ...(f.validDays ? { validDays: f.validDays } : {}),
+      ...(subj.source ? { source: subj.source } : {}),
+    });
+    const file = outFileFor(subj.label);
+    const badge = resolve(f.badge && !f.batch ? f.badge : file.replace(/\.json$/, '') + '.svg');
+    await mkdir(dirname(file), { recursive: true });
+    await writeFile(file, JSON.stringify(a, null, 2) + '\n');
+    await writeFile(badge, badgeSvg(a.statement));
+    await store.append('attestation', { ...a.statement, file }, a.statement.subject.name);
+    return { attestation: a, file, badge };
+  } finally {
+    await subj.cleanup();
+  }
 }
 
 export async function runAttest(f: AttestFlags): Promise<number> {
   const env = f.env ?? process.env;
   const out = f.out_ ?? stdout;
-  const dir = resolve(f.skill);
+  if (f.batch) return runBatchAttest(f, env, out);
+  if (!f.skill)
+    throw new UsageError('attest needs a skill folder, owner/slug@version, or --batch <file>');
   if (f.verify) {
     const a = JSON.parse(await readFile(resolve(f.verify), 'utf8')) as Attestation;
     const trusted = f.publicKey ? await readFile(resolve(f.publicKey), 'utf8') : undefined;
-    const c = await verifyAttestation(a, {
-      dir,
-      ...(trusted ? { trustedPublicKey: trusted } : {}),
-      ...(f.now ? { now: f.now } : {}),
-    });
+    const subj = await resolveSubject(f.skill, f, env);
+    let c;
+    try {
+      if (subj.source && a.statement?.source?.ref !== subj.source.ref)
+        c = {
+          ok: false,
+          verified: false,
+          reason: `attestation is for ${a.statement?.source?.ref ?? 'a local folder'}, not ${subj.source.ref}`,
+        };
+      else
+        c = await verifyAttestation(a, {
+          dir: subj.dir,
+          ...(trusted ? { trustedPublicKey: trusted } : {}),
+          ...(f.now ? { now: f.now } : {}),
+        });
+    } finally {
+      await subj.cleanup();
+    }
     out(
       f.json
         ? JSON.stringify(c)
@@ -220,39 +328,175 @@ export async function runAttest(f: AttestFlags): Promise<number> {
       );
     return c.ok && c.verified ? 0 : 2;
   }
-  const scan = await executeScan({
-    paths: [dir],
-    stdout: () => undefined,
-    quiet: true,
-    json: false,
-    allowSkipped: false,
-    noColor: true,
-    env,
-    ...(f.config ? { config: f.config } : {}),
-  });
-  const findings = scan.skills.reduce((n, s) => n + s.findings.length, 0);
   const store = await RetentionStore.open(env, f.now ? () => f.now as Date : undefined);
-  const a = await buildAttestation({
-    dir,
-    name: scan.skills[0]?.skillName ?? basename(dir),
-    verdict: scan.verdict,
-    findings,
-    key: store.key,
-    ...(f.now ? { now: f.now } : {}),
-    ...(f.validDays ? { validDays: f.validDays } : {}),
-  });
   // Default next to the caller, never inside the skill: writing there would change its digest.
-  const outFile = resolve(f.out ?? `${basename(dir)}.attestation.json`);
-  const badgeFile = resolve(f.badge ?? outFile.replace(/\.json$/, '') + '.svg');
-  await writeFile(outFile, JSON.stringify(a, null, 2) + '\n');
-  await writeFile(badgeFile, badgeSvg(a.statement));
-  await store.append('attestation', { ...a.statement, file: outFile }, a.statement.subject.name);
-  if (f.json) out(JSON.stringify({ attestation: outFile, badge: badgeFile, ...a.statement }));
+  const {
+    attestation: a,
+    file,
+    badge,
+  } = await attestOne(f.skill, f, env, store, (label) =>
+    resolve(f.out ?? `${label}.attestation.json`),
+  );
+  if (f.json) out(JSON.stringify({ attestation: file, badge, ...a.statement }));
   else
     out(
-      `${a.statement.verified ? 'verified' : `not verified (verdict ${a.statement.verdict})`}: ${a.statement.subject.name} ${a.statement.subject.contentDigest.slice(0, 12)}\nattestation ${outFile}\nbadge ${badgeFile}`,
+      `${a.statement.verified ? 'verified' : `not verified (verdict ${a.statement.verdict})`}: ${a.statement.source?.ref ?? a.statement.subject.name} ${a.statement.subject.contentDigest.slice(0, 12)}\nattestation ${file}\nbadge ${badge}`,
     );
   return a.statement.verified ? 0 : 1;
+}
+
+export interface BatchItem {
+  input: string;
+  ref: string | null;
+  name: string | null;
+  publisher: string | null;
+  verdict: string | null;
+  verified: boolean;
+  contentDigest: string | null;
+  attestation: string | null;
+  error: string | null;
+}
+
+export async function parseBatchFile(file: string): Promise<string[]> {
+  const text = (await readFile(resolve(file), 'utf8')).trim();
+  if (text.startsWith('[')) {
+    const arr = JSON.parse(text) as unknown;
+    if (!Array.isArray(arr) || !arr.every((x) => typeof x === 'string'))
+      throw new UsageError('--batch JSON must be an array of strings');
+    return arr as string[];
+  }
+  return text
+    .split('\n')
+    .map((l) => l.replace(/#.*$/, '').trim())
+    .filter(Boolean);
+}
+
+async function runBatchAttest(f: AttestFlags, env: NodeJS.ProcessEnv, out: Out): Promise<number> {
+  const inputs = await parseBatchFile(f.batch as string);
+  if (!inputs.length) throw new UsageError('--batch file lists no skills');
+  const outDir = resolve(f.outDir ?? 'attestations');
+  const store = await RetentionStore.open(env, f.now ? () => f.now as Date : undefined);
+  const items: BatchItem[] = [];
+  for (const input of inputs) {
+    try {
+      const r = await attestOne(input, f, env, store, (label) =>
+        join(outDir, `${label.replace(/[^A-Za-z0-9@._-]/g, '_')}.attestation.json`),
+      );
+      const s = r.attestation.statement;
+      items.push({
+        input,
+        ref: s.source?.ref ?? null,
+        name: s.subject.name,
+        publisher: s.publisher ?? null,
+        verdict: s.verdict,
+        verified: s.verified,
+        contentDigest: s.subject.contentDigest,
+        attestation: r.file,
+        error: null,
+      });
+    } catch (e) {
+      // A skill that could not be fetched or scanned is listed as an error, never as verified.
+      items.push({
+        input,
+        ref: null,
+        name: null,
+        publisher: null,
+        verdict: null,
+        verified: false,
+        contentDigest: null,
+        attestation: null,
+        error: (e as Error).message,
+      });
+    }
+  }
+  const counts = {
+    total: items.length,
+    verified: items.filter((i) => i.verified).length,
+    notVerified: items.filter((i) => !i.verified && !i.error).length,
+    errors: items.filter((i) => i.error).length,
+  };
+  const summary = {
+    format: 'ironheights-batch/1' as const,
+    generatedAt: (f.now ?? new Date()).toISOString(),
+    version: TOOL_VERSION,
+    rulesetHash: rulesetHash(),
+    counts,
+    items,
+  };
+  const signed = {
+    summary,
+    keyId: store.key.keyId,
+    publicKey: store.key.publicPem,
+    signature: sign(null, Buffer.from(stable(summary)), store.key.privateKey).toString('base64'),
+  };
+  const summaryFile = join(outDir, 'batch-summary.json');
+  await mkdir(outDir, { recursive: true });
+  await writeFile(summaryFile, JSON.stringify(signed, null, 2) + '\n');
+  if (f.json) out(JSON.stringify(signed, null, 2));
+  else {
+    for (const i of items)
+      out(
+        `${i.error ? 'ERROR' : i.verified ? 'verified' : `not verified (${i.verdict})`}  ${i.ref ?? i.input}${i.error ? `: ${i.error}` : ''}`,
+      );
+    out(
+      `batch: ${counts.verified}/${counts.total} verified, ${counts.notVerified} not verified, ${counts.errors} error(s); summary ${summaryFile}`,
+    );
+  }
+  return counts.verified === counts.total ? 0 : 1;
+}
+
+export function verifyBatchSummary(s: {
+  summary: unknown;
+  publicKey: string;
+  signature: string;
+}): boolean {
+  try {
+    return verify(
+      null,
+      Buffer.from(stable(s.summary)),
+      createPublicKey(s.publicKey),
+      Buffer.from(s.signature, 'base64'),
+    );
+  } catch {
+    return false;
+  }
+}
+
+/* ---------------- publisher reputation ---------------- */
+
+export async function runPublisherReputation(f: {
+  publisher?: string;
+  out?: string;
+  json?: boolean;
+  minSkills?: number;
+  env?: NodeJS.ProcessEnv;
+  now?: Date;
+  out_?: Out;
+}): Promise<number> {
+  const env = f.env ?? process.env;
+  const out = f.out_ ?? stdout;
+  const store = await RetentionStore.open(env, f.now ? () => f.now as Date : undefined);
+  const v = await store.verify();
+  if (!v.ok)
+    throw new UsageError(
+      `retained store failed verification, reputation not computed: ${v.problems.join('; ')}`,
+    );
+  const rep = computeReputation(await store.records(), {
+    ...(f.publisher ? { publisher: f.publisher } : {}),
+    ...(f.minSkills ? { minSkills: f.minSkills } : {}),
+    now: f.now ?? new Date(),
+  });
+  const signed = signReputation(rep, store.key);
+  if (f.out) await writeFile(resolve(f.out), JSON.stringify(signed, null, 2) + '\n');
+  if (f.json) out(JSON.stringify(signed, null, 2));
+  else if (!rep.publishers.length)
+    out('no ClawHub attestations retained yet; run ironheights attest owner/slug@version first');
+  else
+    for (const p of rep.publishers)
+      out(
+        `${p.publisher.padEnd(20)} ${p.tier.padEnd(17)} ${p.verified}/${p.skills} verified, ${p.review} review, ${p.blocked} block, ${p.incomplete} incomplete (${p.attestations} attestation(s), last ${p.lastAttestedAt})`,
+      );
+  return 0;
 }
 
 /* ---------------- alerts ---------------- */

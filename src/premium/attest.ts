@@ -26,6 +26,18 @@ export interface AttestationStatement {
   issuedAt: string;
   expiresAt: string;
   keyId: string;
+  /** Where the bytes came from (0.26.0): set for a ClawHub ref, absent for a local folder. */
+  source?: AttestationSource;
+  /** ClawHub owner handle, used by publisher reputation. Null for a local folder. */
+  publisher?: string | null;
+}
+
+export interface AttestationSource {
+  registry: 'clawhub';
+  ref: string;
+  owner: string;
+  slug: string;
+  version: string;
 }
 
 export interface Attestation {
@@ -54,6 +66,7 @@ export async function buildAttestation(input: {
   key: WatchKey;
   now?: Date;
   validDays?: number;
+  source?: AttestationSource;
 }): Promise<Attestation> {
   const { digest, files } = await contentDigest(input.dir);
   if (!digest) throw new Error(`no files to attest in ${input.dir}`);
@@ -70,6 +83,9 @@ export async function buildAttestation(input: {
     issuedAt: now.toISOString(),
     expiresAt: new Date(now.getTime() + (input.validDays ?? 30) * 86_400_000).toISOString(),
     keyId: input.key.keyId,
+    ...(input.source
+      ? { source: input.source, publisher: input.source.owner }
+      : { publisher: null }),
   };
   return {
     statement,

@@ -25,6 +25,7 @@ import {
   runAttest,
   runFleetInventory,
   runPolicyInit,
+  runPublisherReputation,
   runReceipts,
 } from './commands/premium.ts';
 import { runUpdate } from './commands/update.ts';
@@ -707,30 +708,68 @@ export async function main(argv: string[], hooks: MainHooks = {}): Promise<numbe
     });
 
   program
-    .command('attest <skill>')
+    .command('attest [skill]')
     .description(
-      'scan a local skill and write a signed "verified by Ironheights" attestation JSON and badge SVG',
+      'signed "verified by Ironheights" attestation JSON and badge SVG for a local folder or a ClawHub owner/slug@version (read-only fetch, nothing installed)',
     )
     .option('--out <file>', 'attestation file (default ./<skill>.attestation.json)')
     .option('--badge <file>', 'badge SVG (default next to the attestation)')
     .option('--valid-days <n>', 'attestation lifetime in days (default 30)')
-    .option('--verify <file>', 'verify an attestation against the skill folder and exit')
+    .option(
+      '--verify <file>',
+      'verify an attestation against the skill (re-fetched for a ClawHub ref) and exit',
+    )
     .option('--public-key <file>', 'trusted public key for --verify')
+    .option(
+      '--batch <file>',
+      'attest every skill listed (one per line or a JSON array); writes a signed batch-summary.json',
+    )
+    .option('--out-dir <dir>', 'batch: output folder (default ./attestations)')
     .option('--config <file>', 'config file')
     .option('--json', 'print JSON to stdout')
-    .action(async (skill: string, opts: Record<string, string | boolean | undefined>) => {
-      const o = (k: string) => (typeof opts[k] === 'string' ? (opts[k] as string) : undefined);
-      process.exitCode = await runAttest({
-        skill,
-        json: Boolean(opts.json),
-        ...(o('out') ? { out: o('out') } : {}),
-        ...(o('badge') ? { badge: o('badge') } : {}),
-        ...(Number(o('validDays')) > 0 ? { validDays: Number(o('validDays')) } : {}),
-        ...(o('verify') ? { verify: o('verify') } : {}),
-        ...(o('publicKey') ? { publicKey: o('publicKey') } : {}),
-        ...(o('config') ? { config: o('config') } : {}),
-      });
-    });
+    .action(
+      async (skill: string | undefined, opts: Record<string, string | boolean | undefined>) => {
+        const o = (k: string) => (typeof opts[k] === 'string' ? (opts[k] as string) : undefined);
+        process.exitCode = await runAttest({
+          ...(skill ? { skill } : {}),
+          json: Boolean(opts.json),
+          ...(o('out') ? { out: o('out') } : {}),
+          ...(o('badge') ? { badge: o('badge') } : {}),
+          ...(Number(o('validDays')) > 0 ? { validDays: Number(o('validDays')) } : {}),
+          ...(o('verify') ? { verify: o('verify') } : {}),
+          ...(o('publicKey') ? { publicKey: o('publicKey') } : {}),
+          ...(o('batch') ? { batch: o('batch') } : {}),
+          ...(o('outDir') ? { outDir: o('outDir') } : {}),
+          ...(o('config') ? { config: o('config') } : {}),
+          ...(hooks.fetchImpl ? { fetchImpl: hooks.fetchImpl } : {}),
+        });
+      },
+    );
+
+  program
+    .command('publisher')
+    .description('publisher tools')
+    .command('reputation [publisher]')
+    .description(
+      'signed per-publisher reputation computed only from ClawHub attestations retained on this machine (see docs/publisher.md)',
+    )
+    .option(
+      '--min-skills <n>',
+      'skills needed before a tier other than insufficient-data (default 3)',
+    )
+    .option('--out <file>', 'write the signed report')
+    .option('--json', 'print JSON to stdout')
+    .action(
+      async (publisher: string | undefined, opts: Record<string, string | boolean | undefined>) => {
+        const o = (k: string) => (typeof opts[k] === 'string' ? (opts[k] as string) : undefined);
+        process.exitCode = await runPublisherReputation({
+          json: Boolean(opts.json),
+          ...(publisher ? { publisher } : {}),
+          ...(Number(o('minSkills')) > 0 ? { minSkills: Number(o('minSkills')) } : {}),
+          ...(o('out') ? { out: o('out') } : {}),
+        });
+      },
+    );
 
   program
     .command('install')

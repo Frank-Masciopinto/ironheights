@@ -84,6 +84,8 @@ New in 0.26.0, open and opt-in. `ironheights receipts ingest` keeps every MCP ch
 
 Also opt-in: signed alerts on block, drift and failed verification (`IRONHEIGHTS_ALERT_WEBHOOK`), `ironheights policy init --template strict|balanced|ci`, and `ironheights fleet inventory` across bots and hosts. See [docs/fleet.md](docs/fleet.md).
 
+For publishers and registries: `ironheights attest owner/slug@version` attests a ClawHub skill read-only, `attest --batch` attests a list with a signed summary, and `ironheights publisher reputation` reports a signed tier per publisher from local attestations. See [docs/publisher.md](docs/publisher.md).
+
 ## 60-second quickstart
 
 ```bash
@@ -150,7 +152,8 @@ ironheights receipts <ingest|list|export|verify|prune> [--from <file>] [--activi
 ironheights alerts <test|verify> [--body <file>] [--signature <base64>] [--public-key <file>]
 ironheights policy init --template <strict|balanced|ci> [--dir <dir>] [--force] [--list]
 ironheights fleet inventory <bot=dir|inventory.json...> [--out <file>] [--audit-export <file>] [--trust-key <file>] [--json]
-ironheights attest <skill> [--out <file>] [--badge <file>] [--valid-days <n>] [--verify <file>] [--public-key <file>] [--json]
+ironheights publisher reputation [publisher] [--min-skills <n>] [--out <file>] [--json]
+ironheights attest <skill|owner/slug@version> [--batch <file>] [--out-dir <dir>] [--out <file>] [--badge <file>] [--valid-days <n>] [--verify <file>] [--public-key <file>] [--json]
 ironheights install <skill-folder|owner/slug[@version]> (--lock <file> | --expect-digest <sha256> | --write-lock <file>) [--dir <skills-dir>] [--with-deps] [--accept-review] [--json]
 ironheights safe-install <owner>/<slug>[@version] [--dir <skills-dir>] [--accept-review] [--out <dir>] [--json] [--config <file>] [--no-color] [--quiet]
 ironheights advisories update
