@@ -50,9 +50,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: Frank-Masciopinto/ironheights@v0.3.0
+      - uses: Frank-Masciopinto/ironheights@v0.27.0
         with:
-          version: '0.3.0'
+          version: '0.27.0'
           path: .
           fail-on: high
           sarif-file: ironheights.sarif
