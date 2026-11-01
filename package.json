@@ -1,6 +1,6 @@
 {
   "name": "ironheights",
-  "version": "0.24.0",
+  "version": "0.25.0",
   "description": "Ironheights protects any AI bot that installs it: local security scanner for agent skills (OpenClaw, Claude, Grok Bot, Codex, Cursor, MCP), threat-model PR checks, MCP server, drift guard and posture report.",
   "homepage": "https://www.ironheights.dev",
   "bugs": {

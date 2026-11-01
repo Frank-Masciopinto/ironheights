@@ -1,5 +1,31 @@
 # Changelog
 
+## 0.25.0 — 2026-11-01
+
+**Run it, watch it, install exactly what was checked.** Ironheights protects any AI bot that installs it. 0.25.0 adds the three runtime pieces the static checks could not cover: a sandboxed run compared against the threat model, a signed activity log the posture report can grade from, and an installer that writes only the bytes that were checked. Every item below builds an idea bots suggested on Moltbook that earlier releases deferred because it needed something that runs or watches the skill. Existing commands, fields and exit codes are unchanged; plain `watch` still rescans on change.
+
+Sandbox run (`ironheights sandbox run <skill> -- <command>`, [docs/sandbox.md](docs/sandbox.md))
+
+- Runs a skill once in a throwaway docker or podman container with `--network none`; HTTP(S) goes to an in-container proxy that logs each host and refuses it. Records every file written (strace plus a before/after hash of the writable mounts), every host tried and every child process, then fails on writes, hosts and children the threat model does not declare. Suggested by austingrok.
+- Writes made by child processes are marked and fail when the model has `shell: false`. Suggested by austingrok and fromthebot.
+- Declared writes that never happened are reported as `sandbox-write-unused` (`--fail-on-unused` to fail). Suggested by evil_robot_jas.
+- `--external` reconciles the trace with an outside record (egress firewall, audit store) by count. Suggested by templeofmolt.
+- Manifest vs sandbox trace mismatch is its own finding. Suggested by fromthebot.
+- `--trace`/`--save-trace` compare a recorded run; the GitHub Action runs it with `sandbox-run`, `sandbox-skill` and `sandbox-image` and reports `sandbox-exit-code`. No container engine exits 3 with a clear message.
+
+Activity watch (`ironheights watch --activity`, [docs/watch.md](docs/watch.md))
+
+- Records file activity for installed skills and drains an events inbox (network, observer heartbeats, check start/progress/end, refusals, agent actions) into an ed25519-signed, hash-chained, append-only log; `watch --verify-log` finds a removed, reordered or edited line. Suggested by concordiumagent and taobotagent.
+- Observer heartbeats measured as records actually landing against the declared cadence (`observer-stale`). Suggested by juan_carlos and sophiaalways.
+- Checks over budget are classed `busy-queue` (progress seen) or `hang` (silence), and every check logs its duration. Suggested by hermeslife3.
+- What the agent did after each refusal (`retry-unchanged`, `retry-mutated`, `route-around`, `switch-tool`, `stop`), observed live. Suggested by novastellar, hz-assistant and nyna.
+- `report --from-watch` grades what happened: undeclared host F, hung check or route-around after refusal D, missed heartbeat C, a log that fails verification F and exit 2. Capped skills carry `watchCap`.
+
+Guarded install (`ironheights install`, [docs/install.md](docs/install.md))
+
+- Installs only the exact bytes that were checked: matches a lock (`--write-lock`/`--lock`) or the `check_skill` digest (`--expect-digest`), refuses changed, missing or extra files, symlinks and unpinned dependencies, and writes the same buffers it re-hashed. Suggested by clawlogan and nanoswarm.
+- `--with-deps` installs the pinned closure only (`npm ci --ignore-scripts`, `pip --require-hashes --no-deps`); a closure that differs from the lock refuses. Suggested by clawlogan and nanoswarm.
+
 ## 0.24.0 — 2026-11-01
 
 **Install gates that bind, expire and redeem once; declared writes, triggers and observers; grades that expire on age or change.** Ironheights protects any AI bot that installs it. Every item below was suggested by bots on Moltbook. Existing models, ledgers, fields and exit codes keep their meaning unless you opt in; new JSON fields are additive.

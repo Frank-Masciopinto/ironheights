@@ -72,6 +72,18 @@ inputs:
     description: 'Pass --review (pull requests, ironheights >= 0.24.0): every widening needs a reasons row and an approver who is not the PR author (read from the PR reviews); an agent-authored PR needs a human approver. false (default) skips it.'
     required: false
     default: 'false'
+  sandbox-run:
+    description: 'Command to run the skill once in a throwaway container (ironheights >= 0.25.0), for example "node run.js". The run has no network except a logging proxy; writes, hosts and child processes the threat model does not declare fail the step. Empty (default) skips it. Needs docker on the runner (ubuntu-latest has it).'
+    required: false
+    default: ''
+  sandbox-skill:
+    description: 'Skill folder for sandbox-run, relative to the workspace. Defaults to path.'
+    required: false
+    default: ''
+  sandbox-image:
+    description: 'Container image for sandbox-run (default node:20-bookworm-slim).'
+    required: false
+    default: ''
   comment:
     description: On pull requests, post or update one threat model summary comment. Needs pull-requests write.
     required: false
@@ -109,6 +121,9 @@ outputs:
   threatmodel-exit-code:
     description: '0 inside the model, 1 review, 2 out-of-model change, 64 usage.'
     value: ${{ steps.threatmodel.outputs.exit-code }}
+  sandbox-exit-code:
+    description: '0 matches the threat model, 2 undeclared reach observed, 3 no container engine, empty when skipped.'
+    value: ${{ steps.sandbox.outputs.exit-code }}
   threatmodel-violations:
     description: Number of violations the threat model check reported (new ones only for PRs).
     value: ${{ steps.threatmodel.outputs.violations }}
@@ -273,6 +288,40 @@ runs:
         else
           gh api -X POST "repos/$GH_REPO/issues/$PR/comments" -F body=@"$MD" >/dev/null || echo "::warning::could not post the threat model comment (needs pull-requests: write)"
         fi
+    - id: sandbox
+      if: inputs.sandbox-run != ''
+      shell: bash
+      env:
+        IH_VERSION: ${{ inputs.version }}
+        IH_SKILL: ${{ inputs.sandbox-skill || inputs.path }}
+        IH_MODEL: ${{ inputs.threatmodel-file }}
+        IH_BASEPATH: ${{ inputs.path }}
+        IH_RUN: ${{ inputs.sandbox-run }}
+        IH_IMAGE: ${{ inputs.sandbox-image }}
+      run: |
+        set -euo pipefail
+        if [[ ! "$IH_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+          echo "ironheights version must be an exact x.y.z pin" >&2
+          echo "exit-code=64" >> "$GITHUB_OUTPUT"; exit 0
+        fi
+        case "$IH_SKILL" in /*) dir="$IH_SKILL" ;; *) dir="${GITHUB_WORKSPACE}/${IH_SKILL}" ;; esac
+        case "$IH_BASEPATH" in /*) base="$IH_BASEPATH" ;; *) base="${GITHUB_WORKSPACE}/${IH_BASEPATH}" ;; esac
+        case "$IH_MODEL" in /*) model="$IH_MODEL" ;; *) model="${base}/${IH_MODEL}" ;; esac
+        args=(sandbox run "$dir" --model "$model" --save-trace "${RUNNER_TEMP:-/tmp}/ironheights-sandbox-trace.json")
+        if [[ -n "$IH_IMAGE" ]]; then args+=(--image "$IH_IMAGE"); fi
+        work="$(mktemp -d)"
+        set +e
+        (cd "$work" && npx --yes "ironheights@${IH_VERSION}" "${args[@]}" -- sh -c "$IH_RUN" | tee -a "$GITHUB_STEP_SUMMARY")
+        code=${PIPESTATUS[0]}
+        set -e
+        rm -rf "$work"
+        echo "exit-code=$code" >> "$GITHUB_OUTPUT"
+    - name: Apply sandbox exit code
+      if: steps.sandbox.outputs.exit-code != '' && steps.sandbox.outputs.exit-code != '0'
+      shell: bash
+      env:
+        IH_CODE: ${{ steps.sandbox.outputs.exit-code }}
+      run: exit "$IH_CODE"
     - name: Apply threat model exit code
       if: steps.threatmodel.outputs.exit-code != '' && steps.threatmodel.outputs.exit-code != '0'
       shell: bash
