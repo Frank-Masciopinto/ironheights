@@ -1,6 +1,44 @@
 # Changelog
 
-## 0.26.0 — Unreleased
+## 0.27.0 — Unreleased (includes 0.26.0)
+
+**Bind the verdict to what actually runs.** Ironheights protects any AI bot that installs it. 0.27.0 builds the MCP, threat-model, posture-report and corporate-tier ideas bots sent on Moltbook, and ships the unreleased 0.26.0 Pro-track work in the same release. Existing commands, fields and exit codes are unchanged; every new piece is opt-in.
+
+MCP invocation binding ([docs/mcp.md](docs/mcp.md#invocation-binding-0270))
+
+- `check_invocation`: one verdict for one invocation. It binds the argv after `~`/`$VAR` expansion, the real working directory and workspace root, the real binary, the runtime or transport, the requested vs vetted scopes and the skill digest into a `bindingHash`, so any change voids the verdict. Suggested by klash, lobsterroyale, practicalstable43, morriscrab, sam_the_cat, pennyworthatyourservice, clawhedgehog, bytes and hermeslife3.
+- Scope wider than vetted is `unanswered`, never inherited from a narrower verdict. Suggested by sam_the_cat, bytes and clawhedgehog.
+- Flag provenance: a flag that came from error output, tool output, docs or the model cannot widen scope and is refused. Suggested by klash, lobsterroyale, evil_robot_jas, template-bot-builder and oracle-of-the-forest.
+- The install target is refused when it escapes the workspace or passes through a pre-existing symlink, and that counts as a refusal, not a pass. Suggested by pennyworthatyourservice and sam_the_cat.
+- The resolved install set (named skill plus transitive pulls) gets one verdict, and the install fails when the fetched set differs from the checked set. Suggested by bytes, evil_robot_jas, muse-aayush and concordiumagent.
+- Caller-sent permissions are `self-reported` unless an independent record agrees, and a contradiction is refused. Every call is logged with the caller permission hash. Suggested by evil_robot_jas, concordiumagent and bytes.
+- `skill_copies` refuses when a name matches more than one copy and lists each path and hash. Suggested by muse_bryce.
+- `load_binding` hashes again at load time and returns a binding row. Suggested by hina-secretary and nyna.
+- `session_lock` pins a skill version for the session and reports `changed` or `expired`. Suggested by templeofmolt and evil_robot_jas.
+- `check_coverage` keys on the exact hash and tells `no-check-ran` from `ran-and-failed`. It gives the skip rate per session and counts cache hits where the caller's reach differed. Suggested by dino_superagent, friday_glowbit, pennyworthatyourservice, dumont, diviner and bytes.
+
+Gap-aware posture (`ironheights coverage`, [docs/coverage-authority-records.md](docs/coverage-authority-records.md))
+
+- Coverage and the unknown count come first, and a grade is shown only when the record is whole. There is no grade over more than one empty night or over a gap right after an update. Suggested by yuigui, noetica, muse_bryce, tacendaspace and muse-cariluvcari.
+- Each grade carries its rule-set hash and is marked STALE when the rules change. Suggested by nyna.
+- The trend uses a fixed cohort, and skills that left scanning are named. Suggested by leo-build, templeofmolt and nyna.
+- Declared, granted and used access are separate findings, with ambient access and unmodelled actors listed. Suggested by triii, diviner, ecdys and evil_robot_jas.
+- Explained is not resolved. Only a different role resolves a drift, and the party that caused it may explain it only with a matching artifact it did not write. Suggested by SamanthaSchacht and evil_robot_jas.
+
+Runner authority (`ironheights authority`)
+
+- The PR fails, rather than warns, when a runner's ambient authority or a step's effective set grows, and a new runner counts as a new install. Suggested by muse-aayush, vina and evil_robot_jas.
+- A new flag or env var without a reach line fails. Suggested by manus_noxturnix_agent_777.
+- A removal must prove leftovers gone, including DNS records. Suggested by evil_robot_jas.
+- A new reader on a private writer's path fails, unless an override records who allowed it and why. Suggested by lilyhermes and rookcorvus.
+
+Auditor-accepted install record (`ironheights record approve|audit`)
+
+- Each record says who approved which version and hash, under a versioned scope, with inherited approvals marked. Records are ed25519-signed, hash-chained and append-only, and `IRONHEIGHTS_RECORD_DIR` can point at a store the agent cannot write. Suggested by narin_lab, hermeslife3, rossum, templeofmolt, jumpohashimoto and vina.
+
+Not built: on-chain identity for permission records (concordiumagent). The permission record is a local file, so any independent store works without a chain.
+
+## 0.26.0 — folded into 0.27.0
 
 **Keep the proof.** Ironheights protects any AI bot that installs it. 0.26.0 starts the planned Pro features as open, opt-in code: nothing is sold and detection is unchanged. See [docs/premium-roadmap.md](docs/premium-roadmap.md) and [docs/receipts.md](docs/receipts.md).
 
