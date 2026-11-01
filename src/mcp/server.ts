@@ -51,6 +51,19 @@ import {
 import { dependencyClosure, type Closure } from './closure.ts';
 import { checkManifest, type ToolDef } from './toolpins.ts';
 import { driftAnswers } from './driftstatus.ts';
+import {
+  checkCoverage,
+  checkInvocation,
+  checkLock,
+  copiesOf,
+  loadBinding,
+  lockSession,
+  type CheckEvent,
+  type InstallEvent,
+  type InvocationInput,
+  type SessionLock,
+} from './invocation.ts';
+import { appendFile, mkdir } from 'node:fs/promises';
 
 /** checkIds this server process issued; redeem_authorization refuses anything else. */
 const checkedThisSession = new Set<string>();
@@ -273,6 +286,103 @@ export const TOOLS = [
       required: ['server', 'tools'],
     },
     annotations: { readOnlyHint: false, openWorldHint: false },
+  },
+  {
+    name: 'check_invocation',
+    title: 'Bind a verdict to the exact command that will run',
+    description:
+      'One verdict for one invocation: argv after ~/$VAR expansion, resolved working directory and workspace root, real binary path, runtime/transport, requested vs vetted scopes, flag provenance, install target, skill digest, resolved install set (named skill plus transitive pulls) and caller permissions. Returns bound (with a bindingHash that any change voids), unanswered (scope wider than vetted, unknown binary) or refused (path or symlink escape, untrusted text widening scope, fetched set differs from checked set, caller permissions contradict the independent record). Only bound may proceed. Every call is logged with the caller permission set.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        argv: { type: 'array', items: str },
+        cwd: str,
+        workspaceRoot: str,
+        binary: str,
+        runtime: str,
+        requestedScopes: { type: 'array', items: str },
+        vettedScopes: { type: 'array', items: str },
+        flags: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              flag: str,
+              source: {
+                ...str,
+                enum: ['typed', 'manifest', 'error-output', 'tool-output', 'doc', 'model'],
+              },
+              grants: { type: 'array', items: str },
+            },
+          },
+        },
+        target: str,
+        skillPath: str,
+        resolvedSet: {
+          type: 'array',
+          items: { type: 'object', properties: { name: str, sha256: str } },
+        },
+        fetchedSet: {
+          type: 'array',
+          items: { type: 'object', properties: { name: str, sha256: str } },
+        },
+        intendedEffect: str,
+        callerPermissions: { type: 'array', items: str },
+        permissionRecord: str,
+      },
+      required: ['argv', 'cwd'],
+    },
+    annotations: { readOnlyHint: true, openWorldHint: false },
+  },
+  {
+    name: 'skill_copies',
+    title: 'Refuse a verdict when a skill name matches more than one copy',
+    description:
+      'List every copy of a skill name under the given roots with path and content hash. More than one copy returns refused: pin one path before any verdict exists.',
+    inputSchema: {
+      type: 'object',
+      properties: { name: str, roots: { type: 'array', items: str } },
+      required: ['name', 'roots'],
+    },
+    annotations: { readOnlyHint: true, openWorldHint: false },
+  },
+  {
+    name: 'load_binding',
+    title: 'Hash at load time: is the loaded skill the checked one?',
+    description:
+      'Second hash at load time. Returns one binding row {checked_path, checked_hash, loaded_path, loaded_hash, match}; a verdict is valid only when match is true.',
+    inputSchema: {
+      type: 'object',
+      properties: { checkedPath: str, checkedHash: str, loadedPath: str },
+      required: ['checkedPath', 'checkedHash', 'loadedPath'],
+    },
+    annotations: { readOnlyHint: true, openWorldHint: false },
+  },
+  {
+    name: 'session_lock',
+    title: 'Pin a skill version for the session',
+    description:
+      'Without lock: locks the current bytes of path for ttlSeconds (default 3600). With lock: returns locked, expired or changed; anything but locked means re-check before the next call.',
+    inputSchema: {
+      type: 'object',
+      properties: { path: str, ttlSeconds: { type: 'number' }, lock: { type: 'object' } },
+    },
+    annotations: { readOnlyHint: true, openWorldHint: false },
+  },
+  {
+    name: 'check_coverage',
+    title: 'Which installs arrived without a check?',
+    description:
+      'Join installs and check results by exact content hash (not name). Lists installs with no check, checks that ran but failed, skip rate per session, and cache hits whose caller reach differed from the original check.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        installs: { type: 'array', items: { type: 'object' } },
+        checks: { type: 'array', items: { type: 'object' } },
+      },
+      required: ['installs', 'checks'],
+    },
+    annotations: { readOnlyHint: true, openWorldHint: false },
   },
 ] as const;
 
@@ -857,6 +967,61 @@ export async function callTool(
         checkedThisSession,
       );
       return text(res, res.decision !== 'allow' && res.status !== 'already-redeemed');
+    }
+    if (name === 'check_invocation') {
+      if (!Array.isArray(args.argv) || typeof args.cwd !== 'string')
+        return text({ verdict: 'refused', error: 'argv and cwd are required' }, true);
+      const res = await checkInvocation({ ...(args as unknown as InvocationInput), env });
+      const log = join(ironheightsHome(env), 'invocation-checks.jsonl');
+      await mkdir(dirname(log), { recursive: true });
+      await appendFile(
+        log,
+        JSON.stringify({
+          at: new Date().toISOString(),
+          verdict: res.verdict,
+          bindingHash: res.bindingHash,
+          callerPermissionsSha256: res.bound.callerPermissionsSha256,
+          callerPermissions: res.callerPermissions,
+          codes: res.findings.map((f) => f.code),
+        }) + '\n',
+        { mode: 0o600 },
+      );
+      return text(res, res.verdict !== 'bound');
+    }
+    if (name === 'skill_copies') {
+      if (typeof args.name !== 'string' || !Array.isArray(args.roots))
+        return text({ error: 'name and roots are required' }, true);
+      const copies = await copiesOf(args.name, args.roots as string[]);
+      const state = copies.length === 1 ? 'single' : copies.length === 0 ? 'absent' : 'refused';
+      return text({ state, copies }, state !== 'single');
+    }
+    if (name === 'load_binding') {
+      const res = await loadBinding(
+        String(args.checkedPath),
+        String(args.checkedHash),
+        String(args.loadedPath),
+      );
+      return text(res, !res.match);
+    }
+    if (name === 'session_lock') {
+      const now = new Date();
+      if (args.lock && typeof args.lock === 'object') {
+        const res = await checkLock(args.lock as SessionLock, now);
+        return text(res, res.state !== 'locked');
+      }
+      if (typeof args.path !== 'string') return text({ error: 'path or lock is required' }, true);
+      const { digest } = await contentDigest(resolve(args.path));
+      if (!digest) return text({ error: `no files at ${args.path}` }, true);
+      const ttl =
+        typeof args.ttlSeconds === 'number' && args.ttlSeconds > 0 ? args.ttlSeconds : 3600;
+      return text(lockSession(resolve(args.path), digest, now, ttl));
+    }
+    if (name === 'check_coverage') {
+      const res = checkCoverage(
+        (args.installs ?? []) as InstallEvent[],
+        (args.checks ?? []) as CheckEvent[],
+      );
+      return text(res, !res.ok);
     }
     if (name === 'tool_manifest_check') {
       if (typeof args.server !== 'string' || !Array.isArray(args.tools))
