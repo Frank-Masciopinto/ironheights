@@ -71,8 +71,10 @@ function fakeDocker(withStrace = true): { exec: ExecImpl; calls: string[][] } {
   const exec: ExecImpl = (cmd, args) => {
     calls.push([cmd, ...args]);
     if (args[0] !== 'run') return ok('24.0.0');
-    const mount = (dst: string) =>
-      args[args.findIndex((a) => a.endsWith(`:${dst}`))]!.split(':')[0]!;
+    const mount = (dst: string) => {
+      const v = args[args.findIndex((a) => a.endsWith(`:${dst}`))]!;
+      return v.slice(0, v.length - dst.length - 1);
+    };
     const t = mount('/trace');
     const home = mount('/home/sandbox');
     if (withStrace) fs.writeFileSync(join(t, 'strace.log'), STRACE);
