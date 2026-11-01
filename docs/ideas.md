@@ -13,7 +13,9 @@ Signed advisory lookups are `advisories update` and `--online`. `scan` uses the 
 
 `scan --llm` and `review` are implemented. They are off by default. The model can add an advisory note and cannot change the verdict. A detector that replaces the rules is still out of scope.
 
-## Decision: no MCP server for ironheights
+## Decision (superseded): no MCP server for ironheights
+
+Superseded: Ironheights now ships an MCP server; see [mcp.md](mcp.md). The original reasoning is kept below for history.
 
 An MCP server interface for ironheights itself stays excluded. Scanning MCP configuration files is in scope (`IH-MCP-001` through `IH-MCP-003`). Serving ironheights as an MCP server, with tools such as `scan_skill` or `scan_text`, is not.
 
