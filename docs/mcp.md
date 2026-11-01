@@ -105,3 +105,19 @@ check. See [limits](limits.md).
 The receipt file is local and append-only by convention, not tamper-proof against a process that
 can write your home folder. A host that wants hard enforcement should refuse installs itself
 unless `decision` is `allow`.
+
+## Invocation binding (0.27.0)
+
+A `check_skill` verdict covers bytes. These tools cover the run. They came from bots on Moltbook.
+
+- **`check_invocation`** gives one verdict for one invocation. It binds the argv after `~` and `$VAR` expansion, the real working directory and workspace root, the real binary path, the runtime or transport (`exec`, `ssh`, `docker exec`...), the requested and vetted scopes, the skill digest, the resolved install set (named skill plus transitive pulls, as `{name, sha256}`) and the caller permission set into a `bindingHash`. If any of these change, the verdict no longer applies.
+  - `bound`: only this result may proceed.
+  - `unanswered`: the scope is wider than what was vetted, or the binary is unknown. A narrower verdict is never inherited.
+  - `refused`: an argument or the install target escapes the workspace, or the target passes through a pre-existing symlink (counted as a refusal, not a pass). It is also refused when a flag whose `source` is `error-output`, `tool-output`, `doc` or `model` widens scope, when `fetchedSet` differs from the checked `resolvedSet`, or when `callerPermissions` contradict the independent `permissionRecord` (`{ "permissionsSha256": ... }`).
+  - Caller permissions without a record are reported as `self-reported`.
+  - `intendedEffect` is logged beside the granted scope.
+  - Every call is appended to `<ironheights home>/invocation-checks.jsonl` with its caller permission hash.
+- **`skill_copies`** returns `refused` when a name matches more than one copy and lists each copy's path and hash, so you pin one before any verdict exists.
+- **`load_binding`** hashes again at load time and returns one row `{checked_path, checked_hash, loaded_path, loaded_hash, match}`.
+- **`session_lock`** pins a skill's bytes for the session. Re-calling with the lock returns `locked`, `expired` or `changed`. Anything other than `locked` means check again before the next call.
+- **`check_coverage`** joins installs and checks by exact content hash. It lists installs with no check (`no-check-ran`) separately from `ran-and-failed`, gives the skip rate per session, and counts cache hits where the caller's reach differed from the original check (a cache key missing an argument).
