@@ -20,6 +20,7 @@ import { runSafeInstall } from './commands/safe-install.ts';
 import { runScan } from './commands/scan.ts';
 import { runWatch } from './commands/watch.ts';
 import { runActivityWatch, runInstall, runSandbox, runVerifyActivity } from './commands/runtime.ts';
+import { runAttest, runReceipts } from './commands/premium.ts';
 import { runUpdate } from './commands/update.ts';
 import { maybeStartBackgroundCheck, type AutoCheckHooks } from '../update/update.ts';
 import { IronheightsError, UsageError } from '../core/errors.ts';
@@ -602,6 +603,65 @@ export async function main(argv: string[], hooks: MainHooks = {}): Promise<numbe
         });
       },
     );
+
+  program
+    .command('receipts <action>')
+    .description(
+      'retained signed logs and receipts: ingest, list, export, verify, prune (local, signed, append-only)',
+    )
+    .option('--from <file>', 'receipts to ingest (default IRONHEIGHTS_HOME/mcp-receipts.jsonl)')
+    .option('--activity <file>', 'also retain a reference to a verified watch --activity log')
+    .option(
+      '--retention-days <n>',
+      'keep this many days (default 365 or IRONHEIGHTS_RETENTION_DAYS)',
+    )
+    .option('--since <date>', 'list: only records at or after this date')
+    .option('--skill <name>', 'list: only this skill or target')
+    .option('--kind <kind>', 'list: only this record kind')
+    .option('--out <file>', 'export: write the bundle here')
+    .option('--bundle <file>', 'verify: check an exported bundle instead of the local store')
+    .option('--json', 'print JSON to stdout')
+    .action(async (action: string, opts: Record<string, string | boolean | undefined>) => {
+      const o = (k: string) => (typeof opts[k] === 'string' ? (opts[k] as string) : undefined);
+      process.exitCode = await runReceipts({
+        action,
+        json: Boolean(opts.json),
+        ...(o('from') ? { from: o('from') } : {}),
+        ...(o('activity') ? { activity: o('activity') } : {}),
+        ...(o('retentionDays') ? { retentionDays: Number(o('retentionDays')) } : {}),
+        ...(o('since') ? { since: o('since') } : {}),
+        ...(o('skill') ? { skill: o('skill') } : {}),
+        ...(o('kind') ? { kind: o('kind') } : {}),
+        ...(o('out') ? { out: o('out') } : {}),
+        ...(o('bundle') ? { bundle: o('bundle') } : {}),
+      });
+    });
+
+  program
+    .command('attest <skill>')
+    .description(
+      'scan a local skill and write a signed "verified by Ironheights" attestation JSON and badge SVG',
+    )
+    .option('--out <file>', 'attestation file (default ./<skill>.attestation.json)')
+    .option('--badge <file>', 'badge SVG (default next to the attestation)')
+    .option('--valid-days <n>', 'attestation lifetime in days (default 30)')
+    .option('--verify <file>', 'verify an attestation against the skill folder and exit')
+    .option('--public-key <file>', 'trusted public key for --verify')
+    .option('--config <file>', 'config file')
+    .option('--json', 'print JSON to stdout')
+    .action(async (skill: string, opts: Record<string, string | boolean | undefined>) => {
+      const o = (k: string) => (typeof opts[k] === 'string' ? (opts[k] as string) : undefined);
+      process.exitCode = await runAttest({
+        skill,
+        json: Boolean(opts.json),
+        ...(o('out') ? { out: o('out') } : {}),
+        ...(o('badge') ? { badge: o('badge') } : {}),
+        ...(Number(o('validDays')) > 0 ? { validDays: Number(o('validDays')) } : {}),
+        ...(o('verify') ? { verify: o('verify') } : {}),
+        ...(o('publicKey') ? { publicKey: o('publicKey') } : {}),
+        ...(o('config') ? { config: o('config') } : {}),
+      });
+    });
 
   program
     .command('install')

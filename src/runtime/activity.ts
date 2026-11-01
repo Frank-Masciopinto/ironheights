@@ -28,7 +28,11 @@ export type ActivityKind =
   | 'check-stall'
   | 'refusal'
   | 'action'
-  | 'after-refusal';
+  | 'after-refusal'
+  | 'receipt'
+  | 'activity-ref'
+  | 'attestation'
+  | 'retention-prune';
 
 export interface ActivityRecord {
   seq: number;
