@@ -43,7 +43,7 @@ SSO, SLA, on-prem option and compliance reports need a hosted product and contra
 3. Alerts hook for block, drift and failed verification (**0.26.0, done**)
 4. Policy templates (**0.26.0, done**)
 5. Fleet inventory and cross-bot audit export (**0.26.0, done**)
-6. Publisher: attest remote refs, batch attest, publisher history
+6. Publisher: ClawHub attestations, batch attest, publisher reputation (**0.26.0, done**)
 7. Priority signature channel (needs hosted feed)
 8. Credential broker, runtime injection screening (larger design work; free-tier parts first)
 9. Hosted console, badge endpoint, Enterprise (needs a backend; outside this repo)

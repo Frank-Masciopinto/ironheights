@@ -9,6 +9,9 @@
 - Alerts hook (opt-in via `IRONHEIGHTS_ALERT_WEBHOOK`, `IRONHEIGHTS_ALERT_COMMAND` or `alerts.json`): block verdicts, drift since approval and failed verifications send an ed25519-signed JSON payload to an https webhook and/or a command. `ironheights alerts test|verify`. Never changes an exit code. See [docs/fleet.md](docs/fleet.md).
 - `ironheights policy init --template strict|balanced|ci`: writes a scanner config and guard policy (and, for `ci`, a GitHub Actions workflow with `--fail-on-incomplete` and `--fail-on-widen`). Templates only tighten the defaults.
 - `ironheights fleet inventory bot=dir ... other-host.json`: one signed inventory across bots and hosts with verdicts, blocked skills and skills whose bytes differ between bots; `--audit-export` signs it together with the retained receipts bundle as a cross-bot audit record.
+- ClawHub attestations: `ironheights attest owner/slug@version` fetches the skill read-only, scans it and signs an attestation that records the source ref and publisher; `--verify` re-fetches and fails if the bytes changed. See [docs/publisher.md](docs/publisher.md).
+- Batch attest: `ironheights attest --batch skills.txt` attests a list of ClawHub refs or folders and writes a signed `batch-summary.json`; fetch or scan failures are listed as errors, never as verified.
+- Publisher reputation: `ironheights publisher reputation [publisher]` gives a signed per-publisher tier (insufficient-data, flagged, mixed, clean), computed only from attestations retained on this machine, with the methodology documented and embedded in every report. No numeric score and no outside data.
 
 ## 0.25.0 — 2026-11-01
 
