@@ -68,6 +68,21 @@ grokentra, moltbookrevenueagent, templeofmolt, aether_cell, annuntiato and evil_
 
 Exit code is `0`; `--fail-on-block` exits `2` when any skill is blocked, for a scheduled CI job.
 
+## Grade stamps, lanes, refusals and environments (0.24.0)
+
+- **Grade stamps.** Every skill has `stamp`: grade, `gradedAt`, `gradedAgainstVersion`, `contentHash` (the graded bytes), consequence class and a hard `validUntil`, shorter for credential or exec reach (1/4 of `--valid-days`) and write or egress reach (1/2). `validity` says `true as of ..., recheck before approving anything after ...`. `--check-interval <hours>` makes the HTML compute age when opened: older than 1 interval is degraded, 2 is greyed, 3 hides the grade and shows only the timestamp. Past `validUntil` it is greyed regardless.
+- **`ironheights report --verify report.json`** re-hashes each graded skill: `fresh`, `changed` (files moved since grading), `version-mismatch`, `expired` or `missing`. Exit 2 when any grade is no longer fresh.
+- **Lead line.** `lead` is the weakest skill and its widest reach as one unit. A critical finding is a kill switch that leads the result. The average score is printed at the bottom as `cleanupEffort`, not as safety.
+- **Two lanes.** `lanes.containment` lists confirmed exploitable paths (skill, reachable asset, precondition). `lanes.verification` lists high-impact paths whose preconditions are unresolved, sorted by reach, with the exact check needed; unknowns never count as safe or proven. With `--verify-sla <days>` an unresolved path past its SLA shows `contained-pending-check` (first seen is kept in `--history`).
+- **Lifecycle.** `lifecycle.state` is `open`, `fix-available-not-applied` (`--fixes` maps a skill to the fixing version; installed version is read from the artifact), `applied-unattested`, `applied-not-loaded` or `closed`. It closes only when `--loaded` (a runtime attestation: `repo/path` to the digest the agent loaded) matches the bytes on disk. A gap column; it does not move the grade.
+- **Refusals.** `--refusals log.jsonl` (`{at, skill, tool, denied, reason, next: {at, action, intent, trace}}`) adds a refusal row beside the grade: denials counted with successes, post-denial actions as a closed set (`retry-unchanged`, `retry-mutated`, `switch-tool`, `switch-approved-source`, `route-around`, `stop`), route-around rate, escalating mutated retries, and each gap (`gap: 2s (unexplained)` when no intent or trace is recorded).
+- **Leftovers.** `--artifacts ledger.json` (a creation ledger of hooks, tokens, cron jobs and files with the skill that created them) makes a live leftover of a removed skill a failing row named after that skill and caps the grade at F; harmless orphan folders are info; an artifact a present skill never declared is medium. Hooks in `.claude/settings.json` that run a command from a skill folder that no longer exists are a failing row too.
+- **Environment.** `environment` stamps `id` (`--env-id` or `IRONHEIGHTS_ENV_ID`), `imageDigest` (`--image-digest` or `IRONHEIGHTS_IMAGE_DIGEST`), the skill paths and a digest of the inspected files. The trend uses only runs from the same environment; others are listed side by side under `otherEnvironments`. The result line ends with when and where it was checked.
+- **Reversal rate.** `--receipts <mcp-receipts.jsonl>` adds `reversal`: over the last `--reversal-window` (20) shortlists with a live alternative, how often a check changed the pick, shortlist sizes, late checks and median check-minus-decision time. Zero is labeled late, not clean; a consistently positive delta is a failed control.
+- **Change log.** `changeLog` lists the skills whose config changed between runs in `--history`.
+
+Suggested on Moltbook by bnb_hq, hina-secretary, nyna, vina, evil_robot_jas, prettyai, pennyworthatyourservice, novastellar, hz-assistant, kobolsix, fineprint, moltbookrevenueagent, clawyer, taobotagent, niaforshephali, dumont, orbitsingulariti, fakeryley, theagatha, KANA-KANA, nalu, holocene, KitSinclair and concordiumagent.
+
 ## Scheduled in CI
 
 ```yaml

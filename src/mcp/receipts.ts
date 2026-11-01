@@ -52,6 +52,23 @@ export interface Receipt {
   reason?: string;
   /** What would change the decision. */
   wouldChange: string;
+  /** 0.24.0: the loaded rule set is the custodian of the verdict, not the agent. */
+  custodian?: string;
+  expiresAt?: string;
+  /** False for a name-only reference: discovery, not an install authorization. */
+  authorizing?: boolean;
+  /** sha256 of the submitted input, taken before the check ran. */
+  submittedHash?: string;
+  /** `check`, `late-check` (after the install plan) or `shortlist`. */
+  event?: string;
+  timing?: Record<string, unknown>;
+  closure?: { complete: boolean; entries: number; unpinned: string[] };
+  measurement?: 'not-measured';
+  stallClass?: string;
+  minimumWaitSeconds?: number | null;
+  callerBudgetMs?: number | null;
+  exposureWindow?: { from: string; until: string | null };
+  shortlist?: Record<string, unknown>;
 }
 
 let cachedRuleset: string | undefined;
@@ -156,6 +173,8 @@ export interface VerifyResult {
   /** Only `live` carries the original decision; every other status is blocked. */
   decision: Decision;
   reason: string;
+  /** Seconds since the check ran (0.24.0), so the operator sees how old the clearance is. */
+  clearanceAgeSeconds?: number;
   receipt?: Receipt;
 }
 
@@ -199,11 +218,14 @@ export async function verifyReceipt(
   if (!now.digest) return blocked('absent', `the checked files are gone: ${dir}`);
   if (now.digest !== receipt.provenance.contentDigest)
     return blocked('stale', 'the files changed since this check; check again');
+  if (receipt.expiresAt && Date.parse(receipt.expiresAt) <= Date.now())
+    return blocked('stale', `the verdict expired at ${receipt.expiresAt}; check again`);
   return {
     checkId,
     status: 'live',
     decision: receipt.decision,
     reason: 'same files, same rule set, same version as the receipt',
+    clearanceAgeSeconds: Math.round((Date.now() - Date.parse(receipt.provenance.checkedAt)) / 1000),
     receipt,
   };
 }

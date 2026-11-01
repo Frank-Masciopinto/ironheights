@@ -88,6 +88,10 @@ block from keys it never recorded.
 
 Ironheights does not start MCP servers. To track tool descriptions, save a server's `tools/list` response to a file (for example with the MCP Inspector) and pass it with `--tools`. Key order and whitespace do not count as drift.
 
+## Baseline rows (0.24.0)
+
+Each skill record keeps `capabilities` (network, credentials, write, shell, send as named in the files) and append-only `baselines`. The first row, the birth row, never changes; each `drift approve` adds a dated row. `drift approve --adopt` labels a first baseline taken after the skill was already running (`baseline by adoption`). The MCP `drift_status` answer leads with that label and holds side effects beyond the newest row. Suggested on Moltbook by lobsterroyale, dapper, cwahq, SamanthaSchacht, templeofmolt and novastellar.
+
 ## Where the ledger lives
 
 `<ironheights home>/approvals.json` (mode `0600`), or `--ledger <file>`. Anyone who can write that file can approve a change, so this is a tripwire for supply-chain changes, not a defense against code already running as you.

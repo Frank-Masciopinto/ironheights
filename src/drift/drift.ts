@@ -34,6 +34,22 @@ const SkillRecordSchema = z
     credentialPaths: z.array(z.string()),
     /** Flattened config keys. Absent on ledgers written before 0.22.0. */
     configKeys: z.record(z.string(), z.string()).optional(),
+    /** Capability classes the skill text reached when this record was taken (0.24.0). */
+    capabilities: z.array(z.string()).optional(),
+    /** `adoption` when the first baseline was taken after the skill was already running (0.24.0). */
+    baselineKind: z.enum(['approval', 'adoption']).optional(),
+    /** Append-only baseline rows; the first row (birth) never changes (0.24.0). */
+    baselines: z
+      .array(
+        z
+          .object({
+            at: z.string(),
+            capabilities: z.array(z.string()),
+            kind: z.enum(['approval', 'adoption']),
+          })
+          .strict(),
+      )
+      .optional(),
   })
   .strict();
 
@@ -78,7 +94,8 @@ export interface DriftChange {
     | 'config-key-added'
     | 'restriction-removed'
     | 'restriction-loosened'
-    | 'config-keys-unrecorded';
+    | 'config-keys-unrecorded'
+    | 'capability-widened';
   severity: 'info' | 'medium' | 'high';
   target: string;
   detail: string;
@@ -166,6 +183,31 @@ export function skillDescription(text: string): string {
   return line ? (line[1] as string).trim().replace(/^['"]|['"]$/g, '') : '';
 }
 
+const CAP_PATTERNS: Array<[string, RegExp]> = [
+  [
+    'shell',
+    /\bchild_process\b|\b(?:execSync|spawnSync|execFileSync)\s*\(|\bsubprocess\.|\bos\.system\s*\(|```(?:bash|sh|shell|zsh)\b/,
+  ],
+  [
+    'write',
+    /\b(?:writeFile(?:Sync)?|appendFile(?:Sync)?|createWriteStream|fs\.write|rename(?:Sync)?)\s*\(|\bopen\([^)]*['"][wa]\+?['"]|>>?\s*[~/$]|\btee\s+-?a?\s*[~/$]/,
+  ],
+  [
+    'send',
+    /\b(?:fetch|axios\.(?:post|put)|requests\.(?:post|put)|sendMail|webhook)\b[^\n]*\b(?:POST|post|PUT|body|json|data)\b|curl\s[^\n]*(?:-d\b|--data|-X\s*POST)/,
+  ],
+];
+
+/** Capability classes named in skill text: network, credentials, write, shell, send. */
+export function capabilitiesOf(text: string, hosts: string[], credentialPaths: string[]): string[] {
+  const caps = new Set<string>();
+  if (hosts.length) caps.add('network');
+  if (credentialPaths.length || /\b[A-Z][A-Z0-9_]*(?:KEY|TOKEN|SECRET|PASSWORD)\b/.test(text))
+    caps.add('credentials');
+  for (const [c, re] of CAP_PATTERNS) if (re.test(text)) caps.add(c);
+  return [...caps].sort();
+}
+
 export async function snapshotSkill(root: string, now = new Date()): Promise<SkillRecord> {
   const abs = resolve(root);
   const files: Record<string, string> = {};
@@ -178,14 +220,17 @@ export async function snapshotSkill(root: string, now = new Date()): Promise<Ski
     description = '';
   }
   const all = texts.join('\n');
+  const hosts = extractHosts(all);
+  const credentialPaths = extractCredentialPaths(all);
   return {
     root: abs,
     approvedAt: now.toISOString(),
     files,
     description,
-    hosts: extractHosts(all),
-    credentialPaths: extractCredentialPaths(all),
+    hosts,
+    credentialPaths,
     configKeys: await collectConfigKeys(abs),
+    capabilities: capabilitiesOf(all, hosts, credentialPaths),
   };
 }
 

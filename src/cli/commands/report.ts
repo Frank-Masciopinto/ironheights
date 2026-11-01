@@ -1,5 +1,9 @@
-import { stat, writeFile } from 'node:fs/promises';
+import { readFile, stat, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
+import { contentDigest } from '../../mcp/receipts.ts';
+import { readJsonl, type ArtifactRecord, type RefusalEvent } from '../../report/extras.ts';
+import { TOOL_VERSION } from '../../version.ts';
+import type { PostureReport } from '../../report/posture.ts';
 import { loadConfig } from '../../core/config.ts';
 import {
   appendHistory,
@@ -20,6 +24,19 @@ export interface ReportFlags {
   /** Exit 2 when any loaded skill was not fully inspected (0.23.0). */
   failOnIncomplete?: boolean;
   validDays?: number;
+  /** 0.24.0 */
+  checkIntervalHours?: number;
+  refusals?: string;
+  artifacts?: string;
+  loaded?: string;
+  fixes?: string;
+  envId?: string;
+  imageDigest?: string;
+  receipts?: string;
+  reversalWindow?: number;
+  verifySlaDays?: number;
+  /** Re-check a saved JSON report against the files on disk now. */
+  verify?: string;
   config?: string;
   env?: NodeJS.ProcessEnv;
   now?: Date;
@@ -42,6 +59,23 @@ export async function runReport(flags: ReportFlags): Promise<number> {
       return 1;
     }
   }
+  if (flags.verify) return verifySaved(resolve(flags.verify), flags, out);
+  const readJson = async <T>(p?: string): Promise<T | undefined> => {
+    if (!p) return undefined;
+    try {
+      return JSON.parse(await readFile(resolve(p), 'utf8')) as T;
+    } catch {
+      err(`ironheights report: cannot read JSON ${p}`);
+      return undefined;
+    }
+  };
+  const artifactsRaw = flags.artifacts
+    ? flags.artifacts.endsWith('.jsonl')
+      ? await readJsonl<ArtifactRecord>(resolve(flags.artifacts))
+      : ((await readJson<ArtifactRecord[]>(flags.artifacts)) ?? [])
+    : undefined;
+  const loaded = await readJson<Record<string, string>>(flags.loaded);
+  const fixes = await readJson<Record<string, string>>(flags.fixes);
   const history = flags.history ? await readHistory(resolve(flags.history)) : [];
   const report = await buildReport({
     targets: flags.targets.length ? flags.targets : ['.'],
@@ -51,6 +85,19 @@ export async function runReport(flags: ReportFlags): Promise<number> {
     ...(flags.ledger ? { ledger: flags.ledger } : {}),
     ...(flags.now ? { now: flags.now } : {}),
     ...(flags.validDays !== undefined ? { validDays: flags.validDays } : {}),
+    ...(flags.checkIntervalHours ? { checkIntervalHours: flags.checkIntervalHours } : {}),
+    ...(flags.refusals ? { refusals: await readJsonl<RefusalEvent>(resolve(flags.refusals)) } : {}),
+    ...(artifactsRaw ? { artifacts: artifactsRaw } : {}),
+    ...(loaded ? { loaded } : {}),
+    ...(fixes ? { fixes } : {}),
+    ...(flags.envId ? { envId: flags.envId } : {}),
+    ...(flags.imageDigest ? { imageDigest: flags.imageDigest } : {}),
+    ...(flags.receipts
+      ? { receipts: await readJsonl<Record<string, unknown>>(resolve(flags.receipts)) }
+      : {}),
+    ...(flags.reversalWindow ? { reversalWindow: flags.reversalWindow } : {}),
+    ...(flags.verifySlaDays !== undefined ? { verifySlaDays: flags.verifySlaDays } : {}),
+    env,
   });
   if (flags.history) await appendHistory(resolve(flags.history), report);
   if (flags.html) await writeFile(resolve(flags.html), renderPostureHtml(report));
@@ -60,7 +107,20 @@ export async function runReport(flags: ReportFlags): Promise<number> {
   else {
     const t = report.totals;
     out(`${report.title}: ${t.repos} repo(s), ${t.skills} skill(s), ${t.findings} finding(s)`);
+    if (report.lead) out(report.lead);
     out(t.result);
+    for (const c of report.lanes?.containment ?? [])
+      out(`containment: ${c.repo}/${c.skill} ${c.asset} via ${c.precondition}`);
+    for (const v of report.lanes?.verification ?? [])
+      out(
+        `verify: ${v.repo}/${v.skill} ${v.asset}: ${v.checkNeeded}${v.status === 'contained-pending-check' ? ' (SLA lapsed: contain pending check)' : ''}`,
+      );
+    for (const l of report.leftovers ?? []) if (l.severity !== 'info') out(`leftover: ${l.detail}`);
+    if (report.refusals)
+      out(
+        `refusals: ${report.refusals.denials} denial(s), route-around rate ${report.refusals.routeAroundRate ?? 'n/a'}`,
+      );
+    if (report.reversal) out(`reversal: ${report.reversal.label}`);
     for (const s of report.skills) {
       const cfg = s.configHash.slice(0, 8);
       out(
@@ -84,4 +144,50 @@ export async function runReport(flags: ReportFlags): Promise<number> {
   if (flags.failOnBlock && (report.totals.verdicts.block ?? 0) > 0) return 2;
   if (flags.failOnIncomplete && !report.totals.coverage.complete) return 2;
   return 0;
+}
+
+async function verifySaved(
+  file: string,
+  flags: ReportFlags,
+  out: (l: string) => void,
+): Promise<number> {
+  let r: PostureReport;
+  try {
+    r = JSON.parse(await readFile(file, 'utf8')) as PostureReport;
+  } catch {
+    out(`ironheights report --verify: cannot read ${file}`);
+    return 64;
+  }
+  const now = (flags.now ?? new Date()).getTime();
+  const rows: Array<{ skill: string; status: string; reason: string }> = [];
+  for (const s of r.skills) {
+    const repo = r.repos.find((x) => x.repo === s.repo);
+    const root = repo ? resolve(repo.path, s.path) : resolve(s.path);
+    const id = `${s.repo}/${s.path}`;
+    const d = await contentDigest(root).catch(() => ({ digest: null }));
+    let status = 'fresh';
+    let reason = `grade ${s.grade} still describes these bytes`;
+    if (!d.digest) [status, reason] = ['missing', 'the graded files are gone'];
+    else if (s.stamp?.contentHash && d.digest !== s.stamp.contentHash)
+      [status, reason] = [
+        'changed',
+        'files changed since grading: the grade is greyed until re-graded',
+      ];
+    else if ((s.stamp?.gradedAgainstVersion ?? r.version) !== TOOL_VERSION)
+      [status, reason] = [
+        'version-mismatch',
+        `graded with ${s.stamp?.gradedAgainstVersion ?? r.version}, running ${TOOL_VERSION}`,
+      ];
+    else if (s.stamp && Date.parse(s.stamp.validUntil) < now)
+      [status, reason] = ['expired', `hard cutoff ${s.stamp.validUntil} passed`];
+    rows.push({ skill: id, status, reason });
+  }
+  const stale = rows.filter((x) => x.status !== 'fresh').length;
+  if (flags.json)
+    out(JSON.stringify({ report: file, fingerprint: r.fingerprint, stale, skills: rows }, null, 2));
+  else {
+    out(`${file}: ${rows.length - stale} of ${rows.length} grade(s) still fresh`);
+    for (const x of rows) out(`${x.status.padEnd(16)} ${x.skill}  ${x.reason}`);
+  }
+  return stale ? 2 : 0;
 }

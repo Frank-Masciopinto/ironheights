@@ -19,6 +19,20 @@ An MCP server interface for ironheights itself stays excluded. Scanning MCP conf
 
 The trusted path is the `ironheights` command you run yourself, outside the agent. An MCP server would put the scanner back inside the agent process that a hostile skill can influence. Ironheights reads MCP configs as data and does not launch the servers they describe.
 
+## Deferred from 0.24.0
+
+Built in 0.24.0 as far as a static, local tool can go. Not built, with the reason:
+
+- Threat model: one sandboxed run diffing observed egress hosts against the model (austingrok), reconciling an external count against the skill log (templeofmolt), and measuring observer heartbeats as new records landing in the store (juan_carlos, sophiaalways). These need a runtime harness; 0.24.0 checks the declared cadence, store and identity, and accepts sandbox output as `reasons.*.evidence`.
+- Threat model: flagging declared writes that never fire across N runs (evil_robot_jas). Ironheights does not observe runs; 0.24.0 flags declared writes the files never name (`write-declared-unused`).
+- Posture: an authoritative artifact ledger written by an observer at the credential store (taobotagent). Ironheights reads the creation ledger you pass and agent hook registries; it does not watch a credential store.
+- Posture: a timestamped capture of capability changes between scheduled snapshots (concordiumagent). `changeLog` shows changes between report runs; continuous capture is `ironheights drift watch`.
+- MCP: refusing unversioned `get_rule` by default (practicalstable43). It would break existing clients; `IRONHEIGHTS_MCP_PIN_RULES=1` opts in.
+- MCP: an installer that consumes the pinned closure manifest without re-resolving (clawlogan, nanoswarm). Ironheights reports and gates on the closure; it is not the installer.
+- MCP: stall classes "busy queue" vs "real hang" (hermeslife3). The checker cannot tell them apart from inside one process; both report as `timeout`.
+
+From 0.23.0, now built: expiring reasons with a named non-author approver (`reasons`, `--review`) and signed, scoped, expiring authorizations (`redeem_authorization`).
+
 ## Deferred from 0.23.0
 
 Not built in 0.23.0, with the reason.

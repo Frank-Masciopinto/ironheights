@@ -111,6 +111,10 @@ export async function main(argv: string[], hooks: MainHooks = {}): Promise<numbe
     .option('--tools <file>', 'saved MCP tools/list JSON; repeatable', collect)
     .option('--ledger <file>', 'approval ledger path (default: <ironheights home>/approvals.json)')
     .option('--interval <seconds>', 'seconds between checks for watch', '60')
+    .option(
+      '--adopt',
+      'approve: label this first baseline "by adoption" (taken after the skill was already running)',
+    )
     .option('--json', 'print JSON to stdout')
     .option('--config <file>', 'config file')
     .action(
@@ -123,6 +127,7 @@ export async function main(argv: string[], hooks: MainHooks = {}): Promise<numbe
           action,
           paths,
           all: Boolean(opts.all),
+          adopt: Boolean(opts.adopt),
           json: Boolean(opts.json),
           ...(Array.isArray(opts.mcp) ? { mcp: opts.mcp } : {}),
           ...(Array.isArray(opts.tools) ? { tools: opts.tools } : {}),
@@ -150,6 +155,32 @@ export async function main(argv: string[], hooks: MainHooks = {}): Promise<numbe
       'exit 2 when any loaded skill was not fully inspected (skipped files or runtime-fetched instructions)',
     )
     .option('--valid-days <n>', 'days until the HTML report marks itself expired (default 7)')
+    .option(
+      '--check-interval <hours>',
+      'grey grades by check interval: 1x degraded, 2x greyed, 3x grade hidden',
+    )
+    .option('--refusals <file>', 'JSONL refusal log: denials and what the agent did next')
+    .option(
+      '--artifacts <file>',
+      'creation ledger (JSON or JSONL) of hooks, tokens and files skills created',
+    )
+    .option(
+      '--loaded <file>',
+      'runtime attestation JSON: repo/path -> content digest the agent loaded',
+    )
+    .option('--fixes <file>', 'JSON: repo/path -> version that fixes the open findings')
+    .option(
+      '--env-id <id>',
+      'environment id for the stamp (default IRONHEIGHTS_ENV_ID or a host hash)',
+    )
+    .option('--image-digest <digest>', 'container image digest for the stamp')
+    .option('--receipts <file>', 'MCP receipts JSONL for the reversal rate')
+    .option('--reversal-window <n>', 'checks in the reversal-rate window (default 20)')
+    .option(
+      '--verify-sla <days>',
+      'days before an unresolved loss path shows as contained pending check',
+    )
+    .option('--verify <report.json>', 're-check a saved JSON report against the files on disk now')
     .option('--config <file>', 'config file')
     .action(async (targets: string[], opts: Record<string, string | boolean | undefined>) => {
       const s = (k: string): string | undefined =>
@@ -168,6 +199,21 @@ export async function main(argv: string[], hooks: MainHooks = {}): Promise<numbe
         ...(s('validDays') !== undefined && Number.isFinite(Number(s('validDays')))
           ? { validDays: Number(s('validDays')) }
           : {}),
+        ...(Number(s('checkInterval')) > 0
+          ? { checkIntervalHours: Number(s('checkInterval')) }
+          : {}),
+        ...(s('refusals') ? { refusals: s('refusals') } : {}),
+        ...(s('artifacts') ? { artifacts: s('artifacts') } : {}),
+        ...(s('loaded') ? { loaded: s('loaded') } : {}),
+        ...(s('fixes') ? { fixes: s('fixes') } : {}),
+        ...(s('envId') ? { envId: s('envId') } : {}),
+        ...(s('imageDigest') ? { imageDigest: s('imageDigest') } : {}),
+        ...(s('receipts') ? { receipts: s('receipts') } : {}),
+        ...(Number(s('reversalWindow')) > 0 ? { reversalWindow: Number(s('reversalWindow')) } : {}),
+        ...(s('verifySla') !== undefined && Number.isFinite(Number(s('verifySla')))
+          ? { verifySlaDays: Number(s('verifySla')) }
+          : {}),
+        ...(s('verify') ? { verify: s('verify') } : {}),
       });
     });
 
@@ -204,6 +250,16 @@ export async function main(argv: string[], hooks: MainHooks = {}): Promise<numbe
       '--fail-on-widen',
       'diff: fail when a capability passes only because the same change widened the model',
     )
+    .option(
+      '--review',
+      'diff: review tier for widenings: reasons rows, an approver who is not the author, evidence that predates the change',
+    )
+    .option('--author <login>', 'diff: author of the change (PR author)')
+    .option(
+      '--author-kind <kind>',
+      'diff: human or agent (an agent-authored widening needs a human approver)',
+    )
+    .option('--approvers <logins>', 'diff: comma-separated logins that approved the change')
     .option('--force', 'overwrite an existing model on init')
     .option('--markdown <file>', 'write a Markdown summary (PR comment)')
     .option('--sarif <file>', 'write SARIF 2.1.0')
@@ -230,6 +286,19 @@ export async function main(argv: string[], hooks: MainHooks = {}): Promise<numbe
           noGrade: opts.grade === false,
           failOnUncovered: Boolean(opts.failOnUncovered),
           failOnWiden: Boolean(opts.failOnWiden),
+          review: Boolean(opts.review),
+          ...(str('author') ? { author: str('author') } : {}),
+          ...(str('authorKind') === 'agent' || str('authorKind') === 'human'
+            ? { authorKind: str('authorKind') as 'agent' | 'human' }
+            : {}),
+          ...(str('approvers')
+            ? {
+                approvers: (str('approvers') as string)
+                  .split(',')
+                  .map((x) => x.trim())
+                  .filter(Boolean),
+              }
+            : {}),
           force: Boolean(opts.force),
           json: Boolean(opts.json),
         });

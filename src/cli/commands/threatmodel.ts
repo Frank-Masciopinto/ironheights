@@ -31,6 +31,19 @@ import {
   type ThreatModel,
   type Violation,
 } from '../../threatmodel/threatmodel.ts';
+import {
+  evaluateExtras,
+  folderViolations,
+  lockAndReasonChanges,
+  profileExtras,
+  readLock,
+  reviewTier,
+  triggerChanges,
+  undeclaredSkillFolders,
+  type ExtraProfile,
+  type ExtrasResult,
+  type ReviewResult,
+} from '../../threatmodel/extras.ts';
 import { REPOSITORY_URL, TOOL_NAME, TOOL_VERSION } from '../../version.ts';
 
 const run = promisify(execFile);
@@ -48,6 +61,13 @@ export interface ThreatModelFlags {
   failOnUncovered?: boolean;
   /** diff: fail when a capability passes only because the same change widened the model. */
   failOnWiden?: boolean;
+  /** diff: review tier for widenings (reasons, non-author approval). Also on with modelChanges: review. */
+  review?: boolean;
+  /** diff: PR author login, and whether an agent authored the change. */
+  author?: string;
+  authorKind?: 'human' | 'agent';
+  /** diff: logins that approved the change. */
+  approvers?: string[];
   force?: boolean;
   json?: boolean;
   markdown?: string;
@@ -76,6 +96,14 @@ export interface ThreatModelReport {
   claims?: ClaimResult[];
   /** Capabilities no claim mentions. Informational unless failing is opted in. */
   uncovered?: UncoveredCapability[];
+  /** 0.24.0: writes seen but not declared, for a human to accept (persistence never auto-added). */
+  proposedWrites?: ExtrasResult['proposedWrites'];
+  /** 0.24.0 diff: changed files counted against the declared scope, so outside is never zero by construction. */
+  scope?: { changedFiles: number; inScope: number; outsideScope: string[] };
+  /** 0.24.0 diff: self-approved marks waiting for a different reader. */
+  selfApproved?: ReviewResult['selfApproved'];
+  /** 0.24.0 diff: how many model changes the extractor could classify. */
+  extractorHealth?: ReviewResult['extractorHealth'];
   exitCode: number;
 }
 
@@ -160,6 +188,8 @@ async function checkAt(
   mcp: number;
   profiles: SkillProfile[];
   mcpServers: McpServerDef[];
+  extras: ExtraProfile[];
+  proposedWrites: ExtrasResult['proposedWrites'];
 }> {
   const { profiles, mcp } = await collect(
     base,
@@ -169,6 +199,29 @@ async function checkAt(
     flags,
   );
   const violations = evaluate({ model, base, profiles, mcp, modelFile });
+  const extras: ExtraProfile[] = [];
+  for (const p of profiles) extras.push(await profileExtras(p));
+  const ex = evaluateExtras(model, profiles, extras);
+  // A fallback host is reported once, as the named code branch.
+  const fb = new Set(
+    ex.violations
+      .filter((x) => x.kind === 'fallback-host' && x.severity === 'high')
+      .map((x) => `${x.target}|${/sends to (\S+)/.exec(x.detail)?.[1] ?? ''}`),
+  );
+  const kept = violations.filter(
+    (x) => !(x.kind === 'host-not-allowed' && fb.has(`${x.target}|${x.detail}`)),
+  );
+  violations.length = 0;
+  violations.push(...kept, ...ex.violations);
+  const outside = await undeclaredSkillFolders(
+    base,
+    flags.skillDirs?.length ? flags.skillDirs : model.skillDirs,
+  );
+  if (outside.length) {
+    const fp: SkillProfile[] = [];
+    for (const k of outside) fp.push(await profileSkill(resolve(base, k), base));
+    violations.push(...folderViolations(model, fp));
+  }
   if (flags.ledger) {
     const ledger = await readLedger(resolve(flags.ledger));
     for (const p of profiles) {
@@ -184,7 +237,15 @@ async function checkAt(
         });
     }
   }
-  return { violations, skills: profiles.length, mcp: mcp.length, profiles, mcpServers: mcp };
+  return {
+    violations,
+    skills: profiles.length,
+    mcp: mcp.length,
+    profiles,
+    mcpServers: mcp,
+    extras,
+    proposedWrites: ex.proposedWrites,
+  };
 }
 
 function withClaims(
@@ -243,6 +304,7 @@ export async function runThreatModel(flags: ThreatModelFlags): Promise<number> {
       violations: assessed.violations,
       claims: assessed.claims,
       uncovered: assessed.uncovered,
+      ...(r.proposedWrites.length ? { proposedWrites: r.proposedWrites } : {}),
       exitCode: exitCodeFor(assessed.violations),
     });
   }
@@ -306,6 +368,10 @@ async function diff(
     | undefined;
   let modelChanges: Violation[] = [];
   let sameChange: Violation[] = [];
+  let extra: Violation[] = [];
+  let review: ReviewResult | undefined;
+  let scope: ThreatModelReport['scope'];
+  const lockPairs: Parameters<typeof lockAndReasonChanges>[1] = [];
   try {
     // --show-prefix avoids comparing long and short (8.3) temp paths on Windows.
     const { stdout: prefix } = await run('git', ['-C', dir, 'rev-parse', '--show-prefix']);
@@ -334,6 +400,33 @@ async function diff(
         mcpServers: base.mcpServers,
       };
       modelChanges = widened(baseModel, headModel, modelFile);
+      const strictTriggers =
+        baseModel.defaults.triggers === 'require' || baseModel.defaults.modelChanges !== 'note';
+      extra.push(...triggerChanges(headModel, base.extras, head.extras, strictTriggers));
+      for (const [id, e] of Object.entries(headModel.skills)) {
+        const key = toPosix(e.path).replace(/^\.\//, '').replace(/\/+$/, '');
+        lockPairs.push({
+          id,
+          key,
+          base: await readLock(join(baseDir, key)),
+          head: await readLock(join(dir, key)),
+        });
+      }
+      const modelFileChanged =
+        (await readFile(baseModelPath, 'utf8')) !== (await readFile(modelPath, 'utf8'));
+      if (flags.review || baseModel.defaults.modelChanges === 'review') {
+        review = await reviewTier({
+          baseModel,
+          headModel,
+          widenings: modelChanges,
+          modelFileChanged,
+          ...(flags.author ? { author: flags.author } : {}),
+          ...(flags.authorKind ? { authorKind: flags.authorKind } : {}),
+          approvers: flags.approvers ?? [],
+          baseHas: (rel) => exists(join(baseDir, rel)),
+        });
+        extra.push(...review.violations);
+      }
       if (flags.failOnWiden || baseModel.defaults.modelChanges === 'fail') {
         // Head skills against the base model, minus what the base already violated there.
         const headVsBase = await checkAt(dir, baseModel, modelFile, {
@@ -376,11 +469,70 @@ async function diff(
   } finally {
     await rm(tmp, { recursive: true, force: true });
   }
+  try {
+    const { stdout } = await run('git', ['-C', dir, 'diff', '--name-only', flags.base, '--', '.']);
+    const { stdout: prefix } = await run('git', ['-C', dir, 'rev-parse', '--show-prefix']);
+    const sub = prefix.trim();
+    const changed = stdout
+      .split('\n')
+      .map((l) => l.trim())
+      .filter(Boolean)
+      .map((l) => (sub && l.startsWith(sub) ? l.slice(sub.length) : l));
+    const dirs = (flags.skillDirs?.length ? flags.skillDirs : headModel.skillDirs).map((d) =>
+      d.replace(/^\.\//, '').replace(/\/+$/, ''),
+    );
+    const inScope = (f: string): boolean =>
+      f === modelFile ||
+      headModel.mcpConfigs.includes(f) ||
+      dirs.some((d) => f === d || f.startsWith(d + '/'));
+    const out = changed.filter((f) => !inScope(f));
+    scope = {
+      changedFiles: changed.length,
+      inScope: changed.length - out.length,
+      outsideScope: out,
+    };
+    for (const f of out) {
+      if (
+        !/\.(?:m?[jt]s|py|sh|bash|zsh|rb|go|json|ya?ml|toml)$|(?:^|\/)SKILL\.md$|(?:^|\/)Dockerfile$/.test(
+          f,
+        )
+      )
+        continue;
+      const body = await readFile(join(dir, f), 'utf8').catch(() => '');
+      const authority =
+        /https?:\/\/|child_process|subprocess|process\.env|os\.environ|\bcurl\b|\bexec\(/.test(
+          body,
+        );
+      if (authority)
+        extra.push({
+          kind: 'changed-outside-scope',
+          severity: headModel.defaults.undeclaredFolders === 'fail' ? 'high' : 'medium',
+          target: f,
+          detail:
+            'changed file outside every declared skill dir names hosts, env or processes; the model never searched it',
+          file: f,
+        });
+    }
+  } catch {
+    scope = undefined;
+  }
   const headAssessed = withClaims(headModel, flags, head, baseSnapshot, true);
   const key = (v: Violation): string => `${v.kind}|${v.target}|${v.detail}`;
   const before = new Set((baseSnapshot?.violations ?? []).map(key));
-  const introduced = [...headAssessed.violations.filter((v) => !before.has(key(v))), ...sameChange];
-  const violations = [...headAssessed.violations, ...sameChange, ...modelChanges];
+  const introduced0 = [
+    ...headAssessed.violations.filter((v) => !before.has(key(v))),
+    ...sameChange,
+  ];
+  extra.push(
+    ...lockAndReasonChanges(
+      headModel,
+      lockPairs,
+      introduced0.some((v) => v.severity !== 'info'),
+    ),
+  );
+  extra = extra.filter((v, i, a) => a.findIndex((x) => key(x) === key(v)) === i);
+  const introduced = [...introduced0, ...extra];
+  const violations = [...headAssessed.violations, ...sameChange, ...extra, ...modelChanges];
   const covered = await coveredRange(dir, flags.base);
   const notChecked = await missingDirs(
     dir,
@@ -400,6 +552,11 @@ async function diff(
     introduced: [...introduced, ...modelChanges],
     claims: headAssessed.claims,
     uncovered: headAssessed.uncovered,
+    ...(head.proposedWrites.length ? { proposedWrites: head.proposedWrites } : {}),
+    ...(scope ? { scope } : {}),
+    ...(review
+      ? { selfApproved: review.selfApproved, extractorHealth: review.extractorHealth }
+      : {}),
     exitCode: exitCodeFor(introduced),
   });
 }
@@ -526,6 +683,33 @@ export function renderMarkdown(r: ThreatModelReport): string {
       '',
     );
   }
+  if (r.selfApproved?.length)
+    lines.push(
+      '**Self-approved marks waiting for a different reader**',
+      '',
+      ...r.selfApproved.map((x) => `- ${esc(x.target)}: ${esc(x.detail)}`),
+      '',
+    );
+  if (r.proposedWrites?.length)
+    lines.push(
+      "**Proposed writes** (accept each one by adding it to `writes`; startup files and other tools' config are never proposed as accepted)",
+      '',
+      ...r.proposedWrites.map(
+        (w) =>
+          `- ${esc(w.target)}: \`${esc(w.path)}\` (${esc(w.why)})${w.denyByDefault ? ' deny by default' : ''}`,
+      ),
+      '',
+    );
+  if (r.scope)
+    lines.push(
+      `Scope: ${r.scope.changedFiles} changed file(s), ${r.scope.inScope} inside the declared skill dirs, ${r.scope.outsideScope.length} outside.`,
+      '',
+    );
+  if (r.extractorHealth && r.extractorHealth.unclassified)
+    lines.push(
+      `Extractor health: ${r.extractorHealth.unclassified} of ${r.extractorHealth.classified + r.extractorHealth.unclassified} model change(s) could not be classified.`,
+      '',
+    );
   lines.push(
     `Fix: remove the access, or widen \`${r.modelFile}\` in this PR so a reviewer approves it. Docs: https://www.ironheights.dev/docs/threatmodel/`,
     '',

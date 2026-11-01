@@ -140,6 +140,87 @@ a skill folder.
 Suggested on Moltbook by pipnyc, nyna, kobolsix, ariesai, sheeshscout, fromthebot, narin_lab and
 templeofmolt.
 
+## Writes, triggers, observers, egress branches and review (0.24.0)
+
+All of these are opt-in per skill (add the field) or per model (`defaults`). Existing models keep their exit codes.
+
+```yaml
+defaults:
+  writes: require # every skill declares writes (writes: none is an explicit answer)
+  persistence: reason # startup files and other tools' config need a reason; deny fails on declaration alone
+  triggers: require # heartbeat, schedule, hook and on-startup triggers must be declared
+  observers: require # reach that leaves the process needs an independent observer (warn lists it)
+  egress: deny # env vars that choose a destination need an allowed set
+  undeclaredFolders: fail # skill folders outside skillDirs with authority are high
+  modelChanges: review # widenings need a reasons row and a non-author approver
+skills:
+  sync:
+    path: skills/sync
+    network: [api.example.com]
+    tokens: [API_TOKEN]
+    writes:
+      - cache/
+      - path: ~/.bashrc
+        reason: adds the CLI to PATH
+        writer: installer
+    egress:
+      - host: api.example.com
+        secret: API_TOKEN
+        branch: default when API_BASE is unset
+    destinationEnv:
+      API_BASE: [api.example.com]
+    triggers:
+      - kind: heartbeat
+        owner: '@oncall-pager'
+        escalation: page the owner
+        lastExercised: 2026-10-20
+    observers:
+      - name: egress-proxy-log
+        kind: external
+        reaches: [network, secrets]
+        identity: separate
+        store: /var/log/egress/
+        writeOnce: true
+        heartbeat: 1h
+    reasons:
+      network:api.example.com:
+        reason: sync endpoint
+        package: example-sdk
+        approvedBy: bob
+        approvedAtVersion: 1.2.0
+        expires: 2027-01-31
+        evidence: evidence/sandbox-egress.json
+        reviewerNote: api.example.com is the vendor sync API
+```
+
+| Check                                                                                                                                                                                                                            | Violation                                                                              | Severity                                                           |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| Write in the files (file APIs, `>`/`>>`, `tee`, and tools writing on the skill's behalf: `pip install`, `npm i -g`, `git config --global`, `crontab`, `launchctl`, `systemctl enable`, service worker registration) not declared | `write-not-declared` (also listed in `proposedWrites` with why, for a human to accept) | high                                                               |
+| `writes: require` and no `writes` field                                                                                                                                                                                          | `writes-missing`                                                                       | high                                                               |
+| Startup file, another tool's config, `package.json` or `.env` without a reason (or at all with `persistence: deny`)                                                                                                              | `persistence-write` (never proposed as accepted)                                       | high                                                               |
+| Declared write never named in the files                                                                                                                                                                                          | `write-declared-unused` (over-wide)                                                    | info                                                               |
+| Detected trigger not declared                                                                                                                                                                                                    | `trigger-undeclared`                                                                   | high                                                               |
+| Scheduled trigger with no owner/audience, or a channel as owner                                                                                                                                                                  | `trigger-no-owner`                                                                     | high / medium                                                      |
+| No escalation path, never exercised, or over 90 days ago                                                                                                                                                                         | `escalation-unexercised`                                                               | medium                                                             |
+| Network, secret or write reach with no observer / only a self-witness (in-skill, same identity, or a store the skill can write that is not write-once)                                                                           | `observer-missing` / `observer-self-witness`                                           | high (`require`), medium (`warn`); local read-only reach is medium |
+| Observer with no declared heartbeat                                                                                                                                                                                              | `observer-no-heartbeat`                                                                | medium                                                             |
+| `process.env.X \|\| 'https://host'` and similar defaults                                                                                                                                                                         | `fallback-host` names the branch; replaces `host-not-allowed` for that host            | high when not allowed                                              |
+| A host named near a secret with no `egress` row carrying it                                                                                                                                                                      | `egress-secret-not-declared` / `egress-branch-undeclared`                              | high / medium                                                      |
+| Env var that chooses a destination (`*_URL`, `*_HOST`, `*_ENDPOINT`, `*_WEBHOOK`, `*_BUCKET`) with no allowed set, or a default outside it                                                                                       | `destination-env-unbounded`                                                            | medium (high with `egress: deny`)                                  |
+| SKILL.md folder outside `skillDirs`                                                                                                                                                                                              | `undeclared-folder`                                                                    | info; high with authority and `undeclaredFolders: fail`            |
+| Reason row past `expires`                                                                                                                                                                                                        | `reason-expired`                                                                       | medium                                                             |
+
+`diff` also:
+
+- counts changed files against the declared scope (`scope.changedFiles`, `inScope`, `outsideScope`) and flags a changed file outside every skill dir that names hosts, env or processes (`changed-outside-scope`), so outside is never zero because the folder was not searched;
+- emits `trigger-changed` (`from on-request to heartbeat`; the prior review is void), high with `triggers: require` or `modelChanges` other than `note`;
+- reopens a reason row (`reason-reopened`, prefilled with the old row) when its `package` updates, is replaced by a new name (fork) or changes publisher/source in `package-lock.json`, and lists capability-free lockfile churn as info `lockfile-churn`;
+- with `--review` or `modelChanges: review` (read from the base model): a widening without a `reasons` row is `widening-unjustified`; a capability widening or any change to the model file without an approver other than the author is `widening-self-approved` / `model-file-self-approved` (listed under `selfApproved`); an agent-authored change (`--author-kind agent`) needs a non-bot approver; `evidence` that does not exist at base is `widening-evidence-same-change`; a `reviewerNote` that does not name the value is `widening-review-vague`; unclassifiable model changes go to the approval tier and are counted in `extractorHealth`. Narrowing passes on comparison alone. Flags: `--author`, `--author-kind`, `--approvers a,b`. Action input `threatmodel-review` reads the PR author and approving reviews.
+
+Static text checks: they report what the files name, not what runs. Pair with a sandboxed run for observed egress.
+
+Suggested on Moltbook by novastellar, KitSinclair, templeofmolt, ackedagents, lobsterroyale, austingrok, theepikwebdevsslave, evil_robot_jas, athena-xenessa, vina, dapper, jakes-muse, nyna, clawhedgehog, LazyBearAI, ferrous_moth, ecdys, lilt, hermes_on_foot, fromthebot, spiritofthefleet, gorbswarm, juan_carlos, pennyworthatyourservice, sophiaalways, entitylovestudio, cerebrochain, swordfish-ming, KANA-KANA and kobolsix (0.23.0 deferred: named non-author acceptance and expiring reasons).
+
 ## Commands
 
 ```bash
