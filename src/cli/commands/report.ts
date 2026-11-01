@@ -1,3 +1,5 @@
+import { watchSummaryFor } from './runtime.ts';
+import { applyCap } from '../../runtime/watcher.ts';
 import { readFile, stat, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { contentDigest } from '../../mcp/receipts.ts';
@@ -27,6 +29,9 @@ export interface ReportFlags {
   /** 0.24.0 */
   checkIntervalHours?: number;
   refusals?: string;
+  /** 0.25.0: signed activity log from `watch --activity`. */
+  fromWatch?: string;
+  watchKey?: string;
   artifacts?: string;
   loaded?: string;
   fixes?: string;
@@ -99,6 +104,40 @@ export async function runReport(flags: ReportFlags): Promise<number> {
     ...(flags.verifySlaDays !== undefined ? { verifySlaDays: flags.verifySlaDays } : {}),
     env,
   });
+  if (flags.fromWatch) {
+    const watch = await watchSummaryFor(flags.fromWatch, flags.watchKey, env);
+    (report as typeof report & { watch?: unknown }).watch = watch;
+    for (const sk of report.skills) {
+      const capped = applyCap(sk.grade, sk.skill, watch);
+      if (capped !== sk.grade) {
+        (sk as typeof sk & { watchCap?: unknown }).watchCap = {
+          from: sk.grade,
+          to: capped,
+          reasons: [...(watch.caps[sk.skill]?.reasons ?? []), ...(watch.caps['*']?.reasons ?? [])],
+        };
+        sk.grade = capped;
+      }
+    }
+    if (!flags.json) {
+      out(
+        watch.verified
+          ? `watch: ${watch.records} signed record(s) ${watch.from ?? ''} to ${watch.to ?? ''}`
+          : `watch: activity log FAILED verification: ${watch.problem}`,
+      );
+      for (const h of watch.undeclaredHosts)
+        out(`watch: ${h.skill ?? '?'} contacted undeclared ${h.host}`);
+      for (const o of watch.staleObservers)
+        out(`watch: observer ${o.observer} (${o.skill ?? '?'}) missed its heartbeat`);
+      if (watch.stalls.hang || watch.stalls.busyQueue)
+        out(`watch: stalls ${watch.stalls.hang} hang, ${watch.stalls.busyQueue} busy queue`);
+      const ar = Object.entries(watch.afterRefusal);
+      if (ar.length) out(`watch: after refusal ${ar.map(([k, v]) => `${k} ${v}`).join(', ')}`);
+    }
+    if (!watch.verified) {
+      if (flags.json) out(JSON.stringify(report, null, 2));
+      return 2;
+    }
+  }
   if (flags.history) await appendHistory(resolve(flags.history), report);
   if (flags.html) await writeFile(resolve(flags.html), renderPostureHtml(report));
   if (flags.jsonFile)

@@ -19,6 +19,7 @@ import { runRules } from './commands/rules.ts';
 import { runSafeInstall } from './commands/safe-install.ts';
 import { runScan } from './commands/scan.ts';
 import { runWatch } from './commands/watch.ts';
+import { runActivityWatch, runInstall, runSandbox, runVerifyActivity } from './commands/runtime.ts';
 import { runUpdate } from './commands/update.ts';
 import { maybeStartBackgroundCheck, type AutoCheckHooks } from '../update/update.ts';
 import { IronheightsError, UsageError } from '../core/errors.ts';
@@ -86,7 +87,37 @@ export async function main(argv: string[], hooks: MainHooks = {}): Promise<numbe
     .option('--config <file>', 'config file')
     .option('--no-color', 'disable color')
     .option('--quiet', 'disable color and extra emphasis')
+    .option(
+      '--activity',
+      'record file, network, heartbeat, check and refusal activity to a signed log',
+    )
+    .option('--log <file>', 'activity log (default IRONHEIGHTS_HOME/activity.jsonl)')
+    .option('--events <file>', 'JSONL inbox hooks, proxies and observers append events to')
+    .option('--model <file>', 'threat model: declared hosts and observer heartbeat cadences')
+    .option(
+      '--check-budget <seconds>',
+      'seconds before an open check is classed busy-queue or hang',
+    )
+    .option('--verify-log <file>', 'verify a signed activity log and exit')
+    .option('--public-key <file>', 'public key for --verify-log')
     .action(async (paths: string[], opts: Record<string, string | boolean | undefined>) => {
+      const o = (k: string) => (typeof opts[k] === 'string' ? (opts[k] as string) : undefined);
+      if (o('verifyLog')) {
+        process.exitCode = await runVerifyActivity(o('verifyLog') as string, o('publicKey'));
+        return;
+      }
+      if (opts.activity) {
+        process.exitCode = await runActivityWatch({
+          paths,
+          once: Boolean(opts.once),
+          ...(o('log') ? { log: o('log') } : {}),
+          ...(o('events') ? { events: o('events') } : {}),
+          ...(o('model') ? { model: o('model') } : {}),
+          ...(opts.interval !== '60' && o('interval') ? { interval: Number(o('interval')) } : {}),
+          ...(Number(o('checkBudget')) > 0 ? { checkBudget: Number(o('checkBudget')) } : {}),
+        });
+        return;
+      }
       process.exitCode = await runWatch({
         paths,
         all: Boolean(opts.all),
@@ -180,6 +211,11 @@ export async function main(argv: string[], hooks: MainHooks = {}): Promise<numbe
       '--verify-sla <days>',
       'days before an unresolved loss path shows as contained pending check',
     )
+    .option('--from-watch <log>', 'signed activity log from watch --activity: grade what happened')
+    .option(
+      '--watch-key <file>',
+      'public key for --from-watch (default IRONHEIGHTS_HOME/watch-key.pub.pem)',
+    )
     .option('--verify <report.json>', 're-check a saved JSON report against the files on disk now')
     .option('--config <file>', 'config file')
     .action(async (targets: string[], opts: Record<string, string | boolean | undefined>) => {
@@ -214,6 +250,8 @@ export async function main(argv: string[], hooks: MainHooks = {}): Promise<numbe
           ? { verifySlaDays: Number(s('verifySla')) }
           : {}),
         ...(s('verify') ? { verify: s('verify') } : {}),
+        ...(s('fromWatch') ? { fromWatch: s('fromWatch') } : {}),
+        ...(s('watchKey') ? { watchKey: s('watchKey') } : {}),
       });
     });
 
@@ -516,6 +554,85 @@ export async function main(argv: string[], hooks: MainHooks = {}): Promise<numbe
         ...(hooks.advisoryPublicKey !== undefined
           ? { advisoryPublicKey: hooks.advisoryPublicKey }
           : {}),
+      });
+    });
+
+  const sandbox = program
+    .command('sandbox')
+    .description(
+      'run a skill once in a throwaway container and compare what it did with the threat model',
+    );
+  sandbox
+    .command('run <skill> [entry...]')
+    .description(
+      'run once with no network except a logging proxy; record writes, hosts and child processes; fail on anything the threat model does not declare',
+    )
+    .option('--model <file>', 'threat model file (default ironheights.threatmodel.yml)')
+    .option(
+      '--image <image>',
+      'container image (default node:20-bookworm-slim or IRONHEIGHTS_SANDBOX_IMAGE)',
+    )
+    .option('--timeout <seconds>', 'kill the run after this many seconds (default 120)')
+    .option('--trace <file>', 'compare a recorded trace instead of running')
+    .option('--save-trace <file>', 'write the observed trace as JSON')
+    .option(
+      '--external <file>',
+      'outside record (JSON list of {kind, value, count}) to reconcile with',
+    )
+    .option('--fail-on-unused', 'also fail when a declared write never happened')
+    .option('--json', 'print JSON to stdout')
+    .action(
+      async (
+        skill: string,
+        entry: string[],
+        opts: Record<string, string | boolean | undefined>,
+      ) => {
+        const o = (k: string) => (typeof opts[k] === 'string' ? (opts[k] as string) : undefined);
+        process.exitCode = await runSandbox({
+          skill,
+          entry,
+          json: Boolean(opts.json),
+          failOnUnused: Boolean(opts.failOnUnused),
+          ...(o('model') ? { model: o('model') } : {}),
+          ...(o('image') ? { image: o('image') } : {}),
+          ...(Number(o('timeout')) > 0 ? { timeout: Number(o('timeout')) } : {}),
+          ...(o('trace') ? { trace: o('trace') } : {}),
+          ...(o('saveTrace') ? { saveTrace: o('saveTrace') } : {}),
+          ...(o('external') ? { external: o('external') } : {}),
+        });
+      },
+    );
+
+  program
+    .command('install')
+    .argument('<skill>', 'local skill folder, owner/slug or owner/slug@version')
+    .description(
+      'guarded install: write only the exact checked bytes and the pinned dependency closure; refuse on any mismatch',
+    )
+    .option('--dir <dir>', 'skills directory to install into')
+    .option('--lock <file>', 'skill lock (files, digest, closure) to match exactly')
+    .option('--expect-digest <sha256>', 'contentDigest from check_skill to match')
+    .option('--write-lock <file>', 'write a lock for this skill and exit')
+    .option(
+      '--with-deps',
+      'install the pinned closure (npm ci --ignore-scripts, pip --require-hashes)',
+    )
+    .option('--accept-review', 'install when the scan verdict is review')
+    .option('--json', 'print JSON to stdout')
+    .option('--config <file>', 'config file')
+    .action(async (skill: string, opts: Record<string, string | boolean | undefined>) => {
+      const o = (k: string) => (typeof opts[k] === 'string' ? (opts[k] as string) : undefined);
+      process.exitCode = await runInstall({
+        skill,
+        json: Boolean(opts.json),
+        withDeps: Boolean(opts.withDeps),
+        acceptReview: Boolean(opts.acceptReview),
+        ...(o('dir') ? { dir: o('dir') } : {}),
+        ...(o('lock') ? { lock: o('lock') } : {}),
+        ...(o('expectDigest') ? { expectDigest: o('expectDigest') } : {}),
+        ...(o('writeLock') ? { writeLock: o('writeLock') } : {}),
+        ...(o('config') ? { config: o('config') } : {}),
+        ...(hooks.fetchImpl ? { fetchImpl: hooks.fetchImpl } : {}),
       });
     });
 

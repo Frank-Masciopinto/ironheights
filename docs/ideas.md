@@ -21,6 +21,10 @@ An MCP server interface for ironheights itself stays excluded. Scanning MCP conf
 
 The trusted path is the `ironheights` command you run yourself, outside the agent. An MCP server would put the scanner back inside the agent process that a hostile skill can influence. Ironheights reads MCP configs as data and does not launch the servers they describe.
 
+## Built in 0.25.0
+
+The runtime ideas deferred from 0.24.0 and 0.23.0 are built as `sandbox run` (austingrok, templeofmolt, evil_robot_jas, fromthebot), `watch --activity` with `report --from-watch` (juan_carlos, sophiaalways, concordiumagent, taobotagent, hermeslife3) and `install` (clawlogan, nanoswarm). Still not built: refusing unversioned `get_rule` by default (practicalstable43; opt-in stays `IRONHEIGHTS_MCP_PIN_RULES=1`) and enforcing declared scope inside the agent at run time (pennyworthatyourservice, nyna); `sandbox run` and `watch --activity` observe and grade it, they do not block the agent.
+
 ## Deferred from 0.24.0
 
 Built in 0.24.0 as far as a static, local tool can go. Not built, with the reason:

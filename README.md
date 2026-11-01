@@ -19,7 +19,7 @@ Website: [www.ironheights.dev](https://www.ironheights.dev)
 
 Ironheights scans any skill folder with a `SKILL.md`, whichever agent it is for, and adds an integrity monitor and runtime guard for [OpenClaw](https://docs.openclaw.ai). To check a Claude or Grok Bot skill, run `npx ironheights scan ./path/to/skill` before you upload or install it. Auto-discovery of installed skills, baselines, the guard, `audit-config` and `safe-install` are OpenClaw/ClawHub-only for now. It reads skill files as data, looks for risky patterns with fixed rules, and compares skill and agent files with a baseline you save on the same machine.
 
-It does not send telemetry, and it does not run the files it scans. Scans are fully local. The only network call made without a flag is a version check against npm and ClawHub, at most once every 6 hours; it only reports new versions, never installs anything, and can be turned off (see [Updates](#updates)). Other network use happens only when you run `fetch`, `safe-install`, `advisories update`, `--online`, `scan --llm`, `scan --check-registry`, or `review`.
+It does not send telemetry, and `scan` does not run the files it scans. Only `sandbox run` runs a skill, and only when you ask, inside a throwaway container with no network. Scans are fully local. The only network call made without a flag is a version check against npm and ClawHub, at most once every 6 hours; it only reports new versions, never installs anything, and can be turned off (see [Updates](#updates)). Other network use happens only when you run `fetch`, `safe-install`, `advisories update`, `--online`, `scan --llm`, `scan --check-registry`, or `review`.
 
 ## Install
 
@@ -64,11 +64,19 @@ node dist/cli/index.js scan test/fixtures/benign
 
 ## MCP server
 
-`npx -y ironheights@0.24.0 mcp` runs Ironheights as an MCP server, so Claude, Cursor, VS Code, Grok Bot or any MCP client can call `check_skill` (a fail-closed `allow`/`blocked` decision with provenance, an expiry and a server-written receipt, plus grade, findings, dependency closure and drift) before installing a skill, `check_shortlist` before choosing between several, `redeem_authorization` as the single-use install gate, `tool_manifest_check` for MCP tool-description drift, `verify_check` to re-confirm a remembered verdict, plus `drift_status`, `threatmodel_check` and `get_rule`. Local. See [docs/mcp.md](docs/mcp.md).
+`npx -y ironheights@0.25.0 mcp` runs Ironheights as an MCP server, so Claude, Cursor, VS Code, Grok Bot or any MCP client can call `check_skill` (a fail-closed `allow`/`blocked` decision with provenance, an expiry and a server-written receipt, plus grade, findings, dependency closure and drift) before installing a skill, `check_shortlist` before choosing between several, `redeem_authorization` as the single-use install gate, `tool_manifest_check` for MCP tool-description drift, `verify_check` to re-confirm a remembered verdict, plus `drift_status`, `threatmodel_check` and `get_rule`. Local. See [docs/mcp.md](docs/mcp.md).
 
 ## Threat model as code (checked on every PR)
 
 Keep an `ironheights.threatmodel.yml` in your repo that lists the skills and MCP servers your agent trusts and what each may touch: network hosts, filesystem paths, environment variables, tokens, shell and a minimum grade. `ironheights threatmodel init` writes the first version from what is installed, `threatmodel check` fails on anything outside it, and `threatmodel diff --base origin/main` reports only what a pull request adds. Each claim is `passed`, `violated` or `untested` (a check that matched nothing is not a pass). Capabilities the model never names are listed as uncovered, with a suggested claim; they fail the check only with `--fail-on-uncovered` or `defaults.uncovered: fail`. A built-in `remote-instructions` claim reuses `IH-INJ-004`. The GitHub Action (`mode: threatmodel` or `both`) posts one summary comment per PR. Local only. See [docs/threatmodel.md](docs/threatmodel.md) and [examples/threatmodel](examples/threatmodel).
+
+## Run it, watch it, install exactly what was checked
+
+New in 0.25.0. Ironheights protects any AI bot that installs it, and these three commands cover what a static scan cannot see:
+
+- `ironheights sandbox run ./skill -- node run.js` runs the skill once in a throwaway docker or podman container with no network except a logging proxy that refuses everything. It records every file written, every host tried and every child process, then fails on anything the threat model does not declare and lists declared writes that never happened. The GitHub Action runs it with `sandbox-run`. See [docs/sandbox.md](docs/sandbox.md).
+- `ironheights watch --activity ./skills --events events.jsonl` records file and network activity, observer heartbeats, check durations (busy queue or hang) and what the agent did after each refusal to an ed25519-signed, hash-chained log. `ironheights report --from-watch activity.jsonl` grades what really happened. See [docs/watch.md](docs/watch.md).
+- `ironheights install ./skill --lock skill.lock.json` writes only the exact bytes that were checked plus the pinned dependency closure, and refuses on any mismatch. See [docs/install.md](docs/install.md).
 
 ## 60-second quickstart
 
@@ -129,6 +137,10 @@ Absence of findings is not proof of safety.
 ironheights scan <path> [--all] [--json] [--sarif <file>] [--md <file>] [--html <file>] [--format text|json|html] [--since-baseline [file]] [--print-suppressions] [--stdin] [--text <text>] [--fail-on <severity>] [--config <file>] [--allow-skipped] [--no-color] [--quiet] [--llm] [--llm-url <url>] [--llm-model <name>] [--llm-api ollama|openai] [--llm-consent] [--dry-run] [--check-registry]
 ironheights review <path> [the same flags as scan]
 ironheights fetch <owner>/<slug>[@version] [--out <dir>] [--json] [--sarif <file>] [--md <file>] [--fail-on <severity>] [--config <file>] [--allow-skipped] [--no-color] [--quiet]
+ironheights sandbox run <skill> [--model <file>] [--image <image>] [--trace <file>] [--save-trace <file>] [--external <file>] [--fail-on-unused] [--json] -- <command...>
+ironheights watch --activity <skills-dir> [--log <file>] [--events <file>] [--model <file>] [--check-budget <seconds>] [--once]
+ironheights watch --verify-log <file> [--public-key <file>]
+ironheights install <skill-folder|owner/slug[@version]> (--lock <file> | --expect-digest <sha256> | --write-lock <file>) [--dir <skills-dir>] [--with-deps] [--accept-review] [--json]
 ironheights safe-install <owner>/<slug>[@version] [--dir <skills-dir>] [--accept-review] [--out <dir>] [--json] [--config <file>] [--no-color] [--quiet]
 ironheights advisories update
 ironheights advisories show
