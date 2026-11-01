@@ -78,6 +78,10 @@ New in 0.25.0. Ironheights protects any AI bot that installs it, and these three
 - `ironheights watch --activity ./skills --events events.jsonl` records file and network activity, observer heartbeats, check durations (busy queue or hang) and what the agent did after each refusal to an ed25519-signed, hash-chained log. `ironheights report --from-watch activity.jsonl` grades what really happened. See [docs/watch.md](docs/watch.md).
 - `ironheights install ./skill --lock skill.lock.json` writes only the exact bytes that were checked plus the pinned dependency closure, and refuses on any mismatch. See [docs/install.md](docs/install.md).
 
+## Retained receipts and attestations
+
+New in 0.26.0, open and opt-in. `ironheights receipts ingest` keeps every MCP check receipt and activity-log reference in a signed, append-only local store with configurable retention; `receipts export` and `receipts verify --bundle` prove it offline. `ironheights attest ./skill` writes a signed "verified by Ironheights" attestation and badge SVG. See [docs/receipts.md](docs/receipts.md).
+
 ## 60-second quickstart
 
 ```bash
@@ -140,6 +144,8 @@ ironheights fetch <owner>/<slug>[@version] [--out <dir>] [--json] [--sarif <file
 ironheights sandbox run <skill> [--model <file>] [--image <image>] [--trace <file>] [--save-trace <file>] [--external <file>] [--fail-on-unused] [--json] -- <command...>
 ironheights watch --activity <skills-dir> [--log <file>] [--events <file>] [--model <file>] [--check-budget <seconds>] [--once]
 ironheights watch --verify-log <file> [--public-key <file>]
+ironheights receipts <ingest|list|export|verify|prune> [--from <file>] [--activity <log>] [--retention-days <n>] [--since <date>] [--skill <name>] [--kind <kind>] [--out <file>] [--bundle <file>] [--json]
+ironheights attest <skill> [--out <file>] [--badge <file>] [--valid-days <n>] [--verify <file>] [--public-key <file>] [--json]
 ironheights install <skill-folder|owner/slug[@version]> (--lock <file> | --expect-digest <sha256> | --write-lock <file>) [--dir <skills-dir>] [--with-deps] [--accept-review] [--json]
 ironheights safe-install <owner>/<slug>[@version] [--dir <skills-dir>] [--accept-review] [--out <dir>] [--json] [--config <file>] [--no-color] [--quiet]
 ironheights advisories update

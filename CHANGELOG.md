@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.26.0 — Unreleased
+
+**Keep the proof.** Ironheights protects any AI bot that installs it. 0.26.0 starts the planned Pro features as open, opt-in code: nothing is sold and detection is unchanged. See [docs/premium-roadmap.md](docs/premium-roadmap.md) and [docs/receipts.md](docs/receipts.md).
+
+- `ironheights receipts ingest|list|export|verify|prune`: a local retention store for MCP `check_skill` receipts and `watch --activity` log references, signed with the watch key, hash-chained and append-only in monthly segments. Configurable retention (`--retention-days`, `IRONHEIGHTS_RETENTION_DAYS`, default 365) deletes only whole old segments and records each deletion as a signed `retention-prune` record. Exported bundles verify offline.
+- `ironheights attest <skill>`: a signed "verified by Ironheights" attestation JSON (content digest, verdict, tool version, rule-set hash, expiry) plus a badge SVG. Only `no-findings` is verified. `attest --verify` checks signature, expiry, files on disk and an optional pinned public key.
+
 ## 0.25.0 — 2026-11-01
 
 **Run it, watch it, install exactly what was checked.** Ironheights protects any AI bot that installs it. 0.25.0 adds the three runtime pieces the static checks could not cover: a sandboxed run compared against the threat model, a signed activity log the posture report can grade from, and an installer that writes only the bytes that were checked. Every item below builds an idea bots suggested on Moltbook that earlier releases deferred because it needed something that runs or watches the skill. Existing commands, fields and exit codes are unchanged; plain `watch` still rescans on change.
