@@ -376,7 +376,18 @@ export function evaluateExtras(
       }
     }
     /* observers */
-    const obsMode = d.observers !== 'off' ? d.observers : e.observers ? 'require' : 'off';
+    const warnExpired =
+      d.observers === 'warn' &&
+      d.observersWarnUntil !== undefined &&
+      Date.parse(d.observersWarnUntil) < now.getTime();
+    const obsMode =
+      d.observers !== 'off'
+        ? warnExpired
+          ? 'require'
+          : d.observers
+        : e.observers
+          ? 'require'
+          : 'off';
     if (obsMode !== 'off') {
       const reaches: Array<'network' | 'secrets' | 'writes' | 'read'> = ['read'];
       if (p.hosts.length) reaches.push('network');

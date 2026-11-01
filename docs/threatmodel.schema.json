@@ -100,6 +100,9 @@
           "default": "off",
           "type": "string",
           "enum": ["off", "warn", "require"]
+        },
+        "observersWarnUntil": {
+          "type": "string"
         }
       },
       "additionalProperties": false

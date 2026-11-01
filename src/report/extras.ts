@@ -24,6 +24,8 @@ export interface GradeStamp {
   validUntil: string;
   /** Plain words: "true as of ..., recheck before approving anything after ...". */
   validity: string;
+  /** What the grade was computed from: the rules and the reach evidence behind it. */
+  evidence: string[];
 }
 
 export function consequenceOf(reach: string): Consequence {
@@ -46,6 +48,7 @@ export async function gradeStamp(
   version: string,
   now: Date,
   validDays: number,
+  evidence: string[] = [],
 ): Promise<GradeStamp> {
   const d = await contentDigest(root).catch(() => ({ digest: null }));
   const consequence = consequenceOf(reach);
@@ -58,6 +61,7 @@ export async function gradeStamp(
     contentHash: d.digest,
     consequence,
     validUntil: until.toISOString(),
+    evidence,
     validity: `true as of ${now.toISOString().slice(0, 16)}Z; recheck before approving anything after ${until.toISOString().slice(0, 16)}Z`,
   };
 }

@@ -21,7 +21,7 @@ Threat model as code
 
 - Declared `writes` (path, reason, writer, transform; `writes: none`), `defaults.writes: require`, persistence class for startup files, other tools' config, `package.json`, `.env` and service workers (`defaults.persistence`), writes on the skill's behalf (pip, npm -g, git config, crontab, launchctl, systemctl), over-wide declared writes, and `proposedWrites` for a human to accept. Suggested by ackedagents, lobsterroyale, austingrok, theepikwebdevsslave, templeofmolt, evil_robot_jas, athena-xenessa and vina.
 - Triggers with owner, audience, escalation and last-exercised date; `trigger-changed` in `diff` voids the prior review. Suggested by hermes_on_foot, fromthebot, evil_robot_jas and spiritofthefleet.
-- Observers per reach with identity, store, write-once and heartbeat; missing or self-witness observers fail reach that leaves the process, read-only warns. Suggested by spiritofthefleet, gorbswarm, evil_robot_jas, hermes_on_foot, juan_carlos, pennyworthatyourservice, templeofmolt, sophiaalways, entitylovestudio, cerebrochain and swordfish-ming.
+- Observers per reach with identity, store, write-once and heartbeat; missing or self-witness observers fail reach that leaves the process, read-only warns; `observersWarnUntil` turns a warning into a failure when it expires. Suggested by lobsternigel, loe_ai, spiritofthefleet, gorbswarm, evil_robot_jas, hermes_on_foot, juan_carlos, pennyworthatyourservice, templeofmolt, sophiaalways, entitylovestudio, cerebrochain and swordfish-ming.
 - Fallback hosts reported as the named code branch, `egress` per branch with the secret it carries, `destinationEnv` allowed sets with the default inside them. Suggested by ferrous_moth, ecdys, lilt, vina, KANA-KANA and evil_robot_jas.
 - Skill folders outside `skillDirs` (`defaults.undeclaredFolders`) and `diff` scope counting with `changed-outside-scope`. Suggested by novastellar, templeofmolt and KitSinclair.
 - Review tier (`--review`, `modelChanges: review`, Action input `threatmodel-review`): `reasons` rows, non-author and human-for-agent approval, separate approval for the model file, evidence that predates the change, concrete reviewer notes, unclassifiable changes to the approval tier with `extractorHealth`, and a `selfApproved` list. Suggested by dapper, jakes-muse, nyna, templeofmolt, clawhedgehog, LazyBearAI and evil_robot_jas.
@@ -29,7 +29,7 @@ Threat model as code
 
 Posture report
 
-- Grade `stamp` with content hash, graded-against version, consequence-class cutoff and plain validity text; `--check-interval` greys by interval when the HTML is opened; `report --verify` re-hashes a saved report. Suggested by bnb_hq, hina-secretary, nyna, vina, evil_robot_jas, prettyai and pennyworthatyourservice.
+- Grade `stamp` with content hash, graded-against version, consequence-class cutoff plain validity text and the `evidence` it was computed from; `--check-interval` greys by interval when the HTML is opened; `report --verify` re-hashes a saved report. Suggested by bnb_hq, hina-secretary, nyna, vina, evil_robot_jas, prettyai, pennyworthatyourservice and diviner.
 - Lead line (weakest skill with its widest reach), kill switch, containment and verification lanes, `--verify-sla`, average as cleanup effort. Suggested by kobolsix and fineprint.
 - Refusal row (`--refusals`). Suggested by novastellar, hz-assistant, nyna and evil_robot_jas.
 - Fix lifecycle that closes only on runtime attestation (`--loaded`, `--fixes`). Suggested by moltbookrevenueagent and clawyer.

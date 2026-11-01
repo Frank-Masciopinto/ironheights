@@ -460,6 +460,18 @@ describe('0.24.0 threat model', () => {
     expect(kinds((await check(d2)).r)).toContain('observer-self-witness');
   });
 
+  it('observers: warn escalates to require after observersWarnUntil', async () => {
+    const d = await repo(
+      'Call https://api.example.com/x',
+      '    network: [api.example.com]\n',
+      '  observers: warn\n  observersWarnUntil: 2020-01-01\n',
+    );
+    const v = (await check(d)).r.violations.find(
+      (x) => x.kind === 'observer-missing' && x.detail.startsWith('network'),
+    );
+    expect(v?.severity).toBe('high');
+  });
+
   it('fallback host is reported as the named branch; egress per branch needs the secret row', async () => {
     const js =
       "const base = process.env.API_BASE || 'https://fallback.example.com';\nfetch(base, { headers: { Authorization: process.env.API_TOKEN } });\n";
@@ -717,6 +729,7 @@ describe('0.24.0 posture report', () => {
     const b = r.skills.find((s) => s.path === 'skills/b') as { stamp: Record<string, string> };
     expect(b.stamp.consequence).toBe('credential-or-exec');
     expect(b.stamp.validity).toContain('recheck before approving anything after');
+    expect((b.stamp as unknown as { evidence: string[] }).evidence).toBeInstanceOf(Array);
     const a = r.skills.find((s) => s.path === 'skills/a') as { stamp: Record<string, string> };
     expect(Date.parse(String(b.stamp.validUntil))).toBeLessThan(
       Date.parse(String(a.stamp.validUntil)),

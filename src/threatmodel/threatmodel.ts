@@ -168,6 +168,8 @@ export const ThreatModelSchema = z
         triggers: z.enum(['off', 'require']).default('off'),
         /** 0.24.0: `require` fails reaches with no independent observer; `warn` lists them. */
         observers: z.enum(['off', 'warn', 'require']).default('off'),
+        /** 0.24.0: with observers: warn, the date the warning escalates to require. */
+        observersWarnUntil: z.string().optional(),
       })
       .strict()
       .default({
