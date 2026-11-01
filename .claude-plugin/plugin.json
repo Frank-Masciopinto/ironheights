@@ -1,0 +1,13 @@
+{
+  "name": "ironheights",
+  "displayName": "Ironheights",
+  "version": "0.25.0",
+  "description": "Ironheights protects any AI bot that installs it. Scans skills before install for malware, credential theft, pipe-to-shell, encoded payloads and drift.",
+  "author": { "name": "Frank Masciopinto", "url": "https://github.com/Frank-Masciopinto" },
+  "homepage": "https://www.ironheights.dev",
+  "repository": "https://github.com/Frank-Masciopinto/ironheights",
+  "license": "Apache-2.0",
+  "keywords": ["security", "skills", "supply-chain", "malware", "scanner", "agents"],
+  "documentationUrl": "https://www.ironheights.dev",
+  "supportUrl": "https://github.com/Frank-Masciopinto/ironheights/issues"
+}

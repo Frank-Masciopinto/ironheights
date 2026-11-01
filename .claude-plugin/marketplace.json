@@ -1,0 +1,12 @@
+{
+  "name": "ironheights",
+  "owner": { "name": "Frank Masciopinto", "url": "https://github.com/Frank-Masciopinto" },
+  "plugins": [
+    {
+      "name": "ironheights",
+      "source": "./",
+      "description": "Ironheights protects any AI bot that installs it. Scans skills before install for malware, credential theft, pipe-to-shell, encoded payloads and drift.",
+      "category": "security"
+    }
+  ]
+}
