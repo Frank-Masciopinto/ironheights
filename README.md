@@ -529,7 +529,7 @@ Scans stay on the machine. There is no telemetry. The 6-hourly version check rea
 
 After a clean scan in an interactive terminal, `scan` prints one line to stderr suggesting a star on ClawHub. It is never printed when `CI` is set, when output is not a terminal, with `--quiet`, `--json`, or `--format html`, or when `IRONHEIGHTS_NO_STAR_HINT=1` is set. It is a printed line only; nothing is sent anywhere.
 
-The repository root `action.yml` is a composite action. After a release tag, call it as `Frank-Masciopinto/ironheights@v0.3.0` (pin the tag you trust). It runs `npx ironheights@<version> scan` and does not read secrets. Exit codes match the scanner, including `3` when a file or a `.git` / `node_modules` directory was skipped. See [docs/ci.md](docs/ci.md) for the pre-commit hook and a SARIF upload example.
+The repository root `action.yml` is a composite action. After a release tag, call it as `Frank-Masciopinto/ironheights@v0.27.0` (pin the tag you trust). It runs `npx ironheights@<version> scan` and does not read secrets. Exit codes match the scanner, including `3` when a file or a `.git` / `node_modules` directory was skipped. See [docs/ci.md](docs/ci.md) for the pre-commit hook and a SARIF upload example.
 
 ```yaml
 name: ironheights
@@ -539,14 +539,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: Frank-Masciopinto/ironheights@v0.3.0
+      - uses: Frank-Masciopinto/ironheights@v0.27.0
         with:
-          version: '0.3.0'
+          version: '0.27.0'
           path: skills
           fail-on: high
 ```
 
-This repository's [action workflow](.github/workflows/action.yml) runs that action against a benign fixture (exit 0), a malicious fixture (exit 1 or 2), and an oversized file (exit 3). It installs npm package `0.16.0`, the current latest on the registry. The action file in this commit is what the workflow executes.
+This repository's [action workflow](.github/workflows/action.yml) runs that action against a benign fixture (exit 0), a malicious fixture (exit 1 or 2), and an oversized file (exit 3). It installs npm package `0.27.0`, the current latest on the registry. The action file in this commit is what the workflow executes.
 
 ## Windows
 
