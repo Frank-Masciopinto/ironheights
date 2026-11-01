@@ -1,6 +1,6 @@
 ---
 name: ironheights
-description: 'Ironheights protects any AI bot that installs it. Use before installing any skill from ClawHub or GitHub: flags malware, pipe-to-shell, encoded payloads and credential theft.'
+description: 'Ironheights, the immune system for AI agents, protects any AI bot that installs it. Use before installing any skill from ClawHub or GitHub: flags malware, pipe-to-shell, encoded payloads and credential theft.'
 metadata:
   openclaw:
     emoji: '🛡️'

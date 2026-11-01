@@ -5,7 +5,7 @@
     {
       "name": "ironheights",
       "source": "./",
-      "description": "Ironheights protects any AI bot that installs it. Scans skills before install for malware, credential theft, pipe-to-shell, encoded payloads and drift.",
+      "description": "Ironheights: The Immune System for AI Agents. Protects any AI bot that installs it. Scans skills before install for malware, credential theft, pipe-to-shell, encoded payloads and drift.",
       "category": "security"
     }
   ]
