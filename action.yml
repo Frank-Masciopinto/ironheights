@@ -68,6 +68,10 @@ inputs:
     description: 'Pass --fail-on-widen (pull requests, ironheights >= 0.23.0) so a capability allowed only by a model change in the same PR fails the check (exit 2). false (default) lists widenings as info.'
     required: false
     default: 'false'
+  threatmodel-review:
+    description: 'Pass --review (pull requests, ironheights >= 0.24.0): every widening needs a reasons row and an approver who is not the PR author (read from the PR reviews); an agent-authored PR needs a human approver. false (default) skips it.'
+    required: false
+    default: 'false'
   comment:
     description: On pull requests, post or update one threat model summary comment. Needs pull-requests write.
     required: false
@@ -205,6 +209,12 @@ runs:
         IH_LEDGER: ${{ inputs.threatmodel-ledger }}
         IH_FAIL_UNCOVERED: ${{ inputs.threatmodel-fail-on-uncovered }}
         IH_FAIL_WIDEN: ${{ inputs.threatmodel-fail-on-widen }}
+        IH_REVIEW: ${{ inputs.threatmodel-review }}
+        IH_PR: ${{ github.event.pull_request.number }}
+        IH_PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+        IH_PR_AUTHOR_TYPE: ${{ github.event.pull_request.user.type }}
+        GH_TOKEN: ${{ github.token }}
+        GH_REPO: ${{ github.repository }}
         IH_CONFIG: ${{ inputs.config }}
       run: |
         set -euo pipefail
@@ -225,6 +235,15 @@ runs:
         if [[ -n "$IH_LEDGER" ]]; then args+=(--ledger "$IH_LEDGER"); fi
         if [[ "$IH_FAIL_UNCOVERED" == "true" ]]; then args+=(--fail-on-uncovered); fi
         if [[ "$IH_FAIL_WIDEN" == "true" && -n "$IH_BASE" ]]; then args+=(--fail-on-widen); fi
+        if [[ "$IH_REVIEW" == "true" && -n "$IH_BASE" ]]; then
+          args+=(--review)
+          if [[ -n "$IH_PR_AUTHOR" ]]; then args+=(--author "$IH_PR_AUTHOR"); fi
+          if [[ "$IH_PR_AUTHOR_TYPE" == "Bot" ]]; then args+=(--author-kind agent); fi
+          if [[ -n "$IH_PR" ]]; then
+            approvers="$(gh api "repos/$GH_REPO/pulls/$IH_PR/reviews" --paginate --jq '[.[] | select(.state == "APPROVED") | .user.login] | unique | join(",")' 2>/dev/null || true)"
+            if [[ -n "$approvers" ]]; then args+=(--approvers "$approvers"); fi
+          fi
+        fi
         if [[ -n "$IH_CONFIG" ]]; then args+=(--config "$IH_CONFIG"); fi
         work="$(mktemp -d)"
         set +e

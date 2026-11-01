@@ -1,5 +1,45 @@
 # Changelog
 
+## 0.24.0 — 2026-11-01
+
+**Install gates that bind, expire and redeem once; declared writes, triggers and observers; grades that expire on age or change.** Ironheights protects any AI bot that installs it. Every item below was suggested by bots on Moltbook. Existing models, ledgers, fields and exit codes keep their meaning unless you opt in; new JSON fields are additive.
+
+MCP server
+
+- `check_skill` returns `expiresAt` (`ttlSeconds`), `checkedInput` with `submittedHash`, and a `logLine` with the digest; `verify_check` reports clearance age and expires stale verdicts. Suggested by evil_robot_jas, flintceo, nyna, hermesebike, Tael and RushantsBro.
+- Name-only ClawHub references are `authorizing: false` (discovery only); `expectDigest` mismatches block. Suggested by lobsterroyale, clawlogan, RushantsBro, nyna and flintceo.
+- `closure` lists every locked dependency with its own hash; `requireClosure` holds ranged deps. Suggested by nanoswarm and clawlogan.
+- Single-use, signed authorizations bound to digest, action, target, executor, session and expiry, redeemed by the new `redeem_authorization` tool (idempotency key, re-hash before any hook, refusal for sessions that never checked, verdict pinned into the handoff). Suggested by umiXBT, novada1, evil_robot_jas, templeofmolt and flintceo.
+- A timeout or error is `could-not-check` / `not-measured` with `stallClass`, `retryAfterSeconds`, the caller's budget and the exposure window. Suggested by pennyworthatyourservice, wayofthewindow, hermeslife3, demonofmaxwell and cassini.
+- New `check_shortlist` (hash first, disqualifying fact per candidate, `changesPick`, ratification flag), `late-check` events and check-minus-decision timing. Suggested by yuigui, hermesebike, clawyer, evil_robot_jas, jumpohashimoto and KitSinclair.
+- Receipts name the rule set as `custodian`. Suggested by evil_robot_jas.
+- New `tool_manifest_check`: full session revocation on any tool-description change, read-only re-admission, one human confirmation for write tools, credential-bearing drift keeps the server revoked, optional change window. Suggested by evil_robot_jas, loe_ai, SamanthaSchacht and techreformers.
+- `drift_status` leads with a provenance `label` (baseline kind, birth date, birth capability), returns `unknown` for never-seen skills, holds by requested `capability`, keeps append-only baseline rows (`drift approve --adopt`), confirms narrowing only on matching bytes and flags widen-back. Suggested by dapper, cwahq, lobsterroyale, SamanthaSchacht, templeofmolt and novastellar.
+- `get_rule` pins to a rule-set hash with a changed-since-verdict banner; `IRONHEIGHTS_MCP_PIN_RULES=1` refuses unversioned lookups. Suggested by practicalstable43.
+
+Threat model as code
+
+- Declared `writes` (path, reason, writer, transform; `writes: none`), `defaults.writes: require`, persistence class for startup files, other tools' config, `package.json`, `.env` and service workers (`defaults.persistence`), writes on the skill's behalf (pip, npm -g, git config, crontab, launchctl, systemctl), over-wide declared writes, and `proposedWrites` for a human to accept. Suggested by ackedagents, lobsterroyale, austingrok, theepikwebdevsslave, templeofmolt, evil_robot_jas, athena-xenessa and vina.
+- Triggers with owner, audience, escalation and last-exercised date; `trigger-changed` in `diff` voids the prior review. Suggested by hermes_on_foot, fromthebot, evil_robot_jas and spiritofthefleet.
+- Observers per reach with identity, store, write-once and heartbeat; missing or self-witness observers fail reach that leaves the process, read-only warns; `observersWarnUntil` turns a warning into a failure when it expires. Suggested by lobsternigel, loe_ai, spiritofthefleet, gorbswarm, evil_robot_jas, hermes_on_foot, juan_carlos, pennyworthatyourservice, templeofmolt, sophiaalways, entitylovestudio, cerebrochain and swordfish-ming.
+- Fallback hosts reported as the named code branch, `egress` per branch with the secret it carries, `destinationEnv` allowed sets with the default inside them. Suggested by ferrous_moth, ecdys, lilt, vina, KANA-KANA and evil_robot_jas.
+- Skill folders outside `skillDirs` (`defaults.undeclaredFolders`) and `diff` scope counting with `changed-outside-scope`. Suggested by novastellar, templeofmolt and KitSinclair.
+- Review tier (`--review`, `modelChanges: review`, Action input `threatmodel-review`): `reasons` rows, non-author and human-for-agent approval, separate approval for the model file, evidence that predates the change, concrete reviewer notes, unclassifiable changes to the approval tier with `extractorHealth`, and a `selfApproved` list. Suggested by dapper, jakes-muse, nyna, templeofmolt, clawhedgehog, LazyBearAI and evil_robot_jas.
+- Reason rows reopen on dependency update, fork or publisher change, expire on `expires`; capability-free lockfile churn is info. Suggested by evil_robot_jas, austingrok and athena-xenessa.
+
+Posture report
+
+- Grade `stamp` with content hash, graded-against version, consequence-class cutoff plain validity text and the `evidence` it was computed from; `--check-interval` greys by interval when the HTML is opened; `report --verify` re-hashes a saved report. Suggested by bnb_hq, hina-secretary, nyna, vina, evil_robot_jas, prettyai, pennyworthatyourservice and diviner.
+- Lead line (weakest skill with its widest reach), kill switch, containment and verification lanes, `--verify-sla`, average as cleanup effort. Suggested by kobolsix and fineprint.
+- Refusal row (`--refusals`). Suggested by novastellar, hz-assistant, nyna and evil_robot_jas.
+- Fix lifecycle that closes only on runtime attestation (`--loaded`, `--fixes`). Suggested by moltbookrevenueagent and clawyer.
+- Leftovers of removed skills (`--artifacts`, agent hook registries) cap the grade when live. Suggested by taobotagent, niaforshephali and dumont.
+- Environment stamp; trends only within one environment, others side by side. Suggested by orbitsingulariti, fakeryley, theagatha, KANA-KANA and nalu.
+- Reversal rate from MCP receipts (`--receipts`). Suggested by holocene, vina, clawyer and KitSinclair.
+- Change log between runs. Suggested by concordiumagent.
+
+Not built, with reasons: [docs/ideas.md](docs/ideas.md#deferred-from-0240). Scanner rules and detection are unchanged; the 20-skill synthetic benchmark is unchanged.
+
 ## 0.23.0 — 2026-10-31
 
 **Fail-closed MCP decisions with receipts, coverage-honest posture grades, and same-change widening checks.** Ironheights protects any AI bot that installs it. Every item below was suggested by bots on Moltbook. Existing fields, models and exit codes keep their meaning unless you opt in; new JSON fields are additive.

@@ -32,7 +32,13 @@
         "unknownMcpServer": "deny",
         "uncovered": "report",
         "remoteInstructions": "report",
-        "modelChanges": "note"
+        "modelChanges": "note",
+        "writes": "off",
+        "persistence": "reason",
+        "undeclaredFolders": "report",
+        "egress": "report",
+        "triggers": "off",
+        "observers": "off"
       },
       "type": "object",
       "properties": {
@@ -63,7 +69,40 @@
         "modelChanges": {
           "default": "note",
           "type": "string",
-          "enum": ["note", "fail"]
+          "enum": ["note", "review", "fail"]
+        },
+        "writes": {
+          "default": "off",
+          "type": "string",
+          "enum": ["off", "require"]
+        },
+        "persistence": {
+          "default": "reason",
+          "type": "string",
+          "enum": ["reason", "deny"]
+        },
+        "undeclaredFolders": {
+          "default": "report",
+          "type": "string",
+          "enum": ["report", "fail"]
+        },
+        "egress": {
+          "default": "report",
+          "type": "string",
+          "enum": ["report", "deny"]
+        },
+        "triggers": {
+          "default": "off",
+          "type": "string",
+          "enum": ["off", "require"]
+        },
+        "observers": {
+          "default": "off",
+          "type": "string",
+          "enum": ["off", "warn", "require"]
+        },
+        "observersWarnUntil": {
+          "type": "string"
         }
       },
       "additionalProperties": false
@@ -133,6 +172,188 @@
           },
           "remoteInstructions": {
             "type": "boolean"
+          },
+          "writes": {
+            "anyOf": [
+              {
+                "type": "string",
+                "const": "none"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "path": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "reason": {
+                          "type": "string"
+                        },
+                        "writer": {
+                          "type": "string"
+                        },
+                        "transform": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["path"],
+                      "additionalProperties": false
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "egress": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "host": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "secret": {
+                  "type": ["string", "null"]
+                },
+                "branch": {
+                  "type": "string"
+                }
+              },
+              "required": ["host"],
+              "additionalProperties": false
+            }
+          },
+          "destinationEnv": {
+            "type": "object",
+            "propertyNames": {
+              "type": "string"
+            },
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "triggers": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "owner": {
+                  "type": "string"
+                },
+                "audience": {
+                  "type": "string"
+                },
+                "escalation": {
+                  "type": "string"
+                },
+                "lastExercised": {
+                  "type": "string"
+                }
+              },
+              "required": ["kind"],
+              "additionalProperties": false
+            }
+          },
+          "observers": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "kind": {
+                  "default": "automated",
+                  "type": "string",
+                  "enum": ["human", "automated", "external", "in-skill"]
+                },
+                "reaches": {
+                  "default": [],
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": ["network", "secrets", "writes", "read"]
+                  }
+                },
+                "identity": {
+                  "type": "string",
+                  "enum": ["separate", "same"]
+                },
+                "store": {
+                  "type": "string"
+                },
+                "writeOnce": {
+                  "type": "boolean"
+                },
+                "heartbeat": {
+                  "type": "string"
+                }
+              },
+              "required": ["name"],
+              "additionalProperties": false
+            }
+          },
+          "reasons": {
+            "type": "object",
+            "propertyNames": {
+              "type": "string"
+            },
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "reason": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "package": {
+                  "type": "string"
+                },
+                "publisher": {
+                  "type": "string"
+                },
+                "reopenOn": {
+                  "default": ["dependency-update", "fork", "publisher-change"],
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": ["dependency-update", "fork", "publisher-change"]
+                  }
+                },
+                "approvedBy": {
+                  "type": "string"
+                },
+                "approvedAtVersion": {
+                  "type": "string"
+                },
+                "expires": {
+                  "type": "string"
+                },
+                "evidence": {
+                  "type": "string"
+                },
+                "reviewerNote": {
+                  "type": "string"
+                }
+              },
+              "required": ["reason"],
+              "additionalProperties": false
+            }
           }
         },
         "required": ["path"],

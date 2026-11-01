@@ -34,6 +34,8 @@ export interface DriftFlags {
   out?: (line: string) => void;
   sleep?: (ms: number) => Promise<void>;
   maxRounds?: number;
+  /** approve: label a first baseline taken after the skill was already running (0.24.0). */
+  adopt?: boolean;
 }
 
 const sha256 = async (s: string): Promise<string> =>
@@ -104,7 +106,24 @@ async function approve(flags: DriftFlags, out: (l: string) => void): Promise<num
   let count = 0;
   for (const root of await roots(flags)) {
     const rec = await snapshotSkill(root, now);
-    ledger.skills[rec.root] = rec;
+    const prev = ledger.skills[rec.root];
+    const kind = flags.adopt ? 'adoption' : 'approval';
+    // Append-only baselines: the birth row stays frozen; a new approval adds a dated row.
+    const rows = prev
+      ? (prev.baselines ?? [
+          {
+            at: prev.approvedAt,
+            capabilities: prev.capabilities ?? [],
+            kind: prev.baselineKind ?? 'approval',
+          },
+        ])
+      : [];
+    rows.push({ at: rec.approvedAt, capabilities: rec.capabilities ?? [], kind });
+    ledger.skills[rec.root] = {
+      ...rec,
+      baselineKind: prev?.baselineKind ?? kind,
+      baselines: rows,
+    };
     count += 1;
   }
   const { mcp, tools } = await items(flags);

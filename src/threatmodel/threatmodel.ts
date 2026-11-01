@@ -20,6 +20,78 @@ export const SCHEMA_URL = 'https://www.ironheights.dev/api/v1/threatmodel.schema
 const GRADES = ['A', 'B', 'C', 'D', 'F'] as const;
 export type Letter = (typeof GRADES)[number];
 
+const WriteEntry = z
+  .object({
+    path: z.string().min(1),
+    /** Required for startup files and other tools' config. */
+    reason: z.string().optional(),
+    /** Who performs the write: the skill, or a tool on its behalf (pip, git, a formatter). */
+    writer: z.string().optional(),
+    /** Transform on the way (formatter, redaction layer). */
+    transform: z.string().optional(),
+  })
+  .strict();
+
+const TriggerEntry = z
+  .object({
+    /** on-request, heartbeat, schedule, hook, on-startup. */
+    kind: z.string().min(1),
+    /** Who acts if this looks wrong: a person or a pager, not a channel. */
+    owner: z.string().optional(),
+    /** Who reads the trigger's output. */
+    audience: z.string().optional(),
+    escalation: z.string().optional(),
+    /** ISO date the escalation path was last exercised. */
+    lastExercised: z.string().optional(),
+  })
+  .strict();
+
+const ObserverEntry = z
+  .object({
+    name: z.string().min(1),
+    kind: z.enum(['human', 'automated', 'external', 'in-skill']).default('automated'),
+    /** Reach classes this observer witnesses. */
+    reaches: z.array(z.enum(['network', 'secrets', 'writes', 'read'])).default([]),
+    /** `separate` when it runs under an identity the skill cannot act as. */
+    identity: z.enum(['separate', 'same']).optional(),
+    /** Where its records land. If the skill can write there, the observer does not count. */
+    store: z.string().optional(),
+    writeOnce: z.boolean().optional(),
+    /** Declared cadence, for example 1h: new records must land in the store at least this often. */
+    heartbeat: z.string().optional(),
+  })
+  .strict();
+
+const EgressEntry = z
+  .object({
+    host: z.string().min(1),
+    /** Secret name this path carries, or null for none. */
+    secret: z.string().nullable().optional(),
+    /** Code branch, for example "default when API_BASE is unset" or "retry". */
+    branch: z.string().optional(),
+  })
+  .strict();
+
+const ReasonEntry = z
+  .object({
+    reason: z.string().min(1),
+    package: z.string().optional(),
+    publisher: z.string().optional(),
+    /** Reopen when the package updates, is replaced by a fork, or changes publisher. */
+    reopenOn: z
+      .array(z.enum(['dependency-update', 'fork', 'publisher-change']))
+      .default(['dependency-update', 'fork', 'publisher-change']),
+    approvedBy: z.string().optional(),
+    approvedAtVersion: z.string().optional(),
+    /** ISO date after which the reason must be re-approved. */
+    expires: z.string().optional(),
+    /** Repository file with evidence that existed before this change (sandbox trace, dry run). */
+    evidence: z.string().optional(),
+    /** A second reader's concrete statement about the delta (must name the value). */
+    reviewerNote: z.string().optional(),
+  })
+  .strict();
+
 const SkillEntry = z
   .object({
     path: z.string().min(1).describe('Skill directory, relative to the model file.'),
@@ -34,6 +106,16 @@ const SkillEntry = z
     dataBoundaries: z.array(z.string()).default([]),
     /** When true, the built-in remote-instructions claim allows IH-INJ-004. */
     remoteInstructions: z.boolean().optional(),
+    /** 0.24.0: places the skill may leave things behind. `none` is an explicit answer. */
+    writes: z.union([z.literal('none'), z.array(z.union([z.string(), WriteEntry]))]).optional(),
+    /** 0.24.0: egress per code branch with the secret it carries. */
+    egress: z.array(EgressEntry).optional(),
+    /** 0.24.0: env vars that choose a destination, each with its own allowed set. */
+    destinationEnv: z.record(z.string(), z.array(z.string())).optional(),
+    triggers: z.array(TriggerEntry).optional(),
+    observers: z.array(ObserverEntry).optional(),
+    /** 0.24.0: why each widening exists, keyed `network:host`, `writes:path`, `tokens:NAME`, `shell`. */
+    reasons: z.record(z.string(), ReasonEntry).optional(),
   })
   .strict();
 
@@ -73,7 +155,21 @@ export const ThreatModelSchema = z
          * same change widened the model is a high violation, so accepting new scope has to land
          * as its own model-only change first. Read from the base model, so a PR cannot turn it off.
          */
-        modelChanges: z.enum(['note', 'fail']).default('note'),
+        modelChanges: z.enum(['note', 'review', 'fail']).default('note'),
+        /** 0.24.0: `require` makes every skill declare `writes` (or `writes: none`). */
+        writes: z.enum(['off', 'require']).default('off'),
+        /** 0.24.0: startup files and other tools' config: `reason` needs a reason line, `deny` fails on declaration alone. */
+        persistence: z.enum(['reason', 'deny']).default('reason'),
+        /** 0.24.0: skill folders outside skillDirs. `fail` makes ones with authority high. */
+        undeclaredFolders: z.enum(['report', 'fail']).default('report'),
+        /** 0.24.0: `deny` makes env-chosen destinations without an allowed set high. */
+        egress: z.enum(['report', 'deny']).default('report'),
+        /** 0.24.0: `require` makes detected triggers (heartbeat, schedule, hook) need a declaration. */
+        triggers: z.enum(['off', 'require']).default('off'),
+        /** 0.24.0: `require` fails reaches with no independent observer; `warn` lists them. */
+        observers: z.enum(['off', 'warn', 'require']).default('off'),
+        /** 0.24.0: with observers: warn, the date the warning escalates to require. */
+        observersWarnUntil: z.string().optional(),
       })
       .strict()
       .default({
@@ -82,6 +178,12 @@ export const ThreatModelSchema = z
         uncovered: 'report',
         remoteInstructions: 'report',
         modelChanges: 'note',
+        writes: 'off',
+        persistence: 'reason',
+        undeclaredFolders: 'report',
+        egress: 'report',
+        triggers: 'off',
+        observers: 'off',
       }),
     skills: z.record(z.string(), SkillEntry).default({}),
     mcpServers: z.record(z.string(), McpEntry).default({}),
@@ -108,7 +210,33 @@ export type ViolationKind =
   | 'model-widened'
   | 'widened-in-same-change'
   | 'uncovered-capability'
-  | 'remote-instructions';
+  | 'remote-instructions'
+  | 'write-not-declared'
+  | 'writes-missing'
+  | 'write-declared-unused'
+  | 'persistence-write'
+  | 'undeclared-folder'
+  | 'changed-outside-scope'
+  | 'fallback-host'
+  | 'egress-secret-not-declared'
+  | 'egress-branch-undeclared'
+  | 'destination-env-unbounded'
+  | 'trigger-undeclared'
+  | 'trigger-changed'
+  | 'trigger-no-owner'
+  | 'escalation-unexercised'
+  | 'observer-missing'
+  | 'observer-self-witness'
+  | 'observer-no-heartbeat'
+  | 'widening-unjustified'
+  | 'widening-self-approved'
+  | 'widening-evidence-same-change'
+  | 'widening-review-vague'
+  | 'model-file-self-approved'
+  | 'model-change-unclassified'
+  | 'reason-reopened'
+  | 'reason-expired'
+  | 'lockfile-churn';
 
 export interface Violation {
   kind: ViolationKind;
@@ -502,6 +630,18 @@ export function widened(base: ThreatModel, head: ThreatModel, modelFile: string)
     for (const k of ['network', 'filesystem', 'env', 'tokens', 'dataBoundaries'] as const)
       for (const x of h[k]) if (!b[k].includes(x)) add(id, `${k} += ${x}`);
     if (h.shell && !b.shell) add(id, 'shell: false -> true');
+    const wpaths = (w: SkillEntryT['writes']): string[] =>
+      w === undefined || w === 'none' ? [] : w.map((x) => (typeof x === 'string' ? x : x.path));
+    for (const x of wpaths(h.writes)) if (!wpaths(b.writes).includes(x)) add(id, `writes += ${x}`);
+    const bt = (b.triggers ?? []).map((t) => t.kind);
+    for (const t of h.triggers ?? []) if (!bt.includes(t.kind)) add(id, `triggers += ${t.kind}`);
+    for (const e of h.egress ?? [])
+      if (
+        !(b.egress ?? []).some(
+          (x) => x.host === e.host && (x.secret ?? null) === (e.secret ?? null),
+        )
+      )
+        add(id, `egress += ${e.host}${e.secret ? ` carrying ${e.secret}` : ''}`);
     const bg = b.minGrade ?? base.defaults.minGrade;
     const hg = h.minGrade ?? head.defaults.minGrade;
     if (bg && (!hg || rank(hg) > rank(bg))) add(id, `minGrade ${bg} -> ${hg ?? 'none'}`);
@@ -525,8 +665,22 @@ export function widened(base: ThreatModel, head: ThreatModel, modelFile: string)
   if (remoteRank[hr] > remoteRank[br]) add('defaults', `remoteInstructions ${br} -> ${hr}`);
   if (base.defaults.uncovered === 'fail' && head.defaults.uncovered === 'report')
     add('defaults', 'uncovered fail -> report');
-  if (base.defaults.modelChanges === 'fail' && head.defaults.modelChanges === 'note')
-    add('defaults', 'modelChanges fail -> note');
+  const mcRank = { fail: 0, review: 1, note: 2 } as const;
+  if (mcRank[head.defaults.modelChanges] > mcRank[base.defaults.modelChanges])
+    add('defaults', `modelChanges ${base.defaults.modelChanges} -> ${head.defaults.modelChanges}`);
+  const loosen: Array<[keyof ThreatModel['defaults'], string, string]> = [
+    ['writes', 'require', 'off'],
+    ['persistence', 'deny', 'reason'],
+    ['undeclaredFolders', 'fail', 'report'],
+    ['egress', 'deny', 'report'],
+    ['triggers', 'require', 'off'],
+  ];
+  for (const [k, strict, loose] of loosen)
+    if (base.defaults[k] === strict && head.defaults[k] === loose)
+      add('defaults', `${k} ${strict} -> ${loose}`);
+  const obsRank = { require: 0, warn: 1, off: 2 } as const;
+  if (obsRank[head.defaults.observers] > obsRank[base.defaults.observers])
+    add('defaults', `observers ${base.defaults.observers} -> ${head.defaults.observers}`);
   return v;
 }
 
@@ -580,6 +734,12 @@ export function modelFromProfiles(
       uncovered: 'report',
       modelChanges: 'note',
       remoteInstructions: 'report',
+      writes: 'off',
+      persistence: 'reason',
+      undeclaredFolders: 'report',
+      egress: 'report',
+      triggers: 'off',
+      observers: 'off',
     },
     skills,
     mcpServers,

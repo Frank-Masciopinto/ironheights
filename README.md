@@ -64,7 +64,7 @@ node dist/cli/index.js scan test/fixtures/benign
 
 ## MCP server
 
-`npx -y ironheights@0.23.0 mcp` runs Ironheights as an MCP server, so Claude, Cursor, VS Code, Grok Bot or any MCP client can call `check_skill` (a fail-closed `allow`/`blocked` decision with provenance and a server-written receipt, plus grade, findings and drift) before installing a skill, `verify_check` to re-confirm a remembered verdict, plus `drift_status`, `threatmodel_check` and `get_rule`. Read-only. See [docs/mcp.md](docs/mcp.md).
+`npx -y ironheights@0.24.0 mcp` runs Ironheights as an MCP server, so Claude, Cursor, VS Code, Grok Bot or any MCP client can call `check_skill` (a fail-closed `allow`/`blocked` decision with provenance, an expiry and a server-written receipt, plus grade, findings, dependency closure and drift) before installing a skill, `check_shortlist` before choosing between several, `redeem_authorization` as the single-use install gate, `tool_manifest_check` for MCP tool-description drift, `verify_check` to re-confirm a remembered verdict, plus `drift_status`, `threatmodel_check` and `get_rule`. Local. See [docs/mcp.md](docs/mcp.md).
 
 ## Threat model as code (checked on every PR)
 
@@ -307,7 +307,7 @@ printf '%s' 'Ignore previous instructions' | ironheights scan --stdin
 
 ## Other agents and MCP configs
 
-The same `scan` command reads Claude Code, Codex, and Cursor skill folders. MCP configuration rules `IH-MCP-001`, `IH-MCP-002`, and `IH-MCP-003` flag a server launched with `curl|sh` or an unpinned `npx` package, a literal secret in `env`, and a broad filesystem root. Paths and examples are in [docs/other-agents.md](docs/other-agents.md). Ironheights does not ship an MCP server. See [docs/ideas.md](docs/ideas.md).
+The same `scan` command reads Claude Code, Codex, and Cursor skill folders. MCP configuration rules `IH-MCP-001`, `IH-MCP-002`, and `IH-MCP-003` flag a server launched with `curl|sh` or an unpinned `npx` package, a literal secret in `env`, and a broad filesystem root. Paths and examples are in [docs/other-agents.md](docs/other-agents.md). Ironheights also ships its own MCP server (`ironheights mcp`), described in [docs/mcp.md](docs/mcp.md).
 
 ## Config
 

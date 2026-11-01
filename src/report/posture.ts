@@ -33,6 +33,22 @@ import {
   type Violation,
 } from '../threatmodel/threatmodel.ts';
 import { TOOL_NAME, TOOL_VERSION } from '../version.ts';
+import {
+  environmentStamp,
+  gradeStamp,
+  leftovers as findLeftovers,
+  lifecycleOf,
+  refusalRow,
+  reversalStats,
+  type ArtifactRecord,
+  type EnvironmentStamp,
+  type GradeStamp,
+  type LeftoverRow,
+  type Lifecycle,
+  type RefusalEvent,
+  type RefusalRow,
+  type ReversalStats,
+} from './extras.ts';
 
 export const OWASP_LLM_2025: Record<string, string> = {
   'LLM01:2025': 'Prompt Injection',
@@ -123,6 +139,22 @@ export interface SkillRow {
     /** Why the skill is not fully inspected. Empty when complete. */
     reasons: string[];
   };
+  /** 0.24.0: what was graded, when, against which version, and until when it holds. */
+  stamp?: GradeStamp;
+  /** 0.24.0: fix lifecycle, derived at read time. Shown as a gap column; it does not move the grade. */
+  lifecycle?: { state: Lifecycle; installedVersion: string | null; gap: string };
+}
+
+export interface LossPath {
+  repo: string;
+  skill: string;
+  path: string;
+  asset: string;
+  precondition: string;
+  exploitable: 'confirmed' | 'unresolved';
+  checkNeeded?: string;
+  firstSeen?: string;
+  status?: 'open' | 'contained-pending-check';
 }
 
 export interface RepoRow {
@@ -168,6 +200,30 @@ export interface PostureReport {
   violations: Array<Violation & { repo: string }>;
   driftChanges: Array<DriftChange & { repo: string }>;
   history: HistoryPoint[];
+  /** 0.24.0: where this report ran. Trends are drawn only across the same environment. */
+  environment?: EnvironmentStamp;
+  /** 0.24.0: weakest skill and its widest reach, as one unit. */
+  lead?: string;
+  /** 0.24.0: a critical finding flips the verdict regardless of the average. */
+  killSwitch?: { skill: string; rule: string } | null;
+  /** 0.24.0: confirmed paths first (containment), then unresolved high-impact paths (verification). */
+  lanes?: { containment: LossPath[]; verification: LossPath[] };
+  /** 0.24.0: average score; a cleanup-effort measure, not a safety measure. */
+  cleanupEffort?: number | null;
+  refusals?: RefusalRow;
+  leftovers?: LeftoverRow[];
+  reversal?: ReversalStats;
+  /** 0.24.0: skills whose config changed between runs, from --history. */
+  changeLog?: Array<{ at: string; changed: string[] }>;
+  /** 0.24.0: earlier runs from other environments, shown side by side, never in the trend. */
+  otherEnvironments?: Array<{
+    id: string;
+    at: string;
+    skills: number;
+    findings: number;
+    inspectedDigest?: string;
+  }>;
+  checkIntervalHours?: number;
 }
 
 export interface HistoryPoint {
@@ -180,6 +236,14 @@ export interface HistoryPoint {
   driftChanged: number;
   /** Per-skill config hashes from this run, keyed by `repo/path`. */
   configHashes?: Record<string, string>;
+  /** 0.24.0 */
+  envId?: string;
+  inspectedDigest?: string;
+  changed?: string[];
+  /** Skills that had findings in this run. */
+  findingSkills?: string[];
+  /** Unresolved loss paths and when they were first seen. */
+  unresolved?: Record<string, string>;
 }
 
 async function isDir(p: string): Promise<boolean> {
@@ -329,6 +393,20 @@ export interface BuildOptions {
   ledger?: string;
   history?: HistoryPoint[];
   now?: Date;
+  /** 0.24.0 */
+  checkIntervalHours?: number;
+  refusals?: RefusalEvent[];
+  artifacts?: ArtifactRecord[];
+  /** Runtime attestation: `repo/path` -> content digest the running agent loaded. */
+  loaded?: Record<string, string>;
+  /** `repo/path` -> version that fixes the open findings. */
+  fixes?: Record<string, string>;
+  envId?: string;
+  imageDigest?: string;
+  receipts?: Array<Record<string, unknown>>;
+  reversalWindow?: number;
+  verifySlaDays?: number;
+  env?: NodeJS.ProcessEnv;
 }
 
 export async function buildReport(opts: BuildOptions): Promise<PostureReport> {
@@ -483,6 +561,36 @@ export async function buildReport(opts: BuildOptions): Promise<PostureReport> {
       threatModel: tm,
     });
   }
+  const now0 = opts.now ?? new Date();
+  const hist = opts.history ?? [];
+  const lastPoint = hist[hist.length - 1];
+  const hadFindings = new Set(lastPoint?.findingSkills ?? []);
+  const rootOf = new Map<string, string>();
+  for (const r of repoRows)
+    for (const s0 of skills.filter((x) => x.repo === r.repo))
+      rootOf.set(`${s0.repo}/${s0.path}`, resolve(r.path, s0.path));
+  for (const s0 of skills) {
+    const id = `${s0.repo}/${s0.path}`;
+    const root = rootOf.get(id) as string;
+    s0.stamp = await gradeStamp(
+      root,
+      s0.grade,
+      s0.worstReach.level,
+      TOOL_VERSION,
+      now0,
+      opts.validDays ?? 7,
+    );
+    const lc = await lifecycleOf(
+      root,
+      s0.findings,
+      hadFindings.has(id),
+      s0.stamp.contentHash,
+      opts.fixes?.[id],
+      opts.loaded?.[id],
+    );
+    if (lc.state)
+      s0.lifecycle = { state: lc.state, installedVersion: lc.installedVersion, gap: lc.gap };
+  }
   skills.sort((a, b) => {
     const byReach = REACH_ORDER[a.worstReach.level] - REACH_ORDER[b.worstReach.level];
     if (byReach !== 0) return byReach;
@@ -546,6 +654,107 @@ export async function buildReport(opts: BuildOptions): Promise<PostureReport> {
         .join('\n'),
     )
     .digest('hex');
+  const environment = environmentStamp(
+    {
+      ...(opts.envId ? { envId: opts.envId } : {}),
+      ...(opts.imageDigest ? { imageDigest: opts.imageDigest } : {}),
+      ...(opts.env ? { env: opts.env } : {}),
+    },
+    skills.map((s0) => `${s0.repo}/${s0.path}`),
+    skills.map((s0) => s0.stamp?.contentHash ?? ''),
+  );
+  /* lead line, kill switch, lanes */
+  const weakest = [...skills].sort(
+    (a, b) =>
+      (GRADE_ORDER[a.grade] ?? 9) - (GRADE_ORDER[b.grade] ?? 9) ||
+      REACH_ORDER[a.worstReach.level] - REACH_ORDER[b.worstReach.level],
+  )[0];
+  const lead = weakest
+    ? `weakest: ${weakest.repo}/${weakest.skill} grade ${weakest.grade}, widest reach ${weakest.worstReach.label}${weakest.worstReach.evidence ? ` (${weakest.worstReach.evidence})` : ''}`
+    : 'nothing scanned';
+  const crit = skills.find((s0) => (s0.bySeverity.critical ?? 0) > 0);
+  const killSwitch = crit
+    ? { skill: `${crit.repo}/${crit.skill}`, rule: crit.topRules[0] ?? 'critical finding' }
+    : null;
+  const prevUnresolved = lastPoint?.unresolved ?? {};
+  const containment: LossPath[] = [];
+  const verification: LossPath[] = [];
+  const sla = opts.verifySlaDays;
+  for (const s0 of skills) {
+    if (!['exec', 'secrets', 'undeclared-network', 'outside-write'].includes(s0.worstReach.level))
+      continue;
+    const confirmed =
+      s0.verdict === 'block' || (s0.bySeverity.critical ?? 0) + (s0.bySeverity.high ?? 0) > 0;
+    const base0: LossPath = {
+      repo: s0.repo,
+      skill: s0.skill,
+      path: s0.path,
+      asset: s0.worstReach.label,
+      precondition: s0.worstReach.rule ?? s0.worstReach.evidence ?? 'named in the skill files',
+      exploitable: confirmed ? 'confirmed' : 'unresolved',
+    };
+    if (confirmed) containment.push(base0);
+    else {
+      const id = `${s0.repo}/${s0.path}`;
+      const firstSeen = prevUnresolved[id] ?? now0.toISOString();
+      const lapsed = sla !== undefined && now0.getTime() - Date.parse(firstSeen) > sla * 86_400_000;
+      verification.push({
+        ...base0,
+        checkNeeded: s0.coverage.complete
+          ? `confirm whether ${base0.precondition} is reachable at run time (read the matched lines)`
+          : `read what the scan skipped: ${s0.coverage.reasons.join('; ')}`,
+        firstSeen,
+        status: lapsed ? 'contained-pending-check' : 'open',
+      });
+    }
+  }
+  verification.sort(
+    (a, b) =>
+      REACH_ORDER[
+        (skills.find((x) => x.path === a.path && x.repo === a.repo) as SkillRow).worstReach.level
+      ] -
+      REACH_ORDER[
+        (skills.find((x) => x.path === b.path && x.repo === b.repo) as SkillRow).worstReach.level
+      ],
+  );
+  const scored = skills.filter((s0) => typeof s0.score === 'number');
+  const cleanupEffort = scored.length
+    ? Math.round((scored.reduce((a, s0) => a + (s0.score as number), 0) / scored.length) * 10) / 10
+    : null;
+  const leftoverRows = await findLeftovers(
+    opts.artifacts ?? [],
+    new Set(
+      skills.flatMap((s0) => [
+        s0.skill,
+        s0.path,
+        `${s0.repo}/${s0.path}`,
+        s0.path.split('/').pop() as string,
+      ]),
+    ),
+    repoRows.map((r) => r.path),
+    now0,
+  );
+  if (leftoverRows.some((l) => l.capsGrade) && totals.overall !== 'nothing-scanned') {
+    totals.overall = 'F';
+    totals.result = `grade F (capped: ${leftoverRows.filter((l) => l.capsGrade).length} live leftover(s) of removed skills); ${totals.result}`;
+  }
+  if (killSwitch)
+    totals.result = `kill switch: ${killSwitch.rule} in ${killSwitch.skill}; ${totals.result}`;
+  totals.result = `${totals.result} · checked ${generatedAt.slice(0, 16)}Z on ${environment.id}`;
+  const sameEnv = hist.filter((h) => !h.envId || h.envId === environment.id);
+  const otherEnv = hist.filter((h) => h.envId && h.envId !== environment.id);
+  const changed = lastPoint?.configHashes
+    ? skills
+        .filter((s0) => {
+          const k = `${s0.repo}/${s0.path}`;
+          return (
+            lastPoint.configHashes &&
+            k in lastPoint.configHashes &&
+            lastPoint.configHashes[k] !== s0.configHash
+          );
+        })
+        .map((s0) => `${s0.repo}/${s0.path}`)
+    : [];
   const point: HistoryPoint = {
     at: generatedAt,
     skills: totals.skills,
@@ -555,6 +764,13 @@ export async function buildReport(opts: BuildOptions): Promise<PostureReport> {
     threatModelCoverage: totals.threatModelCoverage,
     driftChanged: totals.driftChanged,
     configHashes: Object.fromEntries(skills.map((s) => [`${s.repo}/${s.path}`, s.configHash])),
+    envId: environment.id,
+    inspectedDigest: environment.inspectedDigest,
+    changed,
+    findingSkills: skills.filter((s0) => s0.findings > 0).map((s0) => `${s0.repo}/${s0.path}`),
+    unresolved: Object.fromEntries(
+      verification.map((v0) => [`${v0.repo}/${v0.path}`, v0.firstSeen as string]),
+    ),
   };
   return {
     tool: TOOL_NAME,
@@ -578,7 +794,26 @@ export async function buildReport(opts: BuildOptions): Promise<PostureReport> {
     skills,
     violations,
     driftChanges,
-    history: [...(opts.history ?? []), point],
+    history: [...sameEnv, point],
+    environment,
+    lead,
+    killSwitch,
+    lanes: { containment, verification },
+    cleanupEffort,
+    ...(opts.refusals ? { refusals: refusalRow(opts.refusals) } : {}),
+    leftovers: leftoverRows,
+    ...(opts.receipts ? { reversal: reversalStats(opts.receipts, opts.reversalWindow ?? 20) } : {}),
+    changeLog: [...sameEnv, point]
+      .filter((h) => h.changed && h.changed.length)
+      .map((h) => ({ at: h.at, changed: h.changed as string[] })),
+    otherEnvironments: otherEnv.map((h) => ({
+      id: h.envId as string,
+      at: h.at,
+      skills: h.skills,
+      findings: h.findings,
+      ...(h.inspectedDigest ? { inspectedDigest: h.inspectedDigest } : {}),
+    })),
+    ...(opts.checkIntervalHours ? { checkIntervalHours: opts.checkIntervalHours } : {}),
   };
 }
 
@@ -630,7 +865,7 @@ export function renderPostureHtml(r: PostureReport): string {
   const rows = r.skills
     .map(
       (s) =>
-        `<tr><td>${e(s.worstReach.label)}${s.worstReach.rule ? `<div class="p">${e(s.worstReach.rule)}</div>` : ''}</td><td class="g g-${e(s.grade)}">${e(s.grade)} @ cfg ${e(s.configHash.slice(0, 8))}${s.regraded ? '<div class="p">config changed since last report; grade recomputed</div>' : ''}</td><td>${e(s.repo)}</td><td>${e(s.skill)}<div class="p">${e(s.path)}</div></td><td>${e(s.verdict)}</td><td>${s.findings}</td><td>${s.topRules.map((x) => `<a href="${e(rulePageUrl(x))}">${e(x)}</a>`).join(' ')}</td><td>${s.inThreatModel === null ? '—' : s.inThreatModel ? 'yes' : '<b>no</b>'}</td><td>${s.drift ? (s.drift.approved ? (s.drift.changes ? `<b>${s.drift.changes} change(s)</b>` : 'unchanged') : 'not approved') : '—'}</td></tr>`,
+        `<tr class="ih-row" data-graded="${e(s.stamp?.gradedAt ?? r.generatedAt)}" data-until="${e(s.stamp?.validUntil ?? r.validUntil)}"><td>${e(s.worstReach.label)}${s.worstReach.rule ? `<div class="p">${e(s.worstReach.rule)}</div>` : ''}</td><td class="g g-${e(s.grade)}">${e(s.grade)} @ cfg ${e(s.configHash.slice(0, 8))}${s.regraded ? '<div class="p">config changed since last report; grade recomputed</div>' : ''}</td><td>${e(s.repo)}</td><td>${e(s.skill)}<div class="p">${e(s.path)}</div></td><td>${e(s.verdict)}${s.lifecycle ? `<div class="p">${e(s.lifecycle.state)}${s.lifecycle.gap ? `: ${e(s.lifecycle.gap)}` : ''}</div>` : ''}${s.stamp ? `<div class="p">${e(s.stamp.validity)}</div>${s.stamp.evidence.length ? `<div class="p">from: ${e(s.stamp.evidence.join('; '))}</div>` : ''}` : ''}</td><td>${s.findings}</td><td>${s.topRules.map((x) => `<a href="${e(rulePageUrl(x))}">${e(x)}</a>`).join(' ')}</td><td>${s.inThreatModel === null ? '—' : s.inThreatModel ? 'yes' : '<b>no</b>'}</td><td>${s.drift ? (s.drift.approved ? (s.drift.changes ? `<b>${s.drift.changes} change(s)</b>` : 'unchanged') : 'not approved') : '—'}</td></tr>`,
     )
     .join('\n');
   const owasp = r.owaspLlm
@@ -670,6 +905,38 @@ export function renderPostureHtml(r: PostureReport): string {
         )
         .join('')}</tbody></table>`
     : '<p>No drift since approval (or no ledger given).</p>';
+  const lane = (rows0: LossPath[], unresolved: boolean): string =>
+    rows0.length
+      ? `<table><thead><tr><th>Skill</th><th>Reachable asset</th><th>Precondition</th>${unresolved ? '<th>Check needed</th><th>Status</th>' : ''}</tr></thead><tbody>${rows0
+          .map(
+            (x) =>
+              `<tr><td>${e(x.repo)}/${e(x.skill)}</td><td>${e(x.asset)}</td><td>${e(x.precondition)}</td>${unresolved ? `<td>${e(x.checkNeeded)}</td><td>${e(x.status)}${x.firstSeen ? `<div class="p">since ${e(x.firstSeen)}</div>` : ''}</td>` : ''}</tr>`,
+          )
+          .join('')}</tbody></table>`
+      : '<p>None.</p>';
+  const lanesHtml = r.lanes
+    ? `<h2>Loss paths</h2><h3>Containment: confirmed exploitable</h3>${lane(r.lanes.containment, false)}<h3>Verification: high impact, preconditions unresolved</h3><p class="p">Unknowns are a verification task, never counted as safe or proven.</p>${lane(r.lanes.verification, true)}`
+    : '';
+  const refusalHtml = r.refusals
+    ? `<h2>Refusals</h2><p>${r.refusals.denials} denial(s) beside ${r.refusals.successes} success(es) · route-around rate ${r.refusals.routeAroundRate ?? '—'} · escalating mutated retries ${r.refusals.escalatingMutations} · after denial: ${
+        Object.entries(r.refusals.after)
+          .filter(([, n]) => n)
+          .map(([k, n]) => `${e(k)} ${n}`)
+          .join(', ') || '—'
+      }</p>${r.refusals.rows.length ? `<table><thead><tr><th>At</th><th>Skill / tool</th><th>Denial</th><th>Next</th><th>Intent</th><th>Gap</th></tr></thead><tbody>${r.refusals.rows.map((x) => `<tr><td>${e(x.at)}</td><td>${e(x.skill ?? '—')} / ${e(x.tool ?? '—')}</td><td>${e(x.denial)}</td><td>${e(x.next)}</td><td>${e(x.intent ?? '—')}</td><td>${e(x.gap)}</td></tr>`).join('')}</tbody></table>` : ''}`
+    : '';
+  const leftHtml = r.leftovers?.length
+    ? `<h2>Leftovers of removed skills</h2><table><thead><tr><th>Left by</th><th>Kind</th><th>Severity</th><th>Where</th><th>Detail</th></tr></thead><tbody>${r.leftovers.map((x) => `<tr><td>${e(x.skill)}</td><td>${e(x.kind)}</td><td>${e(x.severity)}${x.capsGrade ? ' (caps grade)' : ''}</td><td>${e(x.path ?? '—')}</td><td>${e(x.detail)}<div class="p">${e(x.provenance)}</div></td></tr>`).join('')}</tbody></table>`
+    : '';
+  const revHtml = r.reversal
+    ? `<h2>Reversal rate</h2><p>${e(r.reversal.label)} · shortlist sizes ${e(r.reversal.shortlistSizes.join(', ') || '—')} · late checks ${r.reversal.lateChecks} · median check minus decision ${r.reversal.medianCheckMinusDecisionMs ?? '—'} ms${r.reversal.failedControl ? ' · <b>failed control: checks consistently land after the decision</b>' : ''}</p>`
+    : '';
+  const changeHtml = r.changeLog?.length
+    ? `<h2>Changes between runs</h2><table><thead><tr><th>Run</th><th>Changed skills</th></tr></thead><tbody>${r.changeLog.map((c) => `<tr><td>${e(c.at)}</td><td>${c.changed.map((x) => e(x)).join(', ')}</td></tr>`).join('')}</tbody></table>`
+    : '';
+  const envHtml = r.environment
+    ? `<div class="meta">Environment <code>${e(r.environment.id)}</code>${r.environment.imageDigest ? ` · image <code>${e(r.environment.imageDigest.slice(0, 19))}</code>` : ''} · inspected digest <code>${e(r.environment.inspectedDigest.slice(0, 16))}</code></div>${r.otherEnvironments?.length ? `<h2>Other environments (not in the trend)</h2><div class="banner">These runs came from a different environment; they are shown side by side, never as one trend.</div><table><thead><tr><th>Environment</th><th>Run</th><th>Skills</th><th>Findings</th><th>Inspected digest</th></tr></thead><tbody>${r.otherEnvironments.map((o) => `<tr><td>${e(o.id)}</td><td>${e(o.at)}</td><td>${o.skills}</td><td>${o.findings}</td><td><code>${e((o.inspectedDigest ?? '').slice(0, 16))}</code></td></tr>`).join('')}</tbody></table>` : ''}`
+    : '';
   return `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${e(r.title)} — Ironheights</title>
@@ -682,13 +949,15 @@ table{width:100%;border-collapse:collapse;background:#fff;border:1px solid #e5e5
 th,td{text-align:left;padding:7px 9px;border-bottom:1px solid #eee;vertical-align:top}th{background:#f3f3f3}
 .p{color:#777;font-size:12px}.g{font-weight:700}.g-A{color:#15803d}.g-B{color:#4d7c0f}.g-C{color:#a16207}.g-D{color:#c2410c}.g-F{color:#b91c1c}
 code{font-size:13px}a{color:#1d4ed8}footer{margin-top:40px;color:#666;font-size:13px}
-.banner{background:#fde68a;border:1px solid #d97706;padding:10px 12px;border-radius:8px;margin:8px 0}.result{font-size:18px;font-weight:650;margin:6px 0}.result.inc{color:#b45309}body.expired main>*:not(#ih-expired){opacity:.45}
+tr.ih-degraded td{opacity:.7}tr.ih-grey td{opacity:.4;filter:grayscale(1)}tr.ih-hidden td.g{color:transparent!important;text-shadow:none}tr.ih-hidden td.g::after{content:attr(data-ts);color:#777}.banner{background:#fde68a;border:1px solid #d97706;padding:10px 12px;border-radius:8px;margin:8px 0}.result{font-size:18px;font-weight:650;margin:6px 0}.result.inc{color:#b45309}body.expired main>*:not(#ih-expired){opacity:.45}
 @media print{body{background:#fff}.card,table{break-inside:avoid}}
 </style></head><body><main>
 <h1>${e(r.title)}</h1>
 <div id="ih-expired" class="banner" hidden>This report expired on ${e(r.validUntil)}. It describes the skills as they were on ${e(r.generatedAt)}. Run <code>ironheights report</code> again and compare the fingerprint.</div>
+${r.lead ? `<div class="result lead">${e(r.lead)}</div>` : ''}
 <div class="result ${t.coverage.complete ? '' : 'inc'}">${e(t.result)}</div>
 <div class="meta">Generated ${e(r.generatedAt)} by ${e(r.tool)} ${e(r.version)} · ${t.repos} repo(s) · local scan, no telemetry · valid until ${e(r.validUntil)} · fingerprint <code>${e(r.fingerprint.slice(0, 16))}</code></div>
+${envHtml}
 <div class="cards">
 ${card('Overall', t.overall, `${t.coverage.inspected} of ${t.coverage.loaded} fully inspected`)}
 ${card('Skills installed', String(t.skills))}
@@ -711,11 +980,17 @@ ${card('Changed since approval', String(t.driftChanged), `${t.driftApproved} ski
 <table><thead><tr><th>Repo</th><th>Skills</th><th>In threat model</th><th>Violations</th></tr></thead><tbody>${repos}</tbody></table>
 <h2>Skill inventory</h2>
 <table><thead><tr><th>Worst reach</th><th>Grade</th><th>Repo</th><th>Skill</th><th>Verdict</th><th>Findings</th><th>Top rules</th><th>In model</th><th>Drift</th></tr></thead><tbody>${rows}</tbody></table>
+${lanesHtml}
 <h2>Not fully inspected</h2>${notInspected}
+${refusalHtml}
+${leftHtml}
+${revHtml}
+${changeHtml}
 <h2>Threat model violations</h2>${viol}
 <h2>Drift since approval</h2>${drift}
 ${hist.length > 1 ? `<h2>Trend</h2><table><thead><tr><th>Run</th><th>Skills</th><th>Findings</th><th>Block</th><th>Review</th><th>Coverage</th><th>Drifted</th></tr></thead><tbody>${hist.map((h) => `<tr><td>${e(h.at)}</td><td>${h.skills}</td><td>${h.findings}</td><td>${h.block}</td><td>${h.review}</td><td>${h.threatModelCoverage ?? '—'}</td><td>${h.driftChanged}</td></tr>`).join('')}</tbody></table>` : ''}
+${r.cleanupEffort !== null && r.cleanupEffort !== undefined ? `<p class="p">Average score ${r.cleanupEffort}: a cleanup-effort measure, not a safety measure.</p>` : ''}
 <footer>Ironheights protects any AI bot that installs it. A grade reports what the rules matched in the files scanned; no findings is not proof of safety. OWASP mapping from each rule's references. https://www.ironheights.dev</footer>
-</main><script>(function(){var u=Date.parse(${JSON.stringify(r.validUntil)});if(Date.now()>u){document.body.className+=' expired';var b=document.getElementById('ih-expired');if(b)b.hidden=false;}})();</script></body></html>
+</main><script>(function(){var u=Date.parse(${JSON.stringify(r.validUntil)});if(Date.now()>u){document.body.className+=' expired';var b=document.getElementById('ih-expired');if(b)b.hidden=false;}var iv=${JSON.stringify((r.checkIntervalHours ?? 0) * 3600000)};var rows=document.querySelectorAll('tr.ih-row');for(var i=0;i<rows.length;i++){var tr=rows[i];var g=Date.parse(tr.getAttribute('data-graded'));var until=Date.parse(tr.getAttribute('data-until'));var age=Date.now()-g;var lvl=iv?Math.floor(age/iv):0;if(Date.now()>until&&lvl<2)lvl=2;var c=tr.querySelector('td.g');if(c)c.setAttribute('data-ts','graded '+tr.getAttribute('data-graded'));if(lvl>=3)tr.className+=' ih-grey ih-hidden';else if(lvl>=2)tr.className+=' ih-grey';else if(lvl>=1)tr.className+=' ih-degraded';}})();</script></body></html>
 `;
 }
