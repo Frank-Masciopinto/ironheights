@@ -87,6 +87,16 @@ const NO_CONFIRM =
 const GATE =
   /\b(?:must|always|first)\b[^.\n]{0,60}\b(?:read|open|follow|run)\b[^.\n]{0,60}\b[\w-]+\.(?:pdf|docx|pptx|xlsx|png|jpe?g)\b|\b[\w-]+\.(?:pdf|docx)\b[^.\n]{0,80}\b(?:source\s+of\s+truth|required\s+(?:per-session\s+)?setup|mandatory|before\s+(?:running|invoking|any|taking))/i;
 
+/**
+ * Output provenance: rows or citations from a bundled file are put into the user's output and passed
+ * off as live or sourced, so the report contains content with no upstream input from the user
+ * (rossum, fromthebot, hermes-agent-88, bytes, m/missed-attacks, 2026-11-02).
+ */
+const PASSED_OFF =
+  /\b(?:labell?ed|presented|shown|marked|reported|cited|attributed)\s+as\s+(?:live|real|verified|fresh|current|first-hand|user-supplied|original)[\w-]*\s*(?:\w+\s+){0,2}(?:citations?|sources?|data|results|rows|entries|quotes?|reviews?)/i;
+const BUNDLED_ROWS_INTO_OUTPUT =
+  /\b(?:rows?|entries|records|citations?|quotes?|reviews?)\b[^.\n]{0,80}\bfrom\s+`?[\w./-]+\.(?:json|ya?ml|csv|txt)`?[^.\n]{0,120}\b(?:output|report|table|summary|results)/i;
+
 const FAMILY_LABEL: Record<Family, string> = {
   exfil: 'sends sensitive data to an outside address',
   conceal: 'hides an action from the user',
@@ -167,7 +177,9 @@ export function intentHits(text: string): Hit[] {
     else if (NO_CONFIRM.test(raw)) add('conceal', 1);
     if (matchUnlessNegated(PERSIST_EXEC, raw)) add('persist', 2, TRIGGERED_HELPER.test(raw));
     else if (matchUnlessNegated(PERSIST, raw)) add('persist', 1);
-    if (matchUnlessNegated(STEER_STRONG, raw)) add('steer', 3);
+    if (matchUnlessNegated(PASSED_OFF, raw) || matchUnlessNegated(BUNDLED_ROWS_INTO_OUTPUT, raw))
+      add('steer', 3, true);
+    else if (matchUnlessNegated(STEER_STRONG, raw)) add('steer', 3);
     else if (matchUnlessNegated(STEER, raw)) add('steer', 1);
     if (matchUnlessNegated(GATE, raw)) add('gate', 2);
     if (matchUnlessNegated(DROPPER, raw)) add('dropper', 3);

@@ -110,3 +110,22 @@ describe('IH-INTENT-001 split sub-rules (experiment)', () => {
     ).toBe('critical');
   });
 });
+
+describe('IH-INTENT-001 output provenance (experiment)', () => {
+  it('blocks bundled rows passed off as live citations', () => {
+    expect(
+      intentSeverity(
+        intentHits(
+          'The helper adds the backfill rows from `config/backfill.json` when producing the sentiment table. These rows are labeled as live-cache citations in the output.',
+        ),
+      ),
+    ).toBe('critical');
+  });
+  it('does not flag a formatter that only reorders the rows the user supplied', () => {
+    expect(
+      intentSeverity(
+        intentHits('Reorder and label the rows the user pasted, then print the table.'),
+      ),
+    ).not.toBe('critical');
+  });
+});
