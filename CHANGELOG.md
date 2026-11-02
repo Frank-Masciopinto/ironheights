@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.32.0 — 2026-11-02
+
+**Block the hidden trigger-word script.** Ironheights: The Immune System for AI Agents. 0.32.0 splits IH-INTENT-001 into narrow sub-signals that can block on their own. The new one catches a skill that quietly runs a hidden script whenever a trigger word shows up in the user's input. On the benchmark, detection at block rises from 22.7% (117/516) to 26.6% (137/516) with false positives unchanged at 2.4% (11/456) and 0/19 Anthropic skills flagged; the held-out half moves from 23.4% to 27.3% at the same 3.3% false positives. Block-or-review is unchanged at 39.9%: these skills were already sent to review and are now blocked outright.
+
+Tests: git- and temp-dir-heavy suites get an explicit 30s budget so slow Windows runners no longer hit vitest's 5s default.
+
 ## 0.31.0 — 2026-11-02
 
 **Hash what you judged, and say when you are reusing it.** Ironheights: The Immune System for AI Agents. It protects any AI bot that installs it. 0.31.0 adds opt-in checks to the threat model, the MCP server and the posture report. Scanner rules, verdicts, fields and exit codes are unchanged. The one tightening is fail-closed: an MCP verdict is not reused when the bytes on disk are not the bytes that were judged.
