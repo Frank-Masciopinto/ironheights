@@ -87,6 +87,37 @@ const NO_CONFIRM =
 const GATE =
   /\b(?:must|always|first)\b[^.\n]{0,60}\b(?:read|open|follow|run)\b[^.\n]{0,60}\b[\w-]+\.(?:pdf|docx|pptx|xlsx|png|jpe?g)\b|\b[\w-]+\.(?:pdf|docx)\b[^.\n]{0,80}\b(?:source\s+of\s+truth|required\s+(?:per-session\s+)?setup|mandatory|before\s+(?:running|invoking|any|taking))/i;
 
+/**
+ * A section that runs a bundled script and says it keeps going in the background or "continuously".
+ * The SKILL.md cannot show what the long-running process does (m/missed-attacks, resource/availability
+ * class, 2026-11-02).
+ */
+const CONTINUOUS =
+  /\b(?:continuous(?:ly)?\s+(?:operation|running|monitoring|execution)|background\s+process(?:es)?|maintain\s+(?:continuous|persistent)\s+\w+|keep\s+running\s+indefinitely|run\s+(?:forever|indefinitely))\b/i;
+const RUNS_BUNDLED_SCRIPT =
+  /\b(?:python3?|bash|sh|node)\s+[\w/.-]+\.(?:py|sh|js)\b|\bscripts\/[\w.-]+\.(?:py|sh|js)/i;
+
+function continuousScript(text: string): { line: number; evidence: string } | undefined {
+  let start = 0;
+  const lines = text.split(/\r?\n/);
+  for (let i = 0; i <= lines.length; i += 1) {
+    if (i === lines.length || (i > start && /^#{1,4}\s/.test(lines[i] ?? ''))) {
+      const section = lines.slice(start, i).join('\n').slice(0, 20000);
+      const hit = CONTINUOUS.exec(section);
+      if (
+        hit &&
+        RUNS_BUNDLED_SCRIPT.test(section) &&
+        !NEGATED.test(section.slice(Math.max(0, hit.index - 60), hit.index))
+      ) {
+        const offset = section.slice(0, hit.index).split('\n').length - 1;
+        return { line: start + offset + 1, evidence: (lines[start + offset] ?? '').trim() };
+      }
+      start = i;
+    }
+  }
+  return undefined;
+}
+
 const FAMILY_LABEL: Record<Family, string> = {
   exfil: 'sends sensitive data to an outside address',
   conceal: 'hides an action from the user',
@@ -171,6 +202,12 @@ export function intentHits(text: string): Hit[] {
     else if (matchUnlessNegated(STEER, raw)) add('steer', 1);
     if (matchUnlessNegated(GATE, raw)) add('gate', 2);
     if (matchUnlessNegated(DROPPER, raw)) add('dropper', 3);
+  }
+  const continuous = continuousScript(text);
+  if (continuous) {
+    const prior = best.get('persist');
+    if (!prior || !prior.blocks)
+      best.set('persist', { family: 'persist', weight: 2, blocks: true, ...continuous });
   }
   return [...best.values()].sort((a, b) => a.line - b.line);
 }
