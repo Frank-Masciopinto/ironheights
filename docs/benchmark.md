@@ -64,3 +64,7 @@ Run on 2 Nov 2026 against MaliciousSkillBench (Hugging Face revision `d4b42ce5`)
 - For comparison, 0.27.0 scored 20.2% detection with 9.9% false positives at `block`.
 
 Most malicious skills in this corpus are not caught at `block`. Treat a clean result as "no known patterns found", not as proof of safety.
+
+## Automatic README badge
+
+The README's MaliciousSkillBench badge reads `badges/benchmark.json` from the `badges` branch through a shields.io endpoint. The `benchmark badge` workflow rebuilds that file on every release tag (or manual run): it downloads the skill text from the pinned upstream sources listed in `bench/msb/manifest.json` (MaliciousSkillBench at a fixed Hugging Face revision, CC BY 4.0, and `anthropics/skills` at a fixed commit), checks each file against its SHA-256, scans it with the built CLI (nothing is executed), and counts block verdicts. The repository stores only IDs and hashes, never the skill text. Downloads are pinned and hash-checked, and only transient network errors (timeouts, 429, 5xx) are retried, with backoff. If anything else fails, nothing is published, the workflow run fails, and an issue titled "Benchmark badge run failed" is opened so the cause gets fixed.

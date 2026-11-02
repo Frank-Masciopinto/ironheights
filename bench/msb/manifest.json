@@ -1,0 +1,6826 @@
+{
+ "note": "IDs and SHA-256 hashes only. No skill text is stored here; scripts/benchmark-msb.py downloads it from the pinned upstream sources at run time.",
+ "msb": {
+  "repo": "ProtectSkills/MaliciousSkillBench",
+  "revision": "d4b42ce5766a6e0359c987cf59c1007cb3795a90",
+  "file": "primary.parquet",
+  "sha256": "1d6382017f259bde0b699d402318f3c03f16b2e8ed2363a346b77a5465f06a06",
+  "license": "CC BY 4.0"
+ },
+ "anthropic": {
+  "repo": "anthropics/skills",
+  "commit": "ca45fc496a3436251f191354091d557da31c15b5"
+ },
+ "expected": {
+  "0.32.0": {
+   "detect": "137/516",
+   "fp": "11/456"
+  }
+ },
+ "skills": [
+  {
+   "id": "ASB04_003872",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "83db825f48dae45754479d4b0896e1ad5d5fd7f0b2642b524972157f52b00c46"
+  },
+  {
+   "id": "ASB04_007070",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "prose",
+   "sha256": "f09484818ff31d690e5cad9b49bc4b026663b710f26c54e7e42a936a952a8e14"
+  },
+  {
+   "id": "ASB04_003814",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "code",
+   "sha256": "805cf1b8d46d405278540943e477a42ddb8425ed3e6b3d2758ea77d1f9f37119"
+  },
+  {
+   "id": "ASB04_004709",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "8782b618917682dc078f53a6c1df2ec54e10e2e10ea256a5067a82fdd59ea2d9"
+  },
+  {
+   "id": "ASB04_005887",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "c80f283ea9a65490947bdc43f24763ddecaadb854dfab0f7db674b00ebd0b438"
+  },
+  {
+   "id": "ASB04_006214",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "d320b6ffd8a937505bfddca9d8b3ed3f48627a3df053c3aac75c45e725144fe8"
+  },
+  {
+   "id": "ASB04_000446",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "f72141cec429aa5a0e23382b03597e4289dfdf70d0c889bb3c5c70cce96371e8"
+  },
+  {
+   "id": "ASB04_000101",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "5b0b2013b7e9582b2797a95de4ee1f2b5c07eec9dcf4b13e64600ea44378ba75"
+  },
+  {
+   "id": "ASB04_006090",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "2da69555f5206e96a429a3b956ed46c07ab4c2c82327c670670ce6124546b80b"
+  },
+  {
+   "id": "ASB04_003302",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "8b10501e1eac3799469ea878166fa7cc19eb0371493f5ab8ef31efc61dab1e31"
+  },
+  {
+   "id": "ASB04_006043",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "4aee0ffb6e0dc36f27cd161f5818b14ea5dc108c4cac851f86bb83daa2ae0419"
+  },
+  {
+   "id": "ASB04_006570",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "df1c273c0d90d71c52bbf1f8a883835c39b3665c8e4fbafc3620058e7875d4d8"
+  },
+  {
+   "id": "ASB04_004657",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "e50672ce7e82b95e3bb89bbeea443f72aacc220db050b1a016b64c1b78741a1e"
+  },
+  {
+   "id": "ASB04_002786",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "6dd2234f34e54001ef9b814ef384d082bcfbba8817b56e1b3cac0047503c2f19"
+  },
+  {
+   "id": "ASB04_002656",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "581a58400a53cddc71cfc5869a59a193a206224f8dd0844088d781e2b31af44a"
+  },
+  {
+   "id": "ASB04_007306",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "f973b58e707cbec28ba369ecf21c8be027bd6e928c6b04e9293e05672e822021"
+  },
+  {
+   "id": "ASB04_007477",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "fecb3748e03feb2109e78dec3cd159eebed8bac7a62b52af79f49b34e50efb9b"
+  },
+  {
+   "id": "ASB04_002817",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "code",
+   "sha256": "5d7098beda75f595d47715788589e67b6b7df44c7a13c94306b2cb655a56d1f1"
+  },
+  {
+   "id": "ASB04_001533",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "3244b81510b7ec191d835a006dc39c69cc338316242a6f6e2c87f948dcf4a717"
+  },
+  {
+   "id": "ASB04_005690",
+   "label": "malicious",
+   "source": "MSB:Agent Skill Malware",
+   "kind": "code",
+   "sha256": "991b8d39d0fe09950d462ef41a26fe4779e1574ba47cf4495839596c81649e77"
+  },
+  {
+   "id": "ASB04_004589",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "88ebadbbab78cc0d976bb1b7bd77e3a754d5b562d81dfb00d25c5e8bd31870aa"
+  },
+  {
+   "id": "ASB04_001753",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "b8f5ed962c66c602d74dd8708039ce583000dd833b13dc5e213e68fbaa874631"
+  },
+  {
+   "id": "ASB04_007014",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "ee833c0d9175f8c9740af183767ec95636e00e90cf07d11b01d526f163b3d16f"
+  },
+  {
+   "id": "ASB04_002646",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "57e447c28bfb9ab6c3cd901c547c09cec41dad8d9ad9c49ecdba026488292b29"
+  },
+  {
+   "id": "ASB04_001261",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "abe363064397a6253e97d64686a503362e77ddfa3d5e4a3a589ae9702e525854"
+  },
+  {
+   "id": "ASB04_006143",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "prose",
+   "sha256": "d02120453c8e8031058246d712ae3f8aad8eb53d25aa236cc948b447f86fe331"
+  },
+  {
+   "id": "ASB04_005550",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "809ca444c7d808ed2c6e4e7865b113ac6738193521b206e05d8a3f59bb97e3ea"
+  },
+  {
+   "id": "ASB04_005027",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "a74d360d594e02891d876b1c725573596b2b800672e52b96593430edff99c27e"
+  },
+  {
+   "id": "ASB04_002203",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "05ddd1ea2b0609913675ca42401c0ed67371279b33b554e427f8da628b2065af"
+  },
+  {
+   "id": "ASB04_003019",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "a95755d764eb8d406fe5d2ce964fa10ebcf6bda2041b12a5ac227836c75102b0"
+  },
+  {
+   "id": "ASB04_002906",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "prose",
+   "sha256": "60277bc8d6e4a1f46c4f988d4b3a10c631e8b886fd011b2195825c255800aae1"
+  },
+  {
+   "id": "ASB04_000604",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "code",
+   "sha256": "14fa240c779f19e660ab13027b5c00b83020e2c3c94304346a97d048677048a7"
+  },
+  {
+   "id": "ASB04_003297",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "6df8fc51334e3825a09429eaf72162bc962a7373ba8dd06b767c2a9445f95ec4"
+  },
+  {
+   "id": "ASB04_000905",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "1ebd997578e7262c0262b35cbb929e681459b5038c7fe8126630831d1c4b1934"
+  },
+  {
+   "id": "ASB04_003945",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "841ab0f8de162d8fb3afa8c196146d73f9cf5aec193fda8f589aa366660ea7e0"
+  },
+  {
+   "id": "ASB04_005957",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "prose",
+   "sha256": "ca2e90b6fdb07cf938bfbfaa0d8b50a395f402a3d72ef6fec8cd6f071e5599d9"
+  },
+  {
+   "id": "ASB04_004599",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "prose",
+   "sha256": "9929ba2776d3ab45cbf5a0a0b387bb4b1aaa8b468e2e1c169e2c66b809d7d792"
+  },
+  {
+   "id": "ASB04_000329",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "48c5dab36bcaade26027ae28f8e111b15361b6eb35e1b652ba9bbfb36abce67b"
+  },
+  {
+   "id": "ASB04_004675",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "9bc48dc62d099a38d80e5736d55fdd428003511c547d9b3fb36b4c54092a8652"
+  },
+  {
+   "id": "ASB04_000311",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "0b93a72a060388dff05b77d838ffbb389a5cacf521d0b5746b0631b3371a8f56"
+  },
+  {
+   "id": "ASB04_001352",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "prose",
+   "sha256": "2cb0f36b85410b5ba3ec7902725ac7aa9c2c79f48724eb5903ffe4b7394b6287"
+  },
+  {
+   "id": "ASB04_000452",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "104b4a01ecf927bb01a07255b96246fe8a1ebb3dfdfad46a087460cc8fb04a2a"
+  },
+  {
+   "id": "ASB04_004968",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "a555a7dd768befaaf90c76529b556bc3455d6e58725103d22fd5d7f559f857d1"
+  },
+  {
+   "id": "ASB04_005544",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "prose",
+   "sha256": "bb13a215344f51c37c9d415760ce29ab18c6167110cff6cfc22572792e1a75af"
+  },
+  {
+   "id": "ASB04_005083",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "a92ed0b7debd4a7c7ff4f02643539a0ae80ed1e0fda742918fa58300e26e8b80"
+  },
+  {
+   "id": "ASB04_004103",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "cc70d6330bfe4e47b8592ca88c7f87a2685646235d5b238dc2a22f8f532276d4"
+  },
+  {
+   "id": "ASB04_003668",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "7b0d18bbdf966bb9cfac3e0d469723c087d9654402b1f274745a8805a5656413"
+  },
+  {
+   "id": "ASB04_001294",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "2ab8931b6f2b1cee24baa5a355ffd20c5bf69febbf020c56b7afe7de422c8afa"
+  },
+  {
+   "id": "ASB04_005119",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "aab5be3a7ad1a135cb8c9e6fa69bb1c14857cdf8a89e85a5d5d2f88a8ee2994c"
+  },
+  {
+   "id": "ASB04_003379",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "70f098247b490727fa523b5707e259077eb9ca226e313e269a08d6fc25d1f230"
+  },
+  {
+   "id": "ASB04_001075",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "4a478324ecb84ca70176e69eae49a378118ffb2a01258df652ec39522cef6bf1"
+  },
+  {
+   "id": "ASB04_004366",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "code",
+   "sha256": "91ffcf5fdb6a3020418eb5923ed322f6db74e4500aac537fd0be2126dfc84200"
+  },
+  {
+   "id": "ASB04_002934",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "6112c1d167f87731200cf53b236c855abe5e36748f8466ba8817bd85856a68d9"
+  },
+  {
+   "id": "ASB04_006825",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "6bc8dea22cf828b8e5355aca5000b1175613bcd15fb7fcd7359f1b4935350e58"
+  },
+  {
+   "id": "ASB04_003935",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "0078ce61058fa7b36e78547a140214e4f1f16adf1ef24b5dd704ea932c5b678d"
+  },
+  {
+   "id": "ASB04_004528",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "9738e94c2c643e170d50cae7ea4e1d395a622d07248281802b594e1a51f71e72"
+  },
+  {
+   "id": "ASB04_005552",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "bb7bbcbe6445441f62c71e485fa7cd6930200c538664719248fb4307051ca712"
+  },
+  {
+   "id": "ASB04_002801",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "5ce26a8d61b918188d00869d3e98f6d8e27e090be9573947a6e036d35b66f605"
+  },
+  {
+   "id": "ASB04_005188",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "f41d667e70c906551d5d9bb5b541a78f107eb3a884b6c3ca2169c84ba1bd263e"
+  },
+  {
+   "id": "ASB04_001409",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "bcbe782508d4e1cb3f48cd9a630835686dfdcaa91026c27b6603a23559b0db63"
+  },
+  {
+   "id": "ASB04_006488",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "dc902d79b3733e71292a14e807f6b4cb0e507d3179eaca0f3e64c604b784d4d0"
+  },
+  {
+   "id": "ASB04_006339",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "d75a5bb9e9202488cd55d913d5ffcdd261feba86cab2b8fd0bbcb5a006e5f83d"
+  },
+  {
+   "id": "ASB04_001480",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "30ade1542a98a28a1c8a12bca39d4c859e31e2ff683e2bb1b3eb9b761d779edc"
+  },
+  {
+   "id": "ASB04_003470",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "73c27183ecaf885fc9f3a7d4ebcda3a8222ce013179f37a4c2a553277ee4cfe4"
+  },
+  {
+   "id": "ASB04_004105",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "c4dfcb64c3ea9ac41730d64177a6d2fb6517c686c7c68b144871bda7fd115148"
+  },
+  {
+   "id": "ASB04_001258",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "29b9ac521035aa3a6fa996768038dda663e2d9a2cd397200b1ee4ffeaafbd4f6"
+  },
+  {
+   "id": "ASB04_007403",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "fc73c5038373197f2b9cc57d9f8a893c1c8d7dcbbeeac03132ad11590ac2c840"
+  },
+  {
+   "id": "ASB04_004718",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "9ce8fd4e11302401fca3480b7a44e236adcba1bd89308cc00f7b8ed99418ed7e"
+  },
+  {
+   "id": "ASB04_002443",
+   "label": "malicious",
+   "source": "MSB:SkillSafetyBench",
+   "kind": "code",
+   "sha256": "501e5839f54e7c3428e849277f5b26fd142756ca02cec9f02d586eee22beedec"
+  },
+  {
+   "id": "ASB04_006528",
+   "label": "malicious",
+   "source": "MSB:SkillSafetyBench",
+   "kind": "code",
+   "sha256": "410ef79664ac8cb1a7fca6c3cd0b98ab09adde3c59cf57abdf4891707ecf87d2"
+  },
+  {
+   "id": "ASB04_000768",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "1a309dd79babec64b022460188c97845bb917d21dc9c86c4ddbde6e2f00c4883"
+  },
+  {
+   "id": "ASB04_001834",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "3b569b5b8634037b89e9b01ff2eb87db1cd0cf77471ae985089eb49c56b59e6c"
+  },
+  {
+   "id": "ASB04_002324",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "code",
+   "sha256": "4c2425503751c30d89cad5ff21226f291774cbb081c5464543708b82f8ca99d4"
+  },
+  {
+   "id": "ASB04_003344",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "code",
+   "sha256": "2b8445ef32a9acc08342fb8df3bb52d724c771b3f56956554a3729e4b458c163"
+  },
+  {
+   "id": "ASB04_002172",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "b5e80dd64cfaf5d0f41426b33f69d04931560af9f1bb05c77168dcebddf6aa6f"
+  },
+  {
+   "id": "ASB04_002996",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "630526f1a6aaa9c21e6f06fc543e9ee5042dd5601cbf20270385e22aa90cf0d9"
+  },
+  {
+   "id": "ASB04_003171",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "68b70619a88c31b23634657c45c476530216694f62cb785ccf2e56a7b7560d66"
+  },
+  {
+   "id": "ASB04_001995",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "prose",
+   "sha256": "612312d93e7569c3bdb0d41f9229ba12b0b48218cd30d15a21223d421d0448ff"
+  },
+  {
+   "id": "ASB04_006105",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "code",
+   "sha256": "cec8a7ab01f4a0c7738ecc52f05de75ac5666663c85958f45526e60e04f99775"
+  },
+  {
+   "id": "ASB04_003502",
+   "label": "malicious",
+   "source": "MSB:SkillSafetyBench",
+   "kind": "code",
+   "sha256": "74f929158cf54b8a446147e21b3879941aa73cb47a4c766eed5bd3e59375f7b1"
+  },
+  {
+   "id": "ASB04_003722",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "7cfa37261d28c41c2744d04f9c13b2c893f8cffc5850b983c42fd899b9800eab"
+  },
+  {
+   "id": "ASB04_007065",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "f06332ef7c267eaca6c3854fd9bc192be9b5ce3d5dd49ac7a9df301cdfdf63ac"
+  },
+  {
+   "id": "ASB04_006483",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "code",
+   "sha256": "dc6b1f999223672772016cd4b9c309a6d6aae14bab077b38a821c6b0ba9fc091"
+  },
+  {
+   "id": "ASB04_000105",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "code",
+   "sha256": "047bb6e9c0b88016cc470964836781b7c5ba1afe6da1f106cbc398fca7219b3b"
+  },
+  {
+   "id": "ASB04_005653",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "bf4263584ff77f54c48564308181b4f48336bd590e4e62deadc907c334075ffb"
+  },
+  {
+   "id": "ASB04_006471",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "dbec4b8bd17f4ca0ab108eee63c892a39095d7cb1911d839741778abf77e07f2"
+  },
+  {
+   "id": "ASB04_006067",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "cd83c8f2a674005df67c057074371fbc52301ecaee7017e479705efa666f3999"
+  },
+  {
+   "id": "ASB04_001856",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "ff629defb5828308a97fc1b4f95ea0a0cb23137c32d7cb2e1475e57facb33fff"
+  },
+  {
+   "id": "ASB04_002003",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "beb2293589eee75becdbcdc19138832bb05da7644b1f593f9d0214e023f20841"
+  },
+  {
+   "id": "ASB04_000932",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "prose",
+   "sha256": "69253004fb6fabd57a4a94f843802e90f720f2324beba584b1bfbca76eaf6288"
+  },
+  {
+   "id": "ASB04_005071",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "a8c01607f5585016854a63f241a2060a6502a8b9dc45e803cfb181ad47f03fd2"
+  },
+  {
+   "id": "ASB04_003085",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "247bcfb8cb063f457113954d36dc78fad7f20f6dabcaed657a2943dec40786e5"
+  },
+  {
+   "id": "ASB04_002069",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "1b1ffcad7917f724a3e451a6becc29e030eaf9deed2b786ec65ba17d721fa1eb"
+  },
+  {
+   "id": "ASB04_003456",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "prose",
+   "sha256": "73569862b931f3d9d9370503202b31124bc35f84ce52f130913ebde9e58b940d"
+  },
+  {
+   "id": "ASB04_003100",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "6609387adc23d66762574afabfa3c2ffa36c107dae44d18dee72bf9ac0fc7bf6"
+  },
+  {
+   "id": "ASB04_004555",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "12c5fc208241cf37b916b962dd18f4d06c369d2588d565001079ba2bcb71fb73"
+  },
+  {
+   "id": "ASB04_002997",
+   "label": "malicious",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "63056f90fd37009a7e1f730c6d06958d880825089d9079d3177a63b46f47d250"
+  },
+  {
+   "id": "ASB04_006419",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "da1059f5f051ae624848dda3c5083bf7e5b8ef0a6295a6d7075803f525b89e25"
+  },
+  {
+   "id": "ASB04_004143",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "8a6fb6594405fade67c10ee8e113cf9166aff4bc47d5420d9d2834bd12a4191a"
+  },
+  {
+   "id": "ASB04_001182",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "a79702ca494cde6799e40c87cd8a7ac9a3250e9996e1adfae6181fd963a754ab"
+  },
+  {
+   "id": "ASB04_006555",
+   "label": "malicious",
+   "source": "MSB:SkillLeakBench",
+   "kind": "code",
+   "sha256": "5339475f5aa746702a3a563893d01603f175f69087da0fa5e16284c8db9c39f8"
+  },
+  {
+   "id": "ASB04_006119",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "a174fe0321b39d40fa41c4562d47904ae43e264b36b33ae2f1c3e5b0117c7944"
+  },
+  {
+   "id": "ASB04_002030",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "prose",
+   "sha256": "42503ecd933f561d95a6f88fed86484cc891e93f2e62be9e8ef6e0b6a13c98c3"
+  },
+  {
+   "id": "ASB04_003949",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "9c1cd5409a683bbbaa7718117418a591ebd282bd4bddd20571d87efa903a7c36"
+  },
+  {
+   "id": "ASB04_002988",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "62a7cfc26ce5674b9cbe2ff1e27224cc4de95fe814f427fd6cf3b57b316d7dcb"
+  },
+  {
+   "id": "ASB04_002583",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "841ae741583a027517e956820bc2c1602a627256e40f3a046c3299936c137153"
+  },
+  {
+   "id": "ASB04_005777",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "5734649db7079caf7fedf2060f56bf2df39c1b5dd7c132af2cff0c22ac398807"
+  },
+  {
+   "id": "ASB04_005983",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "prose",
+   "sha256": "caf699c9d25e718cc5c34fc3112707f5971c8c0d42f13745677fb03600e984f1"
+  },
+  {
+   "id": "ASB04_005263",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "afca9971ea49200d06a52ab66d186f69854775f75bb67b1d9c8b9de1b05c0231"
+  },
+  {
+   "id": "ASB04_002493",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "510394cd6215fa5d52943445bb38fc9bb5846e53e2bf43501bae30a7efe648a9"
+  },
+  {
+   "id": "ASB04_006561",
+   "label": "malicious",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "deb70035d675d53b7fa3d26b31c89bd0434d8b2d669c5afb61c613adbaee9ea9"
+  },
+  {
+   "id": "ASB04_000719",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "code",
+   "sha256": "43158f71d9cbad05116e5b8d7e3cdb9bb1b296bcfdf76396f8fafd9c5a0bc35a"
+  },
+  {
+   "id": "ASB04_000189",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "07068b2f682e47cb17ef7f8c72dcb480a8ef3761347abcb84cec152f3112e9b4"
+  },
+  {
+   "id": "ASB04_006692",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "faec9162054de10ff25f04bd1784e2b439b208af44718bcf6fa67d8036f5d3da"
+  },
+  {
+   "id": "ASB04_002108",
+   "label": "malicious",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "4486bcf7590b712daf9228d99f50e45e6411090b81c8388e4a0071773f9f1d81"
+  },
+  {
+   "id": "ASB04_006111",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "cf04b3c71b459f2ee080d5bd9d1054d12d9d64205263071b0c0700739fd6b20d"
+  },
+  {
+   "id": "ASB04_003780",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "a3b7edad3b2c212d96a021a5815bfbef5e40eb98725efdc7c04311021d44b7db"
+  },
+  {
+   "id": "ASB04_005688",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "c0dfe23a5229f5a969cf5ed98872c94da3bcebd94012374d9ce362a0e5f897e1"
+  },
+  {
+   "id": "ASB04_000279",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "60b82b9a8678f8f618ffdf6045f3527fd9e0ac74fb94b44443a7a193fffb85fe"
+  },
+  {
+   "id": "ASB04_002944",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "6176ee3eeaf26d8adfabe3eaaf9df5f5d1c2ce19ba23080081050988fcb5b5a3"
+  },
+  {
+   "id": "ASB04_004800",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "112c0971a05b729e13516f900c8bd2c84dbef6da16f412981f00838b68063f9d"
+  },
+  {
+   "id": "ASB04_002805",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "5cfefe0a9993d805ea97f18c0f0e739c72471838f3def633e0184d37f916fa75"
+  },
+  {
+   "id": "ASB04_000328",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "0c216eae6bf007a013c09bde054991e2e24564cc6a010970d4b75468e1bca500"
+  },
+  {
+   "id": "ASB04_005318",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "b20edad0ddc2dada784ebd3cc0c7cb9bfa3af9c07f628fd59ef0e5bfe6a12b30"
+  },
+  {
+   "id": "ASB04_002741",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "5b0ca206ab9861630484a65bca14656b842a4b6f356f92bf75b293e020dd20ca"
+  },
+  {
+   "id": "ASB04_005912",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "cf50ba36dfa0ef448443ec7642af3f14b6a5e08aa6f20fb8a98135308e4ce406"
+  },
+  {
+   "id": "ASB04_003396",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "71e8396c98192fae8595caffcf629f890041620de97b36f022507b646cba97ec"
+  },
+  {
+   "id": "ASB04_006142",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "d017cfcff5ebc3f4602c43e0d1deee983f85ddfe2ffea342a71aa35752caf89e"
+  },
+  {
+   "id": "ASB04_003909",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "82f6b474c125b9680552528b4f0f2a5c50452a1a0f218e3d3fe2e9d0d27f9788"
+  },
+  {
+   "id": "ASB04_000041",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "81211f4afddf067d0397694140c67f08d27e8e695b95f1ee40ab9700c3dab06c"
+  },
+  {
+   "id": "ASB04_002120",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "9141e4a692c4d0f8c35677fa7851518bb1e99906432d58dd3eaa0130d6b3d181"
+  },
+  {
+   "id": "ASB04_007349",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "prose",
+   "sha256": "80e437f310faa35779c430900ab87ad1a194835d2b2ffce640810586e544b689"
+  },
+  {
+   "id": "ASB04_004345",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "c10b236cfd643ab5ca739af897e934a38ba78b8d243f4cf2e613f7ff533a4fe8"
+  },
+  {
+   "id": "ASB04_006900",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "code",
+   "sha256": "ea429a621b3f81bbf3dba0ff83d7d4b289699a00534b5c5d9e8af61f7d31946c"
+  },
+  {
+   "id": "ASB04_001267",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "2a14193f01916bd73ffd91edd46dc7a0582acf318e0f56b1ef2fba33cd2ca860"
+  },
+  {
+   "id": "ASB04_001160",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "271ecfe995bd3a099c49c47469c34b7dd44c343d63851519de1b643d6131c818"
+  },
+  {
+   "id": "ASB04_006265",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "prose",
+   "sha256": "d4d297140c2af5003827c50aa0f469a6db04367740e3ad491e1d47cde0cbb42a"
+  },
+  {
+   "id": "ASB04_001347",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "2c9012ef5e9f35e4d51383b6194d13a875a2959cdac4b07b664e3440833819ed"
+  },
+  {
+   "id": "ASB04_006132",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "cfca78e340bea296f1347a68c8cee562a6ce23468b286aac9efff7dd11f3ba82"
+  },
+  {
+   "id": "ASB04_006460",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "db7fc52e5bb04f4d4338d253a86666f5aa991c1a841a01abe986dd7fe6af7928"
+  },
+  {
+   "id": "ASB04_000122",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "acd5670343061f36746b5d24040a4cef91750e027c48c046d93033f17dc646f9"
+  },
+  {
+   "id": "ASB04_006461",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "db8889052cf693a307fc6274602606866c94ed79a97e8021db13af277dad4b63"
+  },
+  {
+   "id": "ASB04_002048",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "42d346b5ac9db93c79cbbcc9e6838c62d1f73d33cac28b8964973877b10900b0"
+  },
+  {
+   "id": "ASB04_005409",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "b54e4206359c174e415dc2dda2123e453606d62610f249f7458adbabb4d3dbd6"
+  },
+  {
+   "id": "ASB04_003774",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "7ef4cf431c586e5a0f0f7e8ae182fb7de50d54e486d4cc1740ad32feb3c30c91"
+  },
+  {
+   "id": "ASB04_007142",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "08c1a8fc3c08c54725efcef6972a44b5e7f2d756ec1463e5d2d01b2cf7980340"
+  },
+  {
+   "id": "ASB04_001269",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "3b4db42b656bb370d7688e6c7614ef01549c4928970b651527cad108e011171b"
+  },
+  {
+   "id": "ASB04_000828",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "d7e655126f32fdd7929dc25c81eed731976f49cea73f888899d99ae92e701b5e"
+  },
+  {
+   "id": "ASB04_006823",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "prose",
+   "sha256": "2e2b2aa104b421e752ca77cb8ccb1f208412d1f0bad670d51774c22787044fc2"
+  },
+  {
+   "id": "ASB04_005975",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "1210121b98c1d9012ddd952cc2f765b02ed97d08342bd820c9282b79fe2daf97"
+  },
+  {
+   "id": "ASB04_006705",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "e3b9eb84142b19f0672b962ee9e0fcdace8bf58b168138418fb65c5707ab215c"
+  },
+  {
+   "id": "ASB04_006059",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "prose",
+   "sha256": "d496f142372ded0c5ba0c5a303d9de06e03e7e97333d81cef17a5de3ba185969"
+  },
+  {
+   "id": "ASB04_007342",
+   "label": "malicious",
+   "source": "MSB:SkillSafetyBench",
+   "kind": "code",
+   "sha256": "fac6996227c7ff6db6f5e41306b315694561b4ae22baf55d036c70e6d0e20db3"
+  },
+  {
+   "id": "ASB04_006523",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "a11765f73f045149ce82157a4502dcfaeb720c90446e9a830b804d78afd62eab"
+  },
+  {
+   "id": "ASB04_000164",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "3d9d9197a49c108a58b12c5dd8bf92ea51f0b5c44b754b1e5c94318b1c74bcf2"
+  },
+  {
+   "id": "ASB04_006689",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "caa618731589a691c7572f77cc36fefb1e16b077b9c39ecb7ec6f376f4a4d151"
+  },
+  {
+   "id": "ASB04_000734",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "887f11b684d4fb7bb0f23781ca6316de630f7457fef8e6683e30687212804be0"
+  },
+  {
+   "id": "ASB04_005835",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "c66dec8f1f74d54020add73232cc3f4d9b0a8033b7f39f4bda8aa75c699ef556"
+  },
+  {
+   "id": "ASB04_001230",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "prose",
+   "sha256": "b7da98bc31a7744daecaba4fe168d7d893d4b59d9db577b548227d65efd53d26"
+  },
+  {
+   "id": "ASB04_005554",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "bb960bcb072f89afb22e3e6e29762924f7ef2b42112a4289377f283e680a5339"
+  },
+  {
+   "id": "ASB04_005749",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "1a9613ef5750c8dbba908d35d858c115074880800dd6f18a3804c264c925e122"
+  },
+  {
+   "id": "ASB04_005691",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "c0f3cfad45b20636c21e24c0016b529d03ddcec3e8dc0245998655c03c91fbe6"
+  },
+  {
+   "id": "ASB04_001161",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "prose",
+   "sha256": "271f776ef6561ba2d7bff67d113224f77fccdaf01ba2a8b13c67b5f8b37c43a8"
+  },
+  {
+   "id": "ASB04_001302",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "04d526c1b1bac3333f391c327fe45a046247d9210f75fdfb5a8e4feab15ac05c"
+  },
+  {
+   "id": "ASB04_004717",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "9cd9585a77d249bdc0c02558aaef87fddbc7766c2138f16afa1d47ffd681ac8d"
+  },
+  {
+   "id": "ASB04_001581",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "54db351f73ab92ef8ab4ef11d6cd727058f1488268fe7c92f2cde25f16e2081f"
+  },
+  {
+   "id": "ASB04_002922",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "60b20b93021dacac79b0a8579710ba6fc7cea63e9f6556eb6815f53dacef7644"
+  },
+  {
+   "id": "ASB04_003047",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "645efd12ab4e81c1bfe452572a9e4fc85db4fc5f93f1625f17ef228d2642bcb1"
+  },
+  {
+   "id": "ASB04_007305",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "prose",
+   "sha256": "f9693e62be825acb71ef8dedd91bfec7d79d42290cb2c23920b75a4e16b1b329"
+  },
+  {
+   "id": "ASB04_003032",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "7d6d019c96ef793746d41e87cc39772678fb40c066d640d17a650b29a14805e3"
+  },
+  {
+   "id": "ASB04_005191",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "ad7dbf92bf390d87e11e6e8eed2e58ff59a26cecd3d410af86aaae879cc23c41"
+  },
+  {
+   "id": "ASB04_002986",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "ece6913e31907ac5c900b38f8a95bb6d066554870cdfe33895550b284333f553"
+  },
+  {
+   "id": "ASB04_005524",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "78d9f303e18520a45763983dbdf6eed4253c9fdcf2786ba5776cc783fcbfe8d6"
+  },
+  {
+   "id": "ASB04_006903",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "ea73a45504181fb13c21dcbc7e35e54dd5ac04d51c39d67768fe2a6ca8f8bf0a"
+  },
+  {
+   "id": "ASB04_004540",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "d59f411a891be6270ba173bce42c29edcabef09d2908546d86afc695c61ded53"
+  },
+  {
+   "id": "ASB04_000162",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "57efdb7dace690fccc76377365fca9dc4edc52dd3742b1968afd4eddc0f549d0"
+  },
+  {
+   "id": "ASB04_004362",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "code",
+   "sha256": "91e2a2396e7bf0f0cf3e4c3c4238ede796d92942db309184e03440ddc2242105"
+  },
+  {
+   "id": "ASB04_002502",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "52f3f42beac80b77b93a117866db7a3eeff458cfbc9914d8799db22e00104070"
+  },
+  {
+   "id": "ASB04_004648",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "prose",
+   "sha256": "aa3fec9645437b7f28867488e4dc446b4884a8b7449d5b22bc76d181f8547db9"
+  },
+  {
+   "id": "ASB04_003413",
+   "label": "malicious",
+   "source": "MSB:SkillSafetyBench",
+   "kind": "code",
+   "sha256": "726b29a4fa2456e2b6e63ffb8049e059e34008b752a283da47ce4a27964bbe11"
+  },
+  {
+   "id": "ASB04_006049",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "ccf61fbbf9b3bb11cf094196181ec2ba140f49f9b053f1e71e43ddeb524d59a6"
+  },
+  {
+   "id": "ASB04_004275",
+   "label": "malicious",
+   "source": "MSB:MalSkillBench",
+   "kind": "code",
+   "sha256": "8ed8fcd7441991c9106e6567ca27e21762a314691ea3f07e47bf97a96ae1badc"
+  },
+  {
+   "id": "ASB04_001904",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "3da6eb4a280b8e20dd4cb5d154b2a34b20a9b4db94cf0e91643ab9f18daf9ba6"
+  },
+  {
+   "id": "ASB04_001137",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "cb17d2fc4281e797bf2a902820b289aa84e9b9fcb4e74971af02e582f17a69ad"
+  },
+  {
+   "id": "ASB04_003090",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "659fed961bafc098ced3288a1ab669ebc9697afa94886cdcbb07e9a565b8364a"
+  },
+  {
+   "id": "ASB04_002712",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "prose",
+   "sha256": "599daaf71cae9e8054b3725b7ab444cca4508b88daade2f275fca22e2acb0bfd"
+  },
+  {
+   "id": "ASB04_005980",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "cad37705b6acce477736c347b9ab107cad652647e3f5136e4f81b362614e5814"
+  },
+  {
+   "id": "ASB04_004631",
+   "label": "malicious",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "16c7758d3a7dd2a28d58817cfbcb3fd709f6dc5ec585c0bab1b106fa327d94c2"
+  },
+  {
+   "id": "ASB04_003744",
+   "label": "malicious",
+   "source": "MSB:SkillSafetyBench",
+   "kind": "code",
+   "sha256": "997574e8611d38a9cb2b132875e9ac2f92e1fea5e7f1e20810471639f26ab601"
+  },
+  {
+   "id": "ASB04_006185",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "d1ffdf57789fb14fda01e4fb01f79eb372abf4b8e30be91cae1495a85bf6a0a9"
+  },
+  {
+   "id": "ASB04_004023",
+   "label": "malicious",
+   "source": "MSB:SkillSafetyBench",
+   "kind": "code",
+   "sha256": "059584a1f237e754604645e4992b94d97d1debb4c81cea2aa0bf0d45e583984b"
+  },
+  {
+   "id": "ASB04_003006",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "code",
+   "sha256": "635d648e8eb2cd6baaabaff57a8e74389b0fc8dd5bc97d03ea3586f659ce4db3"
+  },
+  {
+   "id": "ASB04_006027",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "cc2772dfb237aa65b8cf16fda5f130a9bd6584df13f3a1354d8d6e6e5a58e540"
+  },
+  {
+   "id": "ASB04_001127",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "prose",
+   "sha256": "260641b560cc15ec6a59c1c736a0b76f0c7a8ecb0283146af590b927ec3b866c"
+  },
+  {
+   "id": "ASB04_003306",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "code",
+   "sha256": "6e37573c449fe0ae37de07f819dec4336862d35e18233b44cd88bbcd4531a3f3"
+  },
+  {
+   "id": "ASB04_006382",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "code",
+   "sha256": "d90722118a24cdff099288b631d7700bc7c460050277bddd974fc67662ab3ce5"
+  },
+  {
+   "id": "ASB04_003049",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "code",
+   "sha256": "1f395204f74793a4b627ff5e04868d73edaa1fd258b1fee4eb9806c1416d27e3"
+  },
+  {
+   "id": "ASB04_002948",
+   "label": "malicious",
+   "source": "MSB:SkillSafetyBench",
+   "kind": "code",
+   "sha256": "618b7f48005871373fcfa7c97f1833d24e4eec13d805cbe44f7e43364ce45d8a"
+  },
+  {
+   "id": "ASB04_003887",
+   "label": "malicious",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "82790cbf92718ccf0734f84bc093bcd9f58209e5db172436c7a811d3eacf6554"
+  },
+  {
+   "id": "ASB04_003195",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "code",
+   "sha256": "69bf4b04b5afb305102814162ea0765d2ff3bacafb53a08f4d9b585913c32236"
+  },
+  {
+   "id": "ASB04_003713",
+   "label": "malicious",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "7cb37888fd7ea017c34b1fa44f045e2f5f5e1d05a771864d81e1df3a151654db"
+  },
+  {
+   "id": "ASB04_002145",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "code",
+   "sha256": "45c9a91c3f98d5dbbe78a5f90d97798dc5906312a492af8932145181aaa1a4ea"
+  },
+  {
+   "id": "ASB04_007313",
+   "label": "malicious",
+   "source": "MSB:AgentTrap",
+   "kind": "code",
+   "sha256": "a0fb04eab6d11cce9c517e6166df37f5bc50dc47ca0f147e38d0a0a74f78223e"
+  },
+  {
+   "id": "ASB04_001078",
+   "label": "malicious",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "24bbcd33121bc976b5bb2dd06654d11f53e72e91deb01f8f340fd1591d7c44a3"
+  },
+  {
+   "id": "ASB04_002550",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "code",
+   "sha256": "d088888536fc19b4ce77771b583e3c90470e16b41bb8498ff536513a9dd50047"
+  },
+  {
+   "id": "ASB04_003390",
+   "label": "malicious",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "7189755005e04196a1e9dcbc9f7a608b5fedc7399c799dbde757d54a0bab36cb"
+  },
+  {
+   "id": "ASB04_006319",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "prose",
+   "sha256": "d69efc4162f428ac1b2d09207e4a395256aa883fdce2dd92552bdfece04eba6a"
+  },
+  {
+   "id": "ASB04_002842",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "5e31c1c2671e7dada916369b9777e040ba08e485d128c3e436a82713f40b8721"
+  },
+  {
+   "id": "ASB04_002233",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "code",
+   "sha256": "48c40374ef0ed34a6b3bb0cf550cdc59247216c5c81543e98af5411a20796de5"
+  },
+  {
+   "id": "ASB04_003058",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "prose",
+   "sha256": "649b9d59d48c41474524a9b011c1916c2d31c313264114d54212eea0b5662c59"
+  },
+  {
+   "id": "ASB04_001778",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "code",
+   "sha256": "397ea08d4f15153e76b00a1d0f5bd8e9ef77412f5446c2779980e4c22f6fdb11"
+  },
+  {
+   "id": "ASB04_006940",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "prose",
+   "sha256": "eb9ef89db5c6b97abe9f7905a63e12654d5ab65232d33615af9e63abe497ae82"
+  },
+  {
+   "id": "ASB04_001715",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "code",
+   "sha256": "37e6263dcb508e840e6c78c66e507f9b75080777bc1dd8ae97bf68b58a6dcc25"
+  },
+  {
+   "id": "ASB04_004899",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "prose",
+   "sha256": "a2cc785f6d2e6be488564b7be20419a9cd439725a8100a0132e330a4400890d1"
+  },
+  {
+   "id": "ASB04_006313",
+   "label": "malicious",
+   "source": "MSB:SkillSafetyBench",
+   "kind": "code",
+   "sha256": "d68e5487b0920a7a83327af8a6b081607864e8cc33ef9041eb986cdab89dad25"
+  },
+  {
+   "id": "ASB04_004999",
+   "label": "malicious",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "a67b957c3a0cb6e4016f3242005e26725b9b28eb787c6a57ca5ae03c4a046375"
+  },
+  {
+   "id": "ASB04_001094",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "code",
+   "sha256": "253881c5c67fb7e530c61906b70cfbf2f483d1c005672d6f5f8837e1ca26cbba"
+  },
+  {
+   "id": "ASB04_003159",
+   "label": "malicious",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "6823dbab9235d1fded1eeea63741155f095be859712f118eeda35b800b34bbad"
+  },
+  {
+   "id": "ASB04_003701",
+   "label": "malicious",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "7c52ed41d066ac146f18e547713d7e590d1b2d6b2cdc6144bcd59d8f3f58e6ac"
+  },
+  {
+   "id": "ASB04_003082",
+   "label": "malicious",
+   "source": "MSB:SkillLeakBench",
+   "kind": "code",
+   "sha256": "657238a9dbcbb9c577036dba26ea0445e283ff9772e0018ef636878065b918f3"
+  },
+  {
+   "id": "ASB04_003376",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "4f59cab4ad36e3a341063be8b7cb6a3dece2734edb65a61b7d983cb3115b2c15"
+  },
+  {
+   "id": "ASB04_003197",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "69db5f22dbf9cb14251fa5a4cce0a5bd6165bb0b8ff64ca35bb66859117034ca"
+  },
+  {
+   "id": "ASB04_007273",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "f85e7e9ad5c8e0002fa6c5e172f20890e997985883db294388de444b3a15bc24"
+  },
+  {
+   "id": "ASB04_002359",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "code",
+   "sha256": "4d5c8c0b4249c47cda8d8b5c6400a085999c437c7c6837dfd81dd4ea01ec91d2"
+  },
+  {
+   "id": "ASB04_001046",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "23d019f9284a687a215fc2952a892f9c4f81d7360691ead127a9ab8b4471f43d"
+  },
+  {
+   "id": "ASB04_007241",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "prose",
+   "sha256": "f71a3fc930b08eaffd46122ffaae090806f644e64c06e27e81db86fe61829e4b"
+  },
+  {
+   "id": "ASB04_002580",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "55b993dd349d13c66bc9f094590b3a80bb38fb38e4d6ce80ebffa6c5922e0ef8"
+  },
+  {
+   "id": "ASB04_004850",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "a16ea2f911593616ec56fb6ed65c05d4dadd4267ffcc9e3fc6145988bb9d6449"
+  },
+  {
+   "id": "ASB04_005161",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "code",
+   "sha256": "ac80501a38d1c62fd053879204499de8b977ebbd0e5f09f9de277a9f50e54a00"
+  },
+  {
+   "id": "ASB04_000195",
+   "label": "malicious",
+   "source": "MSB:SkillSafetyBench",
+   "kind": "code",
+   "sha256": "d14448d79204a65f6201fba8236d265533bc33719693fb9f313a9ee5ab2d46cf"
+  },
+  {
+   "id": "ASB04_006703",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "code",
+   "sha256": "e3a420c7309ee26ef0de554bbb9536cf6c36ccbf1dce251263f586300c348ce6"
+  },
+  {
+   "id": "ASB04_007242",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "f71aedc50ee14e73db126a3916c783f38d7ad83c2f4ec17554508acf2ca6eb02"
+  },
+  {
+   "id": "ASB04_003746",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "prose",
+   "sha256": "7de67506f6b1657df1ced90f41db072b4e54c66c6fd85928ff08d4f59a2740a0"
+  },
+  {
+   "id": "ASB04_001790",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "39f2b25462a2b4a2af575fdcc299789c5d4eaf64341257cddd58bdbe69517c17"
+  },
+  {
+   "id": "ASB04_000548",
+   "label": "malicious",
+   "source": "MSB:SkillSafetyBench",
+   "kind": "code",
+   "sha256": "136206c7d2ddd9466ddf9d9e907df83955be219a33b6ad74a49fcce9f00aabab"
+  },
+  {
+   "id": "ASB04_000839",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "prose",
+   "sha256": "1ccad0873d0d7bbe2c5631559e8187e2c11138034862a0de538db07bee966913"
+  },
+  {
+   "id": "ASB04_003288",
+   "label": "malicious",
+   "source": "MSB:SkillLeakBench",
+   "kind": "code",
+   "sha256": "6da53a39cc29782a8079476c0f82565d5683a64f9839dc2a3a3ab9ad513df338"
+  },
+  {
+   "id": "ASB04_006695",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "code",
+   "sha256": "8b73372f73943101e66c361a45b2647f3f59486ccd4855cb9a972afc27346b71"
+  },
+  {
+   "id": "ASB04_005265",
+   "label": "malicious",
+   "source": "MSB:SkillSafetyBench",
+   "kind": "code",
+   "sha256": "afd1bceb2f78f0fda78a145029dc2af7f675a188a0fea28dea4a1895fea64a1a"
+  },
+  {
+   "id": "ASB04_004493",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "code",
+   "sha256": "1c11d6665a1134ca10a034514e361a4c3f4d55eaf89d4cbe3fdf177019624675"
+  },
+  {
+   "id": "ASB04_002628",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "code",
+   "sha256": "574d8c0d060f2715953b383fed408c97653814f8220d7672f50efdab6861ad4a"
+  },
+  {
+   "id": "ASB04_004213",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "8cb0907e6421502b8d3cf0cf5a22c96c61cb7d4cce754bb252ec4234e2b89a03"
+  },
+  {
+   "id": "ASB04_004530",
+   "label": "malicious",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "973c793cda7c77319a9e9227f261728d8d4ad8e1e2a4e75bf639a1ebe6b5c01f"
+  },
+  {
+   "id": "ASB04_001569",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "code",
+   "sha256": "3356cd8cdec6590dc8f13b76c6458764f71e55915277ecc5ca02314bdff2bcc3"
+  },
+  {
+   "id": "ASB04_006101",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "code",
+   "sha256": "cea8983517bec0d6128fe60963f2c84a4b7ebe456326a224fb1744b99b084091"
+  },
+  {
+   "id": "ASB04_002572",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "code",
+   "sha256": "556cb66b8c56792039cefdc22cbb3b6f07ff010a9adf0fc02d027a70153dcacc"
+  },
+  {
+   "id": "ASB04_004586",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "98e418dc6ddf68d4046c51cd14360d535aeb641b8e1a39cc423c07b054980e4b"
+  },
+  {
+   "id": "ASB04_006601",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "prose",
+   "sha256": "e00cb751bb6b43132033fbe790b900204b977e1d7dc49c1abf6e31749172cd3b"
+  },
+  {
+   "id": "ASB04_003838",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "8117a9dcd2991c53b94dcbdbef85b14363466a20309665b64b06d188677e5aa0"
+  },
+  {
+   "id": "ASB04_002412",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "prose",
+   "sha256": "4f32217bf2fac2c6eb26659fdbd5b10565497a731e6304d0fbfdfb24a35e61c4"
+  },
+  {
+   "id": "ASB04_004287",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "8f3e194962dcb778a1a2b77ea9417a7e6fecc65a199d9666b3d460c259499b45"
+  },
+  {
+   "id": "ASB04_002179",
+   "label": "malicious",
+   "source": "MSB:SkillLeakBench",
+   "kind": "code",
+   "sha256": "46f31821d581e1642ce06a36fd9aa44b6b9372dda5b7ce77a7ba0e96562f54ec"
+  },
+  {
+   "id": "ASB04_005231",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "aef6812b4b15080d2564a6c6f16497e6a5d3db619bbc3aac0c4db01050c44b5c"
+  },
+  {
+   "id": "ASB04_004352",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "code",
+   "sha256": "917d617cfc93ad0d22fb31f5b95ea30a9dd583401e1bc3a6abad4c1fe5bac0da"
+  },
+  {
+   "id": "ASB04_001056",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "code",
+   "sha256": "24234a8a2b442206fffa5982a6c2eeb0e7a61ff8ab4c20580ead767c22ff4d27"
+  },
+  {
+   "id": "ASB04_005317",
+   "label": "malicious",
+   "source": "MSB:AgentTrap",
+   "kind": "code",
+   "sha256": "c6404360ff32ae3beebdd0acbdbcf0d77eb92cf7f7301b40f9db8f39b4ba8021"
+  },
+  {
+   "id": "ASB04_003671",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "code",
+   "sha256": "7b332e5c8246431bc738bcdd28fdf8a1e975142e7425d48a15bcce0a7dc18eae"
+  },
+  {
+   "id": "ASB04_003365",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "prose",
+   "sha256": "7007edf4e4a68b4337d2b4590372c14e78bee78e2e27f129db1073a11684a9da"
+  },
+  {
+   "id": "ASB04_001799",
+   "label": "malicious",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "3a1b26e550c95533c2e44acff6c2a78e5683efcdd2496032cb7a9129b6c80f5d"
+  },
+  {
+   "id": "ASB04_006841",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "e8b3a1f9e6a54d0cd6e5c28589d80babf04b2501086c608426b059eb81f22704"
+  },
+  {
+   "id": "ASB04_006503",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "dd1ae7d77a6bd50d9f01e91d1aa5ec307bafc616c4da2cbf38d99ac3b611979f"
+  },
+  {
+   "id": "ASB04_005309",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "prose",
+   "sha256": "b1e1808595dec20e41d9d70c3a504afc562e09f4dbbd3149c6ce275e4037b03e"
+  },
+  {
+   "id": "ASB04_006133",
+   "label": "malicious",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "1f4dcaca0d36be8d5ba2658317a23209e9b77e5858de7c868423fee33e55227a"
+  },
+  {
+   "id": "ASB04_006628",
+   "label": "malicious",
+   "source": "MSB:AgentTrap",
+   "kind": "code",
+   "sha256": "e10695c3a834b60fc7e18a98225d27c084a1048c164031a37d0e33e57730ddb6"
+  },
+  {
+   "id": "ASB04_002865",
+   "label": "malicious",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "5eea01a07dec3398094c40023aece394049a6ad42754f3ee8c5114616d5dc2ec"
+  },
+  {
+   "id": "ASB04_004394",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "code",
+   "sha256": "92fbb134042ee4d72fd928b888f4581f82b74d86ff550dbce510228b1b9fa815"
+  },
+  {
+   "id": "ASB04_004531",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "prose",
+   "sha256": "974374598d29f34cc096ac1669cf54443f9af93a39edb673b5d0e06df7bbd51d"
+  },
+  {
+   "id": "ASB04_002760",
+   "label": "malicious",
+   "source": "MSB:Agent Skill Malware",
+   "kind": "code",
+   "sha256": "5bb8132d287452c0eded2e2a83c163c282ad8b4956e6005282f7df068e0fdd9b"
+  },
+  {
+   "id": "ASB04_004651",
+   "label": "malicious",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "9ad03b292007b50110abcc2f9eda722257b33168dfcb284891c8e020190d8bf0"
+  },
+  {
+   "id": "ASB04_001397",
+   "label": "malicious",
+   "source": "MSB:SkillSafetyBench",
+   "kind": "code",
+   "sha256": "2dcb443e52ad7f64b3f81cc738b71ea574576be686e08e0a1891a6d212a6a78a"
+  },
+  {
+   "id": "ASB04_002206",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "code",
+   "sha256": "4792a6f072eb3377f22e68c8ed641423d62c5a4bc05ba0f69057658bd83895ec"
+  },
+  {
+   "id": "ASB04_002419",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "code",
+   "sha256": "4f74ec540b6f5a6e6428f65eaf83bbf925ef077d4574cf24b71cae2257fd005c"
+  },
+  {
+   "id": "ASB04_004595",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "code",
+   "sha256": "9921bc5557d873405e5d1bf69ec7e4530e0a12c3295a4e7d312284deb7dd2c47"
+  },
+  {
+   "id": "ASB04_004291",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "code",
+   "sha256": "8f7df3422b216eb9a4b2e45fbf51619a5396d0c5e53744a9fa1f7ac539002da0"
+  },
+  {
+   "id": "ASB04_004110",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "code",
+   "sha256": "448bee6f1e3be394f3c0b5303a53f8702251f0d3ce9be1fedba26b09447149cd"
+  },
+  {
+   "id": "ASB04_003158",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "6822d1da20ed1c3198e0782fe60001b2d5034cde5c6f8d6a1d8194c34542a28d"
+  },
+  {
+   "id": "ASB04_001859",
+   "label": "malicious",
+   "source": "MSB:Agent Skill Malware",
+   "kind": "code",
+   "sha256": "3c4633c4555305ce630ae8a9d4c993bc7084c70a67774366ffd633e376b02b50"
+  },
+  {
+   "id": "ASB04_002238",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "prose",
+   "sha256": "48ecc28a2d60f606ad1e827231fad5f5f17a4b8e188a251f81a57a38e1f84f73"
+  },
+  {
+   "id": "ASB04_002890",
+   "label": "malicious",
+   "source": "MSB:SkillSafetyBench",
+   "kind": "code",
+   "sha256": "5fc197335515e4dee1fc524af039e16fe537574363abef2f06ab057a33543034"
+  },
+  {
+   "id": "ASB04_004302",
+   "label": "malicious",
+   "source": "MSB:SkillSafetyBench",
+   "kind": "code",
+   "sha256": "8fe819b0a9d79af9d5d38e1f6f7e8e0c5f7c7ed4a3010b9516e5060003c64e68"
+  },
+  {
+   "id": "ASB04_003321",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "6ed59c79ed710368e9eefa57bc9ca054f36b1f9339ade5fd65a8ee72303ea663"
+  },
+  {
+   "id": "ASB04_006312",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "prose",
+   "sha256": "d68daf60e5f1792dc01b7418a8bc7d0b80daac174d9ffd9f4b9b5f0452b2b22c"
+  },
+  {
+   "id": "ASB04_005293",
+   "label": "malicious",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "b0ffe5d8e25bf79c9afb705df2066a8f4e800c94fda7632f62c724fdd9ae225a"
+  },
+  {
+   "id": "ASB04_006882",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "e9c93887da6add6a1ef42c3646e423904c09cd10770987a6058a8e6bb90325d0"
+  },
+  {
+   "id": "ASB04_005354",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "code",
+   "sha256": "b32e85a3680bf25feef5ec7f1d649638dc22b9243664ecee1d383077b4f56516"
+  },
+  {
+   "id": "ASB04_005322",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "prose",
+   "sha256": "b22c4ab20c017c2727853379f7ab6c57788de5a301ae826936ddc7e0b5bd9415"
+  },
+  {
+   "id": "ASB04_002356",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "code",
+   "sha256": "9b153e8614c046aef02c5c551dae852f4c1fa0835ca3e82e59de8381e682c989"
+  },
+  {
+   "id": "ASB04_000559",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "prose",
+   "sha256": "13b007d36ce52b7f5bf259eb86168159b56950c72f3df422188a870fea3f74d8"
+  },
+  {
+   "id": "ASB04_004290",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "8f67566088d3a56185ae77fbf0102a8e4797428fe29f11bda4d8652ba41d5794"
+  },
+  {
+   "id": "ASB04_000144",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "code",
+   "sha256": "05aa002de151a778c35bcfce95d505cc978f10bdd73d584d8cf794630c611187"
+  },
+  {
+   "id": "ASB04_004791",
+   "label": "malicious",
+   "source": "MSB:AgentTrap",
+   "kind": "code",
+   "sha256": "9f620b3923b193411f13e0691466b7d43125c54a221e58b61a4ffa60afab01a4"
+  },
+  {
+   "id": "ASB04_000081",
+   "label": "malicious",
+   "source": "MSB:SkillSafetyBench",
+   "kind": "code",
+   "sha256": "9cce59637af67172dd6a4ea23bc6fa288ef007c3a88cd526e8c7fbf946f3edc3"
+  },
+  {
+   "id": "ASB04_002615",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "56e8ea98a15dedd3215b6efa472f7c6c8e80e3badc14014fbd443353e1c751c5"
+  },
+  {
+   "id": "ASB04_000046",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "code",
+   "sha256": "02180e44c657862cf5c66e9309626c70d257eebb038ebcf2f204fcba5ef7a1be"
+  },
+  {
+   "id": "ASB04_004174",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "prose",
+   "sha256": "8b5064de3292271507d911e126425e70563c1dec4128b9176b6e7b96c2fdc7b6"
+  },
+  {
+   "id": "ASB04_000169",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "prose",
+   "sha256": "066eeb0fa397c441a318e13798a5e7ab7536adeab47c2c91eb9a8b0499b71fad"
+  },
+  {
+   "id": "ASB04_004690",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "prose",
+   "sha256": "9c0cc1fdaf1e83dc17c518ca78bafde4386441f6d7d3a9650aae9b71a1224a17"
+  },
+  {
+   "id": "ASB04_003955",
+   "label": "malicious",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "84813cc353dd922f106ca8dd2cb3003bb700f5f8896cb22470e8bd126e306207"
+  },
+  {
+   "id": "ASB04_002331",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "prose",
+   "sha256": "4c6236e09daf4f81e2adaed396f4588c0251d9216ecec077d1b3f12518373f22"
+  },
+  {
+   "id": "ASB04_002611",
+   "label": "malicious",
+   "source": "MSB:Agent Skill Malware",
+   "kind": "code",
+   "sha256": "56bedf3bb4b4d013e055799e00731fb2a3274d1764f8fb033d9b4e96ca8cbb7c"
+  },
+  {
+   "id": "ASB04_003064",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "code",
+   "sha256": "64d8e3f897143263feaada96996c7ef21b7e2c70de5fdd43aaab08ec3f55d505"
+  },
+  {
+   "id": "ASB04_003855",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "8191a3b336afd192472ef51bc26fc3a428e59dfc0a7bb77406b97b42a14f72dd"
+  },
+  {
+   "id": "ASB04_002608",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "prose",
+   "sha256": "56a8a13913615affdf48f2547c75dd85b24e877c215251cb9a5be0aa8216f066"
+  },
+  {
+   "id": "ASB04_006769",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "e593861f21a1ce7fedfa5c57e553d386fca4b6544ff925b0c3a9436341010360"
+  },
+  {
+   "id": "ASB04_001934",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "code",
+   "sha256": "3ece54934b40d1e29559c526bfc9ec443b3e3f225dbd8d2d1b80a1b15f859ee9"
+  },
+  {
+   "id": "ASB04_004004",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "code",
+   "sha256": "864b4ea2230d9d2b33814f5af5756e677639d1d3e8012ebe8f849b0734d78b6a"
+  },
+  {
+   "id": "ASB04_004847",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "prose",
+   "sha256": "67066bfa52fdaed985f0b5e93814026f70468f9f7f270e594b5760eec368664e"
+  },
+  {
+   "id": "ASB04_005135",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "ab86c4e0b303d47886e119371d407afb7f6da0437ce8fd8eec3734a863d7bb78"
+  },
+  {
+   "id": "ASB04_005545",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "bb1b68aeba7ac4ce2a9e8a5de185ad32c79f84a968a60ead5e15e16201c71113"
+  },
+  {
+   "id": "ASB04_003947",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "prose",
+   "sha256": "8421cac4e1428acb3db63cf400a74c0f630a1ecd58e896a09f9d24511a9cb2c9"
+  },
+  {
+   "id": "ASB04_006124",
+   "label": "malicious",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "cf6aa867a2d76f5a571e886f9ef729245774c8a4bc62211d778939d81460046f"
+  },
+  {
+   "id": "ASB04_001725",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "38328d2e852c7b5377e8a9c5744594f9bb2d309abb5aed624ec54b62f7bac785"
+  },
+  {
+   "id": "ASB04_003790",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "prose",
+   "sha256": "7f7795bde820e759e9aabbeda2bf98eae2eda7994d3579c1d62541afcf6c396d"
+  },
+  {
+   "id": "ASB04_004271",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "8eb9857b91495d4c25b56f56b9e6c8a0d7e96f7b85dd18e2291c9fc26c34e0b5"
+  },
+  {
+   "id": "ASB04_002316",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "code",
+   "sha256": "4bedf5eddfcc4f67fc72813dbc5493413987a5e7ab46535a97fe983f99df0cb1"
+  },
+  {
+   "id": "ASB04_006778",
+   "label": "malicious",
+   "source": "MSB:AgentTrap",
+   "kind": "code",
+   "sha256": "e5f5c4129db328f5225e12db38c3b9a4cb4c131596d1d388642298a424ed5c63"
+  },
+  {
+   "id": "ASB04_005054",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "prose",
+   "sha256": "a7f7fc68940d8bcd894da01808fbb642ea6c39debead567143807a41ee944025"
+  },
+  {
+   "id": "ASB04_002784",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "code",
+   "sha256": "5c69640fbf7908a356f74d59ca65f4a7db969be4cd75976f4d9a3805bd17e915"
+  },
+  {
+   "id": "ASB04_004906",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "prose",
+   "sha256": "a3267696ca007913cf1d15e552e172adb9c594c2539f518479e1cae1504804d2"
+  },
+  {
+   "id": "ASB04_003533",
+   "label": "malicious",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "75e91b33ad4fb9a8e2dce8a6a2ad762b16e80b4de33b020430d527cdca58ff6e"
+  },
+  {
+   "id": "ASB04_001511",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "31a956838d058ee595d36852ec11470f1719aa5078a46334b6bba4a40959c4ac"
+  },
+  {
+   "id": "ASB04_006140",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "d01274c166a93e2bc72063828fc238057021d03b9b232ff753e78bbe185d4c54"
+  },
+  {
+   "id": "ASB04_004708",
+   "label": "malicious",
+   "source": "MSB:SkillHarm",
+   "kind": "code",
+   "sha256": "9c93b48c031b7eb77eb8d3842b446ebfd9c6bc9318e53f8df9134ea102d97d44"
+  },
+  {
+   "id": "ASB04_001862",
+   "label": "malicious",
+   "source": "MSB:Agent Skill Malware",
+   "kind": "code",
+   "sha256": "3c680e605181e4507d85bf3a50c6382aaaf82dd7db372a2c90824a6e8a856d4c"
+  },
+  {
+   "id": "ASB04_005055",
+   "label": "malicious",
+   "source": "MSB:SkillSafetyBench",
+   "kind": "prose",
+   "sha256": "a81152866268c96811a389094b5235e31472cf22197eadc014e230f86adb25a2"
+  },
+  {
+   "id": "ASB04_005680",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "c0c13d66f38857cd44340c7998194ae9c3b1cc2189b24a7a6fe2b3f9038b9e60"
+  },
+  {
+   "id": "ASB04_003224",
+   "label": "malicious",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "6ab998df8cd66a4026c7a46f07d8e847eae4514c627f6cabd6e5146b0aa6dbc4"
+  },
+  {
+   "id": "ASB04_001890",
+   "label": "malicious",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "3d47d677eda8548935095e927a9035e1325f40672952654f2e245e4a69a590ce"
+  },
+  {
+   "id": "ASB04_001880",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "5cf49956e9166a5b4f80337b86b645d094cbd443427ffa1743b18b54269987c4"
+  },
+  {
+   "id": "ASB04_005641",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "prose",
+   "sha256": "beae52c9a5da2bfcc247c90893edf9fda9778884d64ae8b0fbc1b26508f2cb6b"
+  },
+  {
+   "id": "ASB04_003832",
+   "label": "malicious",
+   "source": "MSB:Agent Skill Malware",
+   "kind": "code",
+   "sha256": "80f373a665d8bfb40a7851a24050d547683b3dbbf5abedda85fb58a4b88f7ddb"
+  },
+  {
+   "id": "ASB04_004356",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "10974a352ebba9d087b26c0e7d982bb78caf4b9ffbc1894b6bbdd24afb9f8ec9"
+  },
+  {
+   "id": "ASB04_004620",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "prose",
+   "sha256": "99ddba1caa5008b02514008c9d290599752d037da6558d40ed6ca380a1066b1a"
+  },
+  {
+   "id": "ASB04_002341",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "4ca51089e63aa24f915128d86abd9ae2a19038ebb5d6a88100947a0fa2bd6fb4"
+  },
+  {
+   "id": "ASB04_004637",
+   "label": "malicious",
+   "source": "MSB:SkillSafetyBench",
+   "kind": "code",
+   "sha256": "a056df0ea84d8cc50cb84ce87dcd3562f6c98aca1f8dae13395924919064acda"
+  },
+  {
+   "id": "ASB04_005915",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "c8caff3776f0b0fc7aae2c66353e2ee7a182a4d49f364e9f80c08080ae2492b5"
+  },
+  {
+   "id": "ASB04_001282",
+   "label": "malicious",
+   "source": "MSB:SkillSafetyBench",
+   "kind": "code",
+   "sha256": "2a79141c4d6e7a3bcc026b5379b4976341041781658c3f20a5b7512453e4b5a2"
+  },
+  {
+   "id": "ASB04_007105",
+   "label": "malicious",
+   "source": "MSB:AgentTrap",
+   "kind": "code",
+   "sha256": "f1bc1f8b8d1b937b92594bb0acadef5db60269254e815fd8f91f7d32d6d0fb75"
+  },
+  {
+   "id": "ASB04_007284",
+   "label": "malicious",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "f8aaca2efe06e8ab02e9379b86791264c097ac33e3b0c4b0006868ddf615a6e9"
+  },
+  {
+   "id": "ASB04_002703",
+   "label": "malicious",
+   "source": "MSB:Agent Skill Malware",
+   "kind": "code",
+   "sha256": "59599167a9c27722acc90f309250b74667cb930ff292950387a4134b98a65bce"
+  },
+  {
+   "id": "ASB04_001723",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "382ca6b93be4131beadac7454ebb0fc0e75677138df5ede00a092b510ae405a1"
+  },
+  {
+   "id": "ASB04_001502",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "3157eea9cef7fdd227d14b5edddf20ae17e395336156a5c3439e69a24a4a5a13"
+  },
+  {
+   "id": "ASB04_001001",
+   "label": "malicious",
+   "source": "MSB:Agent Skill Malware",
+   "kind": "code",
+   "sha256": "22277c443618b861c464bd2d2695f21ee2a1569db60390306f71512a8af12885"
+  },
+  {
+   "id": "ASB04_006756",
+   "label": "malicious",
+   "source": "MSB:SkillSafetyBench",
+   "kind": "code",
+   "sha256": "e539880d5dcc1ea1f111a8bbb2a6857fc98cd01f0867d45b82db08e77e478725"
+  },
+  {
+   "id": "ASB04_001417",
+   "label": "malicious",
+   "source": "MSB:SkillLeakBench",
+   "kind": "code",
+   "sha256": "2e8bf5325d12f6dfdf863d26dbb40f0fd612ee032dbf7a7960a6f79f405dd847"
+  },
+  {
+   "id": "ASB04_001506",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "3177977b49bab2c0b227c6e746f49cfb6bbe64aa10d228e8059d521e452f0da2"
+  },
+  {
+   "id": "ASB04_006270",
+   "label": "malicious",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "d522342887624ecb90c175fb197a512185d85be8ac93b2616371c84c01a77a39"
+  },
+  {
+   "id": "ASB04_001796",
+   "label": "malicious",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "3a179c47aadd5583497d3e41c4e3f6c2fa4f8e72b35e3a143cd1d78eec1689e7"
+  },
+  {
+   "id": "ASB04_005143",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "abddb2b0d53ea2aeccf76f163d58b186112358cacff6f0b0b81e1bf865a32f7e"
+  },
+  {
+   "id": "ASB04_004252",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "8e173edf65262ed0847ddb0489686a0f6ee983ebfb464f56cc6fcf24c99aa556"
+  },
+  {
+   "id": "ASB04_000597",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "14b44bb93be10a2ccf1de8ca1226ee26c47e43cf0219e2205b44c0fedcab6e9b"
+  },
+  {
+   "id": "ASB04_004520",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "96dee4aac1f0a752ce102d2cfe721e66b6d0d57450bddd6497f3e9b5dd6846af"
+  },
+  {
+   "id": "ASB04_002662",
+   "label": "malicious",
+   "source": "MSB:SkillSafetyBench",
+   "kind": "code",
+   "sha256": "5844ff1ec992916a8906df560601e033c77434506186600851e48f3cff90982f"
+  },
+  {
+   "id": "ASB04_006106",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "cec987a3bdde799f321280f9121c06e5b955566b982ec27576ca9ffa488a8170"
+  },
+  {
+   "id": "ASB04_007441",
+   "label": "malicious",
+   "source": "MSB:SkillSafetyBench",
+   "kind": "prose",
+   "sha256": "fdb5acb11f2f8b578ff4dc52c880694dffdc11c1c60c486e39ce623b2b89e739"
+  },
+  {
+   "id": "ASB04_003311",
+   "label": "malicious",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "6e58f8d0f393bb7e198c60e2f88c15d35066e9742f68174427ea28b6e61c9911"
+  },
+  {
+   "id": "ASB04_005940",
+   "label": "malicious",
+   "source": "MSB:SkillSafetyBench",
+   "kind": "code",
+   "sha256": "c97ac91f119899ad3e25a60c9cf353280566fc911e3cf152db2010f4b859ebd1"
+  },
+  {
+   "id": "ASB04_003022",
+   "label": "malicious",
+   "source": "MSB:SkillLeakBench",
+   "kind": "code",
+   "sha256": "63ad0516e597bbb7dff173ecb98a10853885062b1613dd8466156b901fe7b769"
+  },
+  {
+   "id": "ASB04_004303",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "8fea57de6d8f178db68faef99cd2afdb361e3c440ace32c6976f7ec126cbe690"
+  },
+  {
+   "id": "ASB04_005298",
+   "label": "malicious",
+   "source": "MSB:SkillLeakBench",
+   "kind": "code",
+   "sha256": "b1441b7221d8b62a63a8a7d7c842733f60088c1852a9609c6b1689f533160a7d"
+  },
+  {
+   "id": "ASB04_002790",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "5c89b5c57cf3f30e10990f80084738ecc5a4bfa02861ee003d52cce759a4aac8"
+  },
+  {
+   "id": "ASB04_006358",
+   "label": "malicious",
+   "source": "MSB:SkillLeakBench",
+   "kind": "code",
+   "sha256": "d82376b69b882af73c22cd9549bcc9392493f352d9f52da1dbe9ecd606ef5013"
+  },
+  {
+   "id": "ASB04_005906",
+   "label": "malicious",
+   "source": "MSB:AgentTrap",
+   "kind": "code",
+   "sha256": "3fe56acdd44be310a0cbf2bd1db985590f5286ef47dbc721aa7943c96268600c"
+  },
+  {
+   "id": "ASB04_006468",
+   "label": "malicious",
+   "source": "MSB:AgentTrap",
+   "kind": "code",
+   "sha256": "dbaac6c249b7ae2bf3f81620a1bbfde1f5279a24b26925b06ccda48b0eb39520"
+  },
+  {
+   "id": "ASB04_001571",
+   "label": "malicious",
+   "source": "MSB:SkillSafetyBench",
+   "kind": "code",
+   "sha256": "3367f1c9e650dcdce7e04bfc61660c72730a97cebd6d4cd0d28704829290921d"
+  },
+  {
+   "id": "ASB04_001356",
+   "label": "malicious",
+   "source": "MSB:Agent Skill Malware",
+   "kind": "code",
+   "sha256": "2cbe2bd9101b992c0bf8d01830c6f7b1832b37f552fa1401e0e373469d97182b"
+  },
+  {
+   "id": "ASB04_001045",
+   "label": "malicious",
+   "source": "MSB:SkillLeakBench",
+   "kind": "code",
+   "sha256": "de8133a9483862dd20d6e58d2da31cd95c3d9e5e10aca9c0a8739757453cc5ae"
+  },
+  {
+   "id": "ASB04_002167",
+   "label": "malicious",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "46878afd4bb3f3c0ec7c4bab3c9c53af37b5b9546d5da04b6ecc804ddf5c2ab9"
+  },
+  {
+   "id": "ASB04_006089",
+   "label": "malicious",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "ce4707612b2cde340df91f101cf1ff4af975ddf49e30cf2b4a8a4a8aa3d315c9"
+  },
+  {
+   "id": "ASB04_002202",
+   "label": "malicious",
+   "source": "MSB:AgentTrap",
+   "kind": "code",
+   "sha256": "477b837976181d2379762a62c5bdfc5344158bed9f57fd895cd7decc4473ac5b"
+  },
+  {
+   "id": "ASB04_001241",
+   "label": "malicious",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "29440a4d70afc0b04ea4545f9f38253aa79bf0071ec46273aa250e6288395ab7"
+  },
+  {
+   "id": "ASB04_003994",
+   "label": "malicious",
+   "source": "MSB:AgentTrap",
+   "kind": "code",
+   "sha256": "85f2863f7793a1d9f1e820dc76fda4bfb521179247b793cfc5a438dd39e1d28f"
+  },
+  {
+   "id": "ASB04_003429",
+   "label": "malicious",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "72b071d68699c929015d49d708a8b51d309f264ee01973700b8d7c8291babe91"
+  },
+  {
+   "id": "ASB04_003522",
+   "label": "malicious",
+   "source": "MSB:SkillSafetyBench",
+   "kind": "code",
+   "sha256": "75c14342dbe6626018735081c9b61c50efa2154592aef5a317509180348a44c1"
+  },
+  {
+   "id": "ASB04_002820",
+   "label": "malicious",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "5d86235c5a6c3569ff3b6aeafe277bb2d12ec742bd508778ca15193e5ce0694d"
+  },
+  {
+   "id": "ASB04_001245",
+   "label": "malicious",
+   "source": "MSB:Agent Skill Malware",
+   "kind": "code",
+   "sha256": "07fc1e496ca38f2feafc7ad772959cce31a6f9c6444cf2b22cd2bb0337bc60a5"
+  },
+  {
+   "id": "ASB04_004725",
+   "label": "malicious",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "9d19acf910de6869421da7d37c494b42e166e0f5264dfd3c280f9b8b9bcb61d4"
+  },
+  {
+   "id": "ASB04_003997",
+   "label": "malicious",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "861b5acf7ad62a20b13d084e94b15dcf4bcdd403d6867c9473b9e2c491ca83a8"
+  },
+  {
+   "id": "ASB04_001380",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "2d5ef9a672456918a02300f9a66c5c53a0bee3eaffd33cdd923cd99c7d0fe344"
+  },
+  {
+   "id": "ASB04_003871",
+   "label": "malicious",
+   "source": "MSB:SkillSafetyBench",
+   "kind": "code",
+   "sha256": "8215fbab0ec1089309f82749963dd19ad0384d28345850cc7bd6f6d56fd75d15"
+  },
+  {
+   "id": "ASB04_005838",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "c68a881dc1a5e8f0420ed2f3121c2b3e63aefc2e52c09e78887baca90cd0ac16"
+  },
+  {
+   "id": "ASB04_000489",
+   "label": "malicious",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "1157e5bb2a0646164eb18173a7805fdaf58bcb1d7abd659227f6c63eabc5a74c"
+  },
+  {
+   "id": "ASB04_002582",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "55bf117c632390cd7c865eacfe36bb14f4c719ae09515947508c9b4707aa8996"
+  },
+  {
+   "id": "ASB04_006033",
+   "label": "malicious",
+   "source": "MSB:SkillLeakBench",
+   "kind": "code",
+   "sha256": "95e31d22d52207dd72c44ebe6ca6f7dc8ae44329ba6c04229c9ed1fd43cec702"
+  },
+  {
+   "id": "ASB04_006923",
+   "label": "malicious",
+   "source": "MSB:SkillLeakBench",
+   "kind": "code",
+   "sha256": "eae89994cfaac4a4cf3dd95a0c0fe78ab830bca9ac70b390abda2c539f5af1d3"
+  },
+  {
+   "id": "ASB04_000683",
+   "label": "malicious",
+   "source": "MSB:SkillSafetyBench",
+   "kind": "code",
+   "sha256": "1794f3c0b667efaa19e5fe22624ffbd01645c44f6b7abed4748c76d80e7edf61"
+  },
+  {
+   "id": "ASB04_000233",
+   "label": "malicious",
+   "source": "MSB:SkillLeakBench",
+   "kind": "code",
+   "sha256": "089941c0fc84870c637d0bd41ceb13e3493ac6e0c8884dc7f28227bbceeb90bd"
+  },
+  {
+   "id": "ASB04_003489",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "748868e06e46fd98c2c219d9e2cc05bcd4109d86c768c2e819c150e1c45020bd"
+  },
+  {
+   "id": "ASB04_006438",
+   "label": "malicious",
+   "source": "MSB:SkillLeakBench",
+   "kind": "prose",
+   "sha256": "da997ce6b1360afe25bc510a8763ebad8609ec313d5a1cd91d2110f9bee914e5"
+  },
+  {
+   "id": "ASB04_006373",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "d8af90a424a2db3c4eef4b4eaecbf318d0161c0406d1cf69f2b5f0c7f08a0605"
+  },
+  {
+   "id": "ASB04_005517",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "b9f86c15829dec9f1e03b6a54d0a5a1909db93c80bc51d6eba8579ed8b36b60f"
+  },
+  {
+   "id": "ASB04_001660",
+   "label": "malicious",
+   "source": "MSB:AgentTrap",
+   "kind": "code",
+   "sha256": "35ed1f586c9808762573a42c5faed572f80b7542c1625fd5d2c221be499f4266"
+  },
+  {
+   "id": "ASB04_005259",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "af9b66f772798ed060c6e8fc26c2a6a1651ea8cf89819faebcf99317649379a9"
+  },
+  {
+   "id": "ASB04_006709",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "e3c0daa59a9b84e37e1ba6fbe184f3806c717b96373f33a2ab4a135c4fc237b8"
+  },
+  {
+   "id": "ASB04_004559",
+   "label": "malicious",
+   "source": "MSB:Agent Skill Malware",
+   "kind": "code",
+   "sha256": "9849f5be388617a53b24165fa56230762b2429f2337d99691dfe21859121a6c9"
+  },
+  {
+   "id": "ASB04_005375",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "b40e81f1242851de67f2e79c909a1ad4e858d59b109fe66759e906a2b7080304"
+  },
+  {
+   "id": "ASB04_005138",
+   "label": "malicious",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "abacd5b2468379d7d9606cb898c84696c70b3a6a16d5fa8f7813fac1c8591526"
+  },
+  {
+   "id": "ASB04_001630",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "3500b1d8b3d3c5bf3099d3b6efd444a9f7b12dc21115496d74adf98f84416c81"
+  },
+  {
+   "id": "ASB04_002518",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "3fefd78687125242efd08bc468dba882217364a94149f95cda81de542f5cb1b2"
+  },
+  {
+   "id": "ASB04_006196",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "d273d7c5a122b5ea5a945d9d1c9a707652fafbd3d69c83247ebb896ec5109fcf"
+  },
+  {
+   "id": "ASB04_003222",
+   "label": "malicious",
+   "source": "MSB:SkillSafetyBench",
+   "kind": "code",
+   "sha256": "bf4bae8a025be3d361d42cc61db69e5a9461d2220eda5a86df0f059f0f346b7c"
+  },
+  {
+   "id": "ASB04_006452",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "1c008360601fbe6e04c5c579ac59999bdefa4fa3da5c19f945f44f1b423e1d15"
+  },
+  {
+   "id": "ASB04_002011",
+   "label": "malicious",
+   "source": "MSB:SkillLeakBench",
+   "kind": "code",
+   "sha256": "4172373faa99842b00132bc932552326ecfae5bcdbd3ae64020c807a7a69c6c5"
+  },
+  {
+   "id": "ASB04_001042",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "23ac8954c502cee5f02734a6119df770e52b0ec754f11c0412ebe38387c1d2bc"
+  },
+  {
+   "id": "ASB04_004635",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "9a7834a1e116ebc52ef01479ff671e33198bbbc2899dff9ca6e7cb94117d8c25"
+  },
+  {
+   "id": "ASB04_003688",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "7bab7a52f174a0fc5918b79465037311959b7e696b6a35ebe97109dbd7ef88a9"
+  },
+  {
+   "id": "ASB04_005148",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "ac1891513495db63a7580994808521f08208b5111a8d551aa035e0c29e976fed"
+  },
+  {
+   "id": "ASB04_000034",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "0177d22729252c4c01c0dcb58d0bdb6458749c5d22878c2d421ed208b878f381"
+  },
+  {
+   "id": "ASB04_004894",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "a29d129f1d0de90b12b41d815fe2e6dcef56d21cc75886e83825aa678f95f738"
+  },
+  {
+   "id": "ASB04_005347",
+   "label": "malicious",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "b2da302175f7613a14b8542385c628e4638ca0f4f514cf1c0c0970fd48bc9683"
+  },
+  {
+   "id": "ASB04_001481",
+   "label": "malicious",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "30ae6c67432eafbb6ad8039e03361b048679a1580251a10e58c53507c2addcac"
+  },
+  {
+   "id": "ASB04_000754",
+   "label": "malicious",
+   "source": "MSB:SkillSafetyBench",
+   "kind": "prose",
+   "sha256": "19b9f5cf18adfa7eeac9b5ebcbb387cb768fef8c3d183747615bddd90f33c999"
+  },
+  {
+   "id": "ASB04_001436",
+   "label": "malicious",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "2f36e926a37cc2cfbe9a3bfb8d90d2d0a388bb748182c79f43a33a1cfc006953"
+  },
+  {
+   "id": "ASB04_003426",
+   "label": "malicious",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "7297ac9da7c540e19ce5a55b3bd256c3143f26a2b1689f870d12043c1b883a66"
+  },
+  {
+   "id": "ASB04_001437",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "2f3874488e4b80dce11a5daa0b499cb51a09616fcf9beb0f658035554ccfea4d"
+  },
+  {
+   "id": "ASB04_002035",
+   "label": "malicious",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "42881521b3f0757a723a88aa901351bda0ea646984c8b9d49698b3f42466f249"
+  },
+  {
+   "id": "ASB04_005070",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "a8b196d5717813909a852f9a2ff51ad008f46e82f04d1f1175db9c45b8e77112"
+  },
+  {
+   "id": "ASB04_004158",
+   "label": "malicious",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "prose",
+   "sha256": "8aeca1b3377c85680cdca6fc3fd6b345e150e42d411a7c8ff576cc73c15e3900"
+  },
+  {
+   "id": "ASB04_005747",
+   "label": "malicious",
+   "source": "MSB:SkillSafetyBench",
+   "kind": "code",
+   "sha256": "c2d75b09f51674559f9ff53559ed50d950ec23dcd1143746a96f70730e6cb68e"
+  },
+  {
+   "id": "ASB04_001441",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "prose",
+   "sha256": "2f42aacfbe21acab5403137b78868750dfdae1fa9cc7d9052b2628671f73a6a4"
+  },
+  {
+   "id": "ASB04_001568",
+   "label": "malicious",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "66273fae2360d0f21ab4bfa67a18603924d871ce8eb0879de6682d143afb0e8f"
+  },
+  {
+   "id": "ASB04_006979",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "ed5cb211da894faf93ab82f87177c3a884717cba9aa76278c7cbc8e67ae08159"
+  },
+  {
+   "id": "ASB04_001651",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "1b3787dacbb931fa11461bdb8ebaa7cabce8d1b2e8940480ef4706287d231262"
+  },
+  {
+   "id": "ASB04_002995",
+   "label": "malicious",
+   "source": "MSB:SkillSafetyBench",
+   "kind": "code",
+   "sha256": "62fc01c48a45960432eb59340d2ee78cf1eb65cae62888dbad73f708aeb6c3c2"
+  },
+  {
+   "id": "ASB04_006895",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "ea2416be4ce284ca2a3badcf9141ceb9d1d312cf472a7f887b1eee34dc369c39"
+  },
+  {
+   "id": "ASB04_000294",
+   "label": "malicious",
+   "source": "MSB:Agent Skill Malware",
+   "kind": "code",
+   "sha256": "865a0b9a91d48d1d95b341d1ea0a0d8965fde54d3f649a7d884dcbd7fe77b934"
+  },
+  {
+   "id": "ASB04_003636",
+   "label": "malicious",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "79f56991056459fcd96f9f34ddae6bacca04c6b5ab842bae2f74c8cc75302a9c"
+  },
+  {
+   "id": "ASB04_005884",
+   "label": "malicious",
+   "source": "MSB:SkillLeakBench",
+   "kind": "code",
+   "sha256": "05c08f1e9cb85c0a67e9a00ed3a30632af078bec67f2a5d1a15c42b697c18845"
+  },
+  {
+   "id": "ASB04_000790",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "1afa6594f796b129984d14e3e957c70754fdf02d784464f128cfc84ab822881c"
+  },
+  {
+   "id": "ASB04_006437",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "da791d1c56020b448b586f7d7abe7857f1fd5a4e89385bca442e56e6deef8396"
+  },
+  {
+   "id": "ASB04_003462",
+   "label": "malicious",
+   "source": "MSB:MaliciousAgentSkillsBench",
+   "kind": "code",
+   "sha256": "737b768b10f92f1e74377854a562c5dc0032e5a687f9921848581bd71aba53dd"
+  },
+  {
+   "id": "ASB04_007141",
+   "label": "malicious",
+   "source": "MSB:SkillSafetyBench",
+   "kind": "code",
+   "sha256": "f33181dec11307e29f9041ef141cf55725d9a982ff2f8e4d7d6ebdab7b115486"
+  },
+  {
+   "id": "ASB04_001961",
+   "label": "malicious",
+   "source": "MSB:SkillSafetyBench",
+   "kind": "code",
+   "sha256": "47760dcdd6fbec3b057306302eafdbe1531e42178dc48290e6f317fbf7feb60a"
+  },
+  {
+   "id": "ASB04_003818",
+   "label": "malicious",
+   "source": "MSB:SkillSafetyBench",
+   "kind": "code",
+   "sha256": "8084f87ca63d8d738867d6f811e12821945d42965875187c3d982c08cfe8172a"
+  },
+  {
+   "id": "ASB04_001823",
+   "label": "malicious",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "3af9c802401716ff4e4fbb1097b2ad787ccddab8dd9ae05c365f02a54d4d3b88"
+  },
+  {
+   "id": "ASB04_004577",
+   "label": "malicious",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "98ac0ce9a719152167e475f91d71dff793b01399e6056997aea150dd3ff3337a"
+  },
+  {
+   "id": "ASB04_004256",
+   "label": "malicious",
+   "source": "MSB:Agent Skill Malware",
+   "kind": "code",
+   "sha256": "8e2b13713c2c6270175b3f533620dfbc2c527b182ee15df96eb68a8e1ee864ab"
+  },
+  {
+   "id": "ASB04_007157",
+   "label": "malicious",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "f3f6df58dabe60e53c4bca43d325faa0a6dd09ca2954f78f13b9d3576bc92fd3"
+  },
+  {
+   "id": "ASB04_004592",
+   "label": "malicious",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "991761faeee220d20696cc28dae71b50473f5d5c0d913b52ed13df0378f17a04"
+  },
+  {
+   "id": "ASB04_006347",
+   "label": "malicious",
+   "source": "MSB:Agent Skill Malware",
+   "kind": "code",
+   "sha256": "3aeb262f7052049eae1432a3ca488d6a8ca87547aac4cef4d98819977d3c89a7"
+  },
+  {
+   "id": "ASB04_002843",
+   "label": "malicious",
+   "source": "MSB:AgentTrap",
+   "kind": "code",
+   "sha256": "5e385a8ba66d43acf5158f9d1fe9780a6ee9db2f7fd79d1644973f33c66300aa"
+  },
+  {
+   "id": "ASB04_003957",
+   "label": "malicious",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "84928893386ef79fbccea45ae7459a876f395c2fb6123697585189ba5e8f4a60"
+  },
+  {
+   "id": "ASB04_001841",
+   "label": "malicious",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "3b97340e56e4c5cd4e2e13bd99fea2c435835a547d6a908488afde165d789bf6"
+  },
+  {
+   "id": "ASB04_001816",
+   "label": "malicious",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "3abe14bc089901a1865d2a5fb2d4c1225504802595ac85248c4cfea88b3a2be4"
+  },
+  {
+   "id": "ASB04_001098",
+   "label": "malicious",
+   "source": "MSB:Agent Skill Malware",
+   "kind": "code",
+   "sha256": "25438a51162fdb901e310ee0dd454f403348d037e678781156cf1fac32ea418a"
+  },
+  {
+   "id": "ASB04_002600",
+   "label": "malicious",
+   "source": "MSB:AgentTrap",
+   "kind": "code",
+   "sha256": "12d544c7b4faae41b4cc15c5b619dc5485f7bb6600e5b2463fdb21041a2615c1"
+  },
+  {
+   "id": "ASB04_005622",
+   "label": "malicious",
+   "source": "MSB:SkillLeakBench",
+   "kind": "code",
+   "sha256": "bdd5356c77c8391476014934b5c3719185264ffd0c64193d76929bdcd560575a"
+  },
+  {
+   "id": "ASB04_005596",
+   "label": "malicious",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "bd23dcb75fda554cf86d0610221e1fa80ca652ecb5022ff9e1ea1525d683179e"
+  },
+  {
+   "id": "ASB04_001381",
+   "label": "malicious",
+   "source": "MSB:SkillSafetyBench",
+   "kind": "code",
+   "sha256": "2d600bbb90444614c798238d77895526d54251ea091c5a8190406e3c7ffc2cfd"
+  },
+  {
+   "id": "ASB04_005538",
+   "label": "malicious",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "baf1d93566163fa999bc64da8c1222ffb2a587d07e353e2e90264939a027de68"
+  },
+  {
+   "id": "ASB04_000952",
+   "label": "malicious",
+   "source": "MSB:SkillLeakBench",
+   "kind": "code",
+   "sha256": "8ac230503b46059f6acb141668b112ba4260dd4a044ef7a63e93ab0282d91c0d"
+  },
+  {
+   "id": "ASB04_004990",
+   "label": "malicious",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "a61f461baad23471b845a7d91246834fadfbaac58488c3eea272bf8eabcaf022"
+  },
+  {
+   "id": "ASB04_000451",
+   "label": "malicious",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "103e8c08ed4b875badd31dd60ab0c0441a395e5cd571a1a9bf38d01429405acd"
+  },
+  {
+   "id": "ASB04_007196",
+   "label": "malicious",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "f5bc364854734572d6ba30941de3fc484fec188f89c5233f47f52736bc4fe6ad"
+  },
+  {
+   "id": "ASB04_003932",
+   "label": "malicious",
+   "source": "MSB:SkillLeakBench",
+   "kind": "prose",
+   "sha256": "839bbc048c4722e5a0a4d3de186d918de0e5fa81ffbfe9869cbb19ea7fda3955"
+  },
+  {
+   "id": "ASB04_002554",
+   "label": "malicious",
+   "source": "MSB:AgentTrap",
+   "kind": "code",
+   "sha256": "54b85508bcad98d2cc723adff9d102ce750006dc514fc7436bc3319d984cce6b"
+  },
+  {
+   "id": "ASB04_001062",
+   "label": "malicious",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "243a059b381865b1abe87b1cbeeca518ad12a5afc7e946772b5e7f036ba3adfb"
+  },
+  {
+   "id": "ASB04_006168",
+   "label": "malicious",
+   "source": "MSB:SkillTrojan",
+   "kind": "code",
+   "sha256": "6febc70e57301912e9c2a5d098b2ad07d97819cd4492721e4ebbf4bbeb78e4b1"
+  },
+  {
+   "id": "ASB04_000983",
+   "label": "malicious",
+   "source": "MSB:Agent Skill Malware",
+   "kind": "code",
+   "sha256": "217675527e28e6b7121c59e63b2adc87147d6f8be4f620d4c50d213f333471bc"
+  },
+  {
+   "id": "ASB04_006918",
+   "label": "malicious",
+   "source": "MSB:SkillSafetyBench",
+   "kind": "prose",
+   "sha256": "eac36174f9cc80295fa86ff8ca8edda8d93f342dd67ddbc52f7d9d9db78f5998"
+  },
+  {
+   "id": "ASB04_005036",
+   "label": "malicious",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "a78724720326a9251db000fda78722b555e12ef25b1c62a19c424e3580043d16"
+  },
+  {
+   "id": "ASB04_006655",
+   "label": "malicious",
+   "source": "MSB:Agent Skill Malware",
+   "kind": "prose",
+   "sha256": "e1e4241c413ab5cee6b5f442393444b6e43dc726feec333835d9114efd477af6"
+  },
+  {
+   "id": "ASB04_006295",
+   "label": "malicious",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "d61dea9a4e751d3e41794b4c3e9fde579ba4076a43d8a9997b8a6fb03a3f579d"
+  },
+  {
+   "id": "ASB04_005997",
+   "label": "malicious",
+   "source": "MSB:SkillSafetyBench",
+   "kind": "code",
+   "sha256": "cb5d0e3509556ae6073363b058e7bd8480c332958b621c61a4e70c501bfe2287"
+  },
+  {
+   "id": "ASB04_005654",
+   "label": "malicious",
+   "source": "MSB:Agent Skill Malware",
+   "kind": "code",
+   "sha256": "bf601133008b043948b65d4c47fb75cea1b0566af988437f68deb3ccfe93d6a4"
+  },
+  {
+   "id": "ASB04_001012",
+   "label": "malicious",
+   "source": "MSB:Agent Skill Malware",
+   "kind": "code",
+   "sha256": "22cdcc3eaf7460ed07b2b9dbc1675cdf779e3c414ffa13c78caeefa7c912b05d"
+  },
+  {
+   "id": "ASB04_006263",
+   "label": "malicious",
+   "source": "MSB:SkillLeakBench",
+   "kind": "code",
+   "sha256": "d4c553506f364a71bc54c2ccc1e13c4b3f619fb806f8753da3254fde2c95b0d6"
+  },
+  {
+   "id": "ASB04_002175",
+   "label": "malicious",
+   "source": "MSB:SkillSafetyBench",
+   "kind": "code",
+   "sha256": "46c668658042524c66483293495fcbb26a7c44bd37f37a8972daeff2aa8845f8"
+  },
+  {
+   "id": "ASB04_002459",
+   "label": "malicious",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "515b5dbbe6bd323eee0cc31d27619fbffdac3de78541f3a2fd83819a386d0420"
+  },
+  {
+   "id": "ASB04_006304",
+   "label": "malicious",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "d6518df2a8271bb6c1451d53afd6a1939d8207424a355f4dc0544cdec220cd3c"
+  },
+  {
+   "id": "ASB04_003303",
+   "label": "malicious",
+   "source": "MSB:SkillLeakBench",
+   "kind": "code",
+   "sha256": "6e31f26f2625354a41138f99affcba002807700e3e36161d0f62b1a0623fc282"
+  },
+  {
+   "id": "ASB04_002514",
+   "label": "malicious",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "537d93393af2d97096f4640a44bf47551416fe94ff144101f0101474a7c65b3f"
+  },
+  {
+   "id": "ASB04_004721",
+   "label": "malicious",
+   "source": "MSB:AgentTrap",
+   "kind": "code",
+   "sha256": "9cfbf64a8b8aeb28abf154ee69e01ddfbad15ba7e05fa2dc34e8e3ba2d2774d2"
+  },
+  {
+   "id": "ASB04_003326",
+   "label": "malicious",
+   "source": "MSB:SkillSafetyBench",
+   "kind": "code",
+   "sha256": "6eec8d03f1ef21e5b7a7af65649922b24b7f60cc08b8a9573a6bba1225af5cf3"
+  },
+  {
+   "id": "ASB04_002643",
+   "label": "malicious",
+   "source": "MSB:AgentTrap",
+   "kind": "code",
+   "sha256": "57d4018dd39f03a846f4402c1ab638ace55fd1b72eddd4e75ab2c54087e01ca1"
+  },
+  {
+   "id": "ASB04_000893",
+   "label": "malicious",
+   "source": "MSB:SkillLeakBench",
+   "kind": "code",
+   "sha256": "1e5b8ad368d37cde678bc03ed63814dcea56ab581495ceff9e7ebbf7653f8faa"
+  },
+  {
+   "id": "ASB04_003427",
+   "label": "malicious",
+   "source": "MSB:SkillLeakBench",
+   "kind": "code",
+   "sha256": "72a4e317c55f88cf2ccd2c455fe28188b4356fa88696ef9a5efc1d1c21cbaf9f"
+  },
+  {
+   "id": "ASB04_003488",
+   "label": "malicious",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "747ea2074dd20866c240f739207f4f3a4c6ff940861241ad32f8140780fcd5f1"
+  },
+  {
+   "id": "ASB04_002136",
+   "label": "malicious",
+   "source": "MSB:SkillSafetyBench",
+   "kind": "code",
+   "sha256": "458bc8bce6e4459c4d8259f8810f5cc2de25fea39ebdb71c85b45149b399ee89"
+  },
+  {
+   "id": "ASB04_002749",
+   "label": "malicious",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "5b4a41ac745e232927e0e6a58387fc443d342cd03a82d73b9b6fa7537fd7cefc"
+  },
+  {
+   "id": "ASB04_004100",
+   "label": "malicious",
+   "source": "MSB:SkillSafetyBench",
+   "kind": "code",
+   "sha256": "f0b2d9d0650f783448a48208906ee7190f08475a83af49042453fcdb7aed81a3"
+  },
+  {
+   "id": "ASB04_001135",
+   "label": "malicious",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "263f099d33629c711dd795cdc77996219d90e7d744af2d5c6a6a1e9748c822b3"
+  },
+  {
+   "id": "ASB04_004249",
+   "label": "malicious",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "8dfa05aae826d68178b4734e9e79e02add4cf210b6f80a8ca0996f355a221da4"
+  },
+  {
+   "id": "ASB04_007007",
+   "label": "malicious",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "ee51d1cc307c3cb5d89fb4fe7dece1151899b23ea67f25fd540046de5684a319"
+  },
+  {
+   "id": "ASB04_002049",
+   "label": "malicious",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "prose",
+   "sha256": "42d89a30ed89294360bf2638aa420710bc27fd983f42e6b22821d44602f10abe"
+  },
+  {
+   "id": "ASB04_002219",
+   "label": "malicious",
+   "source": "MSB:Agent Skill Malware",
+   "kind": "code",
+   "sha256": "4829d6a892b2aa79f2370d644e6c34b78545af5bb7534b559657dd54ace2aa2e"
+  },
+  {
+   "id": "ASB04_005848",
+   "label": "malicious",
+   "source": "MSB:AgentTrap",
+   "kind": "code",
+   "sha256": "da43d46039e2ef3eee0517e43536ebec8569b6228271477c7bafa2b2ec273390"
+  },
+  {
+   "id": "ASB04_004339",
+   "label": "malicious",
+   "source": "MSB:SkillLeakBench",
+   "kind": "code",
+   "sha256": "913c433c00f889f8d467bf3d09a5f848d78e7e4975600a6807b04a65c166d057"
+  },
+  {
+   "id": "ASB04_003108",
+   "label": "malicious",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "664f028c5213a69590f41d329ca2ce5beb43b19eba8c3de47f652f2c0467f76a"
+  },
+  {
+   "id": "ASB04_002498",
+   "label": "malicious",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "52ce05c0726f02e38f3cc05357994c1597041f2310a68f2348f990c7ca325236"
+  },
+  {
+   "id": "ASB04_003128",
+   "label": "malicious",
+   "source": "MSB:SkillLeakBench",
+   "kind": "code",
+   "sha256": "b06f97adb3625fe1bdbe2a6799148a675cd3cb26a1f564f297e0f122d6c80a73"
+  },
+  {
+   "id": "ASB04_002545",
+   "label": "malicious",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "5488f041251366de729b219a08d389db5c271356edf333d4f93e5f345bc58595"
+  },
+  {
+   "id": "ASB04_004969",
+   "label": "malicious",
+   "source": "MSB:AgentTrap",
+   "kind": "code",
+   "sha256": "a570e3fadd5ac02aea84686695a4fe93e5b5f5dcd8e0dcb8422a26a6600c74ff"
+  },
+  {
+   "id": "ASB04_004884",
+   "label": "malicious",
+   "source": "MSB:SkillLeakBench",
+   "kind": "code",
+   "sha256": "a23c93bba3958dd723aeca762795c8f18c2a1bbe14c3ad06ce1ca2ef18b79ca8"
+  },
+  {
+   "id": "ASB04_002266",
+   "label": "malicious",
+   "source": "MSB:AgentTrap",
+   "kind": "code",
+   "sha256": "4a2cdfadb9ff7bd0e900f372bc283f326d0d27a7bab1db33f9330e6bb7d71c09"
+  },
+  {
+   "id": "ASB04_005696",
+   "label": "malicious",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "c12f05de94f7fc3742d78103cd28c9c15eef862ca97ea7098befd16f7a40ceb7"
+  },
+  {
+   "id": "ASB04_001259",
+   "label": "malicious",
+   "source": "MSB:Agent Skill Malware",
+   "kind": "code",
+   "sha256": "29bb293c814d60f86c63c375ea10e65e3016e0efcb0d64106022d61f33ca18d9"
+  },
+  {
+   "id": "ASB04_001496",
+   "label": "malicious",
+   "source": "MSB:Agent Skill Malware",
+   "kind": "code",
+   "sha256": "3132104d9fe0e06c8e91c3e9ec27339d0d8573c2c845c20f6a5b2fc7e5346cc2"
+  },
+  {
+   "id": "ASB04_000743",
+   "label": "malicious",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "194e7d767c79112fb714da95d1e9d663598e699ef488b058c6e62123a2475d00"
+  },
+  {
+   "id": "ASB04_002985",
+   "label": "malicious",
+   "source": "MSB:AgentTrap",
+   "kind": "code",
+   "sha256": "628dbac17e789d75a1def8412a3cb4772dd940db8dcbbeafae562f584803fb47"
+  },
+  {
+   "id": "ASB04_001621",
+   "label": "malicious",
+   "source": "MSB:AgentTrap",
+   "kind": "code",
+   "sha256": "34d78deb774c1214638b0d7a6a49be389864165b50f79375216c07ebc74166d9"
+  },
+  {
+   "id": "ASB04_004224",
+   "label": "malicious",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "8d1b90149dd9d602edf22d87eb843f333f4e3ffc56bc15a3242881b18535848a"
+  },
+  {
+   "id": "ASB04_002897",
+   "label": "malicious",
+   "source": "MSB:SkillSafetyBench",
+   "kind": "code",
+   "sha256": "5fe2cf5cd41c09eedde50dc977e260de9c7bdef7f8fea392097f37cec209d7dc"
+  },
+  {
+   "id": "ASB04_000524",
+   "label": "malicious",
+   "source": "MSB:AgentTrap",
+   "kind": "code",
+   "sha256": "12a72777cbd0408b5e2e366a08ef60004aa7ad44fb75d1b59e2a0db292ad8d59"
+  },
+  {
+   "id": "ASB04_002571",
+   "label": "malicious",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "553d807c3e5e79787971e70110e43a7a4835171efffdc68e90f0e9c67d665684"
+  },
+  {
+   "id": "ASB04_004950",
+   "label": "malicious",
+   "source": "MSB:SkillLeakBench",
+   "kind": "code",
+   "sha256": "a489367ef7504d1ca70791f8b21df0d15fc1e60267b3168a25ef8a6d7166a837"
+  },
+  {
+   "id": "ASB04_003242",
+   "label": "malicious",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "6ba164871b5b6ad6cfa0f6625a0ef1f41fb92b51c19cd97505e79154c72514b7"
+  },
+  {
+   "id": "ASB04_001196",
+   "label": "malicious",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "7249658f009d37bc437c21b44a5540489b659abff3a3eff26478ccf4df5dafae"
+  },
+  {
+   "id": "ASB04_004515",
+   "label": "malicious",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "96b5749314fd06555992a97b855da5d3b6f6fd57d6d6a85d8d3512d8708c9bff"
+  },
+  {
+   "id": "ASB04_003380",
+   "label": "malicious",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "682896d5484cf1d72a53cccc73cce6cf54c2086c19d2a75b778642259a4c4b39"
+  },
+  {
+   "id": "ASB04_002038",
+   "label": "malicious",
+   "source": "MSB:Agent Skill Malware",
+   "kind": "code",
+   "sha256": "0adde5051be9ddfce936a7af672161be3bafb836a6619fdb1a826003c4b1da22"
+  },
+  {
+   "id": "ASB04_000098",
+   "label": "malicious",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "959a8fb32d9e653da1f969e79eddca0a0db595602af7f871968e39ad126a9af3"
+  },
+  {
+   "id": "ASB04_005714",
+   "label": "malicious",
+   "source": "MSB:Agent Skill Malware",
+   "kind": "code",
+   "sha256": "c1ed4bfd3a52adc728e41dd1a9f94377156e08c41e747893fe7290c68e40d782"
+  },
+  {
+   "id": "ASB04_005640",
+   "label": "malicious",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "bea7753ff391e61569dd33958f50446224c97c48135368b137d45c40137dd76e"
+  },
+  {
+   "id": "ASB04_002949",
+   "label": "malicious",
+   "source": "MSB:SkillLeakBench",
+   "kind": "code",
+   "sha256": "61981b8ebd85e071876558a4f9d31ea602ce191976b19b7e2477ff679d1748d9"
+  },
+  {
+   "id": "ASB04_002804",
+   "label": "malicious",
+   "source": "MSB:Agent Skill Malware",
+   "kind": "code",
+   "sha256": "5cf8b1609ebe678292f3ac868909a5ece7b9174cbb0ca3a327d73520346c181f"
+  },
+  {
+   "id": "ASB04_007675",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "11af3b0abacd30c27a00a3b402b3be20f74bf96a7ab79c0735b5f046a83cd00d"
+  },
+  {
+   "id": "ASB04_008629",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "f04d46192d92c3705d2f9f4a8eedf1a621d97c6c2eadc06d926ddf1cbac9e6c0"
+  },
+  {
+   "id": "ASB04_007931",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "2fba1c9fef42b58aace9369b19fb28f1b79128751ef89ae7d884e567a3a1c427"
+  },
+  {
+   "id": "ASB04_008630",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "8289e101027499c40a0f6c1b93bb151a3e9704c0db6ed0000bd9e6fbf7a4613b"
+  },
+  {
+   "id": "ASB04_007700",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "14f172b1802f825f8bcc0d587ee1f44c9dff65ebf195b731180ec74b3afc5d01"
+  },
+  {
+   "id": "ASB04_008798",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "98b235bbdc427d0d728db6287743b46fc5c97529bff4cabdeb072ab40856bd84"
+  },
+  {
+   "id": "ASB04_009097",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "b72bef8dc3938dbd6d3793e98e9714cdda4ba08ca129dea65db649a337fc44bc"
+  },
+  {
+   "id": "ASB04_009332",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "prose",
+   "sha256": "d2d71dad11838ada0ffe81f874b17651741db720bdf7d7e551e2ab45174fabfc"
+  },
+  {
+   "id": "ASB04_008751",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "a47c654324241299d26f37dcfb9a524859609a561c32fb5e7cb5d739aa6b467b"
+  },
+  {
+   "id": "ASB04_009083",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "b63c18d9bd55dfc343eb32961fed39ad392d9d184424ac24f48159dc2b75c899"
+  },
+  {
+   "id": "ASB04_008669",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "893821eca1c4e61a7426851751d385a21c99be4a351084957a7c98690e3cd5c8"
+  },
+  {
+   "id": "ASB04_009513",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "e7306476880d233ebf1a469cb47fb482be25e0bdded18c44f09e04aa3f6c1081"
+  },
+  {
+   "id": "ASB04_009627",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "f4017738b1fec9079782cb84f49cac9a3b14768626dcf935038cafb9a279968b"
+  },
+  {
+   "id": "ASB04_008551",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "prose",
+   "sha256": "7809921eb6ab804eda8903b340845bfbeba1bd1c21ee0c8d3aba824eefbedddd"
+  },
+  {
+   "id": "ASB04_007876",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "28f1af7775905338c94af809627f051b540c4d326cafad93ca74d34f112ef5b2"
+  },
+  {
+   "id": "ASB04_009410",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "eb15f44646528f3a087ce023329ae699c1b6e803662af68338e1eb1c0406b59b"
+  },
+  {
+   "id": "ASB04_009677",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "f9ceec3c52cab5e462a4033f7254b3aaa09c2eb8c481374edf59cd3cca7af1f6"
+  },
+  {
+   "id": "ASB04_007632",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "prose",
+   "sha256": "0cdf8268c1dd9b11991d64635dad20e63659d22caf05cf63d636cb47774d72d3"
+  },
+  {
+   "id": "ASB04_007614",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "prose",
+   "sha256": "0bb162e63148530991584df1ae8c06fbb33cd4d642c115101ef491e530d6705c"
+  },
+  {
+   "id": "ASB04_008310",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "5c70b7b4ac081b2e02b486d6c55d27ce056df26d899d73b45dd009206941e79a"
+  },
+  {
+   "id": "ASB04_008734",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "8fcfe967f8718296c4052fb3780060ed733d58481941411dd433fba7f98b6808"
+  },
+  {
+   "id": "ASB04_007711",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "prose",
+   "sha256": "1652d639ab7921593b4913fe9b66484e20fea271b3eb1b423214ae9d2b605588"
+  },
+  {
+   "id": "ASB04_009296",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "cf177a789c2a92750c497edff5186a2c5c1f65729b3adac46067dcf8ad8095fc"
+  },
+  {
+   "id": "ASB04_008214",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "4fb4158bda80dcee4f1b11e0071f0686881a6c9245a89f59da4e5d2f31c48de7"
+  },
+  {
+   "id": "ASB04_008864",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "prose",
+   "sha256": "9fc68314f3745eb83954ad897e476ea4dc982a154581c54fa18e88bd314187f8"
+  },
+  {
+   "id": "ASB04_007873",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "prose",
+   "sha256": "53be546fcfa7c7f5c7391adacef58c37e81695e9cbe07cdddf1e6f57b84128f3"
+  },
+  {
+   "id": "ASB04_009686",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "4b8f73be5cd2d3c3902c7ec791d675abbd80dd1392860f6bfaca717cdcea214b"
+  },
+  {
+   "id": "ASB04_007992",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "36bbe6b2101a339bb53fe373c07989544837a864e71fd07258edc53ba4b9868c"
+  },
+  {
+   "id": "ASB04_009016",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "b03000178c99cd880c99a957391e6c9c4f3b481133f825ca640f6e9f402d994a"
+  },
+  {
+   "id": "ASB04_007921",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "2eedb9e410a624f5af6e2ce789e554d7d5c90eb4eb59e50cdc64960d4296adc4"
+  },
+  {
+   "id": "ASB04_008442",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "abfcaa04c699b7e59558c9e9afbcb53e2d07964fd3da688b8a4a1cd46c3c5fce"
+  },
+  {
+   "id": "ASB04_009515",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "e750f8c309c638952ceae8fef9cbd56578dd9af8c67fdf167b6d91e4da9546fb"
+  },
+  {
+   "id": "ASB04_009067",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "b504e72667d5adf22a896763205d4071d698d99fa82eb7c496ba3b2cecca4137"
+  },
+  {
+   "id": "ASB04_007909",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "772f1d64b2819d4f366d866545149c3a5530c8e0cfa0beb957d2dd657e88fe29"
+  },
+  {
+   "id": "ASB04_008726",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "8e5a86aa92990a706512a6454e3a6a6345a950b454e75a11d048210d0a2ca830"
+  },
+  {
+   "id": "ASB04_008085",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "405a5d4fc29729a0a26f56434b3888e0fcaa6232ebc99832e8b30fcdd60b7147"
+  },
+  {
+   "id": "ASB04_008768",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "prose",
+   "sha256": "9442e320c40b9b952047d12897e66f23d5cccdb2d41efd25549a34ecf7a56d78"
+  },
+  {
+   "id": "ASB04_008408",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "68cd8d8afcffdac2e8d1a40ced3c6263312023748365648ad75787161ecd7900"
+  },
+  {
+   "id": "ASB04_008232",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "9d6c8822577020dd62594e7fca4c11feb2be1af36f62d3f190984fe5aae1f6d1"
+  },
+  {
+   "id": "ASB04_008383",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "647bb7708dba1cb983cf3c3474734ce26b781ecf8a62d6af23732ef836ca388c"
+  },
+  {
+   "id": "ASB04_008437",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "6be53dcf40a6d49f53d34cef9218265c0a335b5a35f4ab35c49f7cbf8e687ed6"
+  },
+  {
+   "id": "ASB04_008703",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "8b9fdfafc1fbc7000dc974e70474e3c0b6220002e6cbadbcce0332240a6d65d5"
+  },
+  {
+   "id": "ASB04_009535",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "e97cc733a5ab652b4d2f4013b58b03a32ca676b64d295d1a62f58c592bd7ab1f"
+  },
+  {
+   "id": "ASB04_009119",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "prose",
+   "sha256": "b9acb22a3ab7854e2faf23dad6618a5ba2b58241ae54785011e360e8cb6529ef"
+  },
+  {
+   "id": "ASB04_009315",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "1e460328e3a47dabc24b55296fd052109ef61094cfafe84a78afe2047bddc510"
+  },
+  {
+   "id": "ASB04_008785",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "913b75913c60509ec910e7c140ecb0c1fed028ac9330d700538bcc1da0ccdcd4"
+  },
+  {
+   "id": "ASB04_008792",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "97c1eb0a71672d48202e9025955860b144ad17e5dd3bdb81e24be101fec27976"
+  },
+  {
+   "id": "ASB04_007617",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "a9776614c1584a7c053d8c31950dd5eadd77cb2d180a4a88d523f7a831350400"
+  },
+  {
+   "id": "ASB04_008880",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "8cc57fbfef760a0774aeb85c845ca61b1a40ce9f5d663d6984f0e3b0c7f20fd3"
+  },
+  {
+   "id": "ASB04_007571",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "prose",
+   "sha256": "074656a46608a57a0bbbbdffec1470342ab81b2bdc5ccd7534a57675cbf82016"
+  },
+  {
+   "id": "ASB04_008542",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "7721be98908a4d17c1455e90f01c357c018e1e1bbbde2bdeb0c6810a8de8971b"
+  },
+  {
+   "id": "ASB04_009334",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "d30038bbf15f7f12c927a935aed1b1e4692b73ad61cc79ffd243381588c6ba25"
+  },
+  {
+   "id": "ASB04_009424",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "dd7f6e05f4b63e87c2544d7e28f2493dd1e7c00ae88269af5eef3e06a5719520"
+  },
+  {
+   "id": "ASB04_008166",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "ae78b343bd661be77f25417d1a7aa95ffd268e2cdb92dff8e295262158e8f3b8"
+  },
+  {
+   "id": "ASB04_008636",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "833c4e160b79680fdf623090fe530b06ad2650e76c76a85b1842c7ccfaa38c8b"
+  },
+  {
+   "id": "ASB04_008716",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "b0c1de426bcfcf0a7e544ee0be4a0c83399825c97dd85f777ea91cd206aefeb1"
+  },
+  {
+   "id": "ASB04_007626",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "0c9e0f59dbd80640829e0fdeae58e01926281c90c66b1a37b1926eeeb4d9a450"
+  },
+  {
+   "id": "ASB04_009249",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "c8b53626e0da4a4c23562490842c37fb5a83244e9aee0470fd4b8c2819a07280"
+  },
+  {
+   "id": "ASB04_008079",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "3fb861a0e99a28f13a87fd7624e7e6d6ad216a3bb360402067bbf977f03e2b09"
+  },
+  {
+   "id": "ASB04_007974",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "081f89076476eff1b6d853e5f2969802d00cd9b5ddcd1d2b4cc5293fe45d3fda"
+  },
+  {
+   "id": "ASB04_008912",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "a3c044ef6443ada6d314160fc5f21a91238957c2ee53c0f5e88f53a4f35e5767"
+  },
+  {
+   "id": "ASB04_007934",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "prose",
+   "sha256": "300821fff7aeea43b4f0f643fb76552ceb509bf707b5739787ac0df3c0410cfa"
+  },
+  {
+   "id": "ASB04_008813",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "9a210cbe555656cc17212c9096acacc75f60e3319aac252b80c432a727c7d681"
+  },
+  {
+   "id": "ASB04_008198",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "4d6cf93de0388365df7faa82762f64b585291db1f720a3006e27e0f1c966cd06"
+  },
+  {
+   "id": "ASB04_008391",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "654458da0a0a7b677249e1351bea6915d5d84c8d7e6e50cffb8737414f15050d"
+  },
+  {
+   "id": "ASB04_009139",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "bc6343cc8cc14dcf48d00821a055b978013905bfca5f08e52642de2aaf3137cd"
+  },
+  {
+   "id": "ASB04_009286",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "ce0e3ee5b8973000c2ae41c121b50c93283fbc4b194f7c5e6cd13e6b9d4a53b6"
+  },
+  {
+   "id": "ASB04_008934",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "prose",
+   "sha256": "a62ddf822298eb3b39f423dacb7af2336732d16a1ea87c0b7bff9ef2d3295200"
+  },
+  {
+   "id": "ASB04_009558",
+   "label": "benign",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "eccb741247ab1a9d7be4e11e5ea4dca8aabf91b74297b71b5cd83a8f59c4dfc8"
+  },
+  {
+   "id": "ASB04_009473",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "e24a1878e623df60e49dc2b83eda1fb576618ecdb599f7131aa1c468ec52f738"
+  },
+  {
+   "id": "ASB04_008355",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "8c980d29db47742e5c628bbe1644891043ac37f8db536b9c152b701391a54106"
+  },
+  {
+   "id": "ASB04_009412",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "dc13e2de3141851576c4b18f2e59d1428ac6ec2ed1cc0bfcc93e3f9c9b283039"
+  },
+  {
+   "id": "ASB04_007798",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "1f8a4b25573a5fdd09b68320e0dbfe88895a7a15e25fd60d6a8860616fe2daa3"
+  },
+  {
+   "id": "ASB04_008804",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "9956df28a8db01656752c26cff5bc505dee0474a3e358ecaec668fc838f21bf6"
+  },
+  {
+   "id": "ASB04_009593",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "f0932b67d3d814ac89af8deb72928567d8a4ad7a15949c84b794131899e0b16d"
+  },
+  {
+   "id": "ASB04_009171",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "985a003a1452957dd1017f86446346689127fc553a44bd4a4211c7ccc96efd91"
+  },
+  {
+   "id": "ASB04_009290",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "ce9e29c57a289813170c1b260c85bb88d2878cf3e9f4f5c4f852634664d35439"
+  },
+  {
+   "id": "ASB04_009148",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "9b34e6b87b3503bf37e335a66b41d94ec6c24331dd31d12992150b7e324f76e2"
+  },
+  {
+   "id": "ASB04_008884",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "a194cf4a79f541ac0d37a900e2e3abde164f44b2f602849c33600036744dd3d9"
+  },
+  {
+   "id": "ASB04_008285",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "6dbc65a0777ee1cc209dfe81d03b0a8b893e7e7be4ca66fc6ba420cafd0afb50"
+  },
+  {
+   "id": "ASB04_008069",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "3f0fac22b7ca25df2a54e6d217af289133545542774d85f7c59b7fb9ab8197cd"
+  },
+  {
+   "id": "ASB04_008701",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "8b633c2b72dd74164f2e071070599017edc44ffcdbaabbcda784c78a41d8d662"
+  },
+  {
+   "id": "ASB04_007959",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "prose",
+   "sha256": "325f5e48708255282c8e8d57c428d33abf8ad97d16b2cd12bc24b03c5302c3a0"
+  },
+  {
+   "id": "ASB04_008454",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "prose",
+   "sha256": "6de07c9f1248d8adcbb64317856e9708247126cf7e8bd3454cef2892c1bca95d"
+  },
+  {
+   "id": "ASB04_007810",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "20f92e14cecbe1a9866e7322a5e6301ff01a0ddc7122d200c68b21a8fa7468eb"
+  },
+  {
+   "id": "ASB04_008489",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "prose",
+   "sha256": "714d33590951409333dd1d2a692c7d76923ce0d0e169c7ab43c842e5ade2a8da"
+  },
+  {
+   "id": "ASB04_008685",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "893537a7c119076e9d813be195f55bd269e8b1c2d0ad8f0e66c230eba8809051"
+  },
+  {
+   "id": "ASB04_007874",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "28d6043ad91acd53cef7e8d5e4005f5183db4f29caf389bae89118ff8eef5e96"
+  },
+  {
+   "id": "ASB04_008144",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "47d1054e34faaec46af922f7d757931d18efb1d692d7bd81185598fdf1c9784d"
+  },
+  {
+   "id": "ASB04_008082",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "4010f44874588e2b54ce534e97c262f428431513e41aaecd1ae05f91585314af"
+  },
+  {
+   "id": "ASB04_008231",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "51a9c9731b3c4789a5f2082d9de8546be0ccb5dd6fdde6a44b7a90be3bbb6dec"
+  },
+  {
+   "id": "ASB04_008982",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "ace1f177ae3c80505de9def37ca49e06473bef09d06fedb9bea8ec3a3c8b35fb"
+  },
+  {
+   "id": "ASB04_009638",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "d21e28caed5e110e77b806f60e7972b5ed18cbe4c2a3b8964392b0f0d405163b"
+  },
+  {
+   "id": "ASB04_008427",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "3518535a32e1ef76b0b1f558e6027eb0aea8e7e88a735aec457df318c43ea1c1"
+  },
+  {
+   "id": "ASB04_007803",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "20431a5ed6c1f6ada6cebbfd6177d8a19f7d1a4ed066b2fddc04b6fafbd987ff"
+  },
+  {
+   "id": "ASB04_007927",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "2f6cd3607e5f74432cbbd0625a074ef58d6ad9ffaa9bc9a7ad8e2405fb4a6d03"
+  },
+  {
+   "id": "ASB04_008168",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "prose",
+   "sha256": "4a39ca59643d0639b469ccbd1daf9ab7016835eb44c10babe286582e162fb59c"
+  },
+  {
+   "id": "ASB04_008770",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "9450dd931a9d99a9943bc4dfdee76072a3b28ff2769ef1fc4d91a8395fffd981"
+  },
+  {
+   "id": "ASB04_008766",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "9d7ee60a18c61773bad62b1e52cb55a8f492e0e6270c39eb8b75a6419eec07b0"
+  },
+  {
+   "id": "ASB04_009544",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "eaef40cc94802f9f0a659fe0bc2640b17f67a395f13fcbe8f1c86c8b2f9a000c"
+  },
+  {
+   "id": "ASB04_009731",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "prose",
+   "sha256": "a8020c739f52725e5544fd35891d2bb97d0d23bd46a3d701fd17182a6be24301"
+  },
+  {
+   "id": "ASB04_009481",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "e2ee6f138fbb2001c8e8d1a0de9e567e52e1822f6a2434f164c7abe5b3957061"
+  },
+  {
+   "id": "ASB04_008985",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "ab5fc07f6b957b8173bdaac9401afdfc87632fea5ead796311a483b936c2adc8"
+  },
+  {
+   "id": "ASB04_009176",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "prose",
+   "sha256": "c0e056f7c8d988a83cdd2e17f40353d8621e342a6d0a6453998f552c6cff7e38"
+  },
+  {
+   "id": "ASB04_008836",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "9cda228ae01744b9df2bdd2ef86368ed2fe6fe57986f31fde1313af7e4ecebf3"
+  },
+  {
+   "id": "ASB04_008634",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "prose",
+   "sha256": "82f4e9b4adf34fc11bdad7146481a64cef071cfdd5347b2935e23e6b552ef5f1"
+  },
+  {
+   "id": "ASB04_007912",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "2dc838ee093c4c669a52a46619b12005879a8e73327e763b9e2b9131b9e3fe79"
+  },
+  {
+   "id": "ASB04_008465",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "prose",
+   "sha256": "6f07fd4d6cbf96c00c66ef859c2981efb0795315069f55af30c0ae4f28b77690"
+  },
+  {
+   "id": "ASB04_008053",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "3d3fd7ff37f65dce5afe35c02cf5bae4a94b36db043b31b638e3eb9b5cdfa637"
+  },
+  {
+   "id": "ASB04_007742",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "49e0b2bb79629ea4515a4de3210c8434184acab2ecbc38c7923bc5f262d84ac4"
+  },
+  {
+   "id": "ASB04_009492",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "e44f919b49af191244edaebba2a1a52d5125453e0882bc4e16410a1117922c86"
+  },
+  {
+   "id": "ASB04_008091",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "40ec154cefb925da92686211ace29097a120a06eed6e881cf0895b44d5f9c843"
+  },
+  {
+   "id": "ASB04_009420",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "prose",
+   "sha256": "dd02f394fb259c886ed0b22e6dc9c7fda870ffca69fd64bfbc39ad4676877095"
+  },
+  {
+   "id": "ASB04_008803",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "992f00d3fb352a3ce6b20a6fe9e735761cc6ffd5ec53a0e58b941ea86b440fd7"
+  },
+  {
+   "id": "ASB04_008433",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "6b9599bc23fa2708e5a7d9e4a8618faa39311cfee8ed2c37384c12598aadccd9"
+  },
+  {
+   "id": "ASB04_007512",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "00ef6c74467f8400f2d62674d05f6f5e2914c350cd4eeac4e069910a93333b88"
+  },
+  {
+   "id": "ASB04_008314",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "5cf79943364b4d2edfde36c35c6152135b316ec4301edacb94fc3f5d4ffd6706"
+  },
+  {
+   "id": "ASB04_007748",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "a417f843b26929d739e72612d3757ebd335c0f503bb5cb1d76d6a7b1933cc1a4"
+  },
+  {
+   "id": "ASB04_008041",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "3bae721c65573ec05c55da66d1b20317dc61aab0b8f9aa5f1e5390071fba74f4"
+  },
+  {
+   "id": "ASB04_008104",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "42463c02a0d6938443780c71416be5bd0f242a809f104eb631ec6d7c2b8e6737"
+  },
+  {
+   "id": "ASB04_008019",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "39a4fa9965b4d6760b09050e5bbe6eaef354a670f3783d120ba3f154ad9966e9"
+  },
+  {
+   "id": "ASB04_009645",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "f61a2acaf6079d37742fe57cbeb13f0b3568dbab7a3a743988a2e215117cd05f"
+  },
+  {
+   "id": "ASB04_009494",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "e491eec0d64f8620c0b5d0612460d10630e77f269c32daba993a178c85b3dc8e"
+  },
+  {
+   "id": "ASB04_007562",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "fbea41224c1112e8fe5f000ca28c4d13f9f3be8e69202bf163df7826cc10b343"
+  },
+  {
+   "id": "ASB04_009546",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "prose",
+   "sha256": "eb26fcbad339e8f1f3d3fa12fb55a05cf3b34c1cf6333df9161e0d3af3e8a562"
+  },
+  {
+   "id": "ASB04_008920",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "a432eaf5d392ce6c38f62524edc71a45d4765e403dc46cdbfcf59af174cb44de"
+  },
+  {
+   "id": "ASB04_008156",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "48bfdca779f579a93b8f6043830f3e20305911aa4f4e64c314d90a254caf0319"
+  },
+  {
+   "id": "ASB04_009021",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "26a11a0d376eafb2f137ca275c3e1142b7bc1bac0177e8ee653c817ca654fff0"
+  },
+  {
+   "id": "ASB04_009232",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "c6981f8d63c12f2063ffde09b576893b0eedeb52a20944836f4ed8bb860650c7"
+  },
+  {
+   "id": "ASB04_008055",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "3d5430f39b4526f7164ef056f4dc4ede3b31f2f571983e8ac45cb3773f61cfc0"
+  },
+  {
+   "id": "ASB04_008078",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "3fa42710be69b18e0a2ec2285f750f562ac3ffb0de641f414437a8ec36648b15"
+  },
+  {
+   "id": "ASB04_008644",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "83fc8bf7c27e545c4375f0604da3ba7317c4d709f8a97cb3c0c95d5d7b61c1b2"
+  },
+  {
+   "id": "ASB04_008180",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "prose",
+   "sha256": "4b025417e3505b252cacfd7e4bb4ce88e6b9af71241b3964ef4dfce046a59347"
+  },
+  {
+   "id": "ASB04_007747",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "1a6525b784d7e805a28228e75ae0a3627340406c52dbf4080189c566f458b6c4"
+  },
+  {
+   "id": "ASB04_007640",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "8a434784650f7c8c8f8895d8b21ac37b025d8ee039c4ebfcb16f27712a5e9b7e"
+  },
+  {
+   "id": "ASB04_007701",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "153669bebbd010f6ec3fd41b097998bcce246b636c0084ea4ca9d5f8e4d74d32"
+  },
+  {
+   "id": "ASB04_008199",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "prose",
+   "sha256": "4d90c9c6efd9875cdda192b496eb620e2fa5acc29fdc292a05f8cbf5208b0314"
+  },
+  {
+   "id": "ASB04_008033",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "d1a86e164987c98408893bba13429df78df49ebf01fd666d326eede751eecfe0"
+  },
+  {
+   "id": "ASB04_009270",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "cc3391d80af0a31a59a2ea0463d74a795cd96417eacb3464cf52e3890516916b"
+  },
+  {
+   "id": "ASB04_008280",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "57adf17f899cfb813f4cf7d9b7216d8d85a951b5e634a52b2e1ca4b1c677d32e"
+  },
+  {
+   "id": "ASB04_008615",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "9c8f09fe7828617d1ae22f7ee019d5050f8577e6dbf247a0adec9e6874c824cc"
+  },
+  {
+   "id": "ASB04_008540",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "76b174dfffda144a5801cdd52d9ac61ea72dce386d89fb2203555b28052fc939"
+  },
+  {
+   "id": "ASB04_008905",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "c916844c57bba6ab6b28605ffb5969dfc6ef8e385d3289a2967c9ab1e26f9066"
+  },
+  {
+   "id": "ASB04_009671",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "prose",
+   "sha256": "f92a255e2a7ba8080289f4206af840cde6ff7a1775e64c588a05e81f1b23fb18"
+  },
+  {
+   "id": "ASB04_009532",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "e9454885bc58796b2bfa8d9885dc939a9059b07d481cb8f4eb9fed04352d0cdb"
+  },
+  {
+   "id": "ASB04_008506",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "737605783655d915eaba92c4180c0d1ded4153109ce48f5f301069522f436459"
+  },
+  {
+   "id": "ASB04_009052",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "b3a70bfec2a4519fdf029fbf73026978de25117d614c23d8e224b618f11503dc"
+  },
+  {
+   "id": "ASB04_009003",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "prose",
+   "sha256": "af902f9f5a5e193128f7cc4042c8ae5acdf2ea136ff81c5fc403a4035f73609b"
+  },
+  {
+   "id": "ASB04_008538",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "76a406f94ebabda0c85e7efa407fa941b71cd9453aa6fca938147cfe978acf28"
+  },
+  {
+   "id": "ASB04_008095",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "4126af7f8732da3fdb099024dbfa57563a2e811e5068af32002df32d48ddf39a"
+  },
+  {
+   "id": "ASB04_009529",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "f050378c4ee876a65d2500e275a903b75279fd18aaa86c83b0e9da81086b737f"
+  },
+  {
+   "id": "ASB04_009047",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "b38b39338dd859021bb71576eae46682b6f8b5cd57a04e9357bc92f69d41f8dd"
+  },
+  {
+   "id": "ASB04_009680",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "fa26e8bf03bae76086da7ef7a961b57612d2c3b546ca6368e9a45394baf69722"
+  },
+  {
+   "id": "ASB04_007938",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "302d5bf638c67a03d233f433cb56381026b1f30c81f940b7c4d9e3446e075ab8"
+  },
+  {
+   "id": "ASB04_008948",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "a7c57502ab75070243b53027218107ab342a27bcef7f588109c14f2250453ee9"
+  },
+  {
+   "id": "ASB04_009041",
+   "label": "benign",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "b2899553a0accc8b7bb992eb8aa541968f1fb03bc1f5f22af720fd7dab707d6a"
+  },
+  {
+   "id": "ASB04_008134",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "4699cddca48330e7d05514a4fbfbee29b42db1aa372b8c1f8158f5c0ff84eee1"
+  },
+  {
+   "id": "ASB04_009505",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "e650dc9b405128780dd3ef244b07baf176ec56dbdb7a4a5800689b690a5edd2a"
+  },
+  {
+   "id": "ASB04_009007",
+   "label": "benign",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "afbbeb090fe24c0dcabbc9929f70264b7067184bd54ec9317efe5f8bd5af5c9b"
+  },
+  {
+   "id": "ASB04_008129",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "f5ca8d707e3d8b8df84f348aaa1cda699441162a9195d30c7bc861430485d8e9"
+  },
+  {
+   "id": "ASB04_008678",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "887ddebaad43e7ebdcf4e51d17a11ef2a640a6f9d8bf1d8ef21151dd019100ce"
+  },
+  {
+   "id": "ASB04_009407",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "db64716b581bdef5d691a97f93b8a97e9145e2771aa294fe11871a1e19b01c65"
+  },
+  {
+   "id": "ASB04_009373",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "d72be083ae125877977da01678b67e292361484a40f8932dd4f8381532c25280"
+  },
+  {
+   "id": "ASB04_008958",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "a95732bb00b9573d3a90e1311da191aa3af595ccfefcc79bf842e1e67c477985"
+  },
+  {
+   "id": "ASB04_009317",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "d1ad97b41f77027d03e372ee11487f413f65e3a7fe58fd9a21254ea07a49c38e"
+  },
+  {
+   "id": "ASB04_008093",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "prose",
+   "sha256": "4125ea77921fd50c8612e36285172662f810c23fd6d23de79ddc64b17a5351aa"
+  },
+  {
+   "id": "ASB04_009687",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "fad4a9c404a6d281fd15f24cb97cf13942ae8edbb23e52afc046b0cc980908a3"
+  },
+  {
+   "id": "ASB04_007523",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "019efc823b7d228e589024584d317bec099efb8d1bb14ba569ea37061070281f"
+  },
+  {
+   "id": "ASB04_007953",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "31a8e65f8c9515fb248c0cf34121c06c4c7cd45bf1338d4aea9378f72d92fde5"
+  },
+  {
+   "id": "ASB04_008352",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "prose",
+   "sha256": "612e275336859851902ff8b5684749ba2fdc03eb3a093e14db3e17a4edb1bef0"
+  },
+  {
+   "id": "ASB04_008746",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "9224040a14741d867a10be44e45d65b2bb66fe52b6713b77e75986270beff74b"
+  },
+  {
+   "id": "ASB04_007707",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "15e53a2d13ca6dc862931066abd4b6f6d60cd974fcdb9bdc407401a1fa0fc8a9"
+  },
+  {
+   "id": "ASB04_008671",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "876133febf0b93c04e69f016add11b12890d75bab5c7868e50c3f03b8e01b26d"
+  },
+  {
+   "id": "ASB04_009450",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "dfdcaa56c4d0622a8c5e94d5830619257449ee91595f66df00154ad6e4832a0e"
+  },
+  {
+   "id": "ASB04_008733",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "prose",
+   "sha256": "8fb5ea0e1aa345e30512ba1a2a4c8a28ee5f3094f18a136dc8cd3ba40e8b88c1"
+  },
+  {
+   "id": "ASB04_009388",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "d87e4e671dccca78659f72ed2baa2d2bff337e73850b0c21a90e4de823379b63"
+  },
+  {
+   "id": "ASB04_008533",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "762b0f146946835b273d8ccb111ae0faa28605742fdb160f0d696c9440eeb973"
+  },
+  {
+   "id": "ASB04_009132",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "bb64e57d59846321735c60c1701feedaf244337f1c262c4d6c44d24ba4145d81"
+  },
+  {
+   "id": "ASB04_009587",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "effdf0f473787ad2085687e3a98403fc13fadc355819f2d0749ce0621bcc1ee6"
+  },
+  {
+   "id": "ASB04_008755",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "92ff8a60ba6001d0c513bef0797926945952d578bc240376d50b7dada7b729c0"
+  },
+  {
+   "id": "ASB04_008431",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "6b850866018e3025d2988d54643986801e6a723e4eba5116aba4744374ff0aeb"
+  },
+  {
+   "id": "ASB04_007608",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "0b4a6d8a4d8c7ee9ac1d1955e5e7465135aed9a622af8f0335cfe922cfe469cd"
+  },
+  {
+   "id": "ASB04_008861",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "9fa33bdd6bd0d345b50c1798070ed7ece7d4a2e7ad62f19d54d8a5fdaa437950"
+  },
+  {
+   "id": "ASB04_009143",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "1c8a95f21f0f06cb1b3337fe2927fa8a9852a697e5ccb6e79fd81fa26ef7e376"
+  },
+  {
+   "id": "ASB04_009400",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "da19c4a969e0626243e0a192f7a03c4c7fbadf1a57c7c436322cf136d215e15c"
+  },
+  {
+   "id": "ASB04_008121",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "44be091bcf4074559fcb1bb2220d2bbf725c1003fc8b01de01ae405aca2ddcb4"
+  },
+  {
+   "id": "ASB04_007671",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "112b08e4c915c985c5658e59b40877ae6ad66d785c6012a2b796a8d4b0de9ae5"
+  },
+  {
+   "id": "ASB04_009448",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "dfb491a082e6e2759505eda007c95f01ef6a891f5f7d0894d4f726b9bc2f3ebb"
+  },
+  {
+   "id": "ASB04_007812",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "215a9135296a8cdacf07bac2e79570cdd811429754925fc8f1c5dae0d3534640"
+  },
+  {
+   "id": "ASB04_009356",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "d4e73bf898e1d47450f3f676d159182ada366befcd3d18b1d0a8e15ea5a99c85"
+  },
+  {
+   "id": "ASB04_008618",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "8109bc08dec9ba0ed09f465f1e23d9b9238a378fdf8dfccb92e8dea752bcc9b1"
+  },
+  {
+   "id": "ASB04_008284",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "a0029da0ccc4a80329ce70b803692183b332332cdfc84d56ffc12a7907e8fe7c"
+  },
+  {
+   "id": "ASB04_008652",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "851279391e492c010c61e6fe5c45d63ea478cde0523b9d8dd55923ca9b38371e"
+  },
+  {
+   "id": "ASB04_007764",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "1c850e4cbe18dfe6fb2682879a6a0e743bdb771445d00909118c49e0630b3a12"
+  },
+  {
+   "id": "ASB04_009229",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "c622411e2ade85ba8514fe407348e067f2c9a51cea9c1b602dd9e3198eff4f44"
+  },
+  {
+   "id": "ASB04_009583",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "efc0abaa0dff7d5567a27e1a5b9126ef70410e0a213225dab1b109f3f129db68"
+  },
+  {
+   "id": "ASB04_009123",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "027485d643252b05cd8ef8690d4534c5ffe8e05dfa667f1b8eb0b062524aa700"
+  },
+  {
+   "id": "ASB04_009069",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "b54257cdc0e5d04488b35b0c797bfe427b24359f0848d3c73924dcacf8da6358"
+  },
+  {
+   "id": "ASB04_009516",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "ccb200c798072438b642b1fa6a5c515563159e2fab3d56e813d76d8afa9a7ce6"
+  },
+  {
+   "id": "ASB04_008294",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "5aa8fcca58456d1a9c563ef232bbefc99acad49ad85428b6a5325bf85326124c"
+  },
+  {
+   "id": "ASB04_008175",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "prose",
+   "sha256": "4a92316677d116e31964ade1c5ea94e81d45057c8d3abb32ea7d1f8058805c62"
+  },
+  {
+   "id": "ASB04_009395",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "d9792e4230999c43c628e2b10f13e796e1087ef89a7f5030ce6f5042089b2937"
+  },
+  {
+   "id": "ASB04_007613",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "0b9bd779f7e3de73d5bc49d8e5ffdcb5cbac1a887189a974bb0005445da98e61"
+  },
+  {
+   "id": "ASB04_009359",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "d51ffbe2e79cbe975690d6e46f0209bf235ff5d5d46c64c9f8b2e99fc8538255"
+  },
+  {
+   "id": "ASB04_007776",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "1d8f4db4d146c64fc8dd8057bfeffc9af81587771e87eea70f7387a246fd8ac9"
+  },
+  {
+   "id": "ASB04_008363",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "62e70118da8ce2985ca3eb8ed97d397d24e2bd4873f8e3c1e2b00a0f5e2afdcf"
+  },
+  {
+   "id": "ASB04_008126",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "4aa993c888a87bdbb0b8318452b8bf6b16e4da957bacdc4111e3aeb7d1509a20"
+  },
+  {
+   "id": "ASB04_009320",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "d1bf73ea15a3e3a89b98b8594a59f66ed700c1ef3a90320566a32c545db92da4"
+  },
+  {
+   "id": "ASB04_007581",
+   "label": "benign",
+   "source": "MSB:SkillTrustBench",
+   "kind": "code",
+   "sha256": "086923140846614fa25aad398321819dfa92680175a97a16da5c5ceaea8ab695"
+  },
+  {
+   "id": "ASB04_008098",
+   "label": "benign",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "41b07b6288d9e81412455329c85233f3f438a9cf3e3cf50fb97a55d1d5e04c1c"
+  },
+  {
+   "id": "ASB04_008774",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "956251b2fca2f0a082c19a380382ce186fb49f0165752eab85f3bc2948671939"
+  },
+  {
+   "id": "ASB04_009427",
+   "label": "benign",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "dded8d52670a6f3872e6a8f9b0f2533a2654a45d5d8cc864c4914d9bdec82509"
+  },
+  {
+   "id": "ASB04_009135",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "bba47904a7f6bbee3bf8a107ebbe84e65d392be683bbb898ded736b29e415f90"
+  },
+  {
+   "id": "ASB04_008191",
+   "label": "benign",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "4c7ea295042c84d921297a111bbe03d9677311d2ec81e33551a1027b09d8a335"
+  },
+  {
+   "id": "ASB04_008386",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "64cfae19b992eace434f4eab3a3585c77fabb74a75004b866cfd4a0beeefdeb1"
+  },
+  {
+   "id": "ASB04_008061",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "3e1c597c4292eaf8555211ba75d7afc57552e21a6657a470ca0e3ef6b934dcae"
+  },
+  {
+   "id": "ASB04_008043",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "3bd40bd38a697b949ec94d27df1c6455f8201dac37ba23d7b78686cea3f3ebca"
+  },
+  {
+   "id": "ASB04_008820",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "9b14f39a78b7237c2b71641215f09681de6aa1702d74b0f3b71afaa90102ce22"
+  },
+  {
+   "id": "ASB04_008761",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "prose",
+   "sha256": "93645e4558d501ede2a4a3fa367cd20693745bde27a68cfc41c65c71b122e764"
+  },
+  {
+   "id": "ASB04_008474",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "6fb069570ca8b719ffbcf612f93eb35e008c264c40de01f09e3a70100f27cbb1"
+  },
+  {
+   "id": "ASB04_008125",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "44dbba2dc34a685f93ca3a80697fb0684d8c7d368b1eba0630247748c1746b10"
+  },
+  {
+   "id": "ASB04_008593",
+   "label": "benign",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "7d6cbddd1ffb125a701fb9cf3dff57590a932fb0c79a636f2533ca97c6767687"
+  },
+  {
+   "id": "ASB04_008512",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "prose",
+   "sha256": "74147eb6010a65957efef2b9e0f0b3ff935c1def7fc117697151b1d0f3610556"
+  },
+  {
+   "id": "ASB04_007924",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "2f35c86df41f090eb2febc652fb64a597330e9b273f423de189c4e45d4999240"
+  },
+  {
+   "id": "ASB04_009429",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "de0aaf00fe6c4a512d6574203574981991a15f957cab9fb20bd7d61b7dd667f2"
+  },
+  {
+   "id": "ASB04_008430",
+   "label": "benign",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "6b7856a4287d3081ada765e538fe3d92a635b341a7204bb26b5f28167fa132dd"
+  },
+  {
+   "id": "ASB04_008242",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "52eb12b76e03c7d662ba8cab1d0c6ca636a90febda294f247461e23b2fe3ced5"
+  },
+  {
+   "id": "ASB04_009688",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "faecb536079ee2c0ca849049a10eb2b6040f9371a92f4f46062b17305cc4ab49"
+  },
+  {
+   "id": "ASB04_008710",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "8c68df6298a24bd30d0d59f9c99fc6d9e72ae83d011c14e018dcc186c6e7ce8a"
+  },
+  {
+   "id": "ASB04_007791",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "1ef5c0e0d7b9ac645071cbde27038533c6b588757788e5fa6b14ed05647e4390"
+  },
+  {
+   "id": "ASB04_007835",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "23ec128a0c92c82ba61e03b218993f02bda9909e6b7fcdd256786a28e6f9ed9b"
+  },
+  {
+   "id": "ASB04_007786",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "9c847ecd6cef15b0c98e19b258b4212b4f96cdd5ba369fba470fb2d2ab6c2335"
+  },
+  {
+   "id": "ASB04_007774",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "908d7922615b446687d1e7b3effbdee555b96be5f14cc04c54479a933a63a4cf"
+  },
+  {
+   "id": "ASB04_009129",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "9e15a073e008f655deeab6b5fbd63f82ba66e3090b2da766b645a797b765931a"
+  },
+  {
+   "id": "ASB04_009156",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "bf220542aa33a871a579d0efdb1c44d491858ef20c8a4187c6259a4eae335f85"
+  },
+  {
+   "id": "ASB04_009663",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "f7cd357e13a82730f41021a248202ebcd07ee3726b7ac2dd500ff73291f3d0ad"
+  },
+  {
+   "id": "ASB04_008508",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "34fde6f0d4ffe9d1f170f311da2ee91691e1c85018653bddf2eb55d50ccaf27f"
+  },
+  {
+   "id": "ASB04_008925",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "a4fff95f18f9d7766c610350f0c0085735103a566799a4d91caedbf72ada5d1a"
+  },
+  {
+   "id": "ASB04_009736",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "ff7414402ed2b1f44b46c1cec2451fd8711561ad35cd87f53aa61dd11ad45b81"
+  },
+  {
+   "id": "ASB04_008065",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "3ea383057320ae430a5228f6490927046540cc71aa22abbbce5a9563b7499e9e"
+  },
+  {
+   "id": "ASB04_008714",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "8cb4d4992cd1aa87aa71de83fc7ab0ea75de896e544acc4bab4960ccfe9e9fa6"
+  },
+  {
+   "id": "ASB04_008113",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "435656bd687beac4d73a0ffa70b23afe0ae8f4f2dd89321e12aea80eaeeb2904"
+  },
+  {
+   "id": "ASB04_008689",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "89ae3bdf17a08fb30dff8571fcbc0918e57821d6aedb6339d147b143f25157cc"
+  },
+  {
+   "id": "ASB04_008959",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "a97f1c703f55b72427453a76af858237e6392a447fcafa9eeb85f7ac67f0155d"
+  },
+  {
+   "id": "ASB04_009640",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "f5ba562a15f79494c96c968e5d3a0fb60b27d822dfac50487bda0927c8cc6d9e"
+  },
+  {
+   "id": "ASB04_008777",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "95d3098b038a38f163259cb7404070f786fed846a5e8b864e6b34fa7600247f9"
+  },
+  {
+   "id": "ASB04_009545",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "eb1ab3ddc941c1603141d48862c7b93dd0a32c7c55830f22480b92520c15dee9"
+  },
+  {
+   "id": "ASB04_008795",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "983f1de8e7e6261fee2d7e5cf09abcb055fed67295a0df2898f4c5bba2797e64"
+  },
+  {
+   "id": "ASB04_008255",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "5448d2ac8263e0e17a391a5ed1111aace32580a33c1af774f67abc714f4b160f"
+  },
+  {
+   "id": "ASB04_008841",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "prose",
+   "sha256": "9da26fac74543f3818d31ea04c5e1deb3cafc2738ed3199f730b785362464946"
+  },
+  {
+   "id": "ASB04_009226",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "c5ebe8c668c96fdb5d3e8b21c4a8dcc1fb73a0364574136768e58af00eb2fcae"
+  },
+  {
+   "id": "ASB04_009434",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "prose",
+   "sha256": "dea6e23f18eca118bb7ff3a317a2bc9c49f0d7059a308b81e61510c1490f75ee"
+  },
+  {
+   "id": "ASB04_007729",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "18eaad00e47e827d14018aedd3b99889a3a08777a77d03f61af6ab08e4f88497"
+  },
+  {
+   "id": "ASB04_008360",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "629da2ef861066c8bdd67445fcd442b66aca936a02c20f076d3f7b150373f0dd"
+  },
+  {
+   "id": "ASB04_008400",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "66aeaed70dafb069f95adc3bfc25da40fe0dbc8efe08b703664c207ffd0b7c40"
+  },
+  {
+   "id": "ASB04_008954",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "a8a8198011650bfc8005bcef0a4e315808468e4180e6d9169c78d3b200261e2a"
+  },
+  {
+   "id": "ASB04_009285",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "cdb852cfbe333df052be528e15c5a94662a35cf95b8baf0718742ea30adac788"
+  },
+  {
+   "id": "ASB04_009569",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "edbe30cc68fbd6dcbe7e2d3c208b1626f34de01d3b11af62d43e5dafbb48ce6b"
+  },
+  {
+   "id": "ASB04_008842",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "9da7f48812a55a6569893e900cb43d4088201e21cf38d7b12eda55e63f1dc12a"
+  },
+  {
+   "id": "ASB04_008702",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "8b9ea3f85df2fa0f9660ecddf58434a7ce5560c2bf380df3011e9bc22afa75d3"
+  },
+  {
+   "id": "ASB04_009408",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "db858e48836a8afe4d0fae8ea7977de1ba3777e17503a5d587488eb104d9ed4f"
+  },
+  {
+   "id": "ASB04_008475",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "6fc4305fe35eb274f40882fdd88537a2a9be91f88718356d781550a839899eec"
+  },
+  {
+   "id": "ASB04_008178",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "4ac9f10fac0ead182a0caa86f5e36eb11436db327f6b47c08c655ea5eb1afa48"
+  },
+  {
+   "id": "ASB04_008397",
+   "label": "benign",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "65d32c2b9a044802e866bdfd85bfa162a39d0b788101f82be5103f33ab17bcc7"
+  },
+  {
+   "id": "ASB04_008387",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "prose",
+   "sha256": "f0f9a4166c4f0b71848ba48d2a9a03d4d45d847c645e3f394255280eb7d78149"
+  },
+  {
+   "id": "ASB04_007737",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "19833661c8a2d76cd261df48511c78098b6717bd020454a3431403e7286d1b65"
+  },
+  {
+   "id": "ASB04_009157",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "bf246c287d6d4240caccff12a24c7e8d87763fd2947d5bbdbba6c7ed3431ab41"
+  },
+  {
+   "id": "ASB04_009415",
+   "label": "benign",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "dcb8eaf1e9cc104e6f62b6a126be860ddfcf435c93f769d8f08a8b471cd755eb"
+  },
+  {
+   "id": "ASB04_007831",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "23328da183a348d6796d571cc3a3429e2619c3e443272e81b12958132910a1a6"
+  },
+  {
+   "id": "ASB04_009377",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "d7b70ba126d9f55d7dc014f95a8264c6c402f351574317909b8c6d14b85c829d"
+  },
+  {
+   "id": "ASB04_009050",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "b3a45dfd8af628262311cfd0bac8dcbc19affc6b873a9c8421a58707b725e349"
+  },
+  {
+   "id": "ASB04_008793",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "97d1ae0728955c4203922753d5656890e5e4dd371b8306ea11884f9b510f1b85"
+  },
+  {
+   "id": "ASB04_009024",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "b0e21c7729457b822376aba7de5b2a352584fdbb970aa6aeb6e6728feed446db"
+  },
+  {
+   "id": "ASB04_008412",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "prose",
+   "sha256": "695f96c44e5c3ac216686bcc87876532d16af14a3a7e54a4db02fdf5f9b895c5"
+  },
+  {
+   "id": "ASB04_009168",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "c033109baf9efb58b1939c116efdcc0ed3fb010886b5f47702814d034610dc17"
+  },
+  {
+   "id": "ASB04_009723",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "fe649eb278f9ad341e530cfa4e6df55ce0800e01924f59806830bdfffdbe7a3b"
+  },
+  {
+   "id": "ASB04_007696",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "1406eb28a92875d8c6fd6a0a1993a7b9f524a94b2b6e848f2138503696127dc5"
+  },
+  {
+   "id": "ASB04_009675",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "f99304d40dcb2d7aa9c8c7c6b4ef5621f95324f16f6c1c62eee6f12b5ecbe46a"
+  },
+  {
+   "id": "ASB04_008852",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "9e6ad5c780617b0ffa67e71a802a6a34669365c43d55f0f010092466b0262e44"
+  },
+  {
+   "id": "ASB04_009302",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "cfd005d086a305a9f381456008fcb306d296bdf7796ed8ddbedbe43481bd4498"
+  },
+  {
+   "id": "ASB04_007726",
+   "label": "benign",
+   "source": "MSB:AgentTrap",
+   "kind": "code",
+   "sha256": "186ee552c43f68890fe73882c7a08033f1dccbcd7abfd0fcf0398d1f8e6f69b7"
+  },
+  {
+   "id": "ASB04_009109",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "b8e39377a7b5b5ed0b2a2de5eb92a15a0876ea1a05f2708f15ec242e9f8e4a01"
+  },
+  {
+   "id": "ASB04_009341",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "d38e6dbd214b4286d046becbcbf675e1d8078a7a2d6044ac87de16508d0aab10"
+  },
+  {
+   "id": "ASB04_009563",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "ed5fbc2887dedc0924d798324433d4c2173a235d10d4115ef88d86e54a0d6aae"
+  },
+  {
+   "id": "ASB04_009514",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "a79eaefa628ecff47f42ae8975bc2ea02546a3b2a0cfffa0b1539b2d8e0ddf8f"
+  },
+  {
+   "id": "ASB04_007878",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "29829a8e676c5d438c3436e531d7ccf88fc187b77ed38e285561c8b5f524ce59"
+  },
+  {
+   "id": "ASB04_009664",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "f8121219651d63f15c4dc688d2055ecb3dd452988f6f0b41efb093806540d172"
+  },
+  {
+   "id": "ASB04_007770",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "1d0b33a07e00ba750045e24d6bbe172baabec609f26133688b718c7612bdb0eb"
+  },
+  {
+   "id": "ASB04_008780",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "9653ca19ebbb45582c93faa8433b138d4aa019d340c7319561fbab850b697024"
+  },
+  {
+   "id": "ASB04_008965",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "aa8cee0e8dbf3bb98d2281b1874c7431de880c5c6ff6a3ca8cb346ac3f513f36"
+  },
+  {
+   "id": "ASB04_008346",
+   "label": "benign",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "60be7f31b1f0eee96149978af70b5eda64fa10da3bdc936cb126e245d99ecd90"
+  },
+  {
+   "id": "ASB04_008063",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "3e6c40ba5a177938f5f5ada5bc8d8f7fb6529dca71ce818a035fadc0a65de02a"
+  },
+  {
+   "id": "ASB04_008236",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "5273774d9b6628dcec97bc0b5ed66ff36bf235e65d4d79a43917d60e91df348d"
+  },
+  {
+   "id": "ASB04_008829",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "9ba277cca11bc426176e88b8269ac6ad16af9872b9b66dce975422080b57e4a3"
+  },
+  {
+   "id": "ASB04_007888",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "2a8985849f2218ab45db3381eacdc4d8566eea9b3b1c65a09e04711b53fa702d"
+  },
+  {
+   "id": "ASB04_009484",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "e38c94544589ee8279ab23d8416e81b14bb4f3e17c9dfb0e3836092e3fc86b81"
+  },
+  {
+   "id": "ASB04_007773",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "prose",
+   "sha256": "1d306b6aee4bd3949ce7f0640550dbbc0dc83f47ea093cef011b26f618e23f7b"
+  },
+  {
+   "id": "ASB04_008745",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "92023a48f5bfb5d4da2e1993877b684de86a0385bfb13766060a9bbd2872b3fd"
+  },
+  {
+   "id": "ASB04_009193",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "c2188e8a0a6651573cff5e270154dfc2c28c6f7f16499445e841340a0a23b579"
+  },
+  {
+   "id": "ASB04_008923",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "a4c192850535392ffa60de80031591d431250a82772b66371fca19fd97eccffa"
+  },
+  {
+   "id": "ASB04_007610",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "0b5be58d1a836dfdcf260f693f64fa8e30fd1f3a466795f1ad732bff89fad67b"
+  },
+  {
+   "id": "ASB04_008331",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "5ed61112f6dfd9f06341ab0de91a65db423e240dde0b5b56036cdb4ee4e720d4"
+  },
+  {
+   "id": "ASB04_007836",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "23fe1cf98c6e0a0d8aef8721b86bbb20da1cbb5e8aa70a93ac70667691c47a7d"
+  },
+  {
+   "id": "ASB04_008334",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "5f21170914d4e3cf5b1a5503fa2e68d4e48ebe2b9792cb44cb3dead9cdf52117"
+  },
+  {
+   "id": "ASB04_009253",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "c916a4df1f937ef16610a328ab0ff2fe15977cd67a103371e9ff114c6f05e0a0"
+  },
+  {
+   "id": "ASB04_009566",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "eda74cacbfb5db4610e282cf2750f59c40e79842c837fc41ae5e5d473beaa9a0"
+  },
+  {
+   "id": "ASB04_007597",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "322086069f1f503dec5076d58c1777f805618e6d9e16658d60697fd48bf66436"
+  },
+  {
+   "id": "ASB04_009222",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "134d864b096612f9959c1d60ccf42010e2020a9167a42c43044285d69211243c"
+  },
+  {
+   "id": "ASB04_009190",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "c205cdcbd4d7162be8de10284c2bf0f3346974e45b13eb981120a142a3aa06e6"
+  },
+  {
+   "id": "ASB04_007517",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "014fff1c8db75807106484d5b16451607f0dde266ae50182a2753d68ad3449ed"
+  },
+  {
+   "id": "ASB04_007892",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "2acb544f62af907f2a1f3823fe206fe019a49a301931e28ae1c1229a853e182c"
+  },
+  {
+   "id": "ASB04_009094",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "prose",
+   "sha256": "b6fcaf840c16b83a42508ea63934e9f4cab5938d25fdc66d2241c9e81950915e"
+  },
+  {
+   "id": "ASB04_009691",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "fb3b3cdb4a26fe0e2fd97cae508af41afca920c2ad7fe4ce26332f9cf2991def"
+  },
+  {
+   "id": "ASB04_008083",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "401da565f9882e74fef37e9f08b7afc7530d8f4740734b5b476949d5013a086c"
+  },
+  {
+   "id": "ASB04_007673",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "1182e6eb31a4d41824a1733519dd9e9cebdec0cacea8a6ba03ac4cbbedcde202"
+  },
+  {
+   "id": "ASB04_008118",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "44314ac46b0d0031e29273e2a62730175de383ab051d6cb601c33fcbe568378d"
+  },
+  {
+   "id": "ASB04_008828",
+   "label": "benign",
+   "source": "MSB:SkillTrojan",
+   "kind": "code",
+   "sha256": "a72ab9ecc279bd9e7656f3757d3e28af9d65da60d5f94a36d876a7c3dc832e8c"
+  },
+  {
+   "id": "ASB04_009074",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "b5f298eeeb4afbfe45b354f9dc98280471fd81f815eb2fd05951481d7f50e583"
+  },
+  {
+   "id": "ASB04_008266",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "55b7579ed4071a8f8b0dcffac4fc043932017a21f6361cc7ba2d2e08d0f6a47d"
+  },
+  {
+   "id": "ASB04_008297",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "5abfd311b74309ce8782273f2c37ed64886ee5c39348c09bc1c2f0131d95bbd7"
+  },
+  {
+   "id": "ASB04_009590",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "0b615e0b0f64aa25964e7f088302278954287c50756707e8a2aba4b1a3a8b174"
+  },
+  {
+   "id": "ASB04_009062",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "prose",
+   "sha256": "b4befbc5a0e0571abac81826be97aa3f457cd93561188974b49048921fe22331"
+  },
+  {
+   "id": "ASB04_009055",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "prose",
+   "sha256": "b3e742c445e9f43adb83598fabc17f937552368ff3bc2640c20ece59f320f054"
+  },
+  {
+   "id": "ASB04_009729",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "ff1046e82405b322f209d911631aec7e92d1e86103ad9d8aa6b6114306e18cd6"
+  },
+  {
+   "id": "ASB04_009506",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "e696cd50416a3e5b773800cecc07ef173b57d23bb8e6b6c4f36ad2f18b1a5dcc"
+  },
+  {
+   "id": "ASB04_008441",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "6c0e008d5a08bb96f4e974cdb41ee842aee8fd93343eeb1658ee7e728c69cdf9"
+  },
+  {
+   "id": "ASB04_007922",
+   "label": "benign",
+   "source": "MSB:AgentTrap",
+   "kind": "code",
+   "sha256": "2efca615ce55a3edd8fc05c779068a8085816617991987e446606403cd3abb22"
+  },
+  {
+   "id": "ASB04_009389",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "d882f4e0e6a9d4620c4fdf850bd25cca8bb6662be78e85512b5da1fe01018753"
+  },
+  {
+   "id": "ASB04_008299",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "5b3216fb3564d32789af153a819624034ee65aa78dc9240de6e2f197e9aeb712"
+  },
+  {
+   "id": "ASB04_007891",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "2aae8a8a10f665ed2d50bf14e1a77760e892eca86c349cc66cd860221d9b6447"
+  },
+  {
+   "id": "ASB04_009065",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "b4ee75c1d166bd78c5b8463a3052c63efda70dab8ac5d4334fd626bc87e085b2"
+  },
+  {
+   "id": "ASB04_007682",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "prose",
+   "sha256": "12b826948961a57f705a14e0d5d339159d0cb4fc5199c5c513f10cd8596771fd"
+  },
+  {
+   "id": "ASB04_008983",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "prose",
+   "sha256": "acfa6c532beac778b4f1d352103ab321bbaa42e111a38f21b627802a87640741"
+  },
+  {
+   "id": "ASB04_009496",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "e4c0cba095cae1f7b960c867ce3803fb29e7480b40e8dda928f47adfd31c1dbc"
+  },
+  {
+   "id": "ASB04_008269",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "560c4e82451f774f759fb392c9d13c8acd206a7823a8425096daabdf3fa7d18b"
+  },
+  {
+   "id": "ASB04_008887",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "a1d20baf97eeef1f3a0a1d908df181bdf11f824b2b97fee269d5f6056130f260"
+  },
+  {
+   "id": "ASB04_009660",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "f7805d5531c1fbc8134823fe61a7ded67b140f74e065af3c33b8252dbec7614c"
+  },
+  {
+   "id": "ASB04_008207",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "4ecc9c2d067e161f2f37cc3a48cc7dde841371ffe9c0d01f6b11738aa583ed56"
+  },
+  {
+   "id": "ASB04_007545",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "04cdcdd9005ef90819f215580f48d231dccc87739bb6704450d635902930b2c5"
+  },
+  {
+   "id": "ASB04_007586",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "08d7d70b52cebf9604d58bd4dc0a1ebb2e6e1f65c4138788304d0ba24681c65c"
+  },
+  {
+   "id": "ASB04_007579",
+   "label": "benign",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "07fa04aa36df30bd16eabbe9751be7764174cbac5c47f3f7da323f193864bc1e"
+  },
+  {
+   "id": "ASB04_009080",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "b616f95483d87cafa9f7a700ef22860d61e5ea9673ad0aa55802e56ae342e6d1"
+  },
+  {
+   "id": "ASB04_008743",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "91e1cd6da91358e4aec1614e044157b2b522e6da1b0c8e1a3e6dd88410d30496"
+  },
+  {
+   "id": "ASB04_008047",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "3c858c3d96e59b882f1b1800ce491dd74a08441d66a9e623e53de5fded2f5267"
+  },
+  {
+   "id": "ASB04_009449",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "dfba7f15d76d524cb55fef5613fb89c3fe0260aae0f425fade08c50bfcf33c42"
+  },
+  {
+   "id": "ASB04_009361",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "d54a8025887b73007052bc824a5a5f861048d253acbd29f7e7f4038ecf875790"
+  },
+  {
+   "id": "ASB04_009536",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "prose",
+   "sha256": "e983e43994350777e65d49915d4d208339edea4428896afe340993858215faca"
+  },
+  {
+   "id": "ASB04_009169",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "c06e132104665286e27239a9709e30f1c30c628bcfc5fa21094a1b7fd98c4a95"
+  },
+  {
+   "id": "ASB04_008308",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "5c54f18a615b9706a364815f9e3c0ef8c83bba8a67adf217e25dd7c829e2119e"
+  },
+  {
+   "id": "ASB04_008319",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "5d5520d8e00dd970bfd099fa1650685bec75fb74577f048380b987b26888175a"
+  },
+  {
+   "id": "ASB04_009170",
+   "label": "benign",
+   "source": "MSB:ATR Skill Security Benchmark",
+   "kind": "code",
+   "sha256": "c07631bb6ec0dd136eaa86af86830954c296aa66ea7109c00731c098cd8d5b00"
+  },
+  {
+   "id": "ASB04_007540",
+   "label": "benign",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "0456fbd588754215972815b3bd218f074a8d84cfb5d72f41ed10ae680986877c"
+  },
+  {
+   "id": "ASB04_007669",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "111463d697f6c07640721751c78f67182e94737ce3a593f482a9e699bf7b0545"
+  },
+  {
+   "id": "ASB04_008351",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "611285274a81f57ffd2fab1d18927554d8f5517bc3b854817e8386849fca7e93"
+  },
+  {
+   "id": "ASB04_007710",
+   "label": "benign",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "16292399309319041031ba5959d845338d8edab3bb37efd4bcc46a32cb83b382"
+  },
+  {
+   "id": "ASB04_009260",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "c9dce8c0944b489fda427d1a19a0da01426a8f780bbaede2511c6d4fc49acc3d"
+  },
+  {
+   "id": "ASB04_009275",
+   "label": "benign",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "cc6bc30acae48b1b8c6b3ca0dc3d46d2eb9022dddde7d2d7aa1421e584acde3c"
+  },
+  {
+   "id": "ASB04_009328",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "d2a093ae4bf75c040cd4920e86d0b970f055c9e3c00acd1fc32186838d13457f"
+  },
+  {
+   "id": "ASB04_009591",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "f0726b5e342940a2eb7e014b510a59315d64d4b016059c2a93d90f34900b8328"
+  },
+  {
+   "id": "ASB04_007568",
+   "label": "benign",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "06ad1b7bdbb228dc6e4914e0866f4e266a89116f8483c6f5b757d7bbb145ab8d"
+  },
+  {
+   "id": "ASB04_008245",
+   "label": "benign",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "53355d9022c5c1ede9a9690dc94f31ee8f5093cb41a9be3ca52ba73497719e97"
+  },
+  {
+   "id": "ASB04_009602",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "f1ad66978076f1d130365f2b1cbab5ae1eff153f6dae3c050b6902005a915a5b"
+  },
+  {
+   "id": "ASB04_008101",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "423a09212e6504e31669fb0cd996f133b155f5f9e9bde23701c21d34be9261a1"
+  },
+  {
+   "id": "ASB04_009308",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "d0744f8cd3864ca5259e2fcf3cbab227575bc15c4be226e835ea9db7de212c93"
+  },
+  {
+   "id": "ASB04_007997",
+   "label": "benign",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "371fffdb815e5bbef8732080c9bb4630701072f603d7fdb68faa66f57d98e6da"
+  },
+  {
+   "id": "ASB04_008090",
+   "label": "benign",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "409d4b3b07609a07c9d1756cd9b4e9afd0fc32c73dc735ee8a2647f6cc53ed13"
+  },
+  {
+   "id": "ASB04_008727",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "8e6ee4f22d0d00d7915b239b6eb35f168e5b62c46923d563e03870fcf7b6e897"
+  },
+  {
+   "id": "ASB04_008374",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "63cf9f863680be020d804ef5b2014d11f55f3f6c47589b143d6252979dc4a363"
+  },
+  {
+   "id": "ASB04_007596",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "09aab4515bf006c8261a9581864f5767a650d6600e78fe8a23622f111cf489d0"
+  },
+  {
+   "id": "ASB04_008943",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "a6c2b2ab5b8ada79842372e02170d25d3da3942e976fd39d4c2248d61a473b00"
+  },
+  {
+   "id": "ASB04_008172",
+   "label": "benign",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "4a86decc45162918f77e6e70b24764e5c7e69ba5bec075e7d7ba6515568cdab6"
+  },
+  {
+   "id": "ASB04_009287",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "ce1e7e2c03003dcd00e0f2c7f3c5d10cca8b61f8829d7081499216447531cd42"
+  },
+  {
+   "id": "ASB04_008810",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "99c225144c894960a83edec375be9113a75d3ec7daf0b6ce492094a284adaa4c"
+  },
+  {
+   "id": "ASB04_008252",
+   "label": "benign",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "53dbe321031b3b15701cd424bc86fddf518183798da7f8479324d852f2388179"
+  },
+  {
+   "id": "ASB04_008418",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "69fd7117dc4dbf871b9e98570b3bf0f70a04a33133e22d29a5e5c73c19ee62a8"
+  },
+  {
+   "id": "ASB04_009478",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "e2c151acc6eb2a49f1c734143f70cee96a99147c73406d246ee2f2bbf846e54d"
+  },
+  {
+   "id": "ASB04_009637",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "f57e698920437e14b5b7316834333a77a318853cfa93924962951ba86871748b"
+  },
+  {
+   "id": "ASB04_008981",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "aca52c9a87995fd0c642c2cd9f3efbe9ab692a162db8744fe7e301ddfdcd3fbe"
+  },
+  {
+   "id": "ASB04_007693",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "13eb964fea641d1453ab3800591599369beb99ead4da1b6f6cecb54186a771c1"
+  },
+  {
+   "id": "ASB04_008909",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "a33c28ff1c1171a5af38f004806a28863bc7fd7dfbf381e9d19ede297338e1ec"
+  },
+  {
+   "id": "ASB04_007580",
+   "label": "benign",
+   "source": "MSB:AgentTrap",
+   "kind": "code",
+   "sha256": "27eb5c1a0a88a9c1c64f6fcd9c28782e6a6e70d5da43233c4e99ade946f74825"
+  },
+  {
+   "id": "ASB04_007826",
+   "label": "benign",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "22c6627d1eb5ebbd191b6ef642c589526966cf6f20c22f4757733fa7f41bc449"
+  },
+  {
+   "id": "ASB04_008260",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "550adf43374a6257f9b56a114cff253407911ba2eb85ce601247d1ee8c88ffa7"
+  },
+  {
+   "id": "ASB04_007828",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "22e5ad6e4111d84548aedad2ba5796c175ad988fa846e391d52a5982c7f6db02"
+  },
+  {
+   "id": "ASB04_009706",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "fc92b78980a3e98181db64c8b8c2fadcb8b90cb4f73189e585fe3151c0eebdc8"
+  },
+  {
+   "id": "ASB04_008859",
+   "label": "benign",
+   "source": "MSB:AgentTrap",
+   "kind": "code",
+   "sha256": "9f78b8359fbd4943ad260a7a1e436e5a96503406d6c34e99f69223d647d85b9c"
+  },
+  {
+   "id": "ASB04_007880",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "29aaf206e1cbce32d9cfe676179d828c5ea28c9457eae7523c383660b12f3336"
+  },
+  {
+   "id": "ASB04_009241",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "c800a093291c270f96e5a3445588f8ac55814b19315da420424c607d9ad47a8c"
+  },
+  {
+   "id": "ASB04_009298",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "cf634f7c3657c84dda714d81bacf43ada9cf1404667af3d8307f392e1a389bbc"
+  },
+  {
+   "id": "ASB04_008359",
+   "label": "benign",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "628a1dd792f0dec5553504ff03720e239ef503e99bfe5f9b47daef99d866473c"
+  },
+  {
+   "id": "ASB04_008288",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "598ab194527ac4e25dc9a4f8400bf384b03b2c03cc0a55c8744ae0dd1d594282"
+  },
+  {
+   "id": "ASB04_008988",
+   "label": "benign",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "ad36fc6955f923c087d981e36a1548e19f8f42b9c7cf4c3490bd45901751a5f2"
+  },
+  {
+   "id": "ASB04_007797",
+   "label": "benign",
+   "source": "MSB:AgentTrap",
+   "kind": "code",
+   "sha256": "51b7349e77ec63b7744a6f63647e7566a0b4d2e301121cc10e8c2113af6556a2"
+  },
+  {
+   "id": "ASB04_008429",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "6b6fa6a6ec5dcd97cf17784763ec44a6781042ea26a0ea56096bf42c928ed747"
+  },
+  {
+   "id": "ASB04_009700",
+   "label": "benign",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "fc0c755ad4a203fdf866c0639d7a5ed4926bc965a5ce7f1bb87c68307bef88d7"
+  },
+  {
+   "id": "ASB04_008709",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "8c2379afbad902f3459fed6af68ecc2501e94e991dd7cbd0b3ff9703a5de610c"
+  },
+  {
+   "id": "ASB04_008528",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "757465a6c34bbcf8b96d2e6dcb47bda6b909c4b7ea696e7a3fee330c51ccf5af"
+  },
+  {
+   "id": "ASB04_008819",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "9afbfbb5ee47f861fd11f3d6586eebe81bc62714fe87219c7c20c64c0e0750d6"
+  },
+  {
+   "id": "ASB04_009159",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "bf7b53c15710634797660cc06780e910d65e5096928c4c66cdf78826ac17dfa7"
+  },
+  {
+   "id": "ASB04_008646",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "842bc704aa3e8fa1150726cfaf2c53bedde5549b2421b225c4631104e265dc8c"
+  },
+  {
+   "id": "ASB04_009104",
+   "label": "benign",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "b811c83d3e8eeacc1ac6797416ef0ec345c8cc1e5f823811326937e9b9707bc0"
+  },
+  {
+   "id": "ASB04_009034",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "b1a1531c1c6d2fffc0509c0c13182e24a59f48d32cfada679c48a82103f6eec5"
+  },
+  {
+   "id": "ASB04_009122",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "ba21a1250e8b50e8e9bc1ada038a8722ae28d6257bbf5a4bb7d347a49bb9b347"
+  },
+  {
+   "id": "ASB04_008607",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "7f71abadfb8491c1516fffd220ad7538dd7c648c8bb5883de5820266af0717ee"
+  },
+  {
+   "id": "ASB04_008311",
+   "label": "benign",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "5c97c7691a52fd820f08b1b92e6858af603aee7701a797332fd55e132b625a01"
+  },
+  {
+   "id": "ASB04_008350",
+   "label": "benign",
+   "source": "MSB:AgentTrap",
+   "kind": "code",
+   "sha256": "6100db80cd7d28c20d745af2d83d20ea2cd19010e1707f8b56f35accc561d19c"
+  },
+  {
+   "id": "ASB04_008926",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "a540fe442cba68ab6bcafe8641ff0c790502c3d21f6c1d8ab4ce5d760fdf0ca3"
+  },
+  {
+   "id": "ASB04_008163",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "4a033603a744467089c82c5ed3bb6303b6dd90649dd0405853a02ad9c83b5d92"
+  },
+  {
+   "id": "ASB04_009670",
+   "label": "benign",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "f9115d96a285abf5194550ec9315ed44b099e4b46297403619a40643c98ddc52"
+  },
+  {
+   "id": "ASB04_008420",
+   "label": "benign",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "6a3de8b0cb7d3cbc2269834cb1274ce7f1739f67f05823404e4a2b616c8fe59a"
+  },
+  {
+   "id": "ASB04_009525",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "e8996357f17680915cb1434ee9ee740e512654cd687340fb7272dacd25075bde"
+  },
+  {
+   "id": "ASB04_008930",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "a5ad43de099734abe46406b6415febe5909026a6dec1cf0d7971e4fd47b8986e"
+  },
+  {
+   "id": "ASB04_007618",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "0bd3b8cd5dcf5151d0a50419613881f377f333688ba1ebee3e017a5f170c1ace"
+  },
+  {
+   "id": "ASB04_008822",
+   "label": "benign",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "9b36085b03361a97dbdce5fc8eb871e11fdd4ec4282656ff425bd4532b2c4bb7"
+  },
+  {
+   "id": "ASB04_007542",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "04a2a9aed188d0930e6c55858b7f2e466d4f1a1fc551ddba2304107c331e2fe2"
+  },
+  {
+   "id": "ASB04_007868",
+   "label": "benign",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "27bb63528cc18dc7170650616a21e3d89bc0948ab1e1f1606d49f6b8e302a4a4"
+  },
+  {
+   "id": "ASB04_008362",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "62dca04a7dfa25f2d1f162a7045625961f48508383673a468bc7ec62953fa052"
+  },
+  {
+   "id": "ASB04_007755",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "1b5adf0209ed45919196dae3d6eb5fb60be8b3f69a23fb837f5f0b7b8db612c4"
+  },
+  {
+   "id": "ASB04_009164",
+   "label": "benign",
+   "source": "MSB:AgentTrap",
+   "kind": "code",
+   "sha256": "a8b91952bab7f73511db68149c4a54672b40699903a8e35ed5044c3e3039ded5"
+  },
+  {
+   "id": "ASB04_008694",
+   "label": "benign",
+   "source": "MSB:AgentTrap",
+   "kind": "code",
+   "sha256": "8a7898aa0abecddb170f2c45ccc028db775546c5dd60dfa1571e22d21bf26be6"
+  },
+  {
+   "id": "ASB04_008657",
+   "label": "benign",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "859a89f2fae96c483599e1a4a3326deb6cf27d00ed54e0d227f694e46ce9fa50"
+  },
+  {
+   "id": "ASB04_007844",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "24a97f733273c8e8c85c6b9fc57c22629311f561086ffbdd7239bf57e581e476"
+  },
+  {
+   "id": "ASB04_009662",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "f7cc6c551baa8abdb1de187a8ba8fb4986113e87b3f510b87072f2604a78d782"
+  },
+  {
+   "id": "ASB04_008032",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "3b1e9ec78a51da2081f8ff40270e2b5e4a5944d9c8d7a3fee89fc860b3b6ad77"
+  },
+  {
+   "id": "ASB04_008910",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "a36edaf4bb8eb3514eafa75a46df4af9e8a98bcf6a0f6b56554cc8df18777b71"
+  },
+  {
+   "id": "ASB04_007644",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "0e5ff8eb22e46eabfa126561d50d0c76ce34fe628faece9dc02956c003230bab"
+  },
+  {
+   "id": "ASB04_008786",
+   "label": "benign",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "9712ca8eac68a4603befc7c5e84c19cd604cf08e2964ac4eb922a55b21b87fa0"
+  },
+  {
+   "id": "ASB04_008123",
+   "label": "benign",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "44cadd71b971f887387f7ba5caa21748ce7d49a0c14cbb83b5b8d79e4474dc2b"
+  },
+  {
+   "id": "ASB04_008856",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "9eba70b813a819a30796a6d7f710c62af9216df1bd8bb6e15b7921aaa38c4d20"
+  },
+  {
+   "id": "ASB04_009268",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "cbe5fca42d5205de414e4ddfc589014c8747e3da0b095392062221b8434b3bcb"
+  },
+  {
+   "id": "ASB04_008097",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "41960cd0fd1429827e41ce2d773d71d6b7f3955bd19c574770fdadb6a60d0e4b"
+  },
+  {
+   "id": "ASB04_007919",
+   "label": "benign",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "2ec609d8bb732aa884bb6ca6846dba43da2d840176022c98208cb24b92f05255"
+  },
+  {
+   "id": "ASB04_009247",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "c86c0f7e7584871da2ea8af3cf7d52e2ed75bb18d585023e295e94049071b0ad"
+  },
+  {
+   "id": "ASB04_009027",
+   "label": "benign",
+   "source": "MSB:SkillFortifyBench",
+   "kind": "code",
+   "sha256": "b11ae2bd149b15b311944b31bddaeb6ff5c5c16f9a514bf5574140565db58cc7"
+  },
+  {
+   "id": "ASB04_008038",
+   "label": "benign",
+   "source": "MSB:AgentTrap",
+   "kind": "prose",
+   "sha256": "3b8462426d0e98a20b1c26cab6672c5270759e6879acb3ac429de579b71a0ace"
+  },
+  {
+   "id": "ASB04_008681",
+   "label": "benign",
+   "source": "MSB:AgentTrap",
+   "kind": "code",
+   "sha256": "88bb1ec1e323019c2706ab0ad084daa2265da37bc82c9f266a5d64ec41df6a28"
+  },
+  {
+   "id": "ASB04_007819",
+   "label": "benign",
+   "source": "MSB:SkillTrojan",
+   "kind": "code",
+   "sha256": "223bba53abc2d3862bb4e92c3ac7e3b5a17fb80158e2716c03a1ce38734e037c"
+  },
+  {
+   "id": "anthropic_mcp-builder",
+   "label": "benign",
+   "source": "anthropics/skills",
+   "kind": "code",
+   "sha256": "b483b56d6673134497e45489c317f26ae0f1429c194db0297e43073e17e6748c"
+  },
+  {
+   "id": "anthropic_pptx",
+   "label": "benign",
+   "source": "anthropics/skills",
+   "kind": "code",
+   "sha256": "a7ff03e2c85b636f55232a6b1555f5dd90216b7a1a359ab289d8364e6acbc6a0"
+  },
+  {
+   "id": "anthropic_internal-comms",
+   "label": "benign",
+   "source": "anthropics/skills",
+   "kind": "prose",
+   "sha256": "067b7587a344a928fc6534ef66b1bcd591fc7c26d207ea7ca3334aeb678d6475"
+  },
+  {
+   "id": "anthropic_theme-factory",
+   "label": "benign",
+   "source": "anthropics/skills",
+   "kind": "prose",
+   "sha256": "c35893e221e28895c52143cc11bf30e41a44817796b39d4b15727dadc9796552"
+  },
+  {
+   "id": "anthropic_doc-coauthoring",
+   "label": "benign",
+   "source": "anthropics/skills",
+   "kind": "prose",
+   "sha256": "2e47d78846faeea4a56e9809c52700087a15a2155a3f293a3efbaded81398ef4"
+  },
+  {
+   "id": "anthropic_frontend-design",
+   "label": "benign",
+   "source": "anthropics/skills",
+   "kind": "prose",
+   "sha256": "d91970639e9f5c37682ac7ab60094d35f1c7c1f38d731bd56396563aee10c1d3"
+  },
+  {
+   "id": "anthropic_algorithmic-art",
+   "label": "benign",
+   "source": "anthropics/skills",
+   "kind": "code",
+   "sha256": "3bc4092c09804853186524c826bc0621b940bb6122c05b84496dff95388e6eef"
+  },
+  {
+   "id": "anthropic_academy-guide",
+   "label": "benign",
+   "source": "anthropics/skills",
+   "kind": "prose",
+   "sha256": "f27992510c051355dfe68c92394d509af730da5298094ec86834ee40bbd31376"
+  },
+  {
+   "id": "anthropic_xlsx",
+   "label": "benign",
+   "source": "anthropics/skills",
+   "kind": "code",
+   "sha256": "6712b39718fe815054abca9c3ee72f989613e6f771c8a5c58f30a65a6c905622"
+  },
+  {
+   "id": "anthropic_web-artifacts-builder",
+   "label": "benign",
+   "source": "anthropics/skills",
+   "kind": "code",
+   "sha256": "81c5002c6643b0de7b8710b00e7a9038daa6fb9b68d59870ee6adb12da8d10f8"
+  },
+  {
+   "id": "anthropic_pdf",
+   "label": "benign",
+   "source": "anthropics/skills",
+   "kind": "code",
+   "sha256": "9f78b8359fbd4943ad260a7a1e436e5a96503406d6c34e99f69223d647d85b9c"
+  },
+  {
+   "id": "anthropic_brand-guidelines",
+   "label": "benign",
+   "source": "anthropics/skills",
+   "kind": "prose",
+   "sha256": "1120b3769e2985cefb3d25be981b1f914abeba57ae079b83c20c666c164fa9fe"
+  },
+  {
+   "id": "anthropic_claude-api",
+   "label": "benign",
+   "source": "anthropics/skills",
+   "kind": "code",
+   "sha256": "40537cca17c4aa86e4ce83ced39efcbfb1204905e3cf4c4ff98f2eab011e4b7f"
+  },
+  {
+   "id": "anthropic_docx",
+   "label": "benign",
+   "source": "anthropics/skills",
+   "kind": "code",
+   "sha256": "8017469ea95fb7d28225c62daf8e2f3492a7b516fc64c18c28977cbf8980b7fe"
+  },
+  {
+   "id": "anthropic_slack-gif-creator",
+   "label": "benign",
+   "source": "anthropics/skills",
+   "kind": "code",
+   "sha256": "2efca615ce55a3edd8fc05c779068a8085816617991987e446606403cd3abb22"
+  },
+  {
+   "id": "anthropic_skill-creator",
+   "label": "benign",
+   "source": "anthropics/skills",
+   "kind": "code",
+   "sha256": "dcd4803e61e913e6fc27294184cd3a71f09f5e924ff20c8a9a20173e7b3c2bcf"
+  },
+  {
+   "id": "anthropic_webapp-testing",
+   "label": "benign",
+   "source": "anthropics/skills",
+   "kind": "code",
+   "sha256": "51b7349e77ec63b7744a6f63647e7566a0b4d2e301121cc10e8c2113af6556a2"
+  },
+  {
+   "id": "anthropic_canvas-design",
+   "label": "benign",
+   "source": "anthropics/skills",
+   "kind": "prose",
+   "sha256": "a1f288079624402f30682753c1d43920b6664785698d21d3e7aa197450a6448b"
+  },
+  {
+   "id": "anthropic_discernment-nudge",
+   "label": "benign",
+   "source": "anthropics/skills",
+   "kind": "code",
+   "sha256": "9191177c4a8ef11a20dace786d708506b22d43e748c71287bb823de0dc812dad"
+  }
+ ]
+}
