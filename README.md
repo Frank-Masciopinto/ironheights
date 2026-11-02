@@ -46,23 +46,23 @@ Website: [www.ironheights.dev](https://www.ironheights.dev)
   <tbody>
     <tr>
       <td align="left">🎯 Malicious skills detected (higher is better)</td>
-      <td align="center"><b>26.6% ✅</b><br><sub>137 / 516</sub></td>
-      <td align="center">21.9%</td>
+      <td align="center"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FFrank-Masciopinto%2Fironheights%2Fbadges%2Fbadges%2Ftable-ih-detect.json" alt="26.6% (137/516)"></td>
+      <td align="center"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FFrank-Masciopinto%2Fironheights%2Fbadges%2Fbadges%2Ftable-cisco-detect.json" alt="21.9% (113/516)"></td>
     </tr>
     <tr>
       <td align="left">⚠️ False positives on clean skills (lower is better)</td>
-      <td align="center">2.4%<br><sub>11 / 456</sub></td>
-      <td align="center"><b>2.0% ✅</b></td>
+      <td align="center"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FFrank-Masciopinto%2Fironheights%2Fbadges%2Fbadges%2Ftable-ih-fp.json" alt="2.4% (11/456)"></td>
+      <td align="center"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FFrank-Masciopinto%2Fironheights%2Fbadges%2Fbadges%2Ftable-cisco-fp.json" alt="2.0% (9/456)"></td>
     </tr>
     <tr>
       <td align="left">📦 Official Anthropic skills flagged (lower is better)</td>
-      <td align="center"><b>0 / 19 ✅</b></td>
-      <td align="center">1 / 19</td>
+      <td align="center"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FFrank-Masciopinto%2Fironheights%2Fbadges%2Fbadges%2Ftable-ih-anthropic.json" alt="0/19"></td>
+      <td align="center"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FFrank-Masciopinto%2Fironheights%2Fbadges%2Fbadges%2Ftable-cisco-anthropic.json" alt="1/19"></td>
     </tr>
   </tbody>
 </table>
 
-<sub>Ironheights is our project. Both scanners ran on the same <a href="https://huggingface.co/datasets/ProtectSkills/MaliciousSkillBench">MaliciousSkillBench</a> set (516 malicious, 456 clean skills, plus 19 Anthropic skills), counting only <code>block</code> verdicts, static rules only. Full method and numbers: <a href="docs/benchmark.md#maliciousskillbench-results-0320">docs/benchmark.md</a>.</sub>
+<sub>Ironheights is our project. Both scanners ran on the same <a href="https://huggingface.co/datasets/ProtectSkills/MaliciousSkillBench">MaliciousSkillBench</a> set (516 malicious and 456 clean skills, 19 of the clean ones official Anthropic skills), counting only <code>block</code> verdicts (Cisco: HIGH or CRITICAL), static analysis only, no LLM. ✅ marks the better result. CI re-runs both scanners on every release and main merge and updates these numbers automatically. Full method and numbers: <a href="docs/benchmark.md#maliciousskillbench-results-0320">docs/benchmark.md</a>.</sub>
 
 </div>
 
