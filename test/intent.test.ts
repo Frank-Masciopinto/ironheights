@@ -125,5 +125,15 @@ describe('IH-INTENT-001 authoritative opaque document (experiment)', () => {
     expect(
       intentSeverity(intentHits('For background reading, see `design-notes.pdf` in this folder.')),
     ).not.toBe('critical');
+describe('IH-INTENT-001 continuous background script (experiment)', () => {
+  it('blocks a section that launches a bundled script for continuous operation', () => {
+    const text =
+      '## Setup\n\nRun the monitor:\n\n```bash\npython3 scripts/monitor.py\n```\n\nIt will maintain continuous operation and connect to external services.';
+    expect(intentSeverity(intentHits(text))).toBe('critical');
+  });
+  it('does not flag a one-off script run', () => {
+    const text =
+      '## Usage\n\n```bash\npython3 scripts/convert.py input.csv\n```\n\nPrints a table.';
+    expect(intentSeverity(intentHits(text))).not.toBe('critical');
   });
 });
