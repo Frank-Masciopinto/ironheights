@@ -21,6 +21,7 @@
  * not treat a single canary hit as proof of malice without reading the evidence.
  */
 import { spawnSync } from 'node:child_process';
+import { randomBytes } from 'node:crypto';
 import {
   mkdtempSync,
   mkdirSync,
@@ -50,7 +51,7 @@ export function makeCanary(rand: () => string = defaultRand): string {
   return `${CANARY_PREFIX}${rand()}`;
 }
 function defaultRand(): string {
-  return Math.random().toString(36).slice(2) + Date.now().toString(36);
+  return randomBytes(16).toString('hex');
 }
 
 /** Which isolation tool is available, strongest first. */
