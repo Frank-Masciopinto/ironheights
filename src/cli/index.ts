@@ -1066,6 +1066,14 @@ function registerScan(program: Command, name: 'scan' | 'review', hooks: MainHook
       '--llm-stage',
       'second-stage model check for review and prose-only skills; can raise a skill to review, never lowers or blocks (implies --llm)',
     )
+    .option(
+      '--llm-rewrite',
+      'model rewrites SKILL.md as a flat list of imperative orders, which the deterministic rules then judge; can escalate the verdict, never lowers it (implies --llm)',
+    )
+    .option(
+      '--canary',
+      "plant a fake secret, run each skill's setup/bootstrap script once in a locked-down sandbox, and raise it to review if the secret moves (local execution; skipped when no sandbox is available)",
+    )
     .option('--dry-run', 'print the model prompt and do not send it')
     .option(
       '--print-suppressions',
@@ -1094,8 +1102,14 @@ function registerScan(program: Command, name: 'scan' | 'review', hooks: MainHook
         noColor: Boolean(opts.color === false || opts.noColor),
         quiet: Boolean(opts.quiet),
         allowSkipped: Boolean(opts.allowSkipped),
-        llm: name === 'review' || Boolean(opts.llm) || Boolean(opts.llmStage),
+        llm:
+          name === 'review' ||
+          Boolean(opts.llm) ||
+          Boolean(opts.llmStage) ||
+          Boolean(opts.llmRewrite),
         llmStage: Boolean(opts.llmStage),
+        llmRewrite: Boolean(opts.llmRewrite),
+        canary: Boolean(opts.canary),
         ...(typeof opts.llmUrl === 'string' ? { llmUrl: opts.llmUrl } : {}),
         ...(typeof opts.llmModel === 'string' ? { llmModel: opts.llmModel } : {}),
         ...(typeof opts.llmApi === 'string' ? { llmApi: opts.llmApi } : {}),

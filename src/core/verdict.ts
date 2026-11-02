@@ -95,7 +95,15 @@ export const CONTEXT_ONLY_RULES: ReadonlySet<string> = new Set([
 
 export function isContextOnly(finding: Finding): boolean {
   if (CONTEXT_ONLY_RULES.has(finding.ruleId)) return true;
-  return finding.ruleId === 'IH-INTENT-001' && finding.severity === 'low';
+  if (
+    (finding.ruleId === 'IH-INTENT-001' ||
+      finding.ruleId === 'IH-INTENT-002' ||
+      finding.ruleId === 'IH-FLOW-001') &&
+    finding.severity === 'low'
+  ) {
+    return true;
+  }
+  return false;
 }
 
 export function verdictFor(
