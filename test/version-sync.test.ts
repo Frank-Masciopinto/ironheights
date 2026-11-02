@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { TOOL_VERSION } from '../src/version';
+import { TOOL_VERSION } from '../src/version.js';
 
 const pkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
 const server = JSON.parse(readFileSync(new URL('../server.json', import.meta.url), 'utf8'));
