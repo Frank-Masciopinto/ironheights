@@ -9,6 +9,10 @@ import { runThreatModel } from '../src/cli/commands/threatmodel.ts';
 import { callTool, TOOLS } from '../src/mcp/server.ts';
 import { refusalRow, reversalStats } from '../src/report/extras.ts';
 
+// git subprocesses and temp-dir I/O run 5-10x slower on Windows runners (Defender scans,
+// process spawn cost); these tests assert behavior, not speed, so they get a wider budget.
+const SLOW_IO_MS = 30_000;
+
 type Sc = Record<string, unknown>;
 const sc = (r: Record<string, unknown>): Sc => r.structuredContent as Sc;
 
@@ -518,7 +522,7 @@ describe('0.24.0 threat model', () => {
   });
 });
 
-describe('0.24.0 threat model diff: review tier, triggers, scope, lockfiles', () => {
+describe('0.24.0 threat model diff: review tier, triggers, scope, lockfiles', { timeout: SLOW_IO_MS }, () => {
   async function setup(
     defaults: string,
     headEntry: string,

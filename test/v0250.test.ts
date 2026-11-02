@@ -25,6 +25,10 @@ import {
 import { ActivityWatcher, applyCap, summarizeWatch } from '../src/runtime/watcher.ts';
 import { parseModel } from '../src/threatmodel/threatmodel.ts';
 
+// git subprocesses and temp-dir I/O run 5-10x slower on Windows runners (Defender scans,
+// process spawn cost); these tests assert behavior, not speed, so they get a wider budget.
+const SLOW_IO_MS = 30_000;
+
 function capture() {
   const lines: string[] = [];
   return { lines, out: (l: string) => lines.push(l) };
@@ -361,7 +365,7 @@ skills:
   });
 });
 
-describe('0.25.0 guarded install', () => {
+describe('0.25.0 guarded install', { timeout: SLOW_IO_MS }, () => {
   it('installs exactly the locked bytes and refuses changes, extras and unpinned deps', async () => {
     const { dir, s, env } = await skillDir('Say hello.', { 'helper.md': 'notes' });
     const lockf = join(dir, 'lock.json');
