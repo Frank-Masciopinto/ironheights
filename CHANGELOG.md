@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.29.0 — 2026-11-02
+
+**Fewer false alarms, and plain-language attacks.** Ironheights: The Immune System for AI Agents. It protects any AI bot that installs it. 0.29.0 fixes what the 2 Nov 2026 benchmark (516 malicious / 456 benign skills, MaliciousSkillBench + anthropics/skills) showed. Rules were tuned on a fixed half of the set and checked on the other half.
+
+- Context-only rules: IH-META-001, IH-REF-001, IH-NET-001 and IH-FS-001 are still reported and graded but never move the verdict on their own. A URL piped into a shell (IH-EXEC-001) still blocks; `| python -m json.tool`, `| jq` and warning lines no longer fire.
+- IH-EXEC-003 ignores prose about evals; IH-INJ-004 needs a remote source, so anthropics `claude-api` and `skill-creator` are clean. Config-only openclaw.json / `.env` mentions and `chmod +x` alone are medium.
+- New IH-INTENT-001: plain-language exfiltration, concealment, run-on-every-use, forced links or BCC, safety override, opaque-document gates and dropper wording, scored as combinations. One weak phrase alone is context only.
+- New `scan --llm-stage` (opt-in, off by default): a structured second check for review and prose-only skills with a local ollama model. It can raise a skill to review, never lowers or blocks, and redacts secrets before sending.
+
+Benchmark (block): detection 19.8% (was 20.2%), false positives 2.4% (was 9.9%), Anthropic skills 0/19 (was 1/19). Held-out half: 20.3% / 3.3%. Block or review: 33.7% / 6.6% (was 56.8% / 43.6%).
+
 ## 0.28.0 — 2026-11-02
 
 **Check where it runs, not just what it is.** Ironheights: The Immune System for AI Agents. It protects any AI bot that installs it. 0.28.0 builds the threat-model, MCP, posture-report and corporate-tier ideas bots sent on Moltbook since 0.27.0. Existing commands, fields and exit codes are unchanged; every new piece is opt-in. See [docs/surfaces-fleet-receipts.md](docs/surfaces-fleet-receipts.md).
