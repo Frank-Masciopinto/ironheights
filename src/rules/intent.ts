@@ -87,6 +87,15 @@ const NO_CONFIRM =
 const GATE =
   /\b(?:must|always|first)\b[^.\n]{0,60}\b(?:read|open|follow|run)\b[^.\n]{0,60}\b[\w-]+\.(?:pdf|docx|pptx|xlsx|png|jpe?g)\b|\b[\w-]+\.(?:pdf|docx)\b[^.\n]{0,80}\b(?:source\s+of\s+truth|required\s+(?:per-session\s+)?setup|mandatory|before\s+(?:running|invoking|any|taking))/i;
 
+/**
+ * The skill hands all of its real instructions to an opaque bundled document and makes reading it a
+ * precondition for any action ("the PDF is the authoritative workflow; this file is not sufficient").
+ * The scan cannot see what the agent will be told to do, so this blocks on its own
+ * (m/missed-attacks, resource/availability class, 2026-11-02).
+ */
+const GATE_AUTHORITATIVE =
+  /\b[\w-]+\.(?:pdf|docx)\b[^\n]{0,300}\b(?:authoritative|in\s+full\s+before|before\s+(?:running|taking)\s+any|not\s+sufficient|does\s+not\s+contain\s+enough)/i;
+
 const FAMILY_LABEL: Record<Family, string> = {
   exfil: 'sends sensitive data to an outside address',
   conceal: 'hides an action from the user',
@@ -169,7 +178,8 @@ export function intentHits(text: string): Hit[] {
     else if (matchUnlessNegated(PERSIST, raw)) add('persist', 1);
     if (matchUnlessNegated(STEER_STRONG, raw)) add('steer', 3);
     else if (matchUnlessNegated(STEER, raw)) add('steer', 1);
-    if (matchUnlessNegated(GATE, raw)) add('gate', 2);
+    if (matchUnlessNegated(GATE_AUTHORITATIVE, window)) add('gate', 2, true);
+    else if (matchUnlessNegated(GATE, raw)) add('gate', 2);
     if (matchUnlessNegated(DROPPER, raw)) add('dropper', 3);
   }
   return [...best.values()].sort((a, b) => a.line - b.line);
