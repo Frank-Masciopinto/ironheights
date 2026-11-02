@@ -7,15 +7,27 @@ Fetches skill text from pinned upstream sources (hash-checked), writes it to a t
 dir, runs `scan --json` (nothing is executed), and scores block-only verdicts.
 Exits non-zero on any mismatch, so the caller never publishes a bad number.
 """
-import hashlib, json, os, subprocess, sys, tempfile, urllib.request
+import hashlib, json, os, subprocess, sys, tempfile, time, urllib.error, urllib.request
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 M = json.load(open(os.path.join(ROOT, 'bench/msb/manifest.json')))
 cli, out_dir = sys.argv[1], sys.argv[2]
 
-def fetch(url):
-    with urllib.request.urlopen(url, timeout=120) as r:
-        return r.read()
+def fetch(url, tries=5):
+    # Retry only transient errors (network, timeout, 429, 5xx). Content is pinned and
+    # hash-checked, so a retry can never change the result.
+    for n in range(1, tries + 1):
+        try:
+            with urllib.request.urlopen(url, timeout=120) as r:
+                return r.read()
+        except urllib.error.HTTPError as e:
+            if e.code != 429 and e.code < 500 or n == tries:
+                raise
+        except (urllib.error.URLError, TimeoutError, ConnectionError):
+            if n == tries:
+                raise
+        print(f'transient error fetching {url}, retry {n}/{tries - 1}', file=sys.stderr)
+        time.sleep(5 * 2 ** (n - 1))
 
 def sha(b):
     return hashlib.sha256(b).hexdigest()
@@ -46,6 +58,8 @@ verdict = {}
 for label in ('malicious', 'benign'):
     p = subprocess.run(['node', cli, 'scan', '--json', '--allow-skipped', os.path.join(work, 'corpus', label)],
                        capture_output=True, text=True)
+    if not p.stdout.strip():
+        sys.exit(f'scan produced no output (exit {p.returncode}): {p.stderr[-2000:]}')
     for s in json.loads(p.stdout)['skills']:
         verdict[os.path.basename(os.path.realpath(s['root']))] = s['verdict']
 

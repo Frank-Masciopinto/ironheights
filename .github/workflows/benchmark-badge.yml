@@ -14,6 +14,7 @@ concurrency:
 
 jobs:
   score:
+    timeout-minutes: 20
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -23,7 +24,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
-      - run: python3 -m venv .venv && .venv/bin/pip install --require-hashes --only-binary=:all: -r bench/msb/requirements.txt
+      - run: 'python3 -m venv .venv && .venv/bin/pip install --require-hashes --only-binary=:all: -r bench/msb/requirements.txt'
       - run: .venv/bin/python scripts/benchmark-msb.py dist/cli/index.js out
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
@@ -58,3 +59,25 @@ jobs:
           if git diff --cached --quiet; then echo "badge unchanged"; exit 0; fi
           git commit -q -m "benchmark badge: $(jq -r '.version + " " + .detect + " detect, " + .fp + " FP"' badges/benchmark-summary.json)"
           git push -q origin HEAD:badges
+
+  alert:
+    # A failed run must be fixed, not ignored: open (or comment on) a tracking issue.
+    # The workflow run itself is also red, and the old badge is left untouched.
+    needs: [score, publish]
+    if: failure()
+    runs-on: ubuntu-24.04
+    permissions:
+      issues: write
+    steps:
+      - env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          RUN: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          REF: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          title="Benchmark badge run failed"
+          n="$(gh issue list -R "$REPO" --state open --search "\"$title\" in:title" --json number -q '.[0].number')"
+          body="The benchmark badge workflow failed for \`$REF\`: $RUN. The badge still shows the previous release's number until this is fixed."
+          if [ -n "$n" ]; then gh issue comment "$n" -R "$REPO" -b "$body"; else gh issue create -R "$REPO" -t "$title" -b "$body"; fi
+          echo "::error::benchmark badge run failed; see $RUN"
