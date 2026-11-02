@@ -591,3 +591,74 @@ describe('IH-NET-002 named key sent to its own documented API host', () => {
     ).toBe(true);
   });
 });
+
+describe('IH-INJ-005 / IH-INJ-006 / IH-REF-003 hidden instructions (0.34.0 night batch)', () => {
+  const ids = ['IH-INJ-005', 'IH-INJ-006', 'IH-REF-003'];
+  const scanSkill = async (files: Record<string, string>) => {
+    const dir = await mkdtemp(join(tmpdir(), 'ih-night-'));
+    try {
+      for (const [name, text] of Object.entries(files)) {
+        await mkdir(join(dir, name, '..'), { recursive: true });
+        await writeFile(join(dir, name), text);
+      }
+      const result = await scanPath(dir, emptyConfig());
+      const skill = result.skills[0];
+      return {
+        rules: (skill?.findings ?? []).map((f) => f.ruleId).filter((id) => ids.includes(id)),
+        verdict: skill?.verdict,
+      };
+    } finally {
+      await rm(dir, { recursive: true, force: true });
+    }
+  };
+  const fixture = (p: string) => readFile(join(process.cwd(), 'test/fixtures', p), 'utf8');
+  const head = '---\nname: s\ndescription: S.\n---\n';
+
+  it('catches the three candidate attacks at review or block', async () => {
+    for (const [p, id] of [
+      ['malicious/IH-INJ-005/1.md', 'IH-INJ-005'],
+      ['malicious/IH-INJ-006/1.md', 'IH-INJ-006'],
+      ['malicious/IH-REF-003/1.md', 'IH-REF-003'],
+      ['malicious/IH-REF-003/2.md', 'IH-REF-003'],
+    ] as const) {
+      const r = await scanSkill({ 'SKILL.md': await fixture(p) });
+      expect(r.rules, p).toContain(id);
+      expect(['review', 'block'], p).toContain(r.verdict);
+    }
+  });
+
+  it('leaves the honest twins clean of these rules', async () => {
+    for (const p of ['benign/near/IH-INJ-005/1.md', 'benign/near/IH-INJ-006/3.md']) {
+      expect((await scanSkill({ 'SKILL.md': await fixture(p) })).rules, p).toEqual([]);
+    }
+  });
+
+  it('does not fire when the companion document is shipped', async () => {
+    const r = await scanSkill({
+      'SKILL.md': `${head}# Chart Helper\n\nThis file only gives the framing for the skill. All of the actual steps live in the companion guide \`handbook.pdf\` in this same folder.\n`,
+      'handbook.pdf': '%PDF-1.4\n',
+    });
+    expect(r.rules).toEqual([]);
+  });
+
+  it('regression: Clawic loading its own ~/Clawic data when it exists', async () => {
+    const r = await scanSkill({ 'SKILL.md': await fixture('benign/near/IH-INJ-005/2.md') });
+    expect(r.rules).toEqual([]);
+  });
+
+  it('regression: Anthropic canvas-design "invisible subject" and docx tracked changes', async () => {
+    for (const p of ['benign/near/IH-INJ-006/1.md', 'benign/near/IH-INJ-006/2.md']) {
+      expect((await scanSkill({ 'SKILL.md': await fixture(p) })).rules, p).toEqual([]);
+    }
+  });
+
+  it('regression: claude-api style language guides that are not shipped in the scan', async () => {
+    const r = await scanSkill({ 'SKILL.md': await fixture('benign/near/IH-REF-003/2.md') });
+    expect(r.rules).toEqual([]);
+  });
+
+  it('regression: a skill that just says "see reference.md"', async () => {
+    const r = await scanSkill({ 'SKILL.md': await fixture('benign/near/IH-REF-003/1.md') });
+    expect(r.rules).toEqual([]);
+  });
+});
