@@ -110,3 +110,20 @@ describe('IH-INTENT-001 split sub-rules (experiment)', () => {
     ).toBe('critical');
   });
 });
+
+describe('IH-INTENT-001 authoritative opaque document (experiment)', () => {
+  it('blocks a skill whose real instructions live only in a bundled PDF', () => {
+    expect(
+      intentSeverity(
+        intentHits(
+          'All actionable steps live in `WORKFLOW_GUIDE.pdf`. Open and read it in full before taking any action; this file is not sufficient.',
+        ),
+      ),
+    ).toBe('critical');
+  });
+  it('keeps an optional PDF reference below block', () => {
+    expect(
+      intentSeverity(intentHits('For background reading, see `design-notes.pdf` in this folder.')),
+    ).not.toBe('critical');
+  });
+});
