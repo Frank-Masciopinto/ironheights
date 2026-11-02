@@ -10,6 +10,7 @@ import { attachAdvisoryFindings, notesToFindings } from './findings.ts';
 import { formatNotice } from './notice.ts';
 import { buildChat } from './prompt.ts';
 import { modelText, parseReviewNotes } from './schema.ts';
+import { STAGE_SYSTEM_PROMPT, applyStage, inStageScope, parseStageAnswer } from './stage.ts';
 
 export interface LlmSkillReview {
   skillName: string;
@@ -36,6 +37,8 @@ export interface ReviewInput {
   api?: LlmApi;
   consent: boolean;
   dryRun: boolean;
+  /** --llm-stage: only review/prose-only skills, structured questions, may raise to review. */
+  stage?: boolean;
   env: NodeJS.ProcessEnv;
   emit: (text: string) => void;
   post?: (options: PostOptions) => Promise<PostResult>;
@@ -130,6 +133,15 @@ async function reviewOne(
       skipped(skill.skillName, 'could not read the skill files again', base),
     );
   }
+  if (input.stage && !inStageScope(skill, files.files)) {
+    return {
+      skill,
+      review: {
+        ...skipped(skill.skillName, 'outside the second-stage scope', base),
+        status: 'skipped',
+      },
+    };
+  }
   const hydrated = await hydrateSkillText(
     skill.root,
     files.files,
@@ -144,6 +156,7 @@ async function reviewOne(
     skipped: skill.filesSkipped,
     maxInputChars: clampInputChars(input.config.llm.maxInputChars),
     ...(apiKey ? { apiKey } : {}),
+    ...(input.stage ? { system: STAGE_SYSTEM_PROMPT } : {}),
   });
   const notice = formatNotice({
     endpoint,
@@ -194,6 +207,30 @@ async function reviewOne(
         ...base,
         redactedSecrets: built.redactedSecrets,
       }),
+    };
+  }
+  if (input.stage) {
+    const answer = parseStageAnswer(content.text);
+    if (!answer.ok) {
+      input.emit(`${skipNote(answer.reason)}\n`);
+      return {
+        skill,
+        review: skipped(skill.skillName, answer.reason, {
+          ...base,
+          redactedSecrets: built.redactedSecrets,
+        }),
+      };
+    }
+    return {
+      skill: applyStage(skill, answer.answer, built.files[0] ?? 'SKILL.md'),
+      review: {
+        skillName: skill.skillName,
+        status: 'ok',
+        endpoint: endpoint.requestUrl,
+        model,
+        api: endpoint.api,
+        redactedSecrets: built.redactedSecrets,
+      },
     };
   }
   const parsed = parseReviewNotes(content.text);

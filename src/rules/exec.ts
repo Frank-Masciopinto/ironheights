@@ -90,9 +90,20 @@ const SUBPROCESS_SHELL =
   /\bsubprocess\.(?:run|Popen|call|check_output|check_call)\s*\([\s\S]{0,180}?shell\s*=\s*True/;
 const NODE_SHELL = /\b(?:exec|execSync|spawn)\s*\([\s\S]{0,160}?shell\s*:\s*true/;
 
+/** `| python -m json.tool`, `| python3 -c "..."`, `| jq`: the fetched text is data, not code. */
+const DATA_PIPE = /\|\s*(?:python3?\s+(?:-m\s+json\.tool|-c\b)|node\s+-e\b|jq\b)/i;
+/** A line that quotes the pattern as something to avoid. */
+const WARNING_LINE =
+  /\b(?:never|don'?t|do\s+not|avoid|instead\s+of|rather\s+than|e\.g\.|for\s+example|such\s+as|always\s+use\s+a\s+package\s+manager)\b/i;
+
 function checkExec001(file: ScannedFile): Finding[] {
   const findings: Finding[] = [];
   eachLine(file.text, (line, lineNumber) => {
+    if (DATA_PIPE.test(line) && !BASE64_PIPE.test(line) && !SUBSTITUTION.test(line)) {
+      const rest = line.replace(DATA_PIPE, '');
+      if (!PIPE_TO_INTERPRETER.test(rest)) return;
+    }
+    if (file.kind === 'markdown' && WARNING_LINE.test(line)) return;
     const hit =
       PIPE_TO_INTERPRETER.test(line) ||
       SUBSTITUTION.test(line) ||
@@ -149,11 +160,24 @@ function matchOnce(pattern: RegExp, text: string): RegExpExecArray | undefined {
   return match ?? undefined;
 }
 
+/** `eval (prompt tuning)`, `eval()` in a checklist, "never pass X into eval()": prose about eval. */
+const PROSE_EVAL =
+  /\beval\s*\(\s*\)|\b(?:an|the|each|every|this|per|against\s+an?)\s+evals?\b|\b(?:never|no|avoid|don'?t|do\s+not|without)\b[^\n]{0,80}\beval\b/i;
+
 function checkExec003(file: ScannedFile): Finding[] {
   const findings: Finding[] = [];
   const patterns = [EVAL, NEW_FUNCTION, OS_SYSTEM, SUBPROCESS_SHELL, NODE_SHELL];
   eachLine(file.text, (line, lineNumber) => {
-    if (patterns.some((pattern) => pattern.test(line))) {
+    const hits = patterns.filter((pattern) => pattern.test(line));
+    if (
+      file.kind === 'markdown' &&
+      hits.length === 1 &&
+      hits[0] === EVAL &&
+      (PROSE_EVAL.test(line) || !/\beval\(\s*\S/.test(line))
+    ) {
+      return;
+    }
+    if (hits.length > 0) {
       pushUnique(
         findings,
         createFinding(exec003, file, {

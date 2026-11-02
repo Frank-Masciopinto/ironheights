@@ -64,6 +64,8 @@ export interface ScanFlags {
   llmModel?: string;
   llmApi?: string;
   llmConsent?: boolean;
+  /** --llm-stage: second stage that may raise review/prose-only skills to review. */
+  llmStage?: boolean;
   dryRun?: boolean;
   /** Scan only skills whose content hash or version changed since their last scan. */
   changed?: boolean;
@@ -279,6 +281,7 @@ export async function executeScan(flags: ScanFlags): Promise<ScanExecution> {
         ...(api ? { api } : {}),
         consent: flags.llmConsent === true,
         dryRun: flags.dryRun === true,
+        ...(flags.llmStage ? { stage: true } : {}),
         env,
         emit: flags.dryRun ? write : emitNotice,
         ...(flags.post ? { post: flags.post } : {}),
@@ -287,10 +290,15 @@ export async function executeScan(flags: ScanFlags): Promise<ScanExecution> {
       llmReport = reviewed.report;
     }
   }
-  const code = exitCodeFor(verdict, deterministicFindings(skills), config.failOn, {
+  let code = exitCodeFor(verdict, deterministicFindings(skills), config.failOn, {
     filesSkipped: skills.reduce((sum, skill) => sum + blockingSkipCount(skill), 0),
     allowSkipped: flags.allowSkipped === true,
   });
+  let reportedVerdict = verdict;
+  if (flags.llmStage && !flags.dryRun) {
+    reportedVerdict = worstVerdict(reported.map((skill) => skill.verdict));
+    if (reportedVerdict === 'review' && (code === 0 || code === 3)) code = 1;
+  }
   if (flags.dryRun) return { skills, verdict, code };
   if (flags.changed && changedState) {
     const grades = new Map<string, Grade>();
@@ -313,11 +321,13 @@ export async function executeScan(flags: ScanFlags): Promise<ScanExecution> {
       `Replace "${SUPPRESSION_REASON_PLACEHOLDER}" with a reason of at least 8 characters. The placeholder does not suppress a finding.\n`,
     );
   } else if (format === 'json') {
-    write(renderJson(reported, verdict, scannedAt, renderContext));
+    write(renderJson(reported, reportedVerdict, scannedAt, renderContext));
   } else if (format === 'html') {
-    write(`${renderHtml(reported, verdict, scannedAt, scanMode, advisory.note, llmReport)}\n`);
+    write(
+      `${renderHtml(reported, reportedVerdict, scannedAt, scanMode, advisory.note, llmReport)}\n`,
+    );
   } else {
-    write(`${renderHuman(reported, verdict, color, scanMode, advisory.note, llmReport)}\n`);
+    write(`${renderHuman(reported, reportedVerdict, color, scanMode, advisory.note, llmReport)}\n`);
   }
   if (flags.sarif) await writeFile(flags.sarif, renderSarif(reported, scanMode));
   if (flags.md)

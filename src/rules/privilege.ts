@@ -2,9 +2,12 @@ import type { Finding, Rule } from '../core/types.ts';
 import { eachLine } from '../util/text.ts';
 import { createFinding, pushUnique } from './helpers.ts';
 
+const EXEC_PATTERN = /\bchmod\s+(?:-R\s+)?(?:777|666|755|\+x|a\+x|u\+x)\b/;
+/** Setting the execute bit on a script is routine; world-writable modes stay high. */
+const EXEC_BIT = /\bchmod\s+(?:755|\+x|a\+x|u\+x)\b/;
 const PATTERNS: RegExp[] = [
   /\bsudo\b/,
-  /\bchmod\s+(?:-R\s+)?(?:777|666|755|\+x|a\+x|u\+x)\b/,
+  EXEC_PATTERN,
   /\bxattr\s+(?:-d|-c)\b[^\n]{0,80}quarantine/i,
   /\bspctl\s+--master-disable\b/,
   /\b(?:disable|turn off)\b[^\n]{0,40}\b(?:gatekeeper|antivirus|firewall|real-time protection)\b/i,
@@ -48,13 +51,19 @@ export const priv001: Rule = {
     eachLine(file.text, (line, lineNumber) => {
       if (!PATTERNS.some((pattern) => pattern.test(line))) return;
       if (negatedSudoOnly(line)) return;
+      const onlyExecBit =
+        EXEC_BIT.test(line) &&
+        !PATTERNS.some((pattern) => pattern !== EXEC_PATTERN && pattern.test(line));
       pushUnique(
         findings,
         createFinding(priv001, file, {
           line: lineNumber,
           evidence: line,
-          message: 'The file elevates privileges or disables an OS protection.',
-          confidence: 'high',
+          message: onlyExecBit
+            ? 'The file marks a file executable (chmod +x / 755). Check what that file runs.'
+            : 'The file elevates privileges or disables an OS protection.',
+          confidence: onlyExecBit ? 'medium' : 'high',
+          ...(onlyExecBit ? { severity: 'medium' as const } : {}),
         }),
       );
     });

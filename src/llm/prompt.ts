@@ -43,6 +43,8 @@ export function buildChat(input: {
   skipped: SkippedFile[];
   maxInputChars: number;
   apiKey?: string;
+  /** Replaces the advisory system prompt (used by --llm-stage). */
+  system?: string;
 }): BuiltChat {
   const cap = clampInputChars(input.maxInputChars);
   const extras = input.apiKey ? [input.apiKey] : [];
@@ -82,7 +84,7 @@ export function buildChat(input: {
     .join('\n');
 
   const messages = [
-    { role: 'system', content: SYSTEM_PROMPT },
+    { role: 'system', content: input.system ?? SYSTEM_PROMPT },
     { role: 'user', content: user },
   ];
   const body = requestBody(input.api, input.model, messages);

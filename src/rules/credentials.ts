@@ -25,6 +25,22 @@ const SLACK = /\b(xox[baprs]-[A-Za-z0-9-]{10,80})\b/;
 const ASSIGN =
   /\b((?:api[_-]?key|secret|token|password|passwd|access[_-]?key|private[_-]?key))\b\s*[:=]\s*['"]([A-Za-z0-9+/=_-]{20,200})['"]/i;
 
+/** Verbs that read a secret out or move it somewhere. */
+const READ_OUT =
+  /\b(?:cat|type|Get-Content|less|more|head|tail|print|dump|read|send|upload|post|curl|wget|copy|cp|scp|rsync|base64|exfiltrat\w*|forward)\b/i;
+
+/**
+ * A line whose only sensitive marker is openclaw.json or `--env-file .env`,
+ * with no verb that reads the file out or sends it: configuration advice.
+ */
+function configOnlyMarker(line: string): boolean {
+  const stripped = line
+    .replace(/openclaw\.json/gi, ' ')
+    .replace(/--env-file(?:=|\s+)\S{0,120}\.env\b/gi, ' ');
+  if (hasSensitiveMarker(stripped)) return false;
+  return !READ_OUT.test(line);
+}
+
 export const cred001: Rule = {
   id: 'IH-CRED-001',
   title: 'Access to a sensitive path',
@@ -62,13 +78,17 @@ export const cred001: Rule = {
     if (!hasSensitiveMarker(file.text)) return findings;
     eachLine(file.text, (line, lineNumber) => {
       if (!hasSensitiveMarker(line)) return;
+      const config = configOnlyMarker(line);
       pushUnique(
         findings,
         createFinding(cred001, file, {
           line: lineNumber,
           evidence: line,
-          message: 'The file references a sensitive credential or secret path.',
-          confidence: 'high',
+          message: config
+            ? 'The file points the agent at a config file that can hold credentials (openclaw.json or a .env file). Check that it is only configured, not read out or sent.'
+            : 'The file references a sensitive credential or secret path.',
+          confidence: config ? 'medium' : 'high',
+          ...(config ? { severity: 'medium' as const } : {}),
         }),
       );
     });
