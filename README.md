@@ -7,6 +7,18 @@
 [![npm](https://img.shields.io/npm/v/ironheights?logo=npm)](https://www.npmjs.com/package/ironheights)
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/Frank-Masciopinto/ironheights/badge)](https://scorecard.dev/viewer/?uri=github.com/Frank-Masciopinto/ironheights)
 [![Socket](https://socket.dev/api/badge/npm/package/ironheights)](https://socket.dev/npm/package/ironheights)
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/16123/badge)](https://www.bestpractices.dev/projects/16123)
+[![CI](https://github.com/Frank-Masciopinto/ironheights/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Frank-Masciopinto/ironheights/actions/workflows/ci.yml?query=branch%3Amain)
+[![npm downloads](https://img.shields.io/npm/dm/ironheights?logo=npm)](https://www.npmjs.com/package/ironheights)
+[![npm provenance](https://img.shields.io/badge/npm-provenance%20signed-2ea44f?logo=npm)](https://www.npmjs.com/package/ironheights#provenance)
+[![MaliciousSkillBench](https://img.shields.io/badge/MaliciousSkillBench-19.8%25%20detect%20%C2%B7%202.4%25%20FP-blue)](docs/benchmark.md#maliciousskillbench-results-0290)
+[![License](https://img.shields.io/npm/l/ironheights)](LICENSE)
+[![Node](https://img.shields.io/node/v/ironheights?logo=node.js)](package.json)
+[![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6?logo=typescript&logoColor=white)](tsconfig.json)
+
+[![Install MCP server in Cursor](https://img.shields.io/badge/Cursor-Install%20MCP%20server-000000?logo=cursor)](https://cursor.com/en/install-mcp?name=ironheights&config=eyJjb21tYW5kIjogIm5weCIsICJhcmdzIjogWyIteSIsICJpcm9uaGVpZ2h0cyIsICJtY3AiXX0=)
+[![Install MCP server in VS Code](https://img.shields.io/badge/VS%20Code-Install%20MCP%20server-0098FF?logo=visualstudiocode&logoColor=white)](https://insiders.vscode.dev/redirect/mcp/install?name=ironheights&config=%7B%22type%22%3A%22stdio%22%2C%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22-y%22%2C%22ironheights%22%2C%22mcp%22%5D%7D)
+[![Use the GitHub Action](https://img.shields.io/badge/GitHub%20Action-uses%3A%20Frank--Masciopinto%2Fironheights-2088FF?logo=githubactions&logoColor=white)](docs/ci.md)
 
 If Ironheights is useful to you, a star on [ClawHub](https://clawhub.ai/frank-masciopinto/skills/ironheights) or GitHub helps other OpenClaw, Claude and Grok Bot users find it.
 
