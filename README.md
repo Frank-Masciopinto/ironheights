@@ -72,6 +72,15 @@ node dist/cli/index.js scan test/fixtures/benign
 
 Keep an `ironheights.threatmodel.yml` in your repo that lists the skills and MCP servers your agent trusts and what each may touch: network hosts, filesystem paths, environment variables, tokens, shell and a minimum grade. `ironheights threatmodel init` writes the first version from what is installed, `threatmodel check` fails on anything outside it, and `threatmodel diff --base origin/main` reports only what a pull request adds. Each claim is `passed`, `violated` or `untested` (a check that matched nothing is not a pass). Capabilities the model never names are listed as uncovered, with a suggested claim; they fail the check only with `--fail-on-uncovered` or `defaults.uncovered: fail`. A built-in `remote-instructions` claim reuses `IH-INJ-004`. The GitHub Action (`mode: threatmodel` or `both`) posts one summary comment per PR. Local only. See [docs/threatmodel.md](docs/threatmodel.md) and [examples/threatmodel](examples/threatmodel).
 
+## Check where it runs, not just what it is
+
+New in 0.28.0. Ironheights: The Immune System for AI Agents. It protects any AI bot that installs it, and this release adds:
+
+- `ironheights surfaces`, which fails a PR that changes whose credential a skill uses, how often it runs or where it runs without editing the threat model. It also derives surfaces from workflows, crontabs and container files and fails when the model omits one, checks declared max concurrent copies against the scheduler's own ledger, and checks contract call budgets against the last real run.
+- `ironheights fleet-posture`, which puts ignore debt (the age of the oldest live ignore) next to the grade and gives one row per machine. The fleet is clean only when every running copy was checked and the file it actually ran matches.
+- `ironheights run-receipt write|audit`, signed per-run receipts written by the loader, one line per running copy, with the trigger and the approver of the exact hash.
+- MCP `type_verdict`, `verdict_gate`, `lookup_verdict` and `session_binding`: a check after load is never a pass, unknown verdict types fail closed, lookups need a content hash plus a verified publisher, and a reach report expires when the launching session changes. See [docs/surfaces-fleet-receipts.md](docs/surfaces-fleet-receipts.md).
+
 ## Bind the verdict to what actually runs
 
 New in 0.27.0. Ironheights: The Immune System for AI Agents. It protects any AI bot that installs it, and this release adds:
