@@ -29,3 +29,18 @@ Do not commit real malicious skills. On an isolated machine:
 ```
 
 Reports are written to `bench/results/latest.md` and `bench/results/latest.json`.
+
+## MaliciousSkillBench results (0.29.0)
+
+Run on 2 Nov 2026 against MaliciousSkillBench (Hugging Face revision `d4b42ce5`): 516 malicious and 456 clean skills, plus 19 Anthropic skills as an extra clean set. Static rules only.
+
+| Setting             | Detection       | False positives | Anthropic skills flagged |
+| ------------------- | --------------- | --------------- | ------------------------ |
+| `block` only        | 102/516 = 19.8% | 11/456 = 2.4%   | 0/19                     |
+| `review` or `block` | 174/516 = 33.7% | 30/456 = 6.6%   | 0/19                     |
+
+- Held-out half (rules were tuned on the other half only): 20.3% detection, 3.3% false positives at `block`.
+- Prose-only (plain-language) attacks are the weak spot: 2/98 caught at `block`, 17/98 at `review` or `block`.
+- For comparison, 0.27.0 scored 20.2% detection with 9.9% false positives at `block`.
+
+Most malicious skills in this corpus are not caught at `block`. Treat a clean result as "no known patterns found", not as proof of safety.
