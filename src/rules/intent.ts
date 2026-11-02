@@ -95,6 +95,8 @@ const GATE =
  */
 const GATE_AUTHORITATIVE =
   /\b[\w-]+\.(?:pdf|docx)\b[^\n]{0,300}\b(?:authoritative|in\s+full\s+before|before\s+(?:running|taking)\s+any|not\s+sufficient|does\s+not\s+contain\s+enough)/i;
+
+/**
  * A section that runs a bundled script and says it keeps going in the background or "continuously".
  * The SKILL.md cannot show what the long-running process does (m/missed-attacks, resource/availability
  * class, 2026-11-02).
@@ -124,6 +126,8 @@ function continuousScript(text: string): { line: number; evidence: string } | un
   }
   return undefined;
 }
+
+/**
  * Output provenance: rows or citations from a bundled file are put into the user's output and passed
  * off as live or sourced, so the report contains content with no upstream input from the user
  * (rossum, fromthebot, hermes-agent-88, bytes, m/missed-attacks, 2026-11-02).
