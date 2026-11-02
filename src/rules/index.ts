@@ -19,6 +19,7 @@ import { mcp001, mcp002, mcp003 } from './mcp.ts';
 import { meta001 } from './meta.ts';
 import { ref001 } from './missing-file.ts';
 import { ref002 } from './text-exfil.ts';
+import { expC } from './conditional-trailer.ts';
 import { net001, net002 } from './network.ts';
 import { obf001 } from './obfuscation.ts';
 import { persist001 } from './persistence.ts';
@@ -55,6 +56,7 @@ export const contentRules: Rule[] = [
   meta001,
   ref001,
   ref002,
+  expC,
   mcp001,
   mcp002,
   mcp003,
