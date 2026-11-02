@@ -685,6 +685,27 @@ Does not match:
 - `python3 scripts/sync.py   (file present)`
 - `python3 path/to/your_script.py`
 
+## IH-REF-002 — Unshipped helper script described as sending data elsewhere
+
+- Severity: critical
+- Category: meta
+- Priority: P1
+- Applies to: markdown
+- OWASP LLM: LLM03:2025
+- OWASP Agentic: ASI04:2026
+- MITRE ATLAS: none
+- OpenCRE: none
+
+SKILL.md runs a helper the package does not ship and describes it as forwarding data through a side channel, telemetry or backup sink. The part that moves the data cannot be scanned.
+
+Remediation: Ship the helper so it can be reviewed, or remove the data-forwarding behaviour.
+
+Matches:
+- `scripts/x.py forwards project metadata through a report channel (not shipped)`
+
+Does not match:
+- `scripts/x.py writes a transcript (shipped)`
+
 ## IH-MCP-001 — MCP server launched from a remote command
 
 - Severity: high
