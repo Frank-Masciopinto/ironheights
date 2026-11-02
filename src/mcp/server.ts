@@ -64,6 +64,14 @@ import {
   type SessionLock,
 } from './invocation.ts';
 import { appendFile, mkdir } from 'node:fs/promises';
+import {
+  checkSessionBinding,
+  gate,
+  lookupVerdict,
+  sessionDigest,
+  typeVerdict,
+  type StoredVerdict,
+} from './verdicts.ts';
 
 /** checkIds this server process issued; redeem_authorization refuses anything else. */
 const checkedThisSession = new Set<string>();
@@ -343,6 +351,62 @@ export const TOOLS = [
       type: 'object',
       properties: { name: str, roots: { type: 'array', items: str } },
       required: ['name', 'roots'],
+    },
+    annotations: { readOnlyHint: true, openWorldHint: false },
+  },
+  {
+    name: 'type_verdict',
+    title: 'Type a verdict by when it was made (post-load is never a pass)',
+    description:
+      'Given a check decision, the check time and the load time, returns the verdict type. A check that ran after the skill loaded returns post-load-unchanged or post-load-drifted with loadedAt next to checkedAt, never allow, so a late answer cannot be pasted into an audit as a gate pass.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        decision: { ...str, enum: ['allow', 'block', 'unanswered', 'refused'] },
+        checkedAt: str,
+        loadedAt: str,
+        checkedSha256: str,
+        loadedSha256: str,
+      },
+      required: ['decision', 'checkedAt'],
+    },
+    annotations: { readOnlyHint: true, openWorldHint: false },
+  },
+  {
+    name: 'verdict_gate',
+    title: 'Fail-closed gate on a verdict value',
+    description:
+      'Returns proceed true only for a pre-load allow. Post-load verdicts, block, unanswered, refused, missing values and any verdict type the gate does not recognise return proceed false.',
+    inputSchema: { type: 'object', properties: { verdict: {} }, required: ['verdict'] },
+    annotations: { readOnlyHint: true, openWorldHint: false },
+  },
+  {
+    name: 'lookup_verdict',
+    title: 'Look up a stored verdict by content hash and verified publisher',
+    description:
+      'Refuses bare-name lookups and unverified publishers. Finds a verdict only by the content hash of the copy on disk plus the registry-verified publisher; a name that does not match the hash is refused.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        name: str,
+        publisher: str,
+        publisherVerified: { type: 'boolean' },
+        sha256: str,
+        store: { type: 'array', items: { type: 'object' } },
+      },
+      required: ['store'],
+    },
+    annotations: { readOnlyHint: true, openWorldHint: false },
+  },
+  {
+    name: 'session_binding',
+    title: 'Bind a reach report to the launching session',
+    description:
+      'Without boundDigest: returns the digest of sessionId plus the sorted env-var names (names only, never values). With boundDigest: recomputes it from the live names and returns current or expired; expired means re-run the reach check or fail closed.',
+    inputSchema: {
+      type: 'object',
+      properties: { sessionId: str, envNames: { type: 'array', items: str }, boundDigest: str },
+      required: ['sessionId', 'envNames'],
     },
     annotations: { readOnlyHint: true, openWorldHint: false },
   },
@@ -994,6 +1058,32 @@ export async function callTool(
       const copies = await copiesOf(args.name, args.roots as string[]);
       const state = copies.length === 1 ? 'single' : copies.length === 0 ? 'absent' : 'refused';
       return text({ state, copies }, state !== 'single');
+    }
+    if (name === 'type_verdict') {
+      const res = typeVerdict(args as unknown as Parameters<typeof typeVerdict>[0]);
+      return text(res, res.verdict !== 'allow');
+    }
+    if (name === 'verdict_gate') {
+      const res = gate(args.verdict);
+      return text(res, !res.proceed);
+    }
+    if (name === 'lookup_verdict') {
+      const store = Array.isArray(args.store) ? (args.store as StoredVerdict[]) : [];
+      const res = lookupVerdict(store, {
+        ...(typeof args.name === 'string' ? { name: args.name } : {}),
+        ...(typeof args.publisher === 'string' ? { publisher: args.publisher } : {}),
+        publisherVerified: args.publisherVerified === true,
+        ...(typeof args.sha256 === 'string' ? { sha256: args.sha256 } : {}),
+      });
+      return text(res, res.status !== 'found');
+    }
+    if (name === 'session_binding') {
+      const names = Array.isArray(args.envNames) ? args.envNames.map(String) : [];
+      if (typeof args.boundDigest === 'string') {
+        const res = checkSessionBinding(args.boundDigest, String(args.sessionId), names);
+        return text(res, res.status !== 'current');
+      }
+      return text({ boundDigest: sessionDigest(String(args.sessionId), names) }, false);
     }
     if (name === 'load_binding') {
       const res = await loadBinding(

@@ -34,7 +34,8 @@ export type ActivityKind =
   | 'attestation'
   | 'retention-prune'
   | 'alert'
-  | 'install-record';
+  | 'install-record'
+  | 'run-receipt';
 
 export interface ActivityRecord {
   seq: number;
