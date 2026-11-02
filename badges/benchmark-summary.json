@@ -1,0 +1,9 @@
+{
+ "version": "0.32.0",
+ "detect": "137/516",
+ "fp": "11/456",
+ "detect_pct": 26.6,
+ "fp_pct": 2.4,
+ "msb_revision": "d4b42ce5766a6e0359c987cf59c1007cb3795a90",
+ "anthropic_commit": "ca45fc496a3436251f191354091d557da31c15b5"
+}
