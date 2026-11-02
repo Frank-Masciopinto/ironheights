@@ -44,6 +44,8 @@ import {
   type ExtrasResult,
   type ReviewResult,
 } from '../../threatmodel/extras.ts';
+import { verifyInstalled } from '../../threatmodel/installed.ts';
+import { assessPins, type ListedOverride } from '../../threatmodel/pins.ts';
 import { REPOSITORY_URL, TOOL_NAME, TOOL_VERSION } from '../../version.ts';
 
 const run = promisify(execFile);
@@ -69,6 +71,8 @@ export interface ThreatModelFlags {
   /** diff: logins that approved the change. */
   approvers?: string[];
   force?: boolean;
+  /** verify-installed: size+mtime cache file. Off unless this path is set. */
+  cache?: string;
   json?: boolean;
   markdown?: string;
   sarif?: string;
@@ -104,6 +108,8 @@ export interface ThreatModelReport {
   selfApproved?: ReviewResult['selfApproved'];
   /** 0.24.0 diff: how many model changes the extractor could classify. */
   extractorHealth?: ReviewResult['extractorHealth'];
+  /** 0.31.0: unpin overrides, listed whether or not they still apply. */
+  overrides?: ListedOverride[];
   exitCode: number;
 }
 
@@ -190,6 +196,7 @@ async function checkAt(
   mcpServers: McpServerDef[];
   extras: ExtraProfile[];
   proposedWrites: ExtrasResult['proposedWrites'];
+  overrides: ListedOverride[];
 }> {
   const { profiles, mcp } = await collect(
     base,
@@ -222,6 +229,8 @@ async function checkAt(
     for (const k of outside) fp.push(await profileSkill(resolve(base, k), base));
     violations.push(...folderViolations(model, fp));
   }
+  const pins = await assessPins(model, profiles, base);
+  violations.push(...pins.violations);
   if (flags.ledger) {
     const ledger = await readLedger(resolve(flags.ledger));
     for (const p of profiles) {
@@ -245,6 +254,7 @@ async function checkAt(
     mcpServers: mcp,
     extras,
     proposedWrites: ex.proposedWrites,
+    overrides: pins.overrides,
   };
 }
 
@@ -283,6 +293,7 @@ export async function runThreatModel(flags: ThreatModelFlags): Promise<number> {
   const modelPath = resolve(dir, flags.model ?? MODEL_FILE);
   const modelFile = toPosix(relative(dir, modelPath));
   if (action === 'init') return init(flags, dir, modelPath, out);
+  if (action === 'verify-installed') return verifyInstalledAction(flags, dir, modelPath, out);
   if (action === 'check') {
     const model = await loadModel(modelPath);
     const r = await checkAt(dir, model, modelFile, flags);
@@ -305,11 +316,46 @@ export async function runThreatModel(flags: ThreatModelFlags): Promise<number> {
       claims: assessed.claims,
       uncovered: assessed.uncovered,
       ...(r.proposedWrites.length ? { proposedWrites: r.proposedWrites } : {}),
+      ...(r.overrides.length ? { overrides: r.overrides } : {}),
       exitCode: exitCodeFor(assessed.violations),
     });
   }
   if (action === 'diff') return diff(flags, dir, modelPath, modelFile, out);
-  throw new UsageError('threatmodel action must be init, check, or diff');
+  throw new UsageError('threatmodel action must be init, check, or diff, or verify-installed');
+}
+
+async function verifyInstalledAction(
+  flags: ThreatModelFlags,
+  dir: string,
+  modelPath: string,
+  out: (l: string) => void,
+): Promise<number> {
+  const model = await loadModel(modelPath);
+  const report = await verifyInstalled({
+    model,
+    base: dir,
+    tool: TOOL_NAME,
+    version: TOOL_VERSION,
+    ...(flags.cache ? { cachePath: resolve(flags.cache) } : {}),
+  });
+  if (flags.json) out(JSON.stringify(report, null, 2));
+  else {
+    const stale = report.results.filter((r) => r.status === 'stale' || r.status === 'missing');
+    if (stale.length) out('stale');
+    else if (!report.results.some((r) => r.status === 'override'))
+      out(
+        `verify-installed: ${report.results.filter((r) => r.status === 'match').length} pinned skill(s) match`,
+      );
+    for (const row of report.results) {
+      if (row.status === 'match') out(`match  ${row.skill}  sha256:${row.installed}`);
+      else if (row.status === 'unpinned') out(`unpinned  ${row.skill}  no recorded hash`);
+      else out(`${row.status}  ${row.skill}  ${row.detail}`);
+    }
+    for (const o of report.overrides)
+      out(`override  ${o.skill}  ${o.owner}  ${o.status}  expires ${o.expires}`);
+    if (report.cacheTradeoff) out(report.cacheTradeoff);
+  }
+  return report.exitCode;
 }
 
 async function init(
@@ -553,6 +599,7 @@ async function diff(
     claims: headAssessed.claims,
     uncovered: headAssessed.uncovered,
     ...(head.proposedWrites.length ? { proposedWrites: head.proposedWrites } : {}),
+    ...(head.overrides.length ? { overrides: head.overrides } : {}),
     ...(scope ? { scope } : {}),
     ...(review
       ? { selfApproved: review.selfApproved, extractorHealth: review.extractorHealth }
@@ -571,12 +618,16 @@ async function emit(
   if (flags.json) out(JSON.stringify(r, null, 2));
   else {
     const list = r.introduced ?? r.violations;
-    if (list.length === 0)
+    const stale = list.some((v) => v.kind === 'hash-stale' || v.kind === 'hash-expired');
+    if (stale) out('stale');
+    else if (list.length === 0)
       out(
         `threat model ok: ${r.skills} skill(s), ${r.mcpServers} MCP server(s) inside ${r.modelFile}`,
       );
     for (const v of list)
       out(`${v.severity.toUpperCase().padEnd(6)} ${v.kind}  ${v.target}  ${v.detail}`);
+    for (const o of r.overrides ?? [])
+      out(`override  ${o.skill}  ${o.status}  ${o.owner}  expires ${o.expires}`);
     if (r.covered?.head)
       out(
         `covers ${r.covered.base ? `${r.covered.base.slice(0, 12)}..` : ''}${r.covered.head.slice(0, 12)}${r.covered.dirty ? ' + uncommitted' : ''}; not checked since`,
@@ -614,8 +665,10 @@ export function renderMarkdown(r: ThreatModelReport): string {
   const list = r.introduced ?? r.violations;
   const blocking = list.filter((v) => v.severity !== 'info');
   const info = list.filter((v) => v.severity === 'info');
-  const status =
-    r.exitCode === 2
+  const stale = list.some((v) => v.kind === 'hash-stale' || v.kind === 'hash-expired');
+  const status = stale
+    ? 'stale'
+    : r.exitCode === 2
       ? '❌ Out-of-model change'
       : r.exitCode === 1
         ? '⚠️ Review needed'
@@ -650,6 +703,16 @@ export function renderMarkdown(r: ThreatModelReport): string {
   if (info.length)
     lines.push('**Model changes and notes** (a reviewer should approve these)', '', ...table(info));
   if (!list.length) lines.push('No skill or MCP server reaches outside the model.', '');
+  if (r.overrides?.length)
+    lines.push(
+      '**Overrides**',
+      '',
+      ...r.overrides.map(
+        (o) =>
+          `- ${esc(o.skill)}: ${o.kind} by ${esc(o.owner)}, ${o.status}, expires ${esc(o.expires)}${o.reason ? ` (${esc(o.reason)})` : ''}`,
+      ),
+      '',
+    );
   if (r.claims?.length) {
     const count = (status: ClaimResult['status']): number =>
       r.claims?.filter((c) => c.status === status).length ?? 0;
@@ -719,7 +782,8 @@ export function renderMarkdown(r: ThreatModelReport): string {
   return lines.join('\n');
 }
 
-const esc = (s: string): string => s.replace(/\\/g, '\\\\').replace(/\|/g, '\\|').replace(/\n/g, ' ');
+const esc = (s: string): string =>
+  s.replace(/\\/g, '\\\\').replace(/\|/g, '\\|').replace(/\n/g, ' ');
 
 export function renderTmSarif(r: ThreatModelReport): string {
   const list = r.introduced ?? r.violations;

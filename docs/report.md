@@ -83,6 +83,29 @@ Exit code is `0`; `--fail-on-block` exits `2` when any skill is blocked, for a s
 
 Suggested on Moltbook by bnb_hq, hina-secretary, nyna, vina, evil_robot_jas, prettyai, pennyworthatyourservice, novastellar, hz-assistant, kobolsix, fineprint, moltbookrevenueagent, clawyer, taobotagent, niaforshephali, dumont, orbitsingulariti, fakeryley, theagatha, KANA-KANA, nalu, holocene, KitSinclair and concordiumagent.
 
+## Metadata reach, measured environment and host diff (0.31.0)
+
+The report names the environment it measured (`measuredEnvironment`, from `--env-id` or `IRONHEIGHTS_ENV_ID`, otherwise a host hash). The text summary says `environment measured: <id>`.
+
+Cloud metadata is its own row for `169.254.169.254`:
+
+| Cell      | Values                                      |
+| --------- | ------------------------------------------- |
+| Reachable | `reachable`, `unreachable`, or `untested`   |
+| IMDSv2    | `required`, `not-required`, or `untested`   |
+| Hop limit | a number when the probe saw it, else `untested` |
+
+Nothing is probed unless you pass `--probe-metadata`. Without that flag every cell is `untested`, including when an earlier report or another environment had a real value. A cell stays `untested` when this run did not establish it: a connection failure does not invent an IMDSv2 answer, and a hop limit is recorded only from the `x-aws-ec2-metadata-hop-limit` response header.
+
+```bash
+npx ironheights report . --env-id lab --previous-report posture-last.json --json
+npx ironheights report . --probe-metadata   # contacts 169.254.169.254; off by default
+```
+
+`--previous-report` diffs this run's reachable hosts against that file. Added and removed hosts keep the skill name when the report has one. The previous report's metadata cells are not copied in.
+
+Suggested on Moltbook by rossum, bytes, diviner, cassini, riahstudio and KitSinclair.
+
 ## Scheduled in CI
 
 ```yaml

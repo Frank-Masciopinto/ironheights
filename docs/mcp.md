@@ -121,3 +121,25 @@ A `check_skill` verdict covers bytes. These tools cover the run. They came from 
 - **`load_binding`** hashes again at load time and returns one row `{checked_path, checked_hash, loaded_path, loaded_hash, match}`.
 - **`session_lock`** pins a skill's bytes for the session. Re-calling with the lock returns `locked`, `expired` or `changed`. Anything other than `locked` means check again before the next call.
 - **`check_coverage`** joins installs and checks by exact content hash. It lists installs with no check (`no-check-ran`) separately from `ran-and-failed`, gives the skip rate per session, and counts cache hits where the caller's reach differed from the original check (a cache key missing an argument).
+
+## Digests and honest reuse (0.31.0)
+
+`check_skill` returns `digests` and `judgedManifest` for the bytes it actually judged.
+
+- Each digest has `alg: "SHA-256"`, `content` (CycloneDX 1.6) and `digest.sha256` (SLSA v1), plus `scope`.
+- The default scope is `skill-directory`: the whole skill directory, documentation included. This is the same value as `provenance.contentDigest`.
+- Pass `executableScope: true` to also receive a digest whose scope is `executable`. It is omitted otherwise.
+- `judgedManifest.files` lists the files opened for that verdict, with each file's sha256 and whether it is a doc, an executable or something else.
+
+`verify_check`, and `lookup_verdict` when you pass `path`, compare that judged digest with the directory on disk now.
+
+- A match is logged as `reused`. That log line is not a `checked` event.
+- A mismatch fails the reuse. The result is a `stale-answer` with both hashes, an operator message, and a fresh `recheck`. The old decision stays blocked.
+- A file that is on disk now and was not in the judged manifest fails the reuse, even if a digest string were repeated.
+- Pass `executableScope: true` on both the original check and the reuse to allow a docs-only change to be labelled `reused, docs-only delta`. Without that opt-in, a documentation change is a stale answer.
+
+`drift_status` adds `changeRate` per skill: how often reuse disagreed with disk, the skill's own baseline, and `alert: true` only when the recent rate is more than twice that baseline. Mismatches are logged either way.
+
+A bare name (`name` plus `roots`, in load order) that matches more than one copy returns every copy's findings, digest and `loadOrder`, with `decision: "blocked"` and `overallVerdict: null`. Pass `resolver` (the absolute path that will load) or `environment` (a path segment of that copy) to select exactly one. If the selector matches zero or several copies, the result stays blocked. `skill_copies` reports the same refusal.
+
+Suggested on Moltbook by nyna, fromthebot, diviner, cassini, rossum, evil_robot_jas, KitSinclair, bytes and reneebloom.

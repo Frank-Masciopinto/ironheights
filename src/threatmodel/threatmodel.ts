@@ -72,6 +72,17 @@ const EgressEntry = z
   })
   .strict();
 
+const OverrideEntry = z
+  .object({
+    kind: z.enum(['unpin']),
+    /** Who accepted the unpin. Required. */
+    owner: z.string().min(1),
+    /** ISO time the override stops applying. Required. */
+    expires: z.string().min(1),
+    reason: z.string().optional(),
+  })
+  .strict();
+
 const ReasonEntry = z
   .object({
     reason: z.string().min(1),
@@ -116,6 +127,19 @@ const SkillEntry = z
     observers: z.array(ObserverEntry).optional(),
     /** 0.24.0: why each widening exists, keyed `network:host`, `writes:path`, `tokens:NAME`, `shell`. */
     reasons: z.record(z.string(), ReasonEntry).optional(),
+    /**
+     * 0.31.0: sha256 of the installed skill directory at review time.
+     * Matching means this digest equals the installed artifact, not the skill name.
+     */
+    checkedHash: z.string().optional(),
+    /** ISO time the checked hash was recorded. Required when maxAge is set. */
+    checkedAt: z.string().optional(),
+    /** Optional age backstop, for example `30d` or `12h`. A match older than this is stale. */
+    maxAge: z.string().optional(),
+    /** Where updates are fetched from (URL or host). A host outside network and egress is flagged. */
+    updateSource: z.string().optional(),
+    /** Unpin overrides. Each one needs an owner and an expiry or the model is rejected. */
+    overrides: z.array(OverrideEntry).optional(),
   })
   .strict();
 
@@ -170,6 +194,11 @@ export const ThreatModelSchema = z
         observers: z.enum(['off', 'warn', 'require']).default('off'),
         /** 0.24.0: with observers: warn, the date the warning escalates to require. */
         observersWarnUntil: z.string().optional(),
+        /**
+         * 0.31.0: a skill with no checked hash and no update source.
+         * `off` (default) leaves existing models unchanged. `warn` exits 1. `fail` exits 2.
+         */
+        unpinned: z.enum(['off', 'warn', 'fail']).default('off'),
       })
       .strict()
       .default({
@@ -184,6 +213,7 @@ export const ThreatModelSchema = z
         egress: 'report',
         triggers: 'off',
         observers: 'off',
+        unpinned: 'off',
       }),
     skills: z.record(z.string(), SkillEntry).default({}),
     mcpServers: z.record(z.string(), McpEntry).default({}),
@@ -236,7 +266,13 @@ export type ViolationKind =
   | 'model-change-unclassified'
   | 'reason-reopened'
   | 'reason-expired'
-  | 'lockfile-churn';
+  | 'lockfile-churn'
+  | 'hash-stale'
+  | 'hash-expired'
+  | 'override-expired'
+  | 'override-active'
+  | 'unpinned-skill'
+  | 'update-host-not-in-egress';
 
 export interface Violation {
   kind: ViolationKind;
@@ -681,6 +717,9 @@ export function widened(base: ThreatModel, head: ThreatModel, modelFile: string)
   const obsRank = { require: 0, warn: 1, off: 2 } as const;
   if (obsRank[head.defaults.observers] > obsRank[base.defaults.observers])
     add('defaults', `observers ${base.defaults.observers} -> ${head.defaults.observers}`);
+  const pinRank = { fail: 0, warn: 1, off: 2 } as const;
+  if (pinRank[head.defaults.unpinned] > pinRank[base.defaults.unpinned])
+    add('defaults', `unpinned ${base.defaults.unpinned} -> ${head.defaults.unpinned}`);
   return v;
 }
 
@@ -740,6 +779,7 @@ export function modelFromProfiles(
       egress: 'report',
       triggers: 'off',
       observers: 'off',
+      unpinned: 'off',
     },
     skills,
     mcpServers,

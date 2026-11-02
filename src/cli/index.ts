@@ -227,6 +227,14 @@ export async function main(argv: string[], hooks: MainHooks = {}): Promise<numbe
       'public key for --from-watch (default IRONHEIGHTS_HOME/watch-key.pub.pem)',
     )
     .option('--verify <report.json>', 're-check a saved JSON report against the files on disk now')
+    .option(
+      '--probe-metadata',
+      'opt in to probing 169.254.169.254 (reachable, IMDSv2, hop limit). Off by default; no network unless set',
+    )
+    .option(
+      '--previous-report <file>',
+      "diff this run's reachable hosts against a previous report JSON. Metadata cells are not copied across",
+    )
     .option('--config <file>', 'config file')
     .action(async (targets: string[], opts: Record<string, string | boolean | undefined>) => {
       const s = (k: string): string | undefined =>
@@ -260,6 +268,8 @@ export async function main(argv: string[], hooks: MainHooks = {}): Promise<numbe
           ? { verifySlaDays: Number(s('verifySla')) }
           : {}),
         ...(s('verify') ? { verify: s('verify') } : {}),
+        probeMetadata: Boolean(opts.probeMetadata),
+        ...(s('previousReport') ? { previousReport: s('previousReport') } : {}),
         ...(s('fromWatch') ? { fromWatch: s('fromWatch') } : {}),
         ...(s('watchKey') ? { watchKey: s('watchKey') } : {}),
       });
@@ -277,7 +287,7 @@ export async function main(argv: string[], hooks: MainHooks = {}): Promise<numbe
   program
     .command('threatmodel [action]')
     .description(
-      'agent threat model as code: init writes ironheights.threatmodel.yml from the skills and MCP servers in a repo, check fails when a skill or MCP server reaches outside it (hosts, paths, env, tokens, shell, grade), diff --base <ref> reports only what a PR adds. Local only.',
+      'agent threat model as code: init writes ironheights.threatmodel.yml from the skills and MCP servers in a repo, check fails when a skill or MCP server reaches outside it (hosts, paths, env, tokens, shell, grade), diff --base <ref> reports only what a PR adds, verify-installed exits non-zero when an installed hash differs from the recorded hash. Local only.',
     )
     .option('--dir <dir>', 'repository directory', '.')
     .option('--model <file>', 'model file relative to --dir', 'ironheights.threatmodel.yml')
@@ -312,6 +322,10 @@ export async function main(argv: string[], hooks: MainHooks = {}): Promise<numbe
     .option('--markdown <file>', 'write a Markdown summary (PR comment)')
     .option('--sarif <file>', 'write SARIF 2.1.0')
     .option('--json', 'print JSON to stdout')
+    .option(
+      '--cache <file>',
+      'verify-installed: size and mtime cache. A hit does not re-read bytes; size or mtime changes always re-hash. See docs for the tradeoff.',
+    )
     .option('--config <file>', 'config file')
     .action(
       async (
@@ -348,6 +362,7 @@ export async function main(argv: string[], hooks: MainHooks = {}): Promise<numbe
               }
             : {}),
           force: Boolean(opts.force),
+          ...(str('cache') ? { cache: str('cache') } : {}),
           json: Boolean(opts.json),
         });
       },

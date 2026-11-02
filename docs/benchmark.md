@@ -30,6 +30,10 @@ Do not commit real malicious skills. On an isolated machine:
 
 Reports are written to `bench/results/latest.md` and `bench/results/latest.json`.
 
+## MaliciousSkillBench results (0.31.0)
+
+0.31.0 does not change scanner rules, verdicts or grade thresholds. The 0.30.0 block numbers therefore stand: detection 22.7%, false positives 2.4%, Anthropic skills 0/19, on the 2 Nov 2026 set (516 malicious / 456 benign + 19 Anthropic skills). That checkout (`benchmark-2026-11-02`, MaliciousSkillBench revision `d4b42ce5`) is not in this repository, so 0.31.0 did not re-score it. The in-repo 20-skill synthetic bench is unchanged: review recall 1.000, block recall 0.300, 0 false flags.
+
 ## MaliciousSkillBench results (0.29.0)
 
 Run on 2 Nov 2026 against MaliciousSkillBench (Hugging Face revision `d4b42ce5`): 516 malicious and 456 clean skills, plus 19 Anthropic skills as an extra clean set. Static rules only.

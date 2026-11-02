@@ -8,7 +8,7 @@
  */
 import { createHash } from 'node:crypto';
 import { createInterface } from 'node:readline';
-import { rm, stat } from 'node:fs/promises';
+import { appendFile, mkdir, rm, stat } from 'node:fs/promises';
 import { basename, dirname, join, resolve } from 'node:path';
 import { loadConfig, ironheightsHome } from '../core/config.ts';
 import { IronheightsError } from '../core/errors.ts';
@@ -51,11 +51,21 @@ import {
 import { dependencyClosure, type Closure } from './closure.ts';
 import { checkManifest, type ToolDef } from './toolpins.ts';
 import { driftAnswers } from './driftstatus.ts';
+import { skillDigests, type JudgedFile } from './digests.ts';
+import {
+  changeRate,
+  judgeReuse,
+  logReuse,
+  readObservations,
+  reuseLogPath,
+  type ReuseDecision,
+} from './reuse.ts';
+import { bareName, copiesOnPath, selectCopy } from './collisions.ts';
+import { emitAlert } from '../premium/alerts.ts';
 import {
   checkCoverage,
   checkInvocation,
   checkLock,
-  copiesOf,
   loadBinding,
   lockSession,
   type CheckEvent,
@@ -63,7 +73,6 @@ import {
   type InvocationInput,
   type SessionLock,
 } from './invocation.ts';
-import { appendFile, mkdir } from 'node:fs/promises';
 import {
   checkSessionBinding,
   gate,
@@ -154,6 +163,30 @@ export const TOOLS = [
           description: 'sha256 of the before-plan, captured when the plan was written.',
         },
         shortlistId: { ...str, description: 'Id of the open shortlist this check belongs to.' },
+        executableScope: {
+          type: 'boolean',
+          description:
+            'Also return a second digest scoped to executable files only. Omitted unless true. A docs-only delta can be reused under that scope only when this was set on the original check and on verify_check.',
+        },
+        name: {
+          ...str,
+          description:
+            'Bare skill name (no owner, no path). With roots, every matching copy is returned. More than one copy is not an allow until resolver or environment selects one.',
+        },
+        roots: {
+          type: 'array',
+          items: str,
+          description: 'Directories searched, in load order, when name is a bare skill name.',
+        },
+        resolver: {
+          ...str,
+          description: 'Runtime resolver: the absolute path of the copy that will actually load.',
+        },
+        environment: {
+          ...str,
+          description:
+            'Runtime environment. A path segment of the copy must equal it. Required, with or without resolver, before an allow when several copies share the name.',
+        },
       },
     },
     annotations: { readOnlyHint: true, openWorldHint: true },
@@ -203,6 +236,11 @@ export const TOOLS = [
       properties: {
         checkId: { ...str, description: 'checkId returned by check_skill.' },
         path: { ...str, description: 'Folder to re-hash (default: the folder that was checked).' },
+        executableScope: {
+          type: 'boolean',
+          description:
+            'Opt in to comparing the executable-file digest. A docs-only delta is labelled reused, docs-only delta only when this is true and the original check opted in too.',
+        },
       },
       required: ['checkId'],
     },
@@ -349,7 +387,12 @@ export const TOOLS = [
       'List every copy of a skill name under the given roots with path and content hash. More than one copy returns refused: pin one path before any verdict exists.',
     inputSchema: {
       type: 'object',
-      properties: { name: str, roots: { type: 'array', items: str } },
+      properties: {
+        name: str,
+        roots: { type: 'array', items: str },
+        resolver: str,
+        environment: str,
+      },
       required: ['name', 'roots'],
     },
     annotations: { readOnlyHint: true, openWorldHint: false },
@@ -393,6 +436,12 @@ export const TOOLS = [
         publisherVerified: { type: 'boolean' },
         sha256: str,
         store: { type: 'array', items: { type: 'object' } },
+        path: {
+          ...str,
+          description:
+            'Copy on disk. When set, the stored verdict is compared with that directory before it can be reused.',
+        },
+        executableScope: { type: 'boolean' },
       },
       required: ['store'],
     },
@@ -553,14 +602,127 @@ function timingOf(args: Record<string, unknown>, checkedAt: string) {
   };
 }
 
+async function describeCandidate(
+  dir: string,
+  loadOrder: number,
+  env: NodeJS.ProcessEnv,
+): Promise<Record<string, unknown>> {
+  const config = await loadConfig({ env });
+  const result = await scanPath(dir, config).catch(() => null);
+  const judged = await skillDigests(dir).catch(() => null);
+  const findings = result
+    ? result.skills.flatMap((s) =>
+        s.findings.map((f) => ({
+          skill: s.skillName,
+          ruleId: f.ruleId,
+          severity: f.severity,
+          file: f.file,
+          line: f.line,
+          message: f.message,
+        })),
+      )
+    : [];
+  return {
+    path: dir,
+    loadOrder,
+    digest: judged?.directory ?? null,
+    digests: judged?.directory ? [judged.directory] : [],
+    judgedManifest: judged?.manifest ?? null,
+    verdict: result?.verdict ?? 'unknown',
+    decision: result ? decisionFor(result.verdict) : 'blocked',
+    findings: findings.slice(0, 25),
+  };
+}
+
 async function checkSkill(
   args: Record<string, unknown>,
   deps: McpDeps,
   env: NodeJS.ProcessEnv,
   defaultLedger: string,
 ): Promise<Record<string, unknown>> {
+  const roots = Array.isArray(args.roots) ? args.roots.map(String) : undefined;
+  const named = typeof args.name === 'string' ? args.name : undefined;
+  const skillArg = typeof args.skill === 'string' ? args.skill : undefined;
+  const bare =
+    named ??
+    (skillArg && !skillArg.includes('/') && !skillArg.includes('\\') && roots
+      ? skillArg
+      : undefined);
+  if (bare) {
+    if (typeof args.path === 'string')
+      return text(
+        {
+          error: 'pass a bare name or a path, not both',
+          decision: 'blocked',
+          overallVerdict: null,
+        },
+        true,
+      );
+    if (!roots?.length)
+      return text(
+        {
+          error: 'roots are required to resolve a bare name',
+          decision: 'blocked',
+          overallVerdict: null,
+        },
+        true,
+      );
+    const token = bareName(bare);
+    if (!token)
+      return text(
+        {
+          error: 'a bare name is one path segment, not a path or an owner/slug',
+          decision: 'blocked',
+          overallVerdict: null,
+        },
+        true,
+      );
+    const copies = await copiesOnPath(token, roots);
+    const resolver = typeof args.resolver === 'string' ? args.resolver : undefined;
+    const environment = typeof args.environment === 'string' ? args.environment : undefined;
+    const selection = selectCopy(copies, {
+      ...(resolver ? { resolver } : {}),
+      ...(environment ? { environment } : {}),
+    });
+    if (selection.status !== 'chosen') {
+      const candidates = [];
+      for (const copy of copies)
+        candidates.push(await describeCandidate(copy.path, copy.loadOrder, env));
+      return text({
+        decision: 'blocked',
+        verdict: 'ambiguous',
+        overallVerdict: null,
+        ambiguous: true,
+        authorizing: false,
+        name: token,
+        reason: selection.reason,
+        candidates,
+      });
+    }
+    const inner = await checkSkill(
+      {
+        ...args,
+        path: selection.copy.path,
+        name: undefined,
+        skill: undefined,
+        roots: undefined,
+      },
+      deps,
+      env,
+      defaultLedger,
+    );
+    const body = (inner.structuredContent ?? {}) as Record<string, unknown>;
+    if (copies.length > 1)
+      body.resolved = {
+        path: selection.copy.path,
+        loadOrder: selection.copy.loadOrder,
+        resolver: resolver ?? null,
+        environment: environment ?? null,
+      };
+    return text(body, inner.isError === true);
+  }
   const path = typeof args.path === 'string' ? args.path : undefined;
-  const skill = typeof args.skill === 'string' ? args.skill : undefined;
+  const skill = skillArg;
   // Hash exactly what was submitted, before anything else, so a later swap is detectable.
   const submittedHash = sha256(
     JSON.stringify({
@@ -655,7 +817,9 @@ async function checkSkill(
         dir = staged = res.dir;
       }
       const result = await scanPath(dir, config);
-      const digest = await contentDigest(dir);
+      const wantExec = args.executableScope === true;
+      const judged = await skillDigests(dir, { executable: wantExec });
+      const digest = { digest: judged.directoryDigest, files: judged.files };
       if (!result.skills.length || !digest.digest)
         return await unavailable('nothing was scanned (empty folder or empty download)');
       const closure: Closure = await dependencyClosure(dir);
@@ -664,6 +828,7 @@ async function checkSkill(
         result,
         digest as { digest: string; files: Record<string, string> },
         closure,
+        judged,
       );
     };
     const finish = async (
@@ -671,6 +836,7 @@ async function checkSkill(
       result: Awaited<ReturnType<typeof scanPath>>,
       digest: { digest: string; files: Record<string, string> },
       closure: Closure,
+      judged: Awaited<ReturnType<typeof skillDigests>>,
     ): Promise<Record<string, unknown>> => {
       const grade = gradeFromSkills(result.skills);
       const max = typeof args.maxFindings === 'number' ? Math.max(0, args.maxFindings) : 25;
@@ -758,6 +924,10 @@ async function checkSkill(
           unpinned: closure.unpinned,
         },
         ...(holds.length ? { reason: holds.join('; ') } : {}),
+        judgedManifest: judged.manifest.files,
+        ...(args.executableScope === true
+          ? { executableScope: true, executableDigest: judged.executable?.content ?? null }
+          : {}),
       };
       await writeReceipt(receiptFile, receipt);
       checkedThisSession.add(checkId);
@@ -789,6 +959,11 @@ async function checkSkill(
         decision,
         checkId,
         provenance: prov,
+        digests: [
+          judged.directory,
+          ...(args.executableScope === true && judged.executable ? [judged.executable] : []),
+        ].filter((d): d is NonNullable<typeof d> => d !== null),
+        judgedManifest: judged.manifest,
         checkedInput: {
           target,
           contentDigest: digest.digest,
@@ -985,12 +1160,91 @@ export async function callTool(
       if (typeof args.checkId !== 'string' || !args.checkId)
         return text({ error: 'checkId is required', decision: 'blocked' }, true);
       const receipt = await findReceipt(receiptsPath(env), args.checkId);
-      const res = await verifyReceipt(
-        receipt,
-        args.checkId,
-        typeof args.path === 'string' ? resolve(args.path) : undefined,
+      const dir =
+        typeof args.path === 'string'
+          ? resolve(args.path)
+          : receipt?.localPath
+            ? resolve(receipt.localPath)
+            : undefined;
+      const res = await verifyReceipt(receipt, args.checkId, dir);
+      if (!receipt || !dir || (res.status !== 'live' && !res.reason.includes('files changed')))
+        return text(res);
+      const wantExec = args.executableScope === true;
+      const nowDigests = await skillDigests(dir, {
+        executable: wantExec || receipt.executableScope === true,
+      }).catch(() => null);
+      if (!nowDigests) return text(res);
+      const reuse: ReuseDecision = judgeReuse({
+        judgedDigest: receipt.provenance.contentDigest,
+        currentDigest: nowDigests.directoryDigest,
+        judgedFiles: receipt.judgedManifest ?? [],
+        currentFiles: nowDigests.manifest.files,
+        executableScope: wantExec,
+        verdictOptedIn: receipt.executableScope === true,
+        judgedExecutable: receipt.executableDigest ?? null,
+        currentExecutable: nowDigests.executable?.content ?? null,
+        manifestKnown: Array.isArray(receipt.judgedManifest),
+      });
+      const at = new Date().toISOString();
+      if (reuse.ok) {
+        await logReuse(reuseLogPath(env), {
+          at,
+          skill: dir,
+          kind: reuse.audit === 'reused' ? 'match' : 'docs-only',
+          judged: reuse.judged,
+          current: reuse.current,
+          reused: reuse.audit,
+        }).catch(() => undefined);
+        return text({
+          ...res,
+          status: 'live',
+          decision: receipt.decision,
+          audit: reuse.audit,
+          judged: reuse.judged,
+          current: reuse.current,
+          reason:
+            reuse.audit === 'reused'
+              ? res.reason
+              : 'executable digest matches; only documentation changed, and this caller opted into that scope',
+        });
+      }
+      await logReuse(reuseLogPath(env), {
+        at,
+        skill: dir,
+        kind: 'mismatch',
+        judged: reuse.judged,
+        current: reuse.current,
+        event: 'stale-answer',
+        operator: reuse.operator,
+      }).catch(() => undefined);
+      process.stderr.write(`ironheights: ${reuse.operator}\n`);
+      await emitAlert(
+        'verify-failed',
+        reuse.operator,
+        {
+          event: 'stale-answer',
+          checkId: args.checkId,
+          judged: reuse.judged,
+          current: reuse.current,
+        },
+        { env },
+      ).catch(() => undefined);
+      const recheck = await checkSkill(
+        { path: dir, ...(wantExec ? { executableScope: true } : {}) },
+        deps,
+        env,
+        defaultLedger,
       );
-      return text(res);
+      return text({
+        ...res,
+        status: 'stale',
+        decision: 'blocked',
+        event: 'stale-answer',
+        judged: reuse.judged,
+        current: reuse.current,
+        operator: reuse.operator,
+        recheck: recheck.structuredContent ?? null,
+      });
     }
     if (name === 'drift_status') {
       const paths = Array.isArray(args.paths) ? args.paths.map(String) : [];
@@ -999,13 +1253,18 @@ export async function callTool(
       const resolved = paths.map((p) => resolve(p));
       const status = await ledgerChanges(resolved, ledger);
       const answers = await driftAnswers(resolved, ledger, args.capability);
-      const hold = answers.some((a) => a.decision === 'hold');
+      const observations = await readObservations(reuseLogPath(env));
+      const withRate = answers.map((a) => ({
+        ...a,
+        changeRate: changeRate(observations.filter((o) => o.skill === a.skill)),
+      }));
+      const hold = withRate.some((a) => a.decision === 'hold');
       return text({
         // An answer that may precede an irreversible act leads with its own limits.
-        label: answers.map((a) => a.label).join(' | '),
+        label: withRate.map((a) => a.label).join(' | '),
         provenance: provenance(new Date().toISOString(), null, 0, null),
         decision: hold ? 'hold' : status.decision,
-        answers,
+        answers: withRate,
         ledger,
         skills: status.skills,
         configKeys: status.configKeys,
@@ -1055,9 +1314,50 @@ export async function callTool(
     if (name === 'skill_copies') {
       if (typeof args.name !== 'string' || !Array.isArray(args.roots))
         return text({ error: 'name and roots are required' }, true);
-      const copies = await copiesOf(args.name, args.roots as string[]);
-      const state = copies.length === 1 ? 'single' : copies.length === 0 ? 'absent' : 'refused';
-      return text({ state, copies }, state !== 'single');
+      const found = await copiesOnPath(args.name, args.roots.map(String));
+      const resolver = typeof args.resolver === 'string' ? args.resolver : undefined;
+      const environment = typeof args.environment === 'string' ? args.environment : undefined;
+      const selection = selectCopy(found, {
+        ...(resolver ? { resolver } : {}),
+        ...(environment ? { environment } : {}),
+      });
+      const copies: Array<Record<string, unknown> & { sha256: string }> = [];
+      for (const copy of found) {
+        const described = await describeCandidate(copy.path, copy.loadOrder, env);
+        const sha = (described.digest as { content?: string } | null)?.content ?? '';
+        copies.push({ ...described, sha256: sha });
+      }
+      if (selection.status === 'chosen' && found.length === 1)
+        return text({ state: 'single', copies, decision: copies[0]?.decision ?? 'blocked' });
+      if (selection.status === 'chosen' && (resolver || environment)) {
+        const chosen = copies.find((c) => c.path === selection.copy.path);
+        const decision = chosen?.decision === 'allow' ? 'allow' : 'blocked';
+        return text(
+          {
+            state: 'resolved',
+            decision,
+            overallVerdict: decision === 'allow' ? chosen?.verdict : null,
+            resolved: { path: selection.copy.path, loadOrder: selection.copy.loadOrder },
+            copies,
+          },
+          decision !== 'allow',
+        );
+      }
+      const state = found.length === 0 ? 'absent' : 'refused';
+      return text(
+        {
+          state,
+          decision: 'blocked',
+          overallVerdict: null,
+          ambiguous: found.length > 1,
+          reason:
+            selection.status === 'chosen'
+              ? 'bare name matches more than one copy'
+              : selection.reason,
+          copies,
+        },
+        true,
+      );
     }
     if (name === 'type_verdict') {
       const res = typeVerdict(args as unknown as Parameters<typeof typeVerdict>[0]);
@@ -1075,7 +1375,79 @@ export async function callTool(
         publisherVerified: args.publisherVerified === true,
         ...(typeof args.sha256 === 'string' ? { sha256: args.sha256 } : {}),
       });
-      return text(res, res.status !== 'found');
+      if (res.status !== 'found' || typeof args.path !== 'string')
+        return text(res, res.status !== 'found');
+      const dir = resolve(args.path);
+      const wantExec = args.executableScope === true;
+      const nowDigests = await skillDigests(dir, { executable: wantExec }).catch(() => null);
+      const entry = store.find(
+        (s) =>
+          s.sha256.toLowerCase() === res.verdict.sha256.toLowerCase() &&
+          s.publisher === res.verdict.publisher,
+      ) as
+        | (StoredVerdict & {
+            files?: JudgedFile[];
+            executableDigest?: string;
+            executableScope?: boolean;
+          })
+        | undefined;
+      const reuse = judgeReuse({
+        judgedDigest: res.verdict.sha256,
+        currentDigest: nowDigests?.directoryDigest ?? null,
+        judgedFiles: entry?.files ?? [],
+        currentFiles: nowDigests?.manifest.files ?? [],
+        executableScope: wantExec,
+        verdictOptedIn: entry?.executableScope === true,
+        judgedExecutable: entry?.executableDigest ?? null,
+        currentExecutable: nowDigests?.executable?.content ?? null,
+        manifestKnown: Array.isArray(entry?.files),
+      });
+      const at = new Date().toISOString();
+      if (reuse.ok) {
+        await logReuse(reuseLogPath(env), {
+          at,
+          skill: dir,
+          kind: reuse.audit === 'reused' ? 'match' : 'docs-only',
+          judged: reuse.judged,
+          current: reuse.current,
+          reused: reuse.audit,
+        }).catch(() => undefined);
+        return text({ ...res, audit: reuse.audit, reused: reuse.audit });
+      }
+      await logReuse(reuseLogPath(env), {
+        at,
+        skill: dir,
+        kind: 'mismatch',
+        judged: reuse.judged,
+        current: reuse.current,
+        event: 'stale-answer',
+        operator: reuse.operator,
+      }).catch(() => undefined);
+      process.stderr.write(`ironheights: ${reuse.operator}\n`);
+      await emitAlert(
+        'verify-failed',
+        reuse.operator,
+        {
+          event: 'stale-answer',
+          judged: reuse.judged,
+          current: reuse.current,
+        },
+        { env },
+      ).catch(() => undefined);
+      const recheck = await checkSkill({ path: dir }, deps, env, defaultLedger);
+      return text(
+        {
+          status: 'stale-answer',
+          event: 'stale-answer',
+          decision: 'blocked',
+          judged: reuse.judged,
+          current: reuse.current,
+          operator: reuse.operator,
+          reason: reuse.reason,
+          recheck: recheck.structuredContent ?? null,
+        },
+        true,
+      );
     }
     if (name === 'session_binding') {
       const names = Array.isArray(args.envNames) ? args.envNames.map(String) : [];
