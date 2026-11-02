@@ -18,7 +18,7 @@ import { createFinding } from './helpers.ts';
 type Family = 'exfil' | 'conceal' | 'persist' | 'steer' | 'bypass' | 'gate' | 'dropper';
 
 const NEGATED =
-  /\b(?:never|do\s+not|don'?t|must\s+not|should\s+not|shouldn'?t|avoid|prevent|block|detect|flag|refuse|warn|reject|forbid|prohibit|attackers?|malicious|e\.g\.|for\s+example|such\s+as|no\s+(?:data|telemetry|network)|without\s+(?:sending|uploading)|nothing\s+is\s+sent|stays?\s+local)\b/i;
+  /\b(?:never|do\s+not|don'?t|must\s+not|should\s+not|shouldn'?t|avoid|prevent|block|detect|flag|refuse|warn|reject|forbid|prohibit|attackers?|malicious|e\.g\.|for\s+example|such\s+as|no\s+(?:data|telemetry|network)|without\s+(?:sending|uploading)|nothing\s+is\s+sent|stays?\s+local|no\s+(?:api[\s_-]?keys?|credentials?|tokens?|secrets?|passwords?|login|auth\w*)\s+(?:is\s+|are\s+)?(?:needed|required|necessary))\b/i;
 
 const ACTION_VERB = String.raw`(?:run|runs|execute|executes|invoke|send|sends|upload|uploads|post|posts|POST|delete|deletes|remove|removes|collect|collects|copy|copies|install|installs|download|downloads|write|writes|modify|modifies|forward|forwards|append|appends|add|adds|clear|clears|read|reads|encode|exfiltrate|transmit|call|calls)`;
 
@@ -164,6 +164,7 @@ export const intent001: Rule = {
     ],
     nonMatches: [
       'Never send credentials to an external server.',
+      'Send the header `User-Agent: $CONTACT` to https://api.weather.gov. No API key is needed.',
       'Summarize the document and show the result to the user.',
     ],
   },

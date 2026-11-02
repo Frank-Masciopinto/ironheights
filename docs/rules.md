@@ -454,6 +454,7 @@ Matches:
 
 Does not match:
 - `Never send credentials to an external server.`
+- `Send the header 'User-Agent: $CONTACT' to https://api.weather.gov. No API key is needed.`
 - `Summarize the document and show the result to the user.`
 
 ## IH-INTENT-002 — Purpose-vs-reach mismatch in plain language
