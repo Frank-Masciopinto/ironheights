@@ -30,6 +30,20 @@ Do not commit real malicious skills. On an isolated machine:
 
 Reports are written to `bench/results/latest.md` and `bench/results/latest.json`.
 
+## MaliciousSkillBench results (0.33.0)
+
+Run on 2 Nov 2026 against MaliciousSkillBench (Hugging Face revision `d4b42ce5`): 516 malicious and 456 clean skills, plus 19 Anthropic skills as an extra clean set. Static rules only. 0.33.0 is merged on `main`; on npm it is staged and goes live after maintainer approval.
+
+| Setting             | Detection       | False positives | Anthropic skills flagged |
+| ------------------- | --------------- | --------------- | ------------------------ |
+| `block` only        | 162/516 = 31.4% | 11/456 = 2.4%   | 0/19                     |
+| `review` or `block` | 225/516 = 43.6% | 32/456 = 7.0%   | 0/19                     |
+
+- Held-out half: 33.2% detection (95/286), 3.3% false positives (8/245) at `block`. The new patterns were written after reading missed examples from both halves, so this half is not fully blind for 0.33.0.
+- Prose-only (plain-language) attacks: 24/98 caught at `block`, 35/98 at `review` or `block`.
+- Cisco skill-scanner 2.3.2 on the same set: 21.9% detection, 2.0% false positives at `block`, 1/19 Anthropic skills flagged.
+- Earlier block numbers: 0.32.0 26.6%, 0.30.0/0.31.0 22.7%, 0.29.0 19.8%, all at 2.4% false positives.
+
 ## MaliciousSkillBench results (0.32.0)
 
 Run on 2 Nov 2026 against MaliciousSkillBench (Hugging Face revision `d4b42ce5`): 516 malicious and 456 clean skills, plus 19 Anthropic skills as an extra clean set. Static rules only. 0.32.0 is merged on `main`; on npm it is staged and goes live after maintainer approval.
