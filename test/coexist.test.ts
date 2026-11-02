@@ -480,7 +480,8 @@ describe('coexist command', () => {
   it('adds a one-line summary to doctor', async () => {
     await skill('skill-vetter');
     const out: string[] = [];
-    await runDoctor({ env: box.env, stdout: (text) => void out.push(text) });
+    // Pin the repo: this repo's own workflows run Cisco skill-scanner for the benchmark.
+    await runDoctor({ env: box.env, repoDir: box.repo, stdout: (text) => void out.push(text) });
     expect(out.join('')).toContain('Other security tools: skill-vetter');
   });
 

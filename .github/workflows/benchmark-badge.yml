@@ -1,10 +1,12 @@
 name: benchmark badge
-# Re-scores MaliciousSkillBench on each release tag and publishes the README badge
-# as a shields.io endpoint file on the `badges` branch. If any step fails, the
+# Re-scores MaliciousSkillBench (Ironheights and the pinned Cisco skill-scanner) on each
+# release tag and main merge, and publishes the README badge and comparison-table cells
+# as shields.io endpoint files on the `badges` branch. If any step fails, the
 # publish job does not run and the last good badges/benchmark.json stays in place.
 on:
   push:
     tags: ['v*']
+    branches: [main]
   workflow_dispatch:
 permissions:
   contents: read
@@ -24,8 +26,8 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
-      - run: 'python3 -m venv .venv && .venv/bin/pip install --require-hashes --only-binary=:all: -r bench/msb/requirements.txt'
-      - run: .venv/bin/python scripts/benchmark-msb.py dist/cli/index.js out
+      - run: 'python3 -m venv .venv && .venv/bin/pip install --require-hashes --only-binary=:all: -r bench/msb/requirements.txt -r bench/msb/requirements-cisco.txt'
+      - run: .venv/bin/python scripts/benchmark-msb.py dist/cli/index.js out .venv/bin/skill-scanner
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: benchmark-badge
@@ -54,10 +56,11 @@ jobs:
           git remote add origin "https://x-access-token:${GH_TOKEN}@github.com/${REPO}.git"
           if git fetch -q --depth 1 origin badges; then git checkout -q -b badges FETCH_HEAD; else git checkout -q --orphan badges; fi
           mkdir -p badges
-          cp ../out/benchmark.json ../out/benchmark-summary.json badges/
+          test "$(ls ../out/table-*.json | wc -l)" -eq 6
+          cp ../out/benchmark.json ../out/benchmark-summary.json ../out/table-*.json badges/
           git add badges
           if git diff --cached --quiet; then echo "badge unchanged"; exit 0; fi
-          git commit -q -m "benchmark badge: $(jq -r '.version + " " + .detect + " detect, " + .fp + " FP"' badges/benchmark-summary.json)"
+          git commit -q -m "benchmark badge: $(jq -r '.version + " " + .detect + " detect, " + .fp + " FP; cisco " + .cisco.detect + " detect, " + .cisco.fp + " FP"' badges/benchmark-summary.json)"
           git push -q origin HEAD:badges
 
   alert:

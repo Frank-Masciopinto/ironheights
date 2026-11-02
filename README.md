@@ -31,6 +31,41 @@ If Ironheights is useful to you, a star on [ClawHub](https://clawhub.ai/frank-ma
 
 Website: [www.ironheights.dev](https://www.ironheights.dev)
 
+<div align="center">
+
+<h3>🛡️ Benchmark: Ironheights vs Cisco skill-scanner</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th align="left">MaliciousSkillBench</th>
+      <th align="center">Ironheights</th>
+      <th align="center">Cisco skill-scanner</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="left">🎯 Malicious skills detected (higher is better)</td>
+      <td align="center"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FFrank-Masciopinto%2Fironheights%2Fbadges%2Fbadges%2Ftable-ih-detect.json" alt="26.6% (137/516)"></td>
+      <td align="center"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FFrank-Masciopinto%2Fironheights%2Fbadges%2Fbadges%2Ftable-cisco-detect.json" alt="21.9% (113/516)"></td>
+    </tr>
+    <tr>
+      <td align="left">⚠️ False positives on clean skills (lower is better)</td>
+      <td align="center"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FFrank-Masciopinto%2Fironheights%2Fbadges%2Fbadges%2Ftable-ih-fp.json" alt="2.4% (11/456)"></td>
+      <td align="center"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FFrank-Masciopinto%2Fironheights%2Fbadges%2Fbadges%2Ftable-cisco-fp.json" alt="2.0% (9/456)"></td>
+    </tr>
+    <tr>
+      <td align="left">📦 Official Anthropic skills flagged (lower is better)</td>
+      <td align="center"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FFrank-Masciopinto%2Fironheights%2Fbadges%2Fbadges%2Ftable-ih-anthropic.json" alt="0/19"></td>
+      <td align="center"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FFrank-Masciopinto%2Fironheights%2Fbadges%2Fbadges%2Ftable-cisco-anthropic.json" alt="1/19"></td>
+    </tr>
+  </tbody>
+</table>
+
+<sub>Ironheights is our project. Both scanners ran on the same <a href="https://huggingface.co/datasets/ProtectSkills/MaliciousSkillBench">MaliciousSkillBench</a> set (516 malicious and 456 clean skills, 19 of the clean ones official Anthropic skills), counting only <code>block</code> verdicts (Cisco: HIGH or CRITICAL), static analysis only, no LLM. ✅ marks the better result. CI re-runs both scanners on every release and main merge and updates these numbers automatically. Full method and numbers: <a href="docs/benchmark.md#maliciousskillbench-results-0320">docs/benchmark.md</a>.</sub>
+
+</div>
+
 Ironheights scans any skill folder with a `SKILL.md`, whichever agent it is for, and adds an integrity monitor and runtime guard for [OpenClaw](https://docs.openclaw.ai). To check a Claude or Grok Bot skill, run `npx ironheights scan ./path/to/skill` before you upload or install it. Auto-discovery of installed skills, baselines, the guard, `audit-config` and `safe-install` are OpenClaw/ClawHub-only for now. It reads skill files as data, looks for risky patterns with fixed rules, and compares skill and agent files with a baseline you save on the same machine.
 
 It does not send telemetry, and `scan` does not run the files it scans. Only `sandbox run` runs a skill, and only when you ask, inside a throwaway container with no network. Scans are fully local. The only network call made without a flag is a version check against npm and ClawHub, at most once every 6 hours; it only reports new versions, never installs anything, and can be turned off (see [Updates](#updates)). Other network use happens only when you run `fetch`, `safe-install`, `advisories update`, `--online`, `scan --llm`, `scan --check-registry`, or `review`.

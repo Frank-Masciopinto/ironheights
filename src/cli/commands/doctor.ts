@@ -7,6 +7,8 @@ import { OPENCLAW_NODE_RANGE } from '../../version.ts';
 export async function runDoctor(options: {
   config?: string;
   env?: NodeJS.ProcessEnv;
+  /** Repo to check for other security tools; defaults to the current directory. */
+  repoDir?: string;
   stdout?: (text: string) => void;
 }): Promise<number> {
   const env = options.env ?? process.env;
@@ -48,7 +50,10 @@ export async function runDoctor(options: {
     return 64;
   }
   try {
-    const report = await buildCoexistReport({ env });
+    const report = await buildCoexistReport({
+      env,
+      ...(options.repoDir ? { repoDir: options.repoDir } : {}),
+    });
     write(`${renderCoexistSummary(report)}\n`);
   } catch {
     write('Other security tools: could not be checked.\n');
