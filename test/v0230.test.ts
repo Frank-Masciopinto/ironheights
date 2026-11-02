@@ -150,7 +150,7 @@ describe('0.23.0 posture report coverage', () => {
   });
 });
 
-describe('0.23.0 threat model: same-change widening and covered range', () => {
+describe('0.23.0 threat model: same-change widening and covered range', { timeout: 30_000 }, () => { // spawns git; slow on Windows runners
   const git = (cwd: string, ...a: string[]) =>
     execFileSync('git', a, {
       cwd,

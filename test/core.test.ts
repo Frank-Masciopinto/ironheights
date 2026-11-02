@@ -142,10 +142,10 @@ describe('scanner', () => {
     expect(result.skills[0]?.filesScanned).toBe(500);
     expect(result.verdict).toBe('no-findings');
     await rm(dir, { recursive: true, force: true });
-  }, 15_000); // setup writes 500 files; slow on Windows runners. The scan itself is still held to 2 s above.
+  }, 60_000); // setup writes 500 files; slow on Windows runners. The scan itself is still held to 2 s above.
 });
 
-describe('walker robustness', () => {
+describe('walker robustness', { timeout: 30_000 }, () => { // many fs writes; slow on Windows runners
   it('handles empty folders, huge files, invalid utf-8, binaries, symlink loops, long lines, and odd names', async () => {
     const dir = await mkdtemp(join(tmpdir(), 'ih-walk-'));
     const empty = join(dir, 'empty');
