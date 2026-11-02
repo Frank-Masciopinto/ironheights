@@ -35,7 +35,7 @@ Runtime dependencies stay at four: `commander`, `zod`, `yaml`, and `picomatch`. 
 ## When and how tests run
 
 - **Locally:** `npm test` runs the Vitest suite with coverage; `npm run test:packed` installs the packed tarball and runs the CLI against it.
-- **On every push and pull request:** [ci.yml](.github/workflows/ci.yml) runs lint, type-check, the full test suite, a build and `npm audit` on Linux (Node 20.0.0 and 24), the packed-CLI test on Linux, and the build, tests and packed-CLI test on Windows (Node 20.0.0 and 24). CodeQL and dependency review run on every pull request to `main`.
+- **On every push and pull request:** [ci.yml](.github/workflows/ci.yml) runs lint, type-check, the full test suite, a build and `npm audit` on Linux (Node 20.0.0 and 24), the packed-CLI test on Linux, and the build, tests and packed-CLI test on Windows (Node 20.0.0 and 24). CodeQL runs on every push and pull request to `main`.
 - **On release tags:** [release.yml](.github/workflows/release.yml) runs `npm test` again before anything is published.
 
 ## Test policy

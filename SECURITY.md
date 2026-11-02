@@ -52,7 +52,7 @@ The project uses these credentials: the `NPM_TOKEN` GitHub Actions secret (npm p
 
 ## Dependency (SCA) policy
 
-- Every pull request runs `npm audit --audit-level=high` in the required `test` jobs and [dependency review](.github/workflows/dependency-review.yml), which fails on any added dependency with a moderate-or-higher advisory, a malware advisory, or a license outside the allow list (permissive OSI licenses only).
+- Every push and pull request runs `npm audit --audit-level=high` in the required `test (20.0.0)` and `test (24)` CI jobs ([ci.yml](.github/workflows/ci.yml)). It checks the full lockfile against the GitHub Advisory Database, including npm malware advisories, and fails the job (blocking merge) on any high or critical finding. Runtime dependencies are limited to four permissive-licensed packages; adding a dependency or a non-OSI-permissive license needs maintainer review.
 - **Remediation thresholds:** critical and high findings that affect the shipped package are fixed within 7 days; moderate within 30 days; low at the next routine update. A license violation is removed before merge.
 - **Before every release:** `npm audit` must report no high or critical issues and every open SCA finding must be fixed or recorded as not affecting Ironheights in the VEX document [.vex/ironheights.openvex.json](.vex/ironheights.openvex.json). A finding may only be suppressed through a VEX statement with a justification.
 - Dependabot opens weekly update PRs for npm and GitHub Actions.
