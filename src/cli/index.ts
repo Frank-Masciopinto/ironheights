@@ -29,6 +29,7 @@ import {
   runReceipts,
 } from './commands/premium.ts';
 import { runAuthority, runCoverage, runRecord } from './commands/v027.ts';
+import { runFleetPosture, runRunReceipt, runSurfaces } from './commands/v028.ts';
 import { runUpdate } from './commands/update.ts';
 import { maybeStartBackgroundCheck, type AutoCheckHooks } from '../update/update.ts';
 import { IronheightsError, UsageError } from '../core/errors.ts';
@@ -611,6 +612,57 @@ export async function main(argv: string[], hooks: MainHooks = {}): Promise<numbe
         });
       },
     );
+
+  program
+    .command('surfaces')
+    .description(
+      'execution surfaces: credential/schedule/location changes without a threat-model edit, surfaces derived from the repo, max concurrency, call budgets (exit 2 on fail)',
+    )
+    .option(
+      '--input <file>',
+      'base/head surfaces, model, scheduler ledger, budgets and measured runs as JSON',
+    )
+    .option(
+      '--repo <dir>',
+      'derive surfaces from workflows, crontabs and container files in this repo',
+    )
+    .option('--json', 'print JSON to stdout')
+    .action(async (opts: { input?: string; repo?: string; json?: boolean }) => {
+      process.exitCode = await runSurfaces({
+        ...(opts.input ? { input: opts.input } : {}),
+        ...(opts.repo ? { repo: opts.repo } : {}),
+        json: Boolean(opts.json),
+      });
+    });
+
+  program
+    .command('fleet-posture')
+    .description(
+      'ignore debt next to the grade, and one row per machine; clean only when every running copy was checked (exit 2 when not)',
+    )
+    .option('--input <file>', 'findings, ignores, running copies and machines as JSON')
+    .option('--json', 'print JSON to stdout')
+    .action(async (opts: { input?: string; json?: boolean }) => {
+      process.exitCode = await runFleetPosture({
+        ...(opts.input ? { input: opts.input } : {}),
+        json: Boolean(opts.json),
+      });
+    });
+
+  program
+    .command('run-receipt <action>')
+    .description(
+      'per-run receipts written by the loader: write (one signed line per running copy), audit (chain and approver per hash)',
+    )
+    .option('--input <file>', 'write: the receipt JSON')
+    .option('--json', 'print JSON to stdout')
+    .action(async (action: string, opts: { input?: string; json?: boolean }) => {
+      process.exitCode = await runRunReceipt({
+        action,
+        ...(opts.input ? { input: opts.input } : {}),
+        json: Boolean(opts.json),
+      });
+    });
 
   program
     .command('coverage')
