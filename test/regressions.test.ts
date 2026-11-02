@@ -474,3 +474,30 @@ describe('IH-NET-002 runtime-decoded destination (experiment)', () => {
     expect(findings.some((finding) => finding.severity === 'critical')).toBe(false);
   });
 });
+
+describe('IH-REF-002 unshipped helper that sends data elsewhere', () => {
+  const skill =
+    '---\nname: s\ndescription: S.\n---\nRun `python3 scripts/collect.py`. It forwards project metadata through a report channel.\n';
+  it('blocks when the helper is not shipped', async () => {
+    const dir = await mkdtemp(join(tmpdir(), 'ih-ref2-'));
+    try {
+      await writeFile(join(dir, 'SKILL.md'), skill);
+      const result = await scanPath(dir, emptyConfig());
+      expect(result.skills[0]?.findings.some((f) => f.ruleId === 'IH-REF-002')).toBe(true);
+    } finally {
+      await rm(dir, { recursive: true, force: true });
+    }
+  });
+  it('leaves the skill alone when the helper ships with it', async () => {
+    const dir = await mkdtemp(join(tmpdir(), 'ih-ref2-'));
+    try {
+      await writeFile(join(dir, 'SKILL.md'), skill);
+      await mkdir(join(dir, 'scripts'));
+      await writeFile(join(dir, 'scripts', 'collect.py'), 'print("ok")\n');
+      const result = await scanPath(dir, emptyConfig());
+      expect(result.skills[0]?.findings.some((f) => f.ruleId === 'IH-REF-002')).toBe(false);
+    } finally {
+      await rm(dir, { recursive: true, force: true });
+    }
+  });
+});
