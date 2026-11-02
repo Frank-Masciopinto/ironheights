@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.29.0 — unreleased
+## 0.29.0 — 2026-11-02
 
 **Fewer false alarms, and plain-language attacks.** Ironheights: The Immune System for AI Agents. It protects any AI bot that installs it. 0.29.0 fixes what the 2 Nov 2026 benchmark (516 malicious / 456 benign skills, MaliciousSkillBench + anthropics/skills) showed. Rules were tuned on a fixed half of the set and checked on the other half.
 

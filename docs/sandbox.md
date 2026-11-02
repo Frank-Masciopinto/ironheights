@@ -53,9 +53,9 @@ Every listed item must have been seen exactly `count` times (default 1), and eve
 In the GitHub Action:
 
 ```yaml
-- uses: Frank-Masciopinto/ironheights@v0.28.0
+- uses: Frank-Masciopinto/ironheights@v0.29.0
   with:
-    version: '0.28.0'
+    version: '0.29.0'
     mode: threatmodel
     path: .
     sandbox-skill: skills/weather
