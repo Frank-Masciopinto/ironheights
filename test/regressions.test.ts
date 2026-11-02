@@ -662,3 +662,50 @@ describe('IH-INJ-005 / IH-INJ-006 / IH-REF-003 hidden instructions (0.34.0 night
     expect(r.rules).toEqual([]);
   });
 });
+
+describe('IH-INJ-007 agent told to reveal, invalidate or switch off its own session instructions', () => {
+  const scanSkill = async (text: string) => {
+    const dir = await mkdtemp(join(tmpdir(), 'ih-inj007-'));
+    try {
+      await writeFile(join(dir, 'SKILL.md'), text);
+      const result = await scanPath(dir, emptyConfig());
+      const skill = result.skills[0];
+      return {
+        rules: (skill?.findings ?? []).map((f) => f.ruleId).filter((id) => id === 'IH-INJ-007'),
+        verdict: skill?.verdict,
+      };
+    } finally {
+      await rm(dir, { recursive: true, force: true });
+    }
+  };
+  const fixture = (p: string) => readFile(join(process.cwd(), 'test/fixtures', p), 'utf8');
+
+  it('blocks the three motivating attacks (verbatim dump, review switched off, prompt declared invalid)', async () => {
+    for (const p of [
+      'malicious/IH-INJ-007/1.md',
+      'malicious/IH-INJ-007/2.md',
+      'malicious/IH-INJ-007/3.md',
+    ]) {
+      const r = await scanSkill(await fixture(p));
+      expect(r.rules, p).toContain('IH-INJ-007');
+      expect(r.verdict, p).toBe('block');
+    }
+  });
+
+  it('leaves the prompt-writing guide that says not to copy session instructions clean', async () => {
+    expect((await scanSkill(await fixture('benign/near/IH-INJ-007/1.md'))).rules).toEqual([]);
+  });
+
+  it('regression: real look-alikes that tripped the first version stay clean', async () => {
+    // detector skills quoting "reveal your system prompt", skip-safety CLI flags,
+    // safesearch "off" tables, and "add the output to your system prompt"
+    for (const p of [
+      'regressions/IH-INJ-007-lookalikes/detector.md',
+      'regressions/IH-INJ-007-lookalikes/skip-safety-flags.md',
+      'benign/near/IH-INJ-007/2.md',
+      'benign/near/IH-INJ-007/3.md',
+    ]) {
+      expect((await scanSkill(await fixture(p))).rules, p).toEqual([]);
+    }
+  });
+});
