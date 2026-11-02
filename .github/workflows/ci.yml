@@ -57,3 +57,32 @@ jobs:
       - run: npm run build
       - run: npm test
       - run: npm run test:packed
+  accuracy-gates:
+    # Mandatory accuracy gates (docs/accuracy-gates.md): fails on any new block on the
+    # 5,655-skill real-world clean set, or a drop on the blind held-out attack set.
+    name: accuracy gates (real-world FP + blind holdout)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: 'python3 -m venv .venv && .venv/bin/pip install --require-hashes --only-binary=:all: -r bench/msb/requirements.txt'
+      # Pinned, hash-checked inputs: a cache hit is verified again by the script, so it can never change a result.
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cache/ih-gate
+          key: ih-gate-${{ hashFiles('bench/realworld/manifest.json', 'bench/blind/manifest.json') }}
+      - run: .venv/bin/python scripts/realworld-gate.py dist/cli/index.js gate-out
+        env:
+          IH_GATE_CACHE: ~/.cache/ih-gate
+      - if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: accuracy-gates
+          path: gate-out/
+          retention-days: 30

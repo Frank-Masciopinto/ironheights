@@ -96,6 +96,10 @@ export interface Finding {
    * verdict is unchanged; only the letter grade weighs it as a review item.
    */
   firstParty?: boolean;
+  /** Name of the new check that produced this finding, when it is (or was) run in shadow mode. */
+  shadowCheck?: string;
+  /** Set while `shadowCheck` is in shadow mode: the severity it would have once promoted. */
+  wouldSeverity?: Severity;
 }
 
 export interface SkippedFile {

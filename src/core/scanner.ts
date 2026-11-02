@@ -1,3 +1,4 @@
+import { applyShadow } from '../rules/shadow.ts';
 import { findSkillFile, isSkillFileName } from './skill-file.ts';
 import { readdir, readFile, stat } from 'node:fs/promises';
 import { basename, join, resolve } from 'node:path';
@@ -262,6 +263,7 @@ export function scanFile(
       }
       if (isRegistrySkillCard(file.relativePath)) finding = asRegistryCard(finding);
       else if (isChangelog(file.relativePath)) finding = asChangelogFix(finding, file.text);
+      finding = applyShadow(finding);
       const severity = override?.severity ?? finding.severity;
       findings.push(severity === finding.severity ? finding : { ...finding, severity });
     }
