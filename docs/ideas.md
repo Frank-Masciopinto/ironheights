@@ -57,3 +57,12 @@ Not built. These are a larger design change for a future release.
 
 - MCP `check_skill` split between the agent and an approver: a binary decision path, and an approval token bound to the skill digest, including per-call allowed config keys. Suggested by ecdys, Rios, templeofmolt, vina and concordiumagent on Moltbook.
 - Approver-fatigue detection. Suggested by evil_robot_jas on Moltbook.
+
+## Deferred from 0.28.0
+
+- Call-graph reach / approval staleness (evil_robot_jas, rossum, sparkagent_oc): needs reach over the call graph and merge history.
+- Runtime env exposure from observed launch reads (lobsterroyale, little_litt6, SamanthaSchacht, vina): needs launch-time capture of the env the skill is handed.
+- Live token-scope read-back plus scheduled re-check (bytes, m_unhinged_secretary, bnb_hq): needs per-provider APIs and credentials.
+- Process-tree load evidence (auditd/eBPF) and startup emissions (diviner, evil_robot_jas): needs a host agent.
+- Signed-artifact label-flip mutation test (diviner), signed verdict tokens for installers (bluecipherbrandon), expected-slot calendar (openclawprime): next release.
+- Compliance report as audit evidence (vegachiefofstaff, evil_robot_jas, rossum): waits for corporate-tier design and pricing.

@@ -1,5 +1,41 @@
 # Changelog
 
+## 0.28.0 — 2026-11-02
+
+**Check where it runs, not just what it is.** Ironheights: The Immune System for AI Agents. It protects any AI bot that installs it. 0.28.0 builds the threat-model, MCP, posture-report and corporate-tier ideas bots sent on Moltbook since 0.27.0. Existing commands, fields and exit codes are unchanged; every new piece is opt-in. See [docs/surfaces-fleet-receipts.md](docs/surfaces-fleet-receipts.md).
+
+Execution surfaces (`ironheights surfaces`)
+
+- The PR fails when it changes whose credential a surface uses, how often it runs or where it runs, unless the threat-model file changes in the same PR. A new surface fails the same way. Suggested by dapper and m_unhinged_secretary.
+- `--repo` derives surfaces from workflows (cron, secrets, runs-on), crontabs and container files, and fails when the threat model omits one. Model entries nothing runs are warned as stale. Suggested by anette and dapper.
+- A surface with shared write paths must declare max concurrent copies. Unlocked shared writes with more than one copy warn rather than fail, since a PR check cannot see runtime concurrency. The declared max is compared against the scheduler's own run ledger, not a file templated from the same repo. Suggested by nyna, hina-secretary, hermes-agent-88 and muse_bryce.
+- Each call budget is a contract (fails the PR) or a guideline (warns), checked against the last real run's measured calls per task and largest payload. Removing a retry cap or a contract budget fails. Suggested by evil_robot_jas, rossum and vina.
+
+MCP verdict typing
+
+- `type_verdict`: a check made after the skill loaded returns `post-load-unchanged` or `post-load-drifted`, with the load time next to the check time, and never `allow`. Suggested by dapper, lobsterroyale, evil_robot_jas and fineprint.
+- `verdict_gate`: only a pre-load `allow` proceeds. Unknown, truthy, missing and post-load values fail closed. Suggested by dapper.
+- `lookup_verdict`: verdicts are found by the content hash of the copy on disk plus a registry-verified publisher. Bare names are refused, and a name that does not match the hash is refused. Suggested by concordiumagent, evil_robot_jas, noetica and ummon_core.
+- `session_binding`: a reach report is bound to the launching session (session id plus sorted env-var names, never values) and expires when it changes. Suggested by clawhedgehog and novastellar.
+
+Fleet posture (`ironheights fleet-posture`)
+
+- Ignore debt: the age of the oldest live ignore sits next to the grade, with the grade with and without ignores, and a notice when they differ by more than one letter. Each ignore is bound to the hash of the finding it hides and stops applying when that finding changes. Suggested by evil_robot_jas, jumpohashimoto and moltbook_joram.
+- One row per machine. The fleet is clean only when every running copy was checked on its host (a conjunction, never an average), and a machine with no row is unscanned. Suggested by dapper, pipnyc and clawhedgehog.
+- The runner reports the hash of the file it actually executes; a mismatch with the checked hash is a finding. Suggested by bytes.
+
+Per-run receipts (`ironheights run-receipt write|audit`, corporate-tier track, free and opt-in)
+
+- The loader writes the receipt, not the job: one signed, hash-chained line per running copy with the loaded hash, the trigger and the approver of that exact hash. `IRONHEIGHTS_RECEIPT_DIR` can point at a store the agent cannot write. Suggested by austingrok, dapper, evil_robot_jas, muse_bryce and borged.
+
+Not built yet (need a redesign, see docs/ideas.md):
+
+- Call-graph reach and approval-staleness tables (evil_robot_jas, rossum, sparkagent_oc): need reach computed over the call graph and merge history.
+- Failing on unlisted runtime env exposure from observed launch reads (lobsterroyale, little_litt6, SamanthaSchacht, vina): needs launch-time capture of the environment the skill is handed.
+- Live token-scope read-back and a scheduled re-check (bytes, m_unhinged_secretary, bnb_hq): needs per-provider APIs and credentials.
+- Process-tree load evidence via auditd/eBPF and startup emissions (diviner, evil_robot_jas): needs a host agent.
+- Compliance report as audit evidence (vegachiefofstaff, evil_robot_jas, rossum): waits for the corporate-tier design and pricing.
+
 ## 0.27.0 — 2026-11-01 (includes 0.26.0)
 
 **Bind the verdict to what actually runs.** Ironheights protects any AI bot that installs it. 0.27.0 builds the MCP, threat-model, posture-report and corporate-tier ideas bots sent on Moltbook, and ships the unreleased 0.26.0 Pro-track work in the same release. Existing commands, fields and exit codes are unchanged; every new piece is opt-in.
