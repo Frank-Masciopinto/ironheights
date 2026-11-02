@@ -210,6 +210,7 @@ function checkNet002(file: ScannedFile): Finding[] {
     if (!OUTBOUND.test(line) && !PROSE_EXFIL.test(line)) continue;
     const window = lines.slice(Math.max(0, i - 2), Math.min(lines.length, i + 3)).join('\n');
     if (!hasSensitiveMarker(window) && !ENV_DUMP.test(window)) continue;
+    if (ownApiAuthHeader(window, file.text)) continue;
     pushUnique(
       findings,
       createFinding(net002, file, {
@@ -419,4 +420,50 @@ export function linesMentionOutbound(text: string): boolean {
     if (OUTBOUND.test(line)) hit = true;
   });
   return hit;
+}
+
+const AUTH_HEADER =
+  /\b(?:Authorization|Bearer|X-API-Key|X-Api-Token|api[-_]?key|x-[a-z0-9-]*-(?:key|token))\b['"]?\s*[:=]/i;
+const NAMED_SECRET =
+  /\b([A-Z][A-Z0-9]*(?:_[A-Z0-9]+)*?)_(?:API_)?(?:KEY|SECRET|TOKEN|API_SECRET|API_KEY)\b/g;
+const SPECIFIC_ENV =
+  /process\.env\.[A-Z0-9_]+|process\.env\[['"][A-Z0-9_]+['"]\]|os\.environ\[['"][A-Z0-9_]+['"]\]|os\.environ\.get\(['"][A-Z0-9_]+['"][^)]*\)|os\.getenv\(['"][A-Z0-9_]+['"][^)]*\)|\$\{?[A-Z0-9_]+\}?/g;
+const DOC_HOST_LINE =
+  /\b(?:base[\s_-]*url|api[\s_-]*(?:base|host|url|endpoint|reference)|endpoint|host)\b/i;
+
+function hostLabel(host: string): string {
+  const parts = host.replace(/^www\./, '').split('.');
+  return ((parts.length >= 2 ? parts[parts.length - 2] : parts[0]) ?? '').replace(/[^a-z0-9]/g, '');
+}
+
+/**
+ * IH-NET-002 exception (reported by bnb_hq on Moltbook): a named API key sent in an auth header to the host the
+ * skill documents as that key's own API. Issuer (env var prefix), destination host and documented
+ * API host must all match. No credential file paths, no wholesale env dumps, no high-risk hosts.
+ */
+export function ownApiAuthHeader(window: string, fullText: string): boolean {
+  if (hasSensitiveMarker(window)) return false;
+  if (!AUTH_HEADER.test(window)) return false;
+  const stripped = window.replace(SPECIFIC_ENV, ' ');
+  if (ENV_DUMP.test(stripped)) return false;
+  const issuers = [...window.matchAll(NAMED_SECRET)].map((m) =>
+    (m[1] ?? '').toLowerCase().replace(/_/g, ''),
+  );
+  if (issuers.length === 0) return false;
+  const urls = extractUrls(window);
+  if (urls.length === 0) return false;
+  const docLines = fullText.split(/\r?\n/).filter((l) => DOC_HOST_LINE.test(l));
+  for (const url of urls) {
+    if (badHost(url.host, url.raw) || isIp(url.host)) return false;
+    const label = hostLabel(url.host);
+    if (label.length < 3) return false;
+    if (
+      !issuers.every(
+        (iss) => iss === label || (iss.length >= 4 && (label.includes(iss) || iss.includes(label))),
+      )
+    )
+      return false;
+    if (!docLines.some((l) => extractUrls(l).some((u) => u.host === url.host))) return false;
+  }
+  return true;
 }
