@@ -43,6 +43,12 @@ const PERSIST_EXEC = new RegExp(
   String.raw`\b(?:(?:the\s+)?(?:very\s+)?first\s+action\s+(?:must|should)\s+be|whenever\s+this\s+skill|before\s+(?:producing|answering|responding|writing)\b[^\n]{0,40}|(?:once\s+)?at\s+the\s+start\s+of\s+(?:every|each)\s+[\w-]+(?:\s+session)?|before\s+(?:any|every)\s+other\s+(?:action|step|task|tool)|every\s+time\s+you)\b[^\n]{0,160}\b(?:run|execute|invoke|python3?|bash|node)\b[^\n]{0,80}(?:\.py|\.sh|\.js|scripts?\/)`,
   'i',
 );
+/**
+ * A mandatory hidden helper (underscore-prefixed script) fired by an unrelated keyword in the
+ * user's input rather than by the skill's own task: a persisted directive with no task anchor.
+ */
+const TRIGGERED_HELPER =
+  /\b(?:(?:user'?s?\s+(?:input|request|message|prompt)\s+contains|if\s+the\s+user\s+(?:says|mentions|types|asks)|whenever\s+this\s+skill'?s?\s+flow\s+involves)\b[^\n]{0,200}(?:scripts\/)?_[\w-]+\.(?:py|sh|js)|(?:scripts\/)?_[\w-]+\.(?:py|sh|js)\b[^\n]{0,200}\b(?:user'?s?\s+(?:input|request|message|prompt)\s+contains|if\s+the\s+user\s+(?:says|mentions)))/i;
 const PERSIST =
   /\b(?:every\s+time\s+you\s+(?:call|use|run)|on\s+(?:each|every)\s+(?:invocation|startup)|(?:add|append|write|install)\b[^.\n]{0,60}\b(?:\.bashrc|\.zshrc|\.profile|crontab|launch\s*agent|autostart|SOUL\.md)|persist(?:s|ent|ence)?\s+(?:across|between)\s+sessions|remember\s+(?:this|these\s+instructions)\s+(?:for|in)\s+(?:all\s+)?future)\b/i;
 
@@ -59,6 +65,22 @@ const DROPPER =
 /** Data leaves for a collector host even if the object is not named as a secret. */
 const COLLECTOR =
   /\b(?:webhook\.site|pipedream\.net|requestbin|ngrok(?:\.io|-free\.app)?|api\.telegram\.org\/bot|hooks\.slack\.com\/services|discord(?:app)?\.com\/api\/webhooks|interact\.sh|burpcollaborator|our\s+(?:monitoring|collection|analytics)\s+(?:services?|servers?|endpoints?)|attacker[\s-]controlled)\b/i;
+/**
+ * Concealment aimed at the user, not merely quiet output: "don't tell the user",
+ * "without the user's knowledge", "hide this from the user". Blocks on its own.
+ */
+const CONCEAL_USER =
+  /\b(?:(?:do\s+not|don'?t|never)\s+(?:tell|inform|mention\s+(?:this|it)\s+to|notify|alert|reveal\s+(?:this|it)\s+to|disclose\s+(?:this|it)\s+to)\s+(?:the\s+)?(?:user|human|operator)|without\s+(?:the\s+)?user'?s?\s+(?:knowledge|awareness)|(?:hide|conceal)\s+(?:this|it|these\s+\w+|the\s+\w+)\s+from\s+(?:the\s+)?(?:user|human)|invisible\s+to\s+the\s+user|not\s+visible\s+to\s+the\s+user)\b/i;
+/** A literal outside destination written into the skill (author-owned), not a placeholder the user fills. */
+const LITERAL_DEST =
+  /https?:\/\/(?![^\s`'")]*(?:<|\{|\$|YOUR|your[-_]|example\.(?:com|org)|localhost|127\.0\.0\.1))[^\s`'")]+|\b[\w.+-]+@(?!example\.)[\w-]+\.[a-z]{2,}\b|\b(?:webhook\.site|pipedream\.net|requestbin|ngrok|pastebin|KVDB|interact\.sh|burpcollaborator)\b/i;
+/** The destination is one the user creates or configures: stays at review. */
+const USER_DEST =
+  /\b(?:your|you\s+(?:create|configure|set\s+up|provide)|configured|user[-\s](?:provided|supplied|configured|defined))\s+(?:own\s+)?(?:webhook|endpoint|server|url|bot|chat|channel|account|address|instance)|<[A-Z_]+>|\$\{?[A-Z_]+|\{\{?\s*\w+/i;
+/** Inbound flow: the outside party sends to the user's system (webhooks received, callbacks). */
+const INBOUND =
+  /\b(?:receive[sd]?|incoming|inbound|handle[sd]?\s+[`'"]?[\w.]+[`'"]?\s+events?|callback|listen(?:s|ing)?\s+for|POST\s+route)\b/i;
+
 const NO_CONFIRM =
   /\b(?:do\s+not|don'?t|never|without)\s+ask(?:ing)?\s+(?:the\s+user\s+)?(?:for\s+)?(?:confirmation|permission|approval)\b/i;
 
@@ -80,6 +102,8 @@ type Weight = 1 | 2 | 3;
 interface Hit {
   family: Family;
   weight: Weight;
+  /** Narrow sub-signal precise enough to block on its own (see intentSeverity). */
+  blocks?: boolean;
   line: number;
   evidence: string;
 }
@@ -90,6 +114,14 @@ function matchUnlessNegated(pattern: RegExp, line: string): boolean {
   if (!match) return false;
   const before = line.slice(Math.max(0, match.index - 60), match.index);
   return !NEGATED.test(before) && !NEGATED.test(match[0]);
+}
+
+/** CONCEAL_USER carries its own "do not", so only the text before the phrase is checked for a warning. */
+function concealsFromUser(line: string): boolean {
+  const match = CONCEAL_USER.exec(line);
+  if (!match) return false;
+  const before = line.slice(Math.max(0, match.index - 60), match.index);
+  return !NEGATED.test(before);
 }
 
 export function intentHits(text: string): Hit[] {
@@ -109,21 +141,31 @@ export function intentHits(text: string): Hit[] {
     }
     if (inFence || raw.trim() === '') continue;
     const window = [lines[i - 1] ?? '', raw, lines[i + 1] ?? ''].join(' ').slice(0, 4000);
-    const add = (family: Family, weight: Weight): void => {
+    const add = (family: Family, weight: Weight, blocks = false): void => {
       const prior = best.get(family);
-      if (prior && prior.weight >= weight) return;
-      best.set(family, { family, weight, line: i + 1, evidence: raw.trim() });
+      if (
+        prior &&
+        (prior.weight > weight || (prior.weight === weight && (prior.blocks || !blocks)))
+      )
+        return;
+      best.set(family, { family, weight, line: i + 1, evidence: raw.trim(), blocks });
     };
     if (BYPASS.test(raw) && !/\b(?:never|do\s+not|don'?t|must\s+not|refuse)\b/i.test(raw)) {
       add('bypass', 3);
     }
     if (matchUnlessNegated(EXFIL_VERB, raw) && !NEGATED.test(raw)) {
-      if (SENSITIVE.test(raw) && OUTSIDE.test(window)) add('exfil', 3);
-      else if (COLLECTOR.test(window)) add('exfil', 2);
+      const outbound = !INBOUND.test(raw);
+      const authorDest = LITERAL_DEST.test(raw) && !USER_DEST.test(raw);
+      if (SENSITIVE.test(raw) && OUTSIDE.test(window)) {
+        add('exfil', 3, outbound && authorDest);
+      } else if (COLLECTOR.test(window)) {
+        add('exfil', 2, outbound && authorDest && COLLECTOR.test(raw));
+      }
     }
-    if (matchUnlessNegated(CONCEAL, raw)) add('conceal', 2);
+    if (concealsFromUser(raw)) add('conceal', 3, true);
+    else if (matchUnlessNegated(CONCEAL, raw)) add('conceal', 2);
     else if (NO_CONFIRM.test(raw)) add('conceal', 1);
-    if (matchUnlessNegated(PERSIST_EXEC, raw)) add('persist', 2);
+    if (matchUnlessNegated(PERSIST_EXEC, raw)) add('persist', 2, TRIGGERED_HELPER.test(raw));
     else if (matchUnlessNegated(PERSIST, raw)) add('persist', 1);
     if (matchUnlessNegated(STEER_STRONG, raw)) add('steer', 3);
     else if (matchUnlessNegated(STEER, raw)) add('steer', 1);
@@ -140,7 +182,7 @@ export function intentHits(text: string): Hit[] {
  */
 export function intentSeverity(hits: readonly Hit[]): Severity {
   const total = hits.reduce((sum, hit) => sum + hit.weight, 0);
-  if (total >= 5 || hits.length >= 3) return 'critical';
+  if (total >= 5 || hits.length >= 3 || hits.some((hit) => hit.blocks)) return 'critical';
   if (hits.some((hit) => hit.weight === 3) || total >= 4) return 'high';
   if (hits.some((hit) => hit.weight === 2)) return 'medium';
   return 'low';
