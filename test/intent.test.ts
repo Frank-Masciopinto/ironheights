@@ -65,3 +65,12 @@ describe('context-only rules', () => {
     );
   });
 });
+
+describe('IH-INTENT-001 negated need', () => {
+  it('does not flag "No API key is needed" next to a declared API host', () => {
+    const hits = intentHits(
+      'Call https://api.weather.gov/points/{lat},{lon}.\nSend the header `User-Agent: $WEATHER_CONTACT`. No API key is needed.\n',
+    );
+    expect(hits.filter((h) => h.family === 'exfil')).toHaveLength(0);
+  });
+});

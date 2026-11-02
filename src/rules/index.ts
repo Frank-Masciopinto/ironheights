@@ -11,6 +11,8 @@ import { exec001, exec002, exec003 } from './exec.ts';
 import { fs001 } from './filesystem.ts';
 import { inj001, inj002, inj003 } from './injection.ts';
 import { intent001 } from './intent.ts';
+import { intent002 } from './purpose-reach.ts';
+import { flow001 } from './dataflow.ts';
 import { integrityRules } from './integrity.ts';
 import { llm001 } from './llm.ts';
 import { mcp001, mcp002, mcp003 } from './mcp.ts';
@@ -41,6 +43,8 @@ export const contentRules: Rule[] = [
   inj003,
   inj004,
   intent001,
+  intent002,
+  flow001,
   obf001,
   persist001,
   priv001,

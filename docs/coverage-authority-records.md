@@ -10,7 +10,7 @@ This is a gap-aware posture grade. The first line is coverage, for example `chec
 - Each grade carries the `rulesetHash` it was computed against. It is marked STALE when `currentRulesetHash` differs.
 - The trend uses a fixed cohort: only skills graded in every run.
 - Skills that left scanning but are still installed are named as possible hidden vectors.
-- `access` rows show declared, granted and used access separately. They also list ambient access the context grants that no skill declared, and *unmodelled actors*: processes that consumed a credential but are not in the skill's dependency graph.
+- `access` rows show declared, granted and used access separately. They also list ambient access the context grants that no skill declared, and _unmodelled actors_: processes that consumed a credential but are not in the skill's dependency graph.
 - `drift` findings are `open`, `explained`, `resolved` or `rejected`. The party that caused a drift can explain it only by pointing at an artifact it did not write after the fact, whose hash matches the drifted file. Only a different role can resolve it.
 
 ## `ironheights authority --input authority.json`

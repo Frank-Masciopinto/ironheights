@@ -35,6 +35,9 @@ import { LLM_RULE_ID, skipNote } from '../../llm/constants.ts';
 import type { PostOptions, PostResult } from '../../llm/client.ts';
 import { parseLlmApi } from '../../llm/endpoint.ts';
 import { reviewSkills, type LlmReviewReport, type LlmSkillReview } from '../../llm/review.ts';
+import { applyCanary, readSkillText } from '../../runtime/canary.ts';
+import { readdirSync, statSync } from 'node:fs';
+import { join as joinPath } from 'node:path';
 import { parseFailOn } from '../options.ts';
 import { colorEnabled } from '../../util/terminal.ts';
 import { renderHtml } from '../output/html.ts';
@@ -66,6 +69,10 @@ export interface ScanFlags {
   llmConsent?: boolean;
   /** --llm-stage: second stage that may raise review/prose-only skills to review. */
   llmStage?: boolean;
+  /** --llm-rewrite: model rewrites SKILL.md as imperative orders; deterministic rules judge them. */
+  llmRewrite?: boolean;
+  /** --canary: plant a fake secret, run the skill's setup script once in a sandbox, flag it if the secret moves. */
+  canary?: boolean;
   dryRun?: boolean;
   /** Scan only skills whose content hash or version changed since their last scan. */
   changed?: boolean;
@@ -253,6 +260,47 @@ export async function executeScan(flags: ScanFlags): Promise<ScanExecution> {
   }
   skills = reconcileEvidenceDrift(skills, config.suppressions);
 
+  if (flags.canary && scanMode === 'directory') {
+    const emitCanary = flags.stderr ?? ((text: string) => process.stderr.write(text));
+    const walkFiles = (dir: string): string[] => {
+      const out: string[] = [];
+      let entries;
+      try {
+        entries = readdirSync(dir, { withFileTypes: true });
+      } catch {
+        return out;
+      }
+      for (const entry of entries) {
+        const full = joinPath(dir, entry.name);
+        if (entry.isDirectory()) {
+          if (entry.name === 'node_modules' || entry.name === '.git') continue;
+          out.push(...walkFiles(full));
+        } else if (entry.isFile()) {
+          try {
+            if (statSync(full).size <= 2 * 1024 * 1024) out.push(full);
+          } catch {
+            /* ignore */
+          }
+        }
+      }
+      return out;
+    };
+    skills = skills.map((skill) => {
+      if (!skill.root) return skill;
+      const { skill: next, result } = applyCanary(
+        skill,
+        walkFiles(skill.root),
+        readSkillText(skill.root),
+      );
+      if (!result.ran)
+        emitCanary(`ironheights: canary ${skill.skillName}: ${result.skippedReason}\n`);
+      else if (result.moved)
+        emitCanary(`ironheights: canary ${skill.skillName}: secret moved -> review\n`);
+      else emitCanary(`ironheights: canary ${skill.skillName}: secret did not move\n`);
+      return next;
+    });
+  }
+
   const verdict = worstVerdict(skills.map((skill) => skill.verdict));
   const limitNote = scanMode === 'text' ? TEXT_SCAN_LIMIT : undefined;
   const write = flags.stdout ?? ((text: string) => process.stdout.write(text));
@@ -282,6 +330,7 @@ export async function executeScan(flags: ScanFlags): Promise<ScanExecution> {
         consent: flags.llmConsent === true,
         dryRun: flags.dryRun === true,
         ...(flags.llmStage ? { stage: true } : {}),
+        ...(flags.llmRewrite ? { rewrite: true } : {}),
         env,
         emit: flags.dryRun ? write : emitNotice,
         ...(flags.post ? { post: flags.post } : {}),
@@ -295,9 +344,10 @@ export async function executeScan(flags: ScanFlags): Promise<ScanExecution> {
     allowSkipped: flags.allowSkipped === true,
   });
   let reportedVerdict = verdict;
-  if (flags.llmStage && !flags.dryRun) {
+  if ((flags.llmStage || flags.llmRewrite) && !flags.dryRun) {
     reportedVerdict = worstVerdict(reported.map((skill) => skill.verdict));
     if (reportedVerdict === 'review' && (code === 0 || code === 3)) code = 1;
+    if (reportedVerdict === 'block' && code !== 2) code = 2;
   }
   if (flags.dryRun) return { skills, verdict, code };
   if (flags.changed && changedState) {
