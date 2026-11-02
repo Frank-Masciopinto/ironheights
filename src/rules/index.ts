@@ -21,6 +21,7 @@ import { ref001 } from './missing-file.ts';
 import { ref002 } from './text-exfil.ts';
 import { exec006 } from './conditional-trailer.ts';
 import { inj005, inj006, ref003 } from './hidden-instructions.ts';
+import { inj007 } from './session-instructions.ts';
 import { net001, net002 } from './network.ts';
 import { obf001 } from './obfuscation.ts';
 import { persist001 } from './persistence.ts';
@@ -61,6 +62,7 @@ export const contentRules: Rule[] = [
   inj005,
   inj006,
   ref003,
+  inj007,
   mcp001,
   mcp002,
   mcp003,
