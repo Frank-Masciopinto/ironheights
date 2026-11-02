@@ -81,11 +81,29 @@ export function gradeRiskFor(findings: Finding[]): number {
   return Math.round(total);
 }
 
+/**
+ * Rules that describe context (metadata, missing references, a plain URL, a broad
+ * file path, a single low-signal intent phrase). Their findings are still reported
+ * and graded, but on their own they never move the verdict past no-findings.
+ */
+export const CONTEXT_ONLY_RULES: ReadonlySet<string> = new Set([
+  'IH-META-001',
+  'IH-REF-001',
+  'IH-NET-001',
+  'IH-FS-001',
+]);
+
+export function isContextOnly(finding: Finding): boolean {
+  if (CONTEXT_ONLY_RULES.has(finding.ruleId)) return true;
+  return finding.ruleId === 'IH-INTENT-001' && finding.severity === 'low';
+}
+
 export function verdictFor(
-  findings: Finding[],
+  allFindings: Finding[],
   thresholds: { block: number; review: number },
   options?: { filesSkipped?: number; allowSkipped?: boolean },
 ): Verdict {
+  const findings = allFindings.some((finding) => !isContextOnly(finding)) ? allFindings : [];
   const score = scoreFindings(findings);
   if (findings.some((finding) => finding.severity === 'critical') || score >= thresholds.block) {
     return 'block';

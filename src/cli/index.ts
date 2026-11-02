@@ -1062,6 +1062,10 @@ function registerScan(program: Command, name: 'scan' | 'review', hooks: MainHook
     .option('--llm-model <name>', 'model name')
     .option('--llm-api <api>', 'ollama or openai')
     .option('--llm-consent', 'send skill text to a non-localhost model server')
+    .option(
+      '--llm-stage',
+      'second-stage model check for review and prose-only skills; can raise a skill to review, never lowers or blocks (implies --llm)',
+    )
     .option('--dry-run', 'print the model prompt and do not send it')
     .option(
       '--print-suppressions',
@@ -1090,7 +1094,8 @@ function registerScan(program: Command, name: 'scan' | 'review', hooks: MainHook
         noColor: Boolean(opts.color === false || opts.noColor),
         quiet: Boolean(opts.quiet),
         allowSkipped: Boolean(opts.allowSkipped),
-        llm: name === 'review' || Boolean(opts.llm),
+        llm: name === 'review' || Boolean(opts.llm) || Boolean(opts.llmStage),
+        llmStage: Boolean(opts.llmStage),
         ...(typeof opts.llmUrl === 'string' ? { llmUrl: opts.llmUrl } : {}),
         ...(typeof opts.llmModel === 'string' ? { llmModel: opts.llmModel } : {}),
         ...(typeof opts.llmApi === 'string' ? { llmApi: opts.llmApi } : {}),

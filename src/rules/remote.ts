@@ -32,6 +32,10 @@ const PROSE_DIRECTIVE =
 const OVERWRITE_PROSE =
   /\b(?:overwrite|replace|update|re-?download|refresh)\b[^\n]{0,80}\b(?:your|its|the|this)\s+(?:own\s+)?(?:local\s+)?(?:skill\s+files?|SKILL\.md|HEARTBEAT\.md|skill)\b/i;
 
+/** Where an overwrite comes from: a URL or the network, not local tool output. */
+const REMOTE_SOURCE =
+  /https?:\/\/|\b(?:remote|re-?download|download|from\s+(?:the\s+)?(?:server|web|internet|network|url|registry)|latest\s+(?:copy|version)\s+from)\b/i;
+
 export const inj004: Rule = {
   id: 'IH-INJ-004',
   title: 'Remote or self-updating instructions',
@@ -98,7 +102,8 @@ function checkInj004(file: ScannedFile, ctx?: ScanContext): Finding[] {
         'The skill tells the agent to fetch a remote instruction file and follow it. The remote copy can change after review.';
     } else if (
       OVERWRITE_PROSE.test(line) &&
-      (SKILL_FILE.test(line) || /skill\s+files?/i.test(line))
+      (SKILL_FILE.test(line) || /skill\s+files?/i.test(line)) &&
+      REMOTE_SOURCE.test(lines.slice(Math.max(0, i - 1), Math.min(lines.length, i + 2)).join(' '))
     ) {
       message = 'The skill tells the agent to overwrite its own skill files from a remote copy.';
     } else {
@@ -106,6 +111,7 @@ function checkInj004(file: ScannedFile, ctx?: ScanContext): Finding[] {
       if (
         FETCH_VERB.test(line) &&
         URL_OR_FILE.test(line) &&
+        (/https?:\/\//i.test(line) || SKILL_FILE.test(line)) &&
         PERIODIC.test(window) &&
         FOLLOW.test(window)
       ) {
