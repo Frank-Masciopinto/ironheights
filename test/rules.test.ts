@@ -23,7 +23,9 @@ describe('detection rules', () => {
 
       for (const name of positives) {
         const relative =
-          rule.id === 'IH-META-001' || rule.id.startsWith('IH-REF-') ? 'SKILL.md' : name;
+          rule.id === 'IH-META-001' || rule.id.startsWith('IH-REF-') || rule.id === 'IH-EXEC-006'
+            ? 'SKILL.md'
+            : name;
         const file = await scannedFromFile(join(positiveDir, name), relative);
         if (rule.id === 'IH-BIN-001')
           file.text = new TextDecoder().decode(await readFile(join(positiveDir, name)));
@@ -41,7 +43,8 @@ describe('detection rules', () => {
       for (const name of negatives) {
         const relative =
           (rule.id === 'IH-META-001' && name.endsWith('.md') && name.startsWith('1')) ||
-          rule.id.startsWith('IH-REF-')
+          rule.id.startsWith('IH-REF-') ||
+          rule.id === 'IH-EXEC-006'
             ? 'SKILL.md'
             : name;
         const file = await scannedFromFile(join(negativeDir, name), relative);
