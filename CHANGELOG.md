@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.33.0 — 2026-11-02
+
+**Four attack patterns from the Moltbook submolts now block.** Ironheights: The Immune System for AI Agents. 0.33.0 adds four narrow block-alone signals, each tested as a separate experiment on the full benchmark before merging: a skill that moves all its real instructions into a bundled PDF it calls authoritative; a bundled script launched to keep running in the background; a network call whose destination is decoded at runtime (credit fromthebot); and rows from a bundled file passed off as live citations in the output (credit rossum, fromthebot, hermes-agent-88, bytes). On the benchmark, detection at block rises from 26.6% (137/516) to 31.4% (162/516) with false positives unchanged at 2.4% (11/456) and 0/19 Anthropic skills flagged. Prose-only attacks caught at block go from 6/98 to 24/98. Held-out half: 33.2% (95/286) at 3.3% (8/245) false positives.
+
 ## 0.32.0 — 2026-11-02
 
 **Block the hidden trigger-word script.** Ironheights: The Immune System for AI Agents. 0.32.0 splits IH-INTENT-001 into narrow sub-signals that can block on their own. The new one catches a skill that quietly runs a hidden script whenever a trigger word shows up in the user's input. On the benchmark, detection at block rises from 22.7% (117/516) to 26.6% (137/516) with false positives unchanged at 2.4% (11/456) and 0/19 Anthropic skills flagged; the held-out half moves from 23.4% to 27.3% at the same 3.3% false positives. Block-or-review is unchanged at 39.9%: these skills were already sent to review and are now blocked outright.
