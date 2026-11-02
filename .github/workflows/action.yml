@@ -15,7 +15,7 @@ jobs:
         uses: ./
         with:
           # Pinned to the current npm latest.
-          version: '0.28.0'
+          version: '0.29.0'
           path: test/fixtures/benign
       - name: Benign fixture passes
         shell: bash
@@ -36,7 +36,7 @@ jobs:
         continue-on-error: true
         with:
           # Pinned to the current npm latest.
-          version: '0.28.0'
+          version: '0.29.0'
           path: test/fixtures/malicious/IH-CRED-001
           badge-file: ironheights-badge.json
       - name: Malicious fixture fails with a grade and a badge
@@ -74,7 +74,7 @@ jobs:
         continue-on-error: true
         with:
           # Pinned to the current npm latest.
-          version: '0.28.0'
+          version: '0.29.0'
           path: ${{ runner.temp }}/padded-skill
       - name: Skipped file exits 3
         shell: bash
@@ -93,7 +93,8 @@ jobs:
       - id: tm
         uses: ./
         with:
-          # Pinned to the current npm latest.
+          # Held at 0.28.0: 0.29.0's IH-INTENT-001 misreads "No API key is needed" in the
+          # example weather skill (false positive, fixed in 0.30.0). Move to 0.30.0 once live.
           version: '0.28.0'
           path: examples/threatmodel
           mode: threatmodel
