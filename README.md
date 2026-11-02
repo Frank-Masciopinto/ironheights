@@ -11,7 +11,7 @@
 [![CI](https://github.com/Frank-Masciopinto/ironheights/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Frank-Masciopinto/ironheights/actions/workflows/ci.yml?query=branch%3Amain)
 [![npm downloads](https://img.shields.io/npm/dm/ironheights?logo=npm)](https://www.npmjs.com/package/ironheights)
 [![npm provenance](https://img.shields.io/badge/npm-provenance%20signed-2ea44f?logo=npm)](https://www.npmjs.com/package/ironheights#provenance)
-[![MaliciousSkillBench](https://img.shields.io/badge/MaliciousSkillBench-26.6%25%20detect%20%C2%B7%202.4%25%20FP-blue)](docs/benchmark.md#maliciousskillbench-results-0320)
+[![MaliciousSkillBench](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FFrank-Masciopinto%2Fironheights%2Fbadges%2Fbadges%2Fbenchmark.json)](docs/benchmark.md#maliciousskillbench-results-0320)
 [![License](https://img.shields.io/npm/l/ironheights)](LICENSE)
 [![Node](https://img.shields.io/node/v/ironheights?logo=node.js)](package.json)
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6?logo=typescript&logoColor=white)](tsconfig.json)
