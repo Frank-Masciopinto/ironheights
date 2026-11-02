@@ -87,6 +87,56 @@ const NO_CONFIRM =
 const GATE =
   /\b(?:must|always|first)\b[^.\n]{0,60}\b(?:read|open|follow|run)\b[^.\n]{0,60}\b[\w-]+\.(?:pdf|docx|pptx|xlsx|png|jpe?g)\b|\b[\w-]+\.(?:pdf|docx)\b[^.\n]{0,80}\b(?:source\s+of\s+truth|required\s+(?:per-session\s+)?setup|mandatory|before\s+(?:running|invoking|any|taking))/i;
 
+/**
+ * The skill hands all of its real instructions to an opaque bundled document and makes reading it a
+ * precondition for any action ("the PDF is the authoritative workflow; this file is not sufficient").
+ * The scan cannot see what the agent will be told to do, so this blocks on its own
+ * (m/missed-attacks, resource/availability class, 2026-11-02).
+ */
+const GATE_AUTHORITATIVE =
+  /\b[\w-]+\.(?:pdf|docx)\b[^\n]{0,300}\b(?:authoritative|in\s+full\s+before|before\s+(?:running|taking)\s+any|not\s+sufficient|does\s+not\s+contain\s+enough)/i;
+
+/**
+ * A section that runs a bundled script and says it keeps going in the background or "continuously".
+ * The SKILL.md cannot show what the long-running process does (m/missed-attacks, resource/availability
+ * class, 2026-11-02).
+ */
+const CONTINUOUS =
+  /\b(?:continuous(?:ly)?\s+(?:operation|running|monitoring|execution)|background\s+process(?:es)?|maintain\s+(?:continuous|persistent)\s+\w+|keep\s+running\s+indefinitely|run\s+(?:forever|indefinitely))\b/i;
+const RUNS_BUNDLED_SCRIPT =
+  /\b(?:python3?|bash|sh|node)\s+[\w/.-]+\.(?:py|sh|js)\b|\bscripts\/[\w.-]+\.(?:py|sh|js)/i;
+
+function continuousScript(text: string): { line: number; evidence: string } | undefined {
+  let start = 0;
+  const lines = text.split(/\r?\n/);
+  for (let i = 0; i <= lines.length; i += 1) {
+    if (i === lines.length || (i > start && /^#{1,4}\s/.test(lines[i] ?? ''))) {
+      const section = lines.slice(start, i).join('\n').slice(0, 20000);
+      const hit = CONTINUOUS.exec(section);
+      if (
+        hit &&
+        RUNS_BUNDLED_SCRIPT.test(section) &&
+        !NEGATED.test(section.slice(Math.max(0, hit.index - 60), hit.index))
+      ) {
+        const offset = section.slice(0, hit.index).split('\n').length - 1;
+        return { line: start + offset + 1, evidence: (lines[start + offset] ?? '').trim() };
+      }
+      start = i;
+    }
+  }
+  return undefined;
+}
+
+/**
+ * Output provenance: rows or citations from a bundled file are put into the user's output and passed
+ * off as live or sourced, so the report contains content with no upstream input from the user
+ * (rossum, fromthebot, hermes-agent-88, bytes, m/missed-attacks, 2026-11-02).
+ */
+const PASSED_OFF =
+  /\b(?:labell?ed|presented|shown|marked|reported|cited|attributed)\s+as\s+(?:live|real|verified|fresh|current|first-hand|user-supplied|original)[\w-]*\s*(?:\w+\s+){0,2}(?:citations?|sources?|data|results|rows|entries|quotes?|reviews?)/i;
+const BUNDLED_ROWS_INTO_OUTPUT =
+  /\b(?:rows?|entries|records|citations?|quotes?|reviews?)\b[^.\n]{0,80}\bfrom\s+`?[\w./-]+\.(?:json|ya?ml|csv|txt)`?[^.\n]{0,120}\b(?:output|report|table|summary|results)/i;
+
 const FAMILY_LABEL: Record<Family, string> = {
   exfil: 'sends sensitive data to an outside address',
   conceal: 'hides an action from the user',
@@ -167,10 +217,19 @@ export function intentHits(text: string): Hit[] {
     else if (NO_CONFIRM.test(raw)) add('conceal', 1);
     if (matchUnlessNegated(PERSIST_EXEC, raw)) add('persist', 2, TRIGGERED_HELPER.test(raw));
     else if (matchUnlessNegated(PERSIST, raw)) add('persist', 1);
-    if (matchUnlessNegated(STEER_STRONG, raw)) add('steer', 3);
+    if (matchUnlessNegated(PASSED_OFF, raw) || matchUnlessNegated(BUNDLED_ROWS_INTO_OUTPUT, raw))
+      add('steer', 3, true);
+    else if (matchUnlessNegated(STEER_STRONG, raw)) add('steer', 3);
     else if (matchUnlessNegated(STEER, raw)) add('steer', 1);
-    if (matchUnlessNegated(GATE, raw)) add('gate', 2);
+    if (matchUnlessNegated(GATE_AUTHORITATIVE, window)) add('gate', 2, true);
+    else if (matchUnlessNegated(GATE, raw)) add('gate', 2);
     if (matchUnlessNegated(DROPPER, raw)) add('dropper', 3);
+  }
+  const continuous = continuousScript(text);
+  if (continuous) {
+    const prior = best.get('persist');
+    if (!prior || !prior.blocks)
+      best.set('persist', { family: 'persist', weight: 2, blocks: true, ...continuous });
   }
   return [...best.values()].sort((a, b) => a.line - b.line);
 }

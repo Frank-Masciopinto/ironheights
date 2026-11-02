@@ -220,6 +220,52 @@ function checkNet002(file: ScannedFile): Finding[] {
       }),
     );
   }
+  findings.push(...runtimeDestinations(file));
+  return findings;
+}
+
+/**
+ * A destination the static scan cannot read because it is decoded at runtime (base64, hex, char codes)
+ * and then used by a network call in the same code block. An unreadable host is treated as undeclared
+ * and hidden on purpose, so it blocks (fromthebot, m/missed-attacks, 2026-11-02).
+ */
+const NET_CALL =
+  /\b(?:requests\.(?:get|post|put)|fetch\(|curl\b|wget\b|urlopen|httpx\.|axios\.|socket\.connect|Invoke-WebRequest)/i;
+const DECODED_DEST =
+  /\b(?:url|endpoint|host|server|dest\w*|target|webhook)\w*\s*[:=]\s*(?:base64\.b64decode|atob|bytes\.fromhex|Buffer\.from\([^)]{0,200}['"](?:base64|hex)['"]|codecs\.decode|''\.join\(\s*chr|""\.join\(\s*chr|String\.fromCharCode)/i;
+
+function runtimeDestinations(file: ScannedFile): Finding[] {
+  const blocks: { start: number; text: string }[] = [];
+  if (file.kind === 'markdown') {
+    const fence = /```[^\n]*\n([\s\S]*?)```/g;
+    for (const match of file.text.matchAll(fence)) {
+      blocks.push({
+        start: file.text.slice(0, match.index).split('\n').length,
+        text: match[1] ?? '',
+      });
+    }
+  } else {
+    blocks.push({ start: 0, text: file.text });
+  }
+  const findings: Finding[] = [];
+  for (const block of blocks) {
+    if (!NET_CALL.test(block.text)) continue;
+    const hit = DECODED_DEST.exec(block.text);
+    if (!hit) continue;
+    const offset = block.text.slice(0, hit.index).split('\n').length;
+    const line = block.text.split('\n')[offset - 1] ?? '';
+    pushUnique(
+      findings,
+      createFinding(net002, file, {
+        line: block.start + offset,
+        evidence: line,
+        severity: 'critical',
+        message:
+          'A network destination is decoded at runtime, so the scan cannot see where data goes. An unreadable destination counts as undeclared.',
+        confidence: 'high',
+      }),
+    );
+  }
   return findings;
 }
 
