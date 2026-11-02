@@ -2,8 +2,17 @@
  "version": "0.32.0",
  "detect": "137/516",
  "fp": "11/456",
+ "anthropic": "0/19",
  "detect_pct": 26.6,
  "fp_pct": 2.4,
  "msb_revision": "d4b42ce5766a6e0359c987cf59c1007cb3795a90",
- "anthropic_commit": "ca45fc496a3436251f191354091d557da31c15b5"
+ "anthropic_commit": "ca45fc496a3436251f191354091d557da31c15b5",
+ "cisco": {
+  "version": "2.3.2",
+  "detect": "113/516",
+  "fp": "9/456",
+  "anthropic": "1/19",
+  "detect_pct": 21.9,
+  "fp_pct": 2.0
+ }
 }
