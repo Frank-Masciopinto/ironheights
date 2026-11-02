@@ -142,7 +142,7 @@ describe('scanner', () => {
     expect(result.skills[0]?.filesScanned).toBe(500);
     expect(result.verdict).toBe('no-findings');
     await rm(dir, { recursive: true, force: true });
-    }, 15_000); // setup writes 500 files; slow on Windows runners. The scan itself is still held to 2 s above.
+  }, 15_000); // setup writes 500 files; slow on Windows runners. The scan itself is still held to 2 s above.
 });
 
 describe('walker robustness', () => {
