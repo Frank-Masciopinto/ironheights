@@ -3,6 +3,7 @@ import { applyCap } from '../../runtime/watcher.ts';
 import { readFile, stat, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { contentDigest } from '../../mcp/receipts.ts';
+import { diffHosts, type HostRef } from '../../report/metadata.ts';
 import { readJsonl, type ArtifactRecord, type RefusalEvent } from '../../report/extras.ts';
 import { TOOL_VERSION } from '../../version.ts';
 import type { PostureReport } from '../../report/posture.ts';
@@ -42,6 +43,10 @@ export interface ReportFlags {
   verifySlaDays?: number;
   /** Re-check a saved JSON report against the files on disk now. */
   verify?: string;
+  /** Opt-in probe of 169.254.169.254. No network unless set. */
+  probeMetadata?: boolean;
+  /** Previous report JSON. Diffs the reachable-host list. Does not copy its metadata cells. */
+  previousReport?: string;
   config?: string;
   env?: NodeJS.ProcessEnv;
   now?: Date;
@@ -102,8 +107,29 @@ export async function runReport(flags: ReportFlags): Promise<number> {
       : {}),
     ...(flags.reversalWindow ? { reversalWindow: flags.reversalWindow } : {}),
     ...(flags.verifySlaDays !== undefined ? { verifySlaDays: flags.verifySlaDays } : {}),
+    ...(flags.probeMetadata ? { probeMetadata: true } : {}),
     env,
   });
+  if (flags.previousReport) {
+    interface PreviousReport {
+      reachableHosts?: HostRef[];
+      measuredEnvironment?: string;
+      environment?: { id?: string };
+    }
+    let prev: PreviousReport | null = null;
+    try {
+      prev = JSON.parse(await readFile(resolve(flags.previousReport), 'utf8')) as PreviousReport;
+    } catch {
+      err(`ironheights report: cannot read previous report ${flags.previousReport}`);
+      return 1;
+    }
+    report.hostDiff = diffHosts(
+      report.reachableHosts ?? [],
+      Array.isArray(prev?.reachableHosts) ? prev.reachableHosts : [],
+      report.measuredEnvironment ?? report.environment?.id ?? 'unknown',
+      prev?.measuredEnvironment ?? prev?.environment?.id ?? null,
+    );
+  }
   if (flags.fromWatch) {
     const watch = await watchSummaryFor(flags.fromWatch, flags.watchKey, env);
     (report as typeof report & { watch?: unknown }).watch = watch;
@@ -146,6 +172,21 @@ export async function runReport(flags: ReportFlags): Promise<number> {
   else {
     const t = report.totals;
     out(`${report.title}: ${t.repos} repo(s), ${t.skills} skill(s), ${t.findings} finding(s)`);
+    if (report.measuredEnvironment) out(`environment measured: ${report.measuredEnvironment}`);
+    if (report.cloudMetadata)
+      out(
+        `cloud metadata ${report.cloudMetadata.target}: reachable ${report.cloudMetadata.reachable}, IMDSv2 ${report.cloudMetadata.imdsv2}, hop limit ${report.cloudMetadata.hopLimit}`,
+      );
+    if (report.hostDiff) {
+      const d = report.hostDiff;
+      out(
+        `host diff (${d.measuredEnvironment} vs ${d.previousEnvironment ?? 'unknown'}): ${d.added.length} added, ${d.removed.length} removed`,
+      );
+      for (const h of d.added)
+        out(`  added ${h.host}${h.skill ? ` (${h.repo ?? ''}/${h.skill})` : ''}`);
+      for (const h of d.removed)
+        out(`  removed ${h.host}${h.skill ? ` (${h.repo ?? ''}/${h.skill})` : ''}`);
+    }
     if (report.lead) out(report.lead);
     out(t.result);
     for (const c of report.lanes?.containment ?? [])

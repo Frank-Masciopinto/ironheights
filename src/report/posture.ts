@@ -32,6 +32,13 @@ import {
   type SkillProfile,
   type Violation,
 } from '../threatmodel/threatmodel.ts';
+import {
+  probeCloudMetadata,
+  untestedMetadata,
+  type CloudMetadataRow,
+  type HostDiff,
+  type HostRef,
+} from './metadata.ts';
 import { TOOL_NAME, TOOL_VERSION } from '../version.ts';
 import {
   environmentStamp,
@@ -125,6 +132,8 @@ export interface SkillRow {
   bySeverity: Partial<Record<Severity, number>>;
   topRules: string[];
   inThreatModel: boolean | null;
+  /** Hosts named in the skill. Used for the reachable-host list. */
+  hosts: string[];
   drift: { approved: boolean; changes: number; high: number } | null;
   /**
    * What the grade is about. `complete` is false when files were skipped or the skill fetches
@@ -202,6 +211,14 @@ export interface PostureReport {
   history: HistoryPoint[];
   /** 0.24.0: where this report ran. Trends are drawn only across the same environment. */
   environment?: EnvironmentStamp;
+  /** 0.31.0: the environment this run measured. Not taken from another report. */
+  measuredEnvironment?: string;
+  /** 0.31.0: link-local metadata reach. Untested cells are never filled from another environment. */
+  cloudMetadata?: CloudMetadataRow;
+  /** 0.31.0: hosts named by the skills in this run, with the skill they belong to. */
+  reachableHosts?: HostRef[];
+  /** 0.31.0: diff of reachable hosts against a previous report file. */
+  hostDiff?: HostDiff;
   /** 0.24.0: weakest skill and its widest reach, as one unit. */
   lead?: string;
   /** 0.24.0: a critical finding flips the verdict regardless of the average. */
@@ -407,6 +424,9 @@ export interface BuildOptions {
   reversalWindow?: number;
   verifySlaDays?: number;
   env?: NodeJS.ProcessEnv;
+  /** 0.31.0: opt-in probe of 169.254.169.254. Off by default; no network unless set. */
+  probeMetadata?: boolean;
+  metadataFetch?: typeof fetch;
 }
 
 export async function buildReport(opts: BuildOptions): Promise<PostureReport> {
@@ -524,6 +544,7 @@ export async function buildReport(opts: BuildOptions): Promise<PostureReport> {
           .slice(0, 3)
           .map(([r]) => r),
         inThreatModel: model ? modelPaths.has(profile.key) : null,
+        hosts: profile.hosts,
         drift,
         coverage: {
           complete: reasons.length === 0,
@@ -796,6 +817,15 @@ export async function buildReport(opts: BuildOptions): Promise<PostureReport> {
     driftChanges,
     history: [...sameEnv, point],
     environment,
+    measuredEnvironment: environment.id,
+    cloudMetadata: opts.probeMetadata
+      ? await probeCloudMetadata(environment.id, {
+          ...(opts.metadataFetch ? { fetchImpl: opts.metadataFetch } : {}),
+        })
+      : untestedMetadata(environment.id),
+    reachableHosts: skills.flatMap((s0) =>
+      s0.hosts.map((host) => ({ host, skill: s0.skill, repo: s0.repo })),
+    ),
     lead,
     killSwitch,
     lanes: { containment, verification },
@@ -934,8 +964,15 @@ export function renderPostureHtml(r: PostureReport): string {
   const changeHtml = r.changeLog?.length
     ? `<h2>Changes between runs</h2><table><thead><tr><th>Run</th><th>Changed skills</th></tr></thead><tbody>${r.changeLog.map((c) => `<tr><td>${e(c.at)}</td><td>${c.changed.map((x) => e(x)).join(', ')}</td></tr>`).join('')}</tbody></table>`
     : '';
+  const meta = r.cloudMetadata;
+  const metaHtml = meta
+    ? `<h2>Cloud metadata</h2><p>Environment measured: <code>${e(r.measuredEnvironment ?? meta.environment)}</code>. Cells this run did not test stay untested.</p><table><thead><tr><th>Target</th><th>Reachable</th><th>IMDSv2</th><th>Hop limit</th></tr></thead><tbody><tr><td><code>${e(meta.target)}</code></td><td>${e(meta.reachable)}</td><td>${e(meta.imdsv2)}</td><td>${e(String(meta.hopLimit))}</td></tr></tbody></table>`
+    : '';
+  const hostDiffHtml = r.hostDiff
+    ? `<h2>Reachable hosts since the previous report</h2><p>Measured <code>${e(r.hostDiff.measuredEnvironment)}</code>${r.hostDiff.previousEnvironment ? ` against <code>${e(r.hostDiff.previousEnvironment)}</code>` : ''}.</p><table><thead><tr><th></th><th>Host</th><th>Skill</th></tr></thead><tbody>${[...r.hostDiff.added.map((h) => ({ ...h, change: 'added' })), ...r.hostDiff.removed.map((h) => ({ ...h, change: 'removed' }))].map((h) => `<tr><td>${e(h.change)}</td><td><code>${e(h.host)}</code></td><td>${e(h.skill ? `${h.repo ?? ''}/${h.skill}` : '')}</td></tr>`).join('')}</tbody></table>`
+    : '';
   const envHtml = r.environment
-    ? `<div class="meta">Environment <code>${e(r.environment.id)}</code>${r.environment.imageDigest ? ` · image <code>${e(r.environment.imageDigest.slice(0, 19))}</code>` : ''} · inspected digest <code>${e(r.environment.inspectedDigest.slice(0, 16))}</code></div>${r.otherEnvironments?.length ? `<h2>Other environments (not in the trend)</h2><div class="banner">These runs came from a different environment; they are shown side by side, never as one trend.</div><table><thead><tr><th>Environment</th><th>Run</th><th>Skills</th><th>Findings</th><th>Inspected digest</th></tr></thead><tbody>${r.otherEnvironments.map((o) => `<tr><td>${e(o.id)}</td><td>${e(o.at)}</td><td>${o.skills}</td><td>${o.findings}</td><td><code>${e((o.inspectedDigest ?? '').slice(0, 16))}</code></td></tr>`).join('')}</tbody></table>` : ''}`
+    ? `<div class="meta">Environment measured <code>${e(r.measuredEnvironment ?? r.environment.id)}</code>${r.environment.imageDigest ? ` · image <code>${e(r.environment.imageDigest.slice(0, 19))}</code>` : ''} · inspected digest <code>${e(r.environment.inspectedDigest.slice(0, 16))}</code></div>${metaHtml}${hostDiffHtml}${r.otherEnvironments?.length ? `<h2>Other environments (not in the trend)</h2><div class="banner">These runs came from a different environment; they are shown side by side, never as one trend.</div><table><thead><tr><th>Environment</th><th>Run</th><th>Skills</th><th>Findings</th><th>Inspected digest</th></tr></thead><tbody>${r.otherEnvironments.map((o) => `<tr><td>${e(o.id)}</td><td>${e(o.at)}</td><td>${o.skills}</td><td>${o.findings}</td><td><code>${e((o.inspectedDigest ?? '').slice(0, 16))}</code></td></tr>`).join('')}</tbody></table>` : ''}`
     : '';
   return `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">

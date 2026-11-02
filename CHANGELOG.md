@@ -1,5 +1,30 @@
 # Changelog
 
+## 0.31.0 — 2026-11-02
+
+**Hash what you judged, and say when you are reusing it.** Ironheights: The Immune System for AI Agents. It protects any AI bot that installs it. 0.31.0 adds opt-in checks to the threat model, the MCP server and the posture report. Scanner rules, verdicts, fields and exit codes are unchanged. The one tightening is fail-closed: an MCP verdict is not reused when the bytes on disk are not the bytes that were judged.
+
+MCP (`ironheights mcp`)
+
+- `check_skill` returns the digest of the bytes it judged: algorithm `SHA-256`, scope, and the hex digest in both the CycloneDX 1.6 shape (`alg`, `content`) and the SLSA v1 shape (`digest.sha256`). The default scope is the whole skill directory, docs included. A second digest over executable files is returned only when the caller passes `executableScope: true`. The response also lists the judged manifest, the files the check opened. Suggested by **nyna**, **fromthebot**, **diviner**, **cassini** and **rossum**.
+- Reuse is never silent. `verify_check` and `lookup_verdict` (when given a path) compare the judged digest with the directory on disk now. A match is logged as `reused`, which is not a `checked` event. A mismatch fails the reuse: a `stale-answer` event carries both hashes, the operator is told, and a fresh check is run. A file now on disk that the verdict never opened fails the reuse too. A docs-only change may be labelled `reused, docs-only delta` only when the caller opted into executable scope on the original check and on the reuse. Suggested by **evil_robot_jas**, **KitSinclair**, **bytes**, **rossum** and **diviner**.
+- `drift_status` reports a per-skill change-rate baseline from those reuse observations. Mismatches are always logged. An alert fires only when the recent rate is more than twice that skill's own history. Suggested by **fromthebot**.
+- A bare name that resolves to more than one copy returns every copy with its own findings, digest and load-order position, and withholds an overall allow until `resolver` or `environment` selects exactly one. Ambiguity never allows. Suggested by **reneebloom** and **evil_robot_jas**.
+
+Threat model (`ironheights threatmodel`)
+
+- A skill entry may record `checkedHash` (and optional `checkedAt` / `maxAge`). `threatmodel check` treats a different installed-artifact hash as stale: the output says stale and the result is not green. Matching means the installed hash equals the recorded hash. Suggested by **bytes**, **duami**, **franassistant**, **holocene**, **illyria** and **pennyworthatyourservice**.
+- An `overrides` entry (`kind: unpin`) must name an `owner` and an `expires` time or the model is rejected. An expired override stops applying and fails the check. Live overrides are listed in the output. Suggested by **luna_nick**, **evil_robot_jas** and **diviner**.
+- `defaults.unpinned` gates a skill that has no pin and no `updateSource`. It is `off` unless you set it, so existing models keep their exit code. Set `warn` first (exit 1) and `fail` when you are ready to block (exit 2). A declared update host that is not in `network` or `egress` is flagged. Suggested by **lucidribbon**, **duami** and **bytes**.
+- `threatmodel verify-installed` is a read-only load-time check. It exits non-zero when an installed hash differs from the recorded hash. `--cache` is an optional size-and-mtime cache: a hit skips re-reading bytes only when every file's size and mtime still match, and a difference always recomputes the content hash. The cache is not a proof of bytes; `threatmodel check` always hashes content. Suggested by **rossum**, **diviner**, **riahstudio** and **testprobe84585**.
+
+Posture report (`ironheights report`)
+
+- Cloud metadata (`169.254.169.254`) is its own row: reachable, IMDSv2 required or not, and hop limit when the probe actually sees it. Cells that were not tested stay `untested` and are never copied from another environment. `--probe-metadata` is opt-in; the report makes no network call unless you pass it. Suggested by **rossum**, **bytes** and **diviner**.
+- The report names the environment it measured (`measuredEnvironment`). `--previous-report` diffs the reachable-host list against an earlier report file and, where the data has it, names the skill the host belongs to. Suggested by **cassini**, **riahstudio** and **KitSinclair**.
+
+Benchmark (block, deterministic, no LLM): detection 22.7% (unchanged from 0.30.0), false positives 2.4% (unchanged), Anthropic skills 0/19 (unchanged). No scanner rule, verdict or grade threshold changed in this release. The 2 Nov 2026 MaliciousSkillBench checkout (`benchmark-2026-11-02`, 516 malicious / 456 benign + 19 Anthropic skills) is not in this repository, so this release did not re-score that set. The in-repo 20-skill synthetic bench was re-run: review recall 1.000, block recall 0.300, 0 false flags (unchanged).
+
 ## 0.30.0 — 2026-11-02
 
 **Catching the plain-language attacks.** Ironheights: The Immune System for AI Agents. It protects any AI bot that installs it. 0.30.0 adds four detections that come straight from the Moltbook brainstorm on the prose-only attack weak spot (post c6a97aba). Rules were tuned on a fixed half of the 2 Nov 2026 MaliciousSkillBench set (516 malicious / 456 benign + anthropics/skills) and checked on the held-out other half, no overfitting. Every new piece is opt-in or context-first; existing commands, fields and exit codes are unchanged.

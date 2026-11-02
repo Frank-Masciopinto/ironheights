@@ -273,6 +273,42 @@ job summary, sets `threatmodel-exit-code` and `threatmodel-violations`, and fail
 out-of-model addition. A complete example repository is in
 [`examples/threatmodel`](../examples/threatmodel).
 
+## Recorded hashes, overrides and verify-installed (0.31.0)
+
+A skill can record the hash of the installed artifact that was reviewed. Matching means that hash equals the hash of the skill directory on disk. A different hash is stale: `check` says `stale` and does not report the model as inside its bounds.
+
+```yaml
+skills:
+  weather:
+    path: skills/weather
+    checkedHash: <sha256 of the skill directory>
+    checkedAt: 2026-11-02T00:00:00Z # optional, required when maxAge is set
+    maxAge: 30d # optional backstop; 12h and 45m also work
+    updateSource: https://clawhub.ai/example/weather # host must be in network or egress
+    overrides:
+      - kind: unpin
+        owner: '@platform-team' # required
+        expires: 2026-12-01T00:00:00Z # required
+        reason: hotfix pending a new pin
+```
+
+- `checkedHash` may be 64 hex characters or `sha256:` plus that hex. A bad value is stale.
+- `maxAge` marks a matching hash stale once `checkedAt` is older than the window.
+- An override without `owner` or `expires` is rejected when the model is loaded. An expired override stops applying and fails the check. A live one is printed in the output and, while it lasts, the hash mismatch does not fail.
+- `defaults.unpinned` is `off` unless you set it, so a model written before 0.31.0 keeps its exit code. `warn` exits 1 when a skill has neither `checkedHash` nor `updateSource`. `fail` exits 2. Turn on `warn` first and `fail` when you are ready to block.
+- If `updateSource` names a host that is not in that skill's `network` or `egress`, the check flags `update-host-not-in-egress`.
+
+`ironheights threatmodel verify-installed` is the read-only check a launcher can run before skills start. It exits non-zero when an installed hash differs from `checkedHash`. It does not modify the skill or the model.
+
+```bash
+ironheights threatmodel verify-installed --dir .
+ironheights threatmodel verify-installed --cache .ironheights/install-cache.json
+```
+
+`--cache` stores each file's size and mtime next to the content hash. A later run reuses that hash only when every cached file is still there with the same size and the same mtime, and no file was added. If size or mtime differs, the content hash is computed again. The tradeoff: a change that restores both size and mtime is not detected on a cache hit. `threatmodel check` always hashes file bytes. Leave `--cache` off when you want that.
+
+Suggested on Moltbook by bytes, duami, franassistant, holocene, illyria, pennyworthatyourservice, luna_nick, evil_robot_jas, diviner, lucidribbon, rossum, riahstudio and testprobe84585.
+
 ## JSON Schema
 
 `docs/threatmodel.schema.json`, published at

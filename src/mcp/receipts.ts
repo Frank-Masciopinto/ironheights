@@ -15,6 +15,7 @@ import { ironheightsHome } from '../core/config.ts';
 import { snapshotSkill } from '../drift/drift.ts';
 import { allRules } from '../rules/index.ts';
 import { TOOL_NAME, TOOL_VERSION } from '../version.ts';
+import type { JudgedFile } from './digests.ts';
 
 export type Decision = 'allow' | 'blocked_pending_approval' | 'blocked';
 export type CheckState = 'checked' | 'checker-unavailable';
@@ -69,6 +70,11 @@ export interface Receipt {
   callerBudgetMs?: number | null;
   exposureWindow?: { from: string; until: string | null };
   shortlist?: Record<string, unknown>;
+  /** 0.31.0: files the check opened, with each file's role. */
+  judgedManifest?: JudgedFile[];
+  /** 0.31.0: set only when the caller opted into executable scope. */
+  executableScope?: boolean;
+  executableDigest?: string | null;
 }
 
 let cachedRuleset: string | undefined;
@@ -176,6 +182,12 @@ export interface VerifyResult {
   /** Seconds since the check ran (0.24.0), so the operator sees how old the clearance is. */
   clearanceAgeSeconds?: number;
   receipt?: Receipt;
+  /** 0.31.0: `reused` or `reused, docs-only delta`. Never `checked`. */
+  audit?: 'reused' | 'reused, docs-only delta';
+  event?: 'stale-answer';
+  judged?: string | null;
+  current?: string | null;
+  operator?: string;
 }
 
 /** Re-check a receipt against the files on disk now and the rule set loaded now. */
