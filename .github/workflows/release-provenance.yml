@@ -28,6 +28,9 @@ jobs:
           GH_REPO: ${{ github.repository }}
           TAG: ${{ matrix.tag }}
         run: |
+          if ! printf '%s' "$TAG" | grep -Eq '^v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$'; then
+            echo "::error::tag must look like vX.Y.Z"; exit 1
+          fi
           mkdir assets
           gh release download "$TAG" --dir assets --pattern 'ironheights-*.tgz' --pattern 'SHA256SUMS' --skip-existing || true
           if ! ls assets/ironheights-*.tgz >/dev/null 2>&1; then
@@ -44,7 +47,8 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
           TAG: ${{ matrix.tag }}
+          BUNDLE: ${{ steps.attest.outputs.bundle-path }}
         run: |
           out="ironheights-${TAG#v}.intoto.jsonl"
-          cp "${{ steps.attest.outputs.bundle-path }}" "$out"
+          cp "$BUNDLE" "$out"
           gh release upload "$TAG" "$out" --clobber

@@ -719,7 +719,7 @@ export function renderMarkdown(r: ThreatModelReport): string {
   return lines.join('\n');
 }
 
-const esc = (s: string): string => s.replace(/\|/g, '\\|').replace(/\n/g, ' ');
+const esc = (s: string): string => s.replace(/\\/g, '\\\\').replace(/\|/g, '\\|').replace(/\n/g, ' ');
 
 export function renderTmSarif(r: ThreatModelReport): string {
   const list = r.introduced ?? r.violations;

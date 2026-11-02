@@ -32,6 +32,7 @@ export function badge(s) {
 
 function esc(t) {
   return String(t ?? '')
+    .replace(/\\/g, '\\\\')
     .replace(/\|/g, '\\|')
     .replace(/[\r\n]+/g, ' ')
     .slice(0, 160);

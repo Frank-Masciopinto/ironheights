@@ -17,9 +17,18 @@ jobs:
       contents: read
       id-token: write # npm --provenance
     steps:
+      # Validate the collaborator-supplied tag before any step uses it (OSPS-BR-01.04).
+      - name: Validate release tag
+        env:
+          TAG: ${{ inputs.tag || github.ref_name }}
+        run: |
+          if ! printf '%s' "$TAG" | grep -Eq '^v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$'; then
+            echo "::error::release tag must look like vX.Y.Z"
+            exit 1
+          fi
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ${{ inputs.tag || github.ref }}
+          ref: ${{ inputs.tag && format('refs/tags/{0}', inputs.tag) || github.ref }}
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           # Current Node for npm publish --provenance. Package engines remain >=20.
@@ -52,13 +61,18 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - run: npm pack --ignore-scripts
-      - run: node scripts/write-sha256sums.mjs ironheights-*.tgz > SHA256SUMS
+      # CycloneDX SBOM of the runtime dependency tree, shipped with every release (OSPS-QA-02.02).
+      - run: |
+          v="$(node -p 'require("./package.json").version')"
+          npm sbom --sbom-format cyclonedx --omit dev > "ironheights-$v.cdx.json"
+      - run: node scripts/write-sha256sums.mjs ironheights-*.tgz ironheights-*.cdx.json > SHA256SUMS
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: release-checksums
           path: |
             SHA256SUMS
             ironheights-*.tgz
+            ironheights-*.cdx.json
           if-no-files-found: error
   release-checksums:
     needs: publish
@@ -78,17 +92,20 @@ jobs:
           subject-path: |
             SHA256SUMS
             ironheights-*.tgz
+            ironheights-*.cdx.json
       - name: Attach checksums to the GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPO: ${{ github.repository }}
+          TAG: ${{ inputs.tag || github.ref_name }}
+          BUNDLE: ${{ steps.attest.outputs.bundle-path }}
         run: |
-          tag="${{ inputs.tag || github.ref_name }}"
+          tag="$TAG"
           # Signed SLSA provenance (Sigstore bundle) as a release asset.
-          cp "${{ steps.attest.outputs.bundle-path }}" "ironheights-${tag#v}.intoto.jsonl"
+          cp "$BUNDLE" "ironheights-${tag#v}.intoto.jsonl"
           notes="npm package staged with provenance (live after maintainer approval). Verify SHA256SUMS using docs/release-verification.md."
           if gh release view "$tag" >/dev/null 2>&1; then
-            gh release upload "$tag" SHA256SUMS ironheights-*.tgz ironheights-*.intoto.jsonl --clobber
+            gh release upload "$tag" SHA256SUMS ironheights-*.tgz ironheights-*.cdx.json ironheights-*.intoto.jsonl --clobber
           else
-            gh release create "$tag" SHA256SUMS ironheights-*.tgz ironheights-*.intoto.jsonl --title "$tag" --notes "$notes"
+            gh release create "$tag" SHA256SUMS ironheights-*.tgz ironheights-*.cdx.json ironheights-*.intoto.jsonl --title "$tag" --notes "$notes"
           fi

@@ -31,3 +31,13 @@ node dist/cli/index.js scan test/fixtures/benign
 ```
 
 Runtime dependencies stay at four: `commander`, `zod`, `yaml`, and `picomatch`. Do not add a package that compiles native code, and do not add install scripts.
+
+## When and how tests run
+
+- **Locally:** `npm test` runs the Vitest suite with coverage; `npm run test:packed` installs the packed tarball and runs the CLI against it.
+- **On every push and pull request:** [ci.yml](.github/workflows/ci.yml) runs lint, type-check, the full test suite, a build and `npm audit` on Linux (Node 20.0.0 and 24), the packed-CLI test on Linux, and the build, tests and packed-CLI test on Windows (Node 20.0.0 and 24). CodeQL and dependency review run on every pull request to `main`.
+- **On release tags:** [release.yml](.github/workflows/release.yml) runs `npm test` again before anything is published.
+
+## Test policy
+
+Every major change, new feature, rule or bug fix must add or update automated tests in `test/` that exercise the new behaviour (fixtures for rules, unit or CLI tests for commands). Pull requests that change behaviour without tests are not merged. A pull request is merged only when every CI check passes.

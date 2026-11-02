@@ -17,7 +17,7 @@ const MAX_CHECKS = 25;
 export function registryUrl(dep: UnscannedDependency): URL | undefined {
   if (dep.manager === 'npm') {
     if (!/^(?:@[a-z0-9][\w.-]*\/)?[a-z0-9][\w.-]*$/i.test(dep.name)) return undefined;
-    return new URL(`https://registry.npmjs.org/${dep.name.replace('/', '%2F')}`);
+    return new URL(`https://registry.npmjs.org/${dep.name.replace(/\//g, '%2F')}`);
   }
   if (dep.manager === 'pypi') {
     if (!/^[a-z0-9][\w.-]*$/i.test(dep.name)) return undefined;
