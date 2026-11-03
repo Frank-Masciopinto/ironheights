@@ -44,14 +44,29 @@ describe('IH-INTENT-001 signal combinations', () => {
 
 describe('context-only rules', () => {
   it('never escalate the verdict on their own', () => {
-    const only = ['IH-META-001', 'IH-REF-001', 'IH-NET-001', 'IH-FS-001'].map((id) =>
-      finding(id, 'high'),
-    );
+    const only = [
+      ...['IH-META-001', 'IH-REF-001', 'IH-FS-001'].map((id) => finding(id, 'high')),
+      finding('IH-NET-001', 'medium'),
+    ];
     expect(verdictFor(only, { block: 80, review: 15 })).toBe('no-findings');
     expect(verdictFor([finding('IH-INTENT-001', 'low')], { block: 80, review: 15 })).toBe(
       'no-findings',
     );
     expect(isContextOnly(finding('IH-INTENT-001', 'medium'))).toBe(false);
+  });
+
+  it('IH-NET-001 on a metadata address is not context-only', () => {
+    // Regression: md-doc-mcp pattern scored F (40/100) yet verdict no-findings, exit 0.
+    const meta = { ...finding('IH-NET-001', 'high'), evidence: 'http://169.254.169.254/latest/' };
+    const pub = { ...finding('IH-NET-001', 'high'), evidence: 'http://203.0.113.5/?n=' };
+    const lan = { ...finding('IH-NET-001', 'high'), evidence: 'http://192.168.1.20:8080/' };
+    const raw = [meta, pub];
+    expect(isContextOnly(meta)).toBe(false);
+    expect(isContextOnly(lan)).toBe(true);
+    expect(verdictFor(raw, { block: 80, review: 15 })).toBe('block');
+    expect(verdictFor([pub], { block: 80, review: 15 })).toBe('no-findings');
+    expect(verdictFor([meta], { block: 80, review: 15 })).toBe('review');
+    expect(verdictFor([lan], { block: 80, review: 15 })).toBe('no-findings');
   });
 
   it('still count once another rule fires', () => {

@@ -93,7 +93,35 @@ export const CONTEXT_ONLY_RULES: ReadonlySet<string> = new Set([
   'IH-FS-001',
 ]);
 
+const METADATA_HOSTS = new Set([
+  '169.254.169.254',
+  '169.254.170.2',
+  '100.100.100.200',
+  'metadata.google.internal',
+  '[fd00:ec2::254]',
+]);
+
+/** Host of the first URL in a finding's evidence, lower-cased. */
+function evidenceHost(evidence: string): string | undefined {
+  const match = /(?:https?:)?\/\/(\[[^\]]+\]|[^/\s:?#'"`]+)/i.exec(evidence);
+  return match?.[1]?.toLowerCase();
+}
+
+/**
+ * Cloud instance-metadata endpoints. A skill has no reason to reach them, and they hold the
+ * host's cloud credentials. Public raw IPs alone were tried and dropped (2 real-world game
+ * servers sent to review), see experiments/DISCARDED-RULES.md.
+ */
+export function isSignalDestination(evidence: string): boolean {
+  const host = evidenceHost(evidence);
+  if (!host) return false;
+  return METADATA_HOSTS.has(host);
+}
+
 export function isContextOnly(finding: Finding): boolean {
+  // A cloud metadata address is a signal, not context: 0.29.0-0.33.0
+  // reported such a skill as grade F with verdict no-findings and exit 0.
+  if (finding.ruleId === 'IH-NET-001' && isSignalDestination(finding.evidence)) return false;
   if (CONTEXT_ONLY_RULES.has(finding.ruleId)) return true;
   if (
     (finding.ruleId === 'IH-INTENT-001' ||
