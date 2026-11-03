@@ -811,6 +811,158 @@ Matches:
 Does not match:
 - `Do not copy your own session instructions into the draft; write a fresh one for the user's app.`
 
+## IH-XB-A — Whole environment copied into a network call
+
+- Severity: critical
+- Category: network
+- Priority: P1
+- Applies to: any
+- OWASP LLM: LLM02:2025
+- OWASP Agentic: ASI02:2026
+- MITRE ATLAS: none
+- OpenCRE: none
+
+Experiment A: Whole environment copied into a network call.
+
+Remediation: Remove this behaviour or make it explicit and user-controlled.
+
+Matches:
+
+Does not match:
+
+## IH-XB-B — Decoded hidden string is executed
+
+- Severity: critical
+- Category: obfuscation
+- Priority: P1
+- Applies to: any
+- OWASP LLM: LLM01:2025
+- OWASP Agentic: ASI05:2026
+- MITRE ATLAS: none
+- OpenCRE: none
+
+Experiment B: Decoded hidden string is executed.
+
+Remediation: Remove this behaviour or make it explicit and user-controlled.
+
+Matches:
+
+Does not match:
+
+## IH-XB-C — Several named secrets bundled into one payload
+
+- Severity: high
+- Category: network
+- Priority: P1
+- Applies to: any
+- OWASP LLM: LLM02:2025
+- OWASP Agentic: ASI03:2026
+- MITRE ATLAS: none
+- OpenCRE: none
+
+Experiment C: Several named secrets bundled into one payload.
+
+Remediation: Remove this behaviour or make it explicit and user-controlled.
+
+Matches:
+
+Does not match:
+
+## IH-XB-D — Directives told to override safety or existing constraints
+
+- Severity: high
+- Category: injection
+- Priority: P1
+- Applies to: markdown
+- OWASP LLM: LLM01:2025
+- OWASP Agentic: ASI01:2026
+- MITRE ATLAS: none
+- OpenCRE: none
+
+Experiment D: Directives told to override safety or existing constraints.
+
+Remediation: Remove this behaviour or make it explicit and user-controlled.
+
+Matches:
+
+Does not match:
+
+## IH-XB-E — Skill switches off the agent's own output limits
+
+- Severity: high
+- Category: injection
+- Priority: P1
+- Applies to: markdown
+- OWASP LLM: LLM01:2025
+- OWASP Agentic: ASI01:2026
+- MITRE ATLAS: none
+- OpenCRE: none
+
+Experiment E: Skill switches off the agent's own output limits.
+
+Remediation: Remove this behaviour or make it explicit and user-controlled.
+
+Matches:
+
+Does not match:
+
+## IH-XB-F — Skill description admits disguising what it does
+
+- Severity: high
+- Category: meta
+- Priority: P1
+- Applies to: markdown
+- OWASP LLM: LLM01:2025
+- OWASP Agentic: ASI04:2026
+- MITRE ATLAS: none
+- OpenCRE: none
+
+Experiment F: Skill description admits disguising what it does.
+
+Remediation: Remove this behaviour or make it explicit and user-controlled.
+
+Matches:
+
+Does not match:
+
+## IH-XB-G — Send treated as pre-confirmed without asking the user
+
+- Severity: high
+- Category: injection
+- Priority: P1
+- Applies to: markdown
+- OWASP LLM: LLM06:2025
+- OWASP Agentic: ASI09:2026
+- MITRE ATLAS: none
+- OpenCRE: none
+
+Experiment G: Send treated as pre-confirmed without asking the user.
+
+Remediation: Remove this behaviour or make it explicit and user-controlled.
+
+Matches:
+
+Does not match:
+
+## IH-XB-J — User opt-out quietly undone after a timer or count
+
+- Severity: high
+- Category: persistence
+- Priority: P1
+- Applies to: markdown
+- OWASP LLM: LLM06:2025
+- OWASP Agentic: ASI06:2026
+- MITRE ATLAS: none
+- OpenCRE: none
+
+Experiment J: User opt-out quietly undone after a timer or count.
+
+Remediation: Remove this behaviour or make it explicit and user-controlled.
+
+Matches:
+
+Does not match:
+
 ## IH-MCP-001 — MCP server launched from a remote command
 
 - Severity: high

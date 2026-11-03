@@ -276,7 +276,10 @@ function skippedMatch(text: string, openParen: number): boolean {
   const line = text.slice(lineStart, lineEnd === -1 ? text.length : lineEnd);
   if (/^\s*(?:\/\/|\/\*|\*|#)/.test(line)) return true;
   const before = text.slice(lineStart, openParen);
-  const stripped = before.replace(/'(?:\\.|[^'\\\n])*'|"(?:\\.|[^"\\\n])*"|`(?:\\.|[^`\\\n])*`/g, '""');
+  const stripped = before.replace(
+    /'(?:\\.|[^'\\\n])*'|"(?:\\.|[^"\\\n])*"|`(?:\\.|[^`\\\n])*`/g,
+    '""',
+  );
   if (stripped.includes('//')) return true;
   return /\b(?:function|def|class|fn|async\s+function)\s+[A-Za-z_]\w*\s*$/.test(before);
 }
