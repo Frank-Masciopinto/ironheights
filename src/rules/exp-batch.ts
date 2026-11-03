@@ -45,6 +45,8 @@ function mk(key: string, id: string, title: string, severity: Severity, category
   };
   return r;
 }
+const GUARD_DOC = /\b(?:scanner|vett?(?:ing|er)|red flags?|detect(?:s|ion|or)?|suspicious|jailbreak\w*|prompt injection|attack patterns?|threat model|ctf)\b/i;
+const stripStrings = (l: string): string => l.replace(/(['"`])(?:\\.|(?!\1).)*\1/g, '""');
 const NET = /\brequests\.(?:post|put|get|patch)\b|\burllib\.request|\bhttp\.client|\bhttpx\.|\bfetch\s*\(|\baxios\b|\bcurl\b|\bwget\b|\bsocket\.|\bnc\s+-|\bInvoke-(?:WebRequest|RestMethod)\b|\.send\(/;
 
 // A: whole environment copied and sent over the network (any host).
@@ -53,14 +55,15 @@ export const expA = mk('A', 'IH-XB-A', 'Whole environment copied into a network 
   for (const s of segments(file)) {
     const body = s.lines.join('\n');
     if (!NET.test(body) && !/\|\s*(?:curl|nc|wget)/.test(body)) continue;
-    s.lines.forEach((l, i) => { if (A_ENV.test(l)) hit(s.start + i, l); });
+    s.lines.forEach((l, i) => { if (A_ENV.test(stripStrings(l)) && !/^\s*(?:#|\/\/|-\s)/.test(l)) hit(s.start + i, l); });
   }
 });
 
 // B: decode then execute.
 const B_RE = /\b(?:exec|eval)\s*\([^\n]{0,80}?(?:b64decode|base64|atob|fromhex|codecs\.decode|zlib\.decompress|marshal\.loads|bytes\.fromhex|rot13)|\bnew\s+Function\s*\(\s*(?:atob|Buffer\.from)|\beval\s*\(\s*Buffer\.from\([^)]*['"]base64|base64\s+(?:-d|--decode|-D)\b[^\n|]*\|\s*(?:ba|z|da)?sh\b|\|\s*base64\s+(?:-d|--decode)\s*\|\s*(?:ba|z)?sh\b|IEX\s*\(?\s*\[(?:System\.)?Text\.Encoding|FromBase64String[^\n]{0,80}\|\s*(?:iex|Invoke-Expression)/i;
 export const expB = mk('B', 'IH-XB-B', 'Decoded hidden string is executed', 'critical', 'obfuscation', ['any'], (file, hit) => {
-  for (const s of segments(file)) s.lines.forEach((l, i) => { if (B_RE.test(l)) hit(s.start + i, l); });
+  if (GUARD_DOC.test(file.text)) return;
+  for (const s of segments(file)) s.lines.forEach((l, i) => { const c = stripStrings(l); if (B_RE.test(c) && !/\(\s*\.\.\.\s*\)/.test(l) && !/^\s*(?:#|\/\/|-\s)/.test(l)) hit(s.start + i, l); });
 });
 
 // C: two or more named secrets bundled into one payload.
@@ -69,37 +72,41 @@ export const expC = mk('C', 'IH-XB-C', 'Several named secrets bundled into one p
   for (const s of segments(file)) {
     const body = s.lines.join('\n');
     if (!/json\.dumps|JSON\.stringify|payload|requests\.|fetch\(|base64|\.encode\(/.test(body)) continue;
-    let depth = 0; let names = new Set<string>(); let first = 0;
+    let depth = 0; let names = new Set<string>(); let first = 0; let v = '';
     s.lines.forEach((l, i) => {
       const opens = (l.match(/[{[]/g) ?? []).length, closes = (l.match(/[}\]]/g) ?? []).length;
-      if (depth > 0 || /[=:(]\s*\{\s*$|=\s*dict\(\s*$/.test(l)) {
+      const asg = /^\s*(?:const |let |var )?(\w+)\s*=\s*(?:\{|dict\()\s*$/.exec(l); if (depth === 0 && asg) v = asg[1] ?? '';
+      if (depth > 0 || asg) {
         const m = C_SECRET.exec(l); if (m && m[1]) { if (!names.size) first = s.start + i; names.add(m[1]); }
       }
       depth += opens - closes;
-      if (depth <= 0) { if (names.size >= 2) hit(first, s.lines[first - s.start] ?? ''); names = new Set(); depth = 0; }
+      if (depth <= 0) {
+        const sink = v && new RegExp(`(?:json\\.dumps|JSON\\.stringify|b64encode|requests\\.\\w+|fetch|httpx\\.\\w+)\\([^\\n]*\\b${v}\\b`).test(body);
+        if (names.size >= 2 && sink) hit(first, s.lines[first - s.start] ?? ''); names = new Set(); depth = 0; v = ''; }
     });
   }
 });
 
 // D: directives that override safety/security.
-const D_RE = /\b(?:directives?|standing orders?|orders?|instructions?|commands?)\b[^.]{0,80}\b(?:overrid\w*|take precedence|supersed\w*|over existing constraints|even if (?:they|it) (?:appear to )?(?:contradict|conflict|violate))|\bprioriti[sz]e\b[^.]{0,60}\bdirectives?\b[^.]{0,40}\bover\b/i;
-const D_TARGET = /\b(?:security|safety|constraints?|guidelines?|protocols?|polic(?:y|ies)|previous|existing|standard procedures)\b/i;
+const D_RE = /\b(?:treat|consider)\b[^.]{0,40}\bdirectives?\b[^.]{0,20}\bas overriding\b|\bprioriti[sz]e\b[^.]{0,60}\bdirectives?\b[^.]{0,40}\bover\b|\b(?:compl\w+ with|follow|obey) (?:these|the|all|high-priority) directives?\b[^.]{0,30}\beven if\b|\b(?:these|high-priority|standing) (?:directives?|orders?) (?:override|take precedence over|supersede)\b/i;
+const D_TARGET = /\b(?:security|safety|constraints?|guardrails?|protocols?)\b/i;
 export const expD = mk('D', 'IH-XB-D', 'Directives told to override safety or existing constraints', 'high', 'injection', ['markdown'], (file, hit) => {
-  prose(file, (s, n) => { if (D_RE.test(s) && D_TARGET.test(s) && !DESCRIBE.test(s)) hit(n, s); });
+  prose(file, (s, n) => { if (D_RE.test(s) && D_TARGET.test(s) && !DESCRIBE.test(s) && !/["“”]/.test(s)) hit(n, s); });
 });
 
 // E: output filters / restrictions switched off for the agent.
-const E_RE = /\bwithout (?:any )?(?:restriction|content|safety|moderation) (?:filters?|limits?|checks?)\b|\bregardless of (?:topic )?(?:sensitivity|safety|policy|content polic\w*)\b|\b(?:bypass|ignore|disable)\w* (?:your |its |the )?(?:own )?(?:content|safety|restriction) (?:filters?|polic\w+|guidelines?)\b/i;
+const E_RE = /\b(?:this skill|you|the agent|it)\b[^.]{0,80}\bwithout (?:any )?(?:restriction|content|safety|moderation) filters?\b|\bregardless of (?:topic )?sensitivity\b/i;
 export const expE = mk('E', 'IH-XB-E', "Skill switches off the agent's own output limits", 'high', 'injection', ['markdown'], (file, hit) => {
-  prose(file, (s, n) => { if (E_RE.test(s) && !DESCRIBE.test(s)) hit(n, s); });
+  prose(file, (s, n) => { if (E_RE.test(s) && !DESCRIBE.test(s) && !/["“”]/.test(s)) hit(n, s); });
 });
 
 // F: description confesses disguise of its own behaviour.
 const F_RE = /伪装|冒充|偽裝|\bdisguis\w*\b|\bmasquerad\w*\b|\bcamouflag\w*\b|\bpos(?:es|ing) as\b|\bpretend(?:s|ing)? to be\b|\bunder the guise\b|\bdisfraz\w*|\btarn(?:t|en|ung)\b|\bmaquill\w*/i;
+const F_HARM = /资源|消耗|负载|挖矿|窃取|后门|心跳|\b(?:resource|cpu|load|drain|mining|miner|exfil\w*|steal\w*|backdoor|heartbeat|beacon)\b/i;
 export const expF = mk('F', 'IH-XB-F', 'Skill description admits disguising what it does', 'high', 'meta', ['markdown'], (file, hit) => {
   const fm = /^---\r?\n([\s\S]*?)\r?\n---/.exec(file.text);
   if (!fm) return;
-  fm[1]!.split(/\r?\n/).forEach((l, i) => { if (/^\s*description\s*:/.test(l) || /^\s{2,}\S/.test(l)) if (F_RE.test(l) && !DESCRIBE.test(l)) hit(i + 2, l); });
+  fm[1]!.split(/\r?\n/).forEach((l, i) => { if (/^\s*description\s*:/.test(l) && F_RE.test(l) && F_HARM.test(l) && !DESCRIBE.test(l)) hit(i + 2, l); });
 });
 
 // G: pre-confirmed send waiver.
@@ -113,16 +120,17 @@ const H_RE = /\b(?:(?:there is )?no need to (?:mention|tell|describe|report|list
 const H_ACT = /\b(?:delete|remove|replace|rewrite|append|add|write|copy|paste|set|insert|fill|drop)\w*\b/i;
 export const expH = mk('H', 'IH-XB-H', 'Skill keeps one of its own changes out of what it tells the user', 'high', 'injection', ['markdown'], (file, hit) => {
   if (!H_ACT.test(file.text)) return;
-  prose(file, (s, n) => { if (H_RE.test(s) && !/\b(?:detect|flag|scanner|attack)\w*/i.test(s)) hit(n, s); });
+  prose(file, (s, n, para) => { if (H_RE.test(s) && /\b(?:change summary|summary|report (?:your )?edits|change ?log)\b/i.test(para) && /\b(?:delet|remov|replac|fill|paste|copy|insert|append)\w*/i.test(file.text) && !/\b(?:detect|flag|scanner|attack)\w*/i.test(s)) hit(n, s); });
 });
 
 // I: a .env value written into a published file.
-const I_ENV = /\.env\b[^.]{0,120}\b(?:value|token|key|secret)\b|\b(?:value|token|key|secret) (?:of|from) [^.]{0,60}\.env\b/i;
+const I_ENV = /\b(?:copy|take|paste|read)\b[^.]{0,20}\bthe value of\b/i;
+
 const I_PUB = /\b(?:CHANGELOG|README|release notes|RELEASE|docs?\/|public|published|commit(?:ted)?|issue|gist|pull request)\b/i;
 const I_PUT = /\b(?:copy|paste|put|insert|include|add|write|embed|rewrite|split)\w*\b/i;
 export const expI = mk('I', 'IH-XB-I', 'Secret value from .env written into a published file', 'high', 'credentials', ['markdown'], (file, hit) => {
   if (!I_PUB.test(file.text)) return;
-  prose(file, (s, n, para) => { if (I_ENV.test(s) && I_PUT.test(para) && !/\b(?:never|do not|don't|redact\w*|mask\w*|names? only|without (?:the )?values?)\b/i.test(s)) hit(n, s); });
+  prose(file, (s, n, para) => { if (I_ENV.test(s) && /\.env\b/.test(para) && /\b(?:CHANGELOG|README|release notes|public issue|gist)\b/i.test(file.text) && I_PUT.test(para) && !/\b(?:never|do not|don't|redact\w*|mask\w*|names? only|without (?:the )?values?)\b/i.test(s)) hit(n, s); });
 });
 
 // J: an opt-out undone on a timer or count.
