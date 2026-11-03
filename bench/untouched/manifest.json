@@ -1,0 +1,3068 @@
+{
+"note": "UNTOUCHED TEST SET frozen 2026-11-03 ~20:15 CET. Never open, print, grep or read these skills when writing or tuning rules; aggregate scoring at release only. Sampled by hash without reading text. Malicious: MaliciousSkillBench rows not in bench/msb or bench/blind, from structural families not used anywhere, one per family, max 50 per upstream source. Benign (assumed clean, not hand-reviewed): GitHub SKILL.md corpus (skillmd.parquet), one per author, not in the real-world baseline or the look-alike set. Seed 20261103.",
+"msb_revision": "d4b42ce5",
+"counts": {
+"malicious": 208,
+"benign": 300,
+"malicious_sources": {
+"SkillHarm": 50,
+"SkillTrustBench": 50,
+"MalSkillBench": 50,
+"MaliciousAgentSkillsBench": 50,
+"SkillLeakBench": 2,
+"AgentTrap": 3,
+"Agent Skill Malware": 2,
+"SkillSafetyBench": 1
+}
+},
+"skills": [
+{
+"id": "ASB04_000064",
+"label": "malicious",
+"source": "MSB:SkillTrustBench",
+"sha256": "02d0fcc431cb024314da967635bc09a926c90981c5599dc5afbc4ce77a5ac3bb"
+},
+{
+"id": "ASB04_000086",
+"label": "malicious",
+"source": "MSB:MaliciousAgentSkillsBench",
+"sha256": "03b14ba299a51c17185aeaae57510ccc7fec6da8a76cf7236ed51ad9bd523c63"
+},
+{
+"id": "ASB04_000092",
+"label": "malicious",
+"source": "MSB:SkillTrustBench",
+"sha256": "03e8f97b1084086e7206956d35e35325ddb3e41ab32c1009f40d9212964abda1"
+},
+{
+"id": "ASB04_000140",
+"label": "malicious",
+"source": "MSB:SkillHarm",
+"sha256": "0574c8a1d4a2320e51804a6a055220d6af505c72e9ae97a836f77dc230a996e0"
+},
+{
+"id": "ASB04_000148",
+"label": "malicious",
+"source": "MSB:MalSkillBench",
+"sha256": "ed8eb96bfb8906048db2e5b9d8d97ff5cb340ccf5159966b73db87bc658afde2"
+},
+{
+"id": "ASB04_000167",
+"label": "malicious",
+"source": "MSB:SkillHarm",
+"sha256": "066727e98785b385cd5eb4c2309f7d909725f9dfd6283068eb83a3c7710c7f8b"
+},
+{
+"id": "ASB04_000181",
+"label": "malicious",
+"source": "MSB:MaliciousAgentSkillsBench",
+"sha256": "06c31af9567cabba41f59d1904a368598ae4cfbd77e1e67832f928bbb06c5252"
+},
+{
+"id": "ASB04_000198",
+"label": "malicious",
+"source": "MSB:SkillTrustBench",
+"sha256": "0749db63d399ea46e96c8d43c9f3bad3fe9c58004faff703f62723372cdfa143"
+},
+{
+"id": "ASB04_000239",
+"label": "malicious",
+"source": "MSB:SkillTrustBench",
+"sha256": "00059020f381189a01e94ef4eae1a8439c8307afb6bb2cae8c6c8782bd513b50"
+},
+{
+"id": "ASB04_000251",
+"label": "malicious",
+"source": "MSB:SkillTrustBench",
+"sha256": "093051b8cef5050e9455ced2ae2e51c9824df24241c50fb172221bbaab1aa453"
+},
+{
+"id": "ASB04_000253",
+"label": "malicious",
+"source": "MSB:MalSkillBench",
+"sha256": "12729df46cda57f5ba4d1b50845c2a349d93b9673bd0adea13ab0e920c0d96e3"
+},
+{
+"id": "ASB04_000272",
+"label": "malicious",
+"source": "MSB:SkillTrustBench",
+"sha256": "09df4aeeda269ff0e50f9c5122e6e3f3b2d8ea5ca24fdcc6cf4d42d167f11a9b"
+},
+{
+"id": "ASB04_000373",
+"label": "malicious",
+"source": "MSB:SkillTrustBench",
+"sha256": "0e050e2a5d3db60686d7a602db11d098e649ce550782c7d9829027ed45f76a92"
+},
+{
+"id": "ASB04_000439",
+"label": "malicious",
+"source": "MSB:MaliciousAgentSkillsBench",
+"sha256": "1006d384315440391e056e2d4f5f6cab204187b57c6637d14d705efce541e50a"
+},
+{
+"id": "ASB04_000441",
+"label": "malicious",
+"source": "MSB:MalSkillBench",
+"sha256": "45ddc8844846d9c9449192355f562e20483ff7691896b5fa89c997e1d63af542"
+},
+{
+"id": "ASB04_000520",
+"label": "malicious",
+"source": "MSB:MalSkillBench",
+"sha256": "22ca40ce31167efed34962f9e40d8dda8d3ba501b1e63dceb8b1ee086d8c3033"
+},
+{
+"id": "ASB04_000523",
+"label": "malicious",
+"source": "MSB:SkillHarm",
+"sha256": "12a28629d6958208e238ec0d840a267147e085e2d0020d09e1f2a57a8b7321b2"
+},
+{
+"id": "ASB04_000536",
+"label": "malicious",
+"source": "MSB:MaliciousAgentSkillsBench",
+"sha256": "131b48b039f879ca57302d427c1f8ef00885ae41a2f1dec5e284105cda7a7c67"
+},
+{
+"id": "ASB04_000540",
+"label": "malicious",
+"source": "MSB:SkillHarm",
+"sha256": "13340e72b993b50a8da485b3416b42d42eb80461db08a54c3c62dd6068fe04fa"
+},
+{
+"id": "ASB04_000549",
+"label": "malicious",
+"source": "MSB:SkillTrustBench",
+"sha256": "13652d4df04bd953ecef5b81c1d1919c9088be20ab2a248049c750ff18a081b0"
+},
+{
+"id": "ASB04_000588",
+"label": "malicious",
+"source": "MSB:MalSkillBench",
+"sha256": "1496f1cce8af4db760e3ac223ccf77ada4cc4cf7cd461139a34f900875ae6307"
+},
+{
+"id": "ASB04_000757",
+"label": "malicious",
+"source": "MSB:MaliciousAgentSkillsBench",
+"sha256": "f175835baa36b6682be5a82818ea6f990f2b4846bca40033763edef277efe7ac"
+},
+{
+"id": "ASB04_000946",
+"label": "malicious",
+"source": "MSB:SkillTrustBench",
+"sha256": "2018a6a8e0b19a7ddf2abeb1f9a7b94e0c53365e7f804db375042bba72121721"
+},
+{
+"id": "ASB04_000954",
+"label": "malicious",
+"source": "MSB:MaliciousAgentSkillsBench",
+"sha256": "2049359b0c52539bd22a512c47fb691047136240218809b9f40d5afb6f4060d1"
+},
+{
+"id": "ASB04_000972",
+"label": "malicious",
+"source": "MSB:Agent Skill Malware",
+"sha256": "20ff1b39db6098dc18f3741cad3923c0ee161ea018175ddc2f3a3a3b33df7677"
+},
+{
+"id": "ASB04_001003",
+"label": "malicious",
+"source": "MSB:MalSkillBench",
+"sha256": "2244ad389ae0bac4ceedd3ad8ef255a4c2ff2c53fc1d5196d592dc10e596cb00"
+},
+{
+"id": "ASB04_001038",
+"label": "malicious",
+"source": "MSB:MaliciousAgentSkillsBench",
+"sha256": "238c4c7ee15eacdc816873c5784f751d8d9bd986247c279f8fa242dc0fa5e6c7"
+},
+{
+"id": "ASB04_001093",
+"label": "malicious",
+"source": "MSB:MalSkillBench",
+"sha256": "9a7b4625a2a720a87339786b14e955b8f7e1637d2414417925e71b43b4c83fd1"
+},
+{
+"id": "ASB04_001105",
+"label": "malicious",
+"source": "MSB:SkillTrustBench",
+"sha256": "de7522e0c20245d36f51e8b54805bf8ca493fe67fec4ac81302e34687553644c"
+},
+{
+"id": "ASB04_001119",
+"label": "malicious",
+"source": "MSB:SkillHarm",
+"sha256": "25cce5f1db8a48e9200ecc2b31b5931ff1050c05c5844629b5d005bfdc8274fc"
+},
+{
+"id": "ASB04_001145",
+"label": "malicious",
+"source": "MSB:SkillTrustBench",
+"sha256": "269c4a6ff09221c852d629d31c787c4494dcdd0a3af5838c1e3d8c4b23906a98"
+},
+{
+"id": "ASB04_001156",
+"label": "malicious",
+"source": "MSB:MaliciousAgentSkillsBench",
+"sha256": "26f4a778989b6dddd1dfbe25dd7024ff617fb070c5689ee3e0dff32b3f3f8048"
+},
+{
+"id": "ASB04_001212",
+"label": "malicious",
+"source": "MSB:SkillHarm",
+"sha256": "28805174fa37ebc407a684b26232d928080caabbd3baa92a9becaaeff633af95"
+},
+{
+"id": "ASB04_001277",
+"label": "malicious",
+"source": "MSB:MalSkillBench",
+"sha256": "d35a344afb88148dd79fdd9684eb777b4098fe41c99a7bd7e54d15bd30b0efc8"
+},
+{
+"id": "ASB04_001420",
+"label": "malicious",
+"source": "MSB:SkillHarm",
+"sha256": "2ec3632a94409daa8c262bef862d3604a57a68e2019b980e2bed08013d05e3e0"
+},
+{
+"id": "ASB04_001453",
+"label": "malicious",
+"source": "MSB:MalSkillBench",
+"sha256": "301d487689bd31ef6c063664d7f792eafa3fb49d64f15934d790940219a9e5ff"
+},
+{
+"id": "ASB04_001463",
+"label": "malicious",
+"source": "MSB:MalSkillBench",
+"sha256": "f24459462d33b5c95fa9f955ecdc0666893ee11420373940f514ac001b7bf134"
+},
+{
+"id": "ASB04_001487",
+"label": "malicious",
+"source": "MSB:MaliciousAgentSkillsBench",
+"sha256": "30e89d4ed8558ef632fa85a6b1b15e9869d8970d02e9d98bae8f82b99bc14acf"
+},
+{
+"id": "ASB04_001490",
+"label": "malicious",
+"source": "MSB:SkillHarm",
+"sha256": "3101c56d108762a1d49a66e2ce3bb087410910ab50569925a5e1924556a140ce"
+},
+{
+"id": "ASB04_001501",
+"label": "malicious",
+"source": "MSB:SkillTrustBench",
+"sha256": "3150672ed1c96407690eb441f6615ebbcb24afabf9dae433dc939c515067ba6b"
+},
+{
+"id": "ASB04_001505",
+"label": "malicious",
+"source": "MSB:MaliciousAgentSkillsBench",
+"sha256": "317691f0cc02a4d137928e1ebf9cd04c6bba5fc951184f70aecdae6b2f9cfb0d"
+},
+{
+"id": "ASB04_001602",
+"label": "malicious",
+"source": "MSB:MalSkillBench",
+"sha256": "34411029abe1d89ad680f182790a6abe9c6a5ab17506df060e16ddcdee1e2201"
+},
+{
+"id": "ASB04_001604",
+"label": "malicious",
+"source": "MSB:MalSkillBench",
+"sha256": "cb1d51ca523708a4a798b98210b13a529a8a5446682825cb2f8974ca1e5fc846"
+},
+{
+"id": "ASB04_001628",
+"label": "malicious",
+"source": "MSB:MaliciousAgentSkillsBench",
+"sha256": "34f07c23634aceb44db76ef9c19821d67440689766eb00f1b0d1cf998d621cdf"
+},
+{
+"id": "ASB04_001652",
+"label": "malicious",
+"source": "MSB:SkillHarm",
+"sha256": "35b8c3c694fb59404a8d0863ddc0d0a7d778f15a24c662ec1963b16d90066c87"
+},
+{
+"id": "ASB04_001748",
+"label": "malicious",
+"source": "MSB:SkillHarm",
+"sha256": "38856b8be1d1be0d94bd32a49f898866563d7729eb1e326181b7e7c568b371c7"
+},
+{
+"id": "ASB04_001775",
+"label": "malicious",
+"source": "MSB:MalSkillBench",
+"sha256": "396ee3b0d14d46f28feb7b74be236b22edfba3cb4265f7df1b14a22a1d938057"
+},
+{
+"id": "ASB04_001900",
+"label": "malicious",
+"source": "MSB:SkillTrustBench",
+"sha256": "8705498b5046a56182d30d162fe11d65865105fcea1c3e552383c2ac474adb90"
+},
+{
+"id": "ASB04_001903",
+"label": "malicious",
+"source": "MSB:SkillHarm",
+"sha256": "3d29245c732bc0063626ede7eb3e15a6c03987fb0136bd3aea758c39eaf800ae"
+},
+{
+"id": "ASB04_001980",
+"label": "malicious",
+"source": "MSB:MaliciousAgentSkillsBench",
+"sha256": "408f1fe34617cab4c20902669b0d97b5650946ced4f4f4a2c05725cb324eefc5"
+},
+{
+"id": "ASB04_002010",
+"label": "malicious",
+"source": "MSB:MaliciousAgentSkillsBench",
+"sha256": "b638ea610fc7df6e77a7ffcffc2f3d204642cee8a72b92d5f4cefc92efdb80a4"
+},
+{
+"id": "ASB04_002047",
+"label": "malicious",
+"source": "MSB:MalSkillBench",
+"sha256": "8f43dd4b9e747b411e1e8b0881364b17b6319063216987059e1168e2cd9ce4f7"
+},
+{
+"id": "ASB04_002076",
+"label": "malicious",
+"source": "MSB:SkillLeakBench",
+"sha256": "053794bc0c38c4627f50f4e71d66fc5dff12ec70c3e3dc4d8d35cac3df5f797d"
+},
+{
+"id": "ASB04_002118",
+"label": "malicious",
+"source": "MSB:MaliciousAgentSkillsBench",
+"sha256": "44dae85da3f8d7fc1456d4869b3fa73a7c64f68f1fecf49aa7da6ba81047d9b3"
+},
+{
+"id": "ASB04_002205",
+"label": "malicious",
+"source": "MSB:SkillHarm",
+"sha256": "478e62417bab7baa5ed9c5b7e1aee4914b21c30627956155df54185dc1158412"
+},
+{
+"id": "ASB04_002258",
+"label": "malicious",
+"source": "MSB:SkillTrustBench",
+"sha256": "49dcbf89aa746608f1dd0c1c3dbd8c6ffc7b1792809eb4e40c8a5fea8a9836bf"
+},
+{
+"id": "ASB04_002343",
+"label": "malicious",
+"source": "MSB:SkillHarm",
+"sha256": "4cb71351a721cf47d06177f6d8f4a7a83920721bb6c457cf5a62488bb7be8fb2"
+},
+{
+"id": "ASB04_002349",
+"label": "malicious",
+"source": "MSB:MalSkillBench",
+"sha256": "325541c18379c81dc139e7d76a964a0165e2e73f50ccc2c093608f6b7f3e0542"
+},
+{
+"id": "ASB04_002467",
+"label": "malicious",
+"source": "MSB:MalSkillBench",
+"sha256": "2ce33bcc4a526ef9397a568e15c325a781ad67010dba12149025bf4c0c2e7950"
+},
+{
+"id": "ASB04_002485",
+"label": "malicious",
+"source": "MSB:MaliciousAgentSkillsBench",
+"sha256": "525392cc547471bfbc9dac6b9e4aaf09cd8a6fe8f1865f6b35db7ac7f6cf1efa"
+},
+{
+"id": "ASB04_002504",
+"label": "malicious",
+"source": "MSB:SkillTrustBench",
+"sha256": "cb468689f0f0cb121139c5574da5e7732938b3db72a6785fcbef443e137840a7"
+},
+{
+"id": "ASB04_002563",
+"label": "malicious",
+"source": "MSB:MaliciousAgentSkillsBench",
+"sha256": "54ef05f8a54a7a57f988532937dd65b56b50b8a811a6882b52cbcde065c178e2"
+},
+{
+"id": "ASB04_002573",
+"label": "malicious",
+"source": "MSB:MalSkillBench",
+"sha256": "930995a589b25f6c10c099d5f0be6edc5f280814e509486caee7d5594fb80f60"
+},
+{
+"id": "ASB04_002631",
+"label": "malicious",
+"source": "MSB:MaliciousAgentSkillsBench",
+"sha256": "577888002c6de353587d3ea4cce599ae275691cd179af17895e3211b89d1e2c0"
+},
+{
+"id": "ASB04_002678",
+"label": "malicious",
+"source": "MSB:SkillSafetyBench",
+"sha256": "58bccd0368559f3f20066dedb7572e2c3b22e6039f28d3f189531be6b7227938"
+},
+{
+"id": "ASB04_002684",
+"label": "malicious",
+"source": "MSB:MaliciousAgentSkillsBench",
+"sha256": "58e79643c637d54be98c1c9ba6ef799288bcb0345594f09d7d05a8163d01c74c"
+},
+{
+"id": "ASB04_002746",
+"label": "malicious",
+"source": "MSB:MalSkillBench",
+"sha256": "a51e7cb1b06034066e533a88d71463b209c0d0b77fb1d365cfd21c566d6d7285"
+},
+{
+"id": "ASB04_002754",
+"label": "malicious",
+"source": "MSB:MaliciousAgentSkillsBench",
+"sha256": "5b70656697944ab296907e5e4638d362108c5796305b036504f1cb5649091b1f"
+},
+{
+"id": "ASB04_002814",
+"label": "malicious",
+"source": "MSB:MalSkillBench",
+"sha256": "d0eaa3eb90baccafbebf3e95238f671cf72b218825654e8cf37263f4a3d1746e"
+},
+{
+"id": "ASB04_002840",
+"label": "malicious",
+"source": "MSB:SkillTrustBench",
+"sha256": "4037ad7183cb1a10d77bf7e2b4665fd0e65d73f3ac9ff3cdce7c6c81a7394272"
+},
+{
+"id": "ASB04_002860",
+"label": "malicious",
+"source": "MSB:SkillHarm",
+"sha256": "5ec82bdbc00b97f9b6ecf0c7a769895a0f5825a5d06cecedd21d0683ea528338"
+},
+{
+"id": "ASB04_002861",
+"label": "malicious",
+"source": "MSB:MalSkillBench",
+"sha256": "48e78c8016db30ab6c10464db7ad88318c77eef1efec00a1d0b5da24fbbbcafc"
+},
+{
+"id": "ASB04_002894",
+"label": "malicious",
+"source": "MSB:SkillTrustBench",
+"sha256": "7f03606b4a8748c2b0e50418e5e76c4412258d856177c5fd92059224dbaf138b"
+},
+{
+"id": "ASB04_002902",
+"label": "malicious",
+"source": "MSB:MalSkillBench",
+"sha256": "600a346bbcf015dd9a90b1c03e4f871da3c66c53d402bc8911b59f2d234c9a31"
+},
+{
+"id": "ASB04_002932",
+"label": "malicious",
+"source": "MSB:MalSkillBench",
+"sha256": "b1f82cc8037af2b134db7417ebc8997543ee7c75dccfff17f7c2261586aee029"
+},
+{
+"id": "ASB04_003162",
+"label": "malicious",
+"source": "MSB:MaliciousAgentSkillsBench",
+"sha256": "685cc0603ae282005d273dfbc8d8b90d60a74df4bb7347e5f12f2cc2ef8c5654"
+},
+{
+"id": "ASB04_003177",
+"label": "malicious",
+"source": "MSB:MaliciousAgentSkillsBench",
+"sha256": "69138f2e4bdaa3bafc5074459e9aaae38c53ef5af8c158001e5e1e58baca49f7"
+},
+{
+"id": "ASB04_003260",
+"label": "malicious",
+"source": "MSB:MaliciousAgentSkillsBench",
+"sha256": "6c5411393c4645a1aa0bb6fa27797f7a720a0239a00b194aabdaf95b9b80b35b"
+},
+{
+"id": "ASB04_003286",
+"label": "malicious",
+"source": "MSB:MalSkillBench",
+"sha256": "839422274ae62b7457affbe4230aa65c9cf4125c4e990dc94237992aa83f3d6c"
+},
+{
+"id": "ASB04_003312",
+"label": "malicious",
+"source": "MSB:SkillHarm",
+"sha256": "6e5c0a08d274746b07eaff0936ebe3c3588fbf1fe7da93ac36b6b2f9f716c59d"
+},
+{
+"id": "ASB04_003374",
+"label": "malicious",
+"source": "MSB:MaliciousAgentSkillsBench",
+"sha256": "716b8a583cddff93505f73da4aaeb2405b140a474bfbe973379bf38d7989303b"
+},
+{
+"id": "ASB04_003439",
+"label": "malicious",
+"source": "MSB:MaliciousAgentSkillsBench",
+"sha256": "72f0548bc14fb512cf98581fb989259e14639f2fb83c3ab96b7800e95976b457"
+},
+{
+"id": "ASB04_003449",
+"label": "malicious",
+"source": "MSB:MalSkillBench",
+"sha256": "fd67416c7d2e8e7c070449c51fcdcdf07f7006313f6081a3bfd1a090c08acd1a"
+},
+{
+"id": "ASB04_003464",
+"label": "malicious",
+"source": "MSB:MalSkillBench",
+"sha256": "7af771b014e575dd4bb759bc29c2ec0a447c2c0a071735a924abcf8bc9b87a83"
+},
+{
+"id": "ASB04_003480",
+"label": "malicious",
+"source": "MSB:SkillHarm",
+"sha256": "744272346cfddcc92338ee98bafa4d5d91398e637984d5e298d274e418369bbb"
+},
+{
+"id": "ASB04_003487",
+"label": "malicious",
+"source": "MSB:SkillTrustBench",
+"sha256": "7478b0708c27c26b0b177b113008e721cf3be39ce62c5de2c3d6965accabd1ae"
+},
+{
+"id": "ASB04_003546",
+"label": "malicious",
+"source": "MSB:SkillTrustBench",
+"sha256": "cb6d981bb4be48163328addb734d0406bd092d4fb675196d9ebccbb3657f9b2b"
+},
+{
+"id": "ASB04_003615",
+"label": "malicious",
+"source": "MSB:MaliciousAgentSkillsBench",
+"sha256": "48f461fd830645b8ebabc41451c3ddafa58e9739af884bf22821fdbf6c986567"
+},
+{
+"id": "ASB04_003622",
+"label": "malicious",
+"source": "MSB:MaliciousAgentSkillsBench",
+"sha256": "796dcfddf4187c2138d2a90cdecf5f0fb35f165c73a4ff198c13cd7d8139c509"
+},
+{
+"id": "ASB04_003625",
+"label": "malicious",
+"source": "MSB:MalSkillBench",
+"sha256": "1d839b1f65787af9aab6e695719d64b0562178c09cbd8dd7286ae2d483b7bcb4"
+},
+{
+"id": "ASB04_003654",
+"label": "malicious",
+"source": "MSB:MalSkillBench",
+"sha256": "c2f4b63e7b9915db61d06fb98c96f66649266c3e55d92429887564254bd41507"
+},
+{
+"id": "ASB04_003729",
+"label": "malicious",
+"source": "MSB:SkillTrustBench",
+"sha256": "a420c294a53ca636eb0872e69d45f14657db1b46a1b1a608397f2fc34a93c925"
+},
+{
+"id": "ASB04_003791",
+"label": "malicious",
+"source": "MSB:SkillHarm",
+"sha256": "7f849a06d9802a035142e8e2340eb7961b22a1c5f0a79c45f712e216134ad04f"
+},
+{
+"id": "ASB04_003792",
+"label": "malicious",
+"source": "MSB:SkillTrustBench",
+"sha256": "7f9d12bac6eca44bbcbed85fcfc68ec0749e46c30a4a422f39a7fcf2dfcc5d14"
+},
+{
+"id": "ASB04_003858",
+"label": "malicious",
+"source": "MSB:SkillTrustBench",
+"sha256": "227d107516cb621bcd59efc4c7fb54defe0cae293fe0c867b879eb3fdd8cfaa1"
+},
+{
+"id": "ASB04_003859",
+"label": "malicious",
+"source": "MSB:MaliciousAgentSkillsBench",
+"sha256": "81bb6be5547bccf76a8b55fbf899e1bd200c9d6c1d15556c2120b78ba7db2ec8"
+},
+{
+"id": "ASB04_003911",
+"label": "malicious",
+"source": "MSB:SkillTrustBench",
+"sha256": "0229e5068836062a00069430020d2594d8d598b84af2bae691e91d120a87293e"
+},
+{
+"id": "ASB04_003913",
+"label": "malicious",
+"source": "MSB:SkillHarm",
+"sha256": "832509cac9c3ff5a58473700181daba7561d48cd4ca008f97bb0a41e77d112a9"
+},
+{
+"id": "ASB04_003921",
+"label": "malicious",
+"source": "MSB:SkillHarm",
+"sha256": "834ee9b92fa4e2f02019a36fe4dbce3f91bc07662a522df38861ae856dce2636"
+},
+{
+"id": "ASB04_003940",
+"label": "malicious",
+"source": "MSB:MalSkillBench",
+"sha256": "82d3290bfd41456d6d50d27b96b7815631ccbee75b7d14459786458c12bc8609"
+},
+{
+"id": "ASB04_003970",
+"label": "malicious",
+"source": "MSB:SkillTrustBench",
+"sha256": "850a442bbad89950897611c6c64f05668bf3f4389861ae48580da03bc768f0ba"
+},
+{
+"id": "ASB04_004010",
+"label": "malicious",
+"source": "MSB:SkillTrustBench",
+"sha256": "865b3a4f8e05d215c6b5b86d2ffc3bd46962c9d7a34360db028b9f9d0f61b277"
+},
+{
+"id": "ASB04_004136",
+"label": "malicious",
+"source": "MSB:MaliciousAgentSkillsBench",
+"sha256": "8a3ef6c64272f25ac507a384a226797814b2d3e6995c9e2fe450a2237b7ff47f"
+},
+{
+"id": "ASB04_004142",
+"label": "malicious",
+"source": "MSB:SkillTrustBench",
+"sha256": "606c24a8ccef0d73656b3845f63a0648d454d1144c741ede0f231fb7f8029da2"
+},
+{
+"id": "ASB04_004205",
+"label": "malicious",
+"source": "MSB:SkillHarm",
+"sha256": "8c58440cebbe41735c79d7c2e3499a37b3062def5a0b4245906dad0b836f1e55"
+},
+{
+"id": "ASB04_004219",
+"label": "malicious",
+"source": "MSB:SkillTrustBench",
+"sha256": "8cdf3fa134373c8d999653a45d985257b540fe66a7232d1508e466590c3aed02"
+},
+{
+"id": "ASB04_004246",
+"label": "malicious",
+"source": "MSB:SkillTrustBench",
+"sha256": "8dc1afa996321fd9895e7b56dbf1563ae330380365a7ef540e06ffaa616da481"
+},
+{
+"id": "ASB04_004250",
+"label": "malicious",
+"source": "MSB:MalSkillBench",
+"sha256": "10a4e8ea6e4cd18449abd9cf0cb9c409dd81c93859a2164c874ba05eb269d16c"
+},
+{
+"id": "ASB04_004314",
+"label": "malicious",
+"source": "MSB:MaliciousAgentSkillsBench",
+"sha256": "904fed39717f041a0ed5927d6376830df1fc01ebbdc29f8171655e6b08a53822"
+},
+{
+"id": "ASB04_004318",
+"label": "malicious",
+"source": "MSB:MalSkillBench",
+"sha256": "907632abf1bbbd31c291830a26aa3f77060c7e3e2b4e919eacbc2755db161a10"
+},
+{
+"id": "ASB04_004348",
+"label": "malicious",
+"source": "MSB:MalSkillBench",
+"sha256": "9164fae49bc206ae26b3f7f54521cff84437974d27e396798b3df0ae4e675548"
+},
+{
+"id": "ASB04_004357",
+"label": "malicious",
+"source": "MSB:SkillHarm",
+"sha256": "91aa9a9c4c1d0aa6e294adbad9f737d090f9a0c7cd53b494aa6a605f05eafd29"
+},
+{
+"id": "ASB04_004403",
+"label": "malicious",
+"source": "MSB:MalSkillBench",
+"sha256": "704063414880259e8b59d72f70d1260d97f3354945b163e7352983e5c53b4540"
+},
+{
+"id": "ASB04_004458",
+"label": "malicious",
+"source": "MSB:SkillHarm",
+"sha256": "94ee9c48d4ab18faa592c65f0e65d2f90a2e426b2d977e0244cfbf307e34827c"
+},
+{
+"id": "ASB04_004548",
+"label": "malicious",
+"source": "MSB:MaliciousAgentSkillsBench",
+"sha256": "b221c7ed97b9e670a79576c6053aa5850bff29998191067969d9993845c2b981"
+},
+{
+"id": "ASB04_004604",
+"label": "malicious",
+"source": "MSB:SkillHarm",
+"sha256": "99626434bc3f912af241f37d210abc9333f8bf643f848011c8d26ca9a47b2003"
+},
+{
+"id": "ASB04_004629",
+"label": "malicious",
+"source": "MSB:SkillTrustBench",
+"sha256": "9a34ee5bfcc3e8d046c61f8e603687f79762bab32f113db7079cac88353bb0a7"
+},
+{
+"id": "ASB04_004634",
+"label": "malicious",
+"source": "MSB:MaliciousAgentSkillsBench",
+"sha256": "9a7072e6758d310d8f51cde70b5a4a528aad7d1340b45b72e25541f455c5b9ff"
+},
+{
+"id": "ASB04_004742",
+"label": "malicious",
+"source": "MSB:SkillHarm",
+"sha256": "9d90d13cdd9241123ffd330c0ef47868c0fb8b0c54ec04c17892ee8504f58db0"
+},
+{
+"id": "ASB04_004761",
+"label": "malicious",
+"source": "MSB:SkillHarm",
+"sha256": "9e2969ae4ae1785bdcac0402ae35f1ac4c566b9bb69a7ec330fdda71ab10d0c8"
+},
+{
+"id": "ASB04_004773",
+"label": "malicious",
+"source": "MSB:Agent Skill Malware",
+"sha256": "9ebc3b11e4f4e20332c999a264c713f8eb61906433510cd5c9f58c6255d6fee8"
+},
+{
+"id": "ASB04_004774",
+"label": "malicious",
+"source": "MSB:MaliciousAgentSkillsBench",
+"sha256": "9ecb39429ea97a5ca50bcb996cefcb4c942c6076808eabaf3cba83daee51860e"
+},
+{
+"id": "ASB04_004805",
+"label": "malicious",
+"source": "MSB:SkillHarm",
+"sha256": "9fc97a6f407f942e9aa63df451762340ef1dd5dfd4f12731dbb36d351b5a516e"
+},
+{
+"id": "ASB04_004834",
+"label": "malicious",
+"source": "MSB:MaliciousAgentSkillsBench",
+"sha256": "a0f7d913dd8da7b1c1ba1ab0b12eb6faee9d3ac120a095b09d3aa6deef2256c5"
+},
+{
+"id": "ASB04_004839",
+"label": "malicious",
+"source": "MSB:SkillTrustBench",
+"sha256": "17dda79d3a030be47085eda7e9f59495a40920399f22da9472930008d23625c9"
+},
+{
+"id": "ASB04_004878",
+"label": "malicious",
+"source": "MSB:MalSkillBench",
+"sha256": "af7a419221da7f4911a6b739d4663f4e4e21a191a85652f366dddadaecc816e7"
+},
+{
+"id": "ASB04_004891",
+"label": "malicious",
+"source": "MSB:SkillHarm",
+"sha256": "a28efc8838268eeb5bb31b72d6a2e58777c145495055800bfc40d52f31411ee9"
+},
+{
+"id": "ASB04_004905",
+"label": "malicious",
+"source": "MSB:SkillTrustBench",
+"sha256": "a3176c27c4394ce54d489d950bb4f0a373e5d2068025a9b6b9c018ba4295105b"
+},
+{
+"id": "ASB04_004933",
+"label": "malicious",
+"source": "MSB:MalSkillBench",
+"sha256": "68be7e1ff52d46ed29c676eb5701ad1b6f1443282837424ec88dfbb7ddf4b47c"
+},
+{
+"id": "ASB04_004935",
+"label": "malicious",
+"source": "MSB:SkillTrustBench",
+"sha256": "a406e53cbee4720569f7fbb03128f7594da86d8a80eb74c439dca4bee6aa8ad5"
+},
+{
+"id": "ASB04_004998",
+"label": "malicious",
+"source": "MSB:MalSkillBench",
+"sha256": "a69d187b416522e4fcbf398dc0ed4f03c9c560f0035a9a194b1620deabf6b049"
+},
+{
+"id": "ASB04_005019",
+"label": "malicious",
+"source": "MSB:SkillHarm",
+"sha256": "a702a6dc4e1d64b3501e6053b54cf0c75ca67a704760cf3a75bc9189b42f2806"
+},
+{
+"id": "ASB04_005067",
+"label": "malicious",
+"source": "MSB:MalSkillBench",
+"sha256": "a889646d52a6c51a5d33556b4e622ac52edfb9890764b5c558ca57ffe3346890"
+},
+{
+"id": "ASB04_005068",
+"label": "malicious",
+"source": "MSB:SkillHarm",
+"sha256": "a897efb40329588f7bfbc63c5041953819d88f0a351657d1d2ad7e5cce5f5d9c"
+},
+{
+"id": "ASB04_005073",
+"label": "malicious",
+"source": "MSB:MalSkillBench",
+"sha256": "67f88ec366658dc68855c80ae4e7a89d3ae12804ca70a55175ce0113f2be4c51"
+},
+{
+"id": "ASB04_005117",
+"label": "malicious",
+"source": "MSB:MaliciousAgentSkillsBench",
+"sha256": "aa94994c8bf458d392ac233f84317a1fb2dd5e930e04c8c3c5459df5d7df2beb"
+},
+{
+"id": "ASB04_005215",
+"label": "malicious",
+"source": "MSB:MaliciousAgentSkillsBench",
+"sha256": "96226fdfb97396c140b3ed0505ab71f4a2d5e443d8bee0d17dc25aae4cf9cfe0"
+},
+{
+"id": "ASB04_005219",
+"label": "malicious",
+"source": "MSB:AgentTrap",
+"sha256": "ae8a701a8a924c74c9b472dddd634faed104cbf9d52e2853a252f17119892e62"
+},
+{
+"id": "ASB04_005253",
+"label": "malicious",
+"source": "MSB:SkillHarm",
+"sha256": "af8c23f1361c835d6d23ab11f6d10b5af0a9e576762f42dc82bec54224f5c404"
+},
+{
+"id": "ASB04_005270",
+"label": "malicious",
+"source": "MSB:MalSkillBench",
+"sha256": "4baca2b3fc0deab3ecef87f7aecd6945dcc87376dabf04f38da89149af72cf1f"
+},
+{
+"id": "ASB04_005289",
+"label": "malicious",
+"source": "MSB:MalSkillBench",
+"sha256": "05c27d84d52a55411e12ffed056d283a12ec3ecbbd46561a851a71369f88c206"
+},
+{
+"id": "ASB04_005359",
+"label": "malicious",
+"source": "MSB:SkillTrustBench",
+"sha256": "b36a93212efe233e5e8b90a823b2dba400c8ec20105c95999f39924c78c8e57f"
+},
+{
+"id": "ASB04_005396",
+"label": "malicious",
+"source": "MSB:SkillHarm",
+"sha256": "b4d84f0d8f5ca68d6d9da711041be8208d509a8137c01cd7edcb9726b03a9e81"
+},
+{
+"id": "ASB04_005401",
+"label": "malicious",
+"source": "MSB:SkillTrustBench",
+"sha256": "57716cc0a4690beb0a57198e348ca1706dde294e5df24365907da7dab7a11c32"
+},
+{
+"id": "ASB04_005448",
+"label": "malicious",
+"source": "MSB:MaliciousAgentSkillsBench",
+"sha256": "b6daa8d6079f42ae1b63d63fbd84210a2aa64de04a7e7f82361501db9d486ce6"
+},
+{
+"id": "ASB04_005449",
+"label": "malicious",
+"source": "MSB:SkillHarm",
+"sha256": "b6edbc4091809f73096754c75b1de09e622601e235c9fc3b5e13272039ce89cd"
+},
+{
+"id": "ASB04_005452",
+"label": "malicious",
+"source": "MSB:MalSkillBench",
+"sha256": "fe7dbbfd939c3e6556161ba626c77b95c829c21e56a84ca978a693078dc6fe4d"
+},
+{
+"id": "ASB04_005495",
+"label": "malicious",
+"source": "MSB:AgentTrap",
+"sha256": "b1d9e4dbb90e0cf3026fc86ccec1fe2ef52a21124cb28e4cb1cb4ea6a4913d73"
+},
+{
+"id": "ASB04_005543",
+"label": "malicious",
+"source": "MSB:SkillTrustBench",
+"sha256": "bb0741e3ba3024d2df992bbd8a6beec902d9b7d2dcfcbe998a36f77514c1b573"
+},
+{
+"id": "ASB04_005621",
+"label": "malicious",
+"source": "MSB:AgentTrap",
+"sha256": "2446b556786b3684be4d6c94b770d40ae268029b45456b80f542493055a1752b"
+},
+{
+"id": "ASB04_005637",
+"label": "malicious",
+"source": "MSB:MalSkillBench",
+"sha256": "734589fb32676d8019d898b9f3269642c6ed3163a6aeca1cdaf5a2daa84380d7"
+},
+{
+"id": "ASB04_005638",
+"label": "malicious",
+"source": "MSB:SkillTrustBench",
+"sha256": "be8f090c5b48646767fe276d688755cab11ca3c70a7cfa78afc12c6c3e822f03"
+},
+{
+"id": "ASB04_005704",
+"label": "malicious",
+"source": "MSB:SkillTrustBench",
+"sha256": "c15c8a3651b2dfd7ac3ccb66c3b8bc04225aa1cebb2086bfba88f5e75ff873ec"
+},
+{
+"id": "ASB04_005716",
+"label": "malicious",
+"source": "MSB:SkillHarm",
+"sha256": "c201b8a35aba826d59cdd80437d79abb7d4a1576e5b7f062504e78cf7920ac5b"
+},
+{
+"id": "ASB04_005765",
+"label": "malicious",
+"source": "MSB:SkillHarm",
+"sha256": "bde3cc214313ec909d3733df3bdcbb911b47b87b6bdcf37aba5f0afd658fdfff"
+},
+{
+"id": "ASB04_005813",
+"label": "malicious",
+"source": "MSB:SkillHarm",
+"sha256": "c581416dbfa1b56619bb8b7a5c408220075d2965a9e0108ed8963008edcd5cda"
+},
+{
+"id": "ASB04_005818",
+"label": "malicious",
+"source": "MSB:SkillHarm",
+"sha256": "c5b2e25d7d45c1fda6b44d30d0a811ddb8a63bb222f2018836f9edf7030de4d5"
+},
+{
+"id": "ASB04_005831",
+"label": "malicious",
+"source": "MSB:SkillHarm",
+"sha256": "c62ba1f408b7bbdcf1b6605d66812a833f63c84faf2454d9c8fd0562753b3a03"
+},
+{
+"id": "ASB04_005876",
+"label": "malicious",
+"source": "MSB:MaliciousAgentSkillsBench",
+"sha256": "c7c8f88a34ba6125422c78d6e3d1ab1719af59272698f5651241735b646e19d2"
+},
+{
+"id": "ASB04_005883",
+"label": "malicious",
+"source": "MSB:MaliciousAgentSkillsBench",
+"sha256": "c7fbca9725654eadafd2b37e3e40cd833da9f7b6fcdc4ae019c65d051666dfe6"
+},
+{
+"id": "ASB04_005893",
+"label": "malicious",
+"source": "MSB:SkillHarm",
+"sha256": "c825166d48af18780a93ccc91580ec3a4fc3cde0b690c4eff43f3ac47de3b804"
+},
+{
+"id": "ASB04_005910",
+"label": "malicious",
+"source": "MSB:SkillTrustBench",
+"sha256": "c891c2fa2561c5fed2c99f4c176ddbaa11fbe79059426787ef53b62ae924a292"
+},
+{
+"id": "ASB04_005925",
+"label": "malicious",
+"source": "MSB:MalSkillBench",
+"sha256": "f5c12e82d2caa374c745cded889a393b446449ef43635031c2da1af2689d070f"
+},
+{
+"id": "ASB04_005943",
+"label": "malicious",
+"source": "MSB:SkillTrustBench",
+"sha256": "c9914f4adae07256ed670d65e84ba05dd4c1c30a5c4007dee7b68a11442b2fe6"
+},
+{
+"id": "ASB04_005952",
+"label": "malicious",
+"source": "MSB:SkillTrustBench",
+"sha256": "c9e2bcb97efbed702d55771d4492deaac8fdf3d415819c7c2f5f5db9497e63dd"
+},
+{
+"id": "ASB04_005971",
+"label": "malicious",
+"source": "MSB:SkillHarm",
+"sha256": "ca967b7b1f58e093f1c9d6f70affaba695366aaee93f199022e9889efb860116"
+},
+{
+"id": "ASB04_006076",
+"label": "malicious",
+"source": "MSB:MaliciousAgentSkillsBench",
+"sha256": "cdea63462093cc573d30a2efe32ffeb2bfba25eff81f000e09e8837feea3893e"
+},
+{
+"id": "ASB04_006126",
+"label": "malicious",
+"source": "MSB:SkillTrustBench",
+"sha256": "cf79b4316fb636d7c6408ccaedd9391dfc4cd2efac82609f38e91d7eec566f6a"
+},
+{
+"id": "ASB04_006208",
+"label": "malicious",
+"source": "MSB:MaliciousAgentSkillsBench",
+"sha256": "d2d4229a88933d9cbae1ce424812ecf4bf6339eb7be0b913822f3720ab8fc833"
+},
+{
+"id": "ASB04_006236",
+"label": "malicious",
+"source": "MSB:MalSkillBench",
+"sha256": "03f182b13645f970282e100c76e9e954f74555789a5b182b296362615a5c5157"
+},
+{
+"id": "ASB04_006266",
+"label": "malicious",
+"source": "MSB:SkillTrustBench",
+"sha256": "d4d3688444177901f92ba8563379e612470a01bb780561506df7ff9a2e35939e"
+},
+{
+"id": "ASB04_006268",
+"label": "malicious",
+"source": "MSB:SkillHarm",
+"sha256": "d5091b41a4a653adb221c4d6cbc6888fba4cb01073858412eeac2a9f81f0bed6"
+},
+{
+"id": "ASB04_006287",
+"label": "malicious",
+"source": "MSB:SkillTrustBench",
+"sha256": "d5caa1d4dd577009b9b218bf31d50ab68c458c3113440e86650cb7fd9357a05f"
+},
+{
+"id": "ASB04_006327",
+"label": "malicious",
+"source": "MSB:MalSkillBench",
+"sha256": "d701194b77deb41127aa5c777ea03977d227969f0e72d6973fa49d2f10a34c7b"
+},
+{
+"id": "ASB04_006350",
+"label": "malicious",
+"source": "MSB:MalSkillBench",
+"sha256": "7750d8c48d167cbbd99527a0c8e3d30bcc929a3cbcd132717878b453988ef045"
+},
+{
+"id": "ASB04_006361",
+"label": "malicious",
+"source": "MSB:MaliciousAgentSkillsBench",
+"sha256": "d855c018898c927d36fe5c557cbb91e2e60d1de218dd2d6a86d9b687e0c1a011"
+},
+{
+"id": "ASB04_006380",
+"label": "malicious",
+"source": "MSB:SkillLeakBench",
+"sha256": "d8ff72763ed7841766840a6f80d013db5e20bc47cb6819e2c0ba8f5af3f88a58"
+},
+{
+"id": "ASB04_006405",
+"label": "malicious",
+"source": "MSB:MaliciousAgentSkillsBench",
+"sha256": "d9bc0e2b14cc2a7540c2073b9f6048dc031f7b2f3ceac48ba30c77c88ab4e002"
+},
+{
+"id": "ASB04_006414",
+"label": "malicious",
+"source": "MSB:SkillHarm",
+"sha256": "d9edd3f852974289d58e3f9edf3d65da1723febfd2b598a9aa096577693679b0"
+},
+{
+"id": "ASB04_006494",
+"label": "malicious",
+"source": "MSB:SkillHarm",
+"sha256": "dccdbb12e254b393cc3456039c730d8908626d8eff956a28eada19ada120cef2"
+},
+{
+"id": "ASB04_006506",
+"label": "malicious",
+"source": "MSB:SkillHarm",
+"sha256": "dd3a509106417e9b1f7b2e79f99073093947466c4d091ac3d66426c3e5e8bdaf"
+},
+{
+"id": "ASB04_006531",
+"label": "malicious",
+"source": "MSB:MaliciousAgentSkillsBench",
+"sha256": "dde0de9dd26f47221e830a587bb95688b4e18c329911b15d9a9f00702e6cdde0"
+},
+{
+"id": "ASB04_006545",
+"label": "malicious",
+"source": "MSB:SkillHarm",
+"sha256": "de4262f58106839d278303fe97156c5c7eb6207f7327e17a7275a41abfda7a55"
+},
+{
+"id": "ASB04_006611",
+"label": "malicious",
+"source": "MSB:SkillTrustBench",
+"sha256": "25e9d1dd1b841ae1cdc3614e99e1b6f320c3c36bfefe29bb3545fb10b3e183ff"
+},
+{
+"id": "ASB04_006658",
+"label": "malicious",
+"source": "MSB:MalSkillBench",
+"sha256": "597fda6e4dcb54546b84abfc22974f337940c8792acf1dea3b513c6db4f3c063"
+},
+{
+"id": "ASB04_006670",
+"label": "malicious",
+"source": "MSB:SkillTrustBench",
+"sha256": "e2809c3bd1f1f192a230c2e4f354ae5ab6ea2cc92bbcf159959e85361131c7df"
+},
+{
+"id": "ASB04_006713",
+"label": "malicious",
+"source": "MSB:MaliciousAgentSkillsBench",
+"sha256": "e3efe8031746a99df76fe71af64b1c3cfb3b41d519f5fedd985d000b6f203381"
+},
+{
+"id": "ASB04_006745",
+"label": "malicious",
+"source": "MSB:MaliciousAgentSkillsBench",
+"sha256": "e4f2b68d80b228f68d9c2d0b18bd09fa45c807024d912e40f6dd6f852eaa9f72"
+},
+{
+"id": "ASB04_006809",
+"label": "malicious",
+"source": "MSB:SkillHarm",
+"sha256": "e77e64c9e7747368b9f038be8923e5fe0b5a4679094401a775df83cc8d861bcf"
+},
+{
+"id": "ASB04_006811",
+"label": "malicious",
+"source": "MSB:SkillTrustBench",
+"sha256": "e788efd756180fd973f581c534827b114482a0e48b3b343342f28cdd8555f51c"
+},
+{
+"id": "ASB04_006881",
+"label": "malicious",
+"source": "MSB:MalSkillBench",
+"sha256": "b012cead476530d766a060124fa3d5b048040541006566a6a1b9f5bab2738a57"
+},
+{
+"id": "ASB04_006905",
+"label": "malicious",
+"source": "MSB:SkillTrustBench",
+"sha256": "ea840c0c60ee643b587c5d2d183b5a258426105f2256b191d5e322603bb9683e"
+},
+{
+"id": "ASB04_007139",
+"label": "malicious",
+"source": "MSB:SkillHarm",
+"sha256": "f31edc3a91655bc7460892205d4dbfc7ab7aea3ee820428349b7ab9963edd2f4"
+},
+{
+"id": "ASB04_007152",
+"label": "malicious",
+"source": "MSB:MaliciousAgentSkillsBench",
+"sha256": "a466ba4adbe2c76f774a7cfdbd3ee71e5120e2aad37bb719b1ebd42caf494e1e"
+},
+{
+"id": "ASB04_007194",
+"label": "malicious",
+"source": "MSB:SkillTrustBench",
+"sha256": "f5aee2e761e0506cc976c85ddfa05b41bf5b224831028b2deb24b131c2340bc1"
+},
+{
+"id": "ASB04_007262",
+"label": "malicious",
+"source": "MSB:SkillTrustBench",
+"sha256": "f807092cb3dc4b75f4f24bc323d5333bfd7a29a1c1a86052aeca77f21c9aeef5"
+},
+{
+"id": "ASB04_007263",
+"label": "malicious",
+"source": "MSB:MaliciousAgentSkillsBench",
+"sha256": "8c7e61ecce0f4122f4bfc9bc5bbf6d204434c9c6c900880a1b9b383f5c0ecf51"
+},
+{
+"id": "ASB04_007286",
+"label": "malicious",
+"source": "MSB:SkillHarm",
+"sha256": "f8cdf2e0160605b7bd302d3d324ad97b1a252d4af3c24f1d3e4ec873392bd328"
+},
+{
+"id": "ASB04_007292",
+"label": "malicious",
+"source": "MSB:MalSkillBench",
+"sha256": "5274f97692fc8f9121ce05aa7456b99a16367b1a37a9a9b7f06d0e3700a0f3f2"
+},
+{
+"id": "ASB04_007295",
+"label": "malicious",
+"source": "MSB:SkillHarm",
+"sha256": "e95f3e820f367cea27269a95d269be09febc6d18f1ea2b6c3c775da4554ad446"
+},
+{
+"id": "ASB04_007298",
+"label": "malicious",
+"source": "MSB:MaliciousAgentSkillsBench",
+"sha256": "f925de716628cba77c7a34c695b514fca0edd601a3d631a5ee7215ac93b3ce3f"
+},
+{
+"id": "ASB04_007327",
+"label": "malicious",
+"source": "MSB:MaliciousAgentSkillsBench",
+"sha256": "fa2c0c75185e55d0fdabb79da865a8760c72b7984d2df091f15914dde1e5f825"
+},
+{
+"id": "ASB04_007359",
+"label": "malicious",
+"source": "MSB:SkillHarm",
+"sha256": "fb210d408bfe31ff63d04ef3659121387b81d5278fa1ad2b2e793722dd837468"
+},
+{
+"id": "ASB04_007400",
+"label": "malicious",
+"source": "MSB:MalSkillBench",
+"sha256": "988878ff2b849c37be61651b01138665ce7824b8274e6a74eb83da4b0ac988e5"
+},
+{
+"id": "ASB04_007422",
+"label": "malicious",
+"source": "MSB:MaliciousAgentSkillsBench",
+"sha256": "fcfa4bfa9fcb122b23b1871f4fbb07f57da1903f5d7ba04b62221e787b4976b5"
+},
+{
+"id": "ASB04_007480",
+"label": "malicious",
+"source": "MSB:MalSkillBench",
+"sha256": "9f51ae3b8597e7a0d994409bb52f2b84b7a3e6269e81dce6eada0f9b756d8796"
+},
+{
+"id": "ASB04_007481",
+"label": "malicious",
+"source": "MSB:SkillHarm",
+"sha256": "ff1ebfe1a608127cd222ad9498fad12716e1d28cf08516407f043ab1f1b8c45b"
+},
+{
+"id": "ASB04_007494",
+"label": "malicious",
+"source": "MSB:SkillTrustBench",
+"sha256": "ff88beb3ce64a1200918f1c66eb0b4e00b986ef0aff9a98d689f68ba2a97cace"
+},
+{
+"id": "AIDotNet/MoYuCode:skills/tools/text-diff/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "3c7536b1a4988ebc509fd71a44dde6d8212315086c74d822b18465d7ad312411"
+},
+{
+"id": "AdemKao/ai-cowork:.ai/skills/code-review/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "e34c87e4cc4c4d393ce0ba6f97311474660cc53f4ca5bd4da6d4d4f438c12086"
+},
+{
+"id": "AgentiveCity/SkillFactory:.claude/skills/shadcn-setup-and-theming/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "8bed4d2e4af604af79c78608919e4502119946c4b840a1634db14bc22058ec01"
+},
+{
+"id": "AmnadTaowsoam/cerebratechai-claude-skills:44-ai-governance/model-bias-fairness/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "1101af7bb9594c882db0972c5ff2d99cef12863d760291c049fea49967a46554"
+},
+{
+"id": "AsyrafHussin/agent-skills:skills/git-workflow/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "ea37c193838d664c63f6262b1095cadbdcf1c2b38238d105fa031b074af76706"
+},
+{
+"id": "Brmbobo/Web2podcast:.claude/agents/enterprise-frontend-design/agents/skills/08-ml-deployment/batch-inference-pipeline/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "c80ed2ffc3a23a5cb5c3572bebcf53d9f7036348ed28e68a7829992aa442a322"
+},
+{
+"id": "BrunoSantanaDeveloper/flyeelab-agent-kit:skills/analytics-strategy/SKILL.md",
+"label": "benign-assumed",
+"source": "search",
+"sha256": "02ea1ac47ae1d1b26dc73479af407a5d56a8bd9b2109ee1e97d03863aa62dd2a"
+},
+{
+"id": "CaoMeiYouRen/momei:.github/skills/requirement-analyst/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "471d5ad4ba979daea9128b6248efaac012ccbde9204fb119efbd7142ee5950f2"
+},
+{
+"id": "CharlesWiltgen/Axiom:.claude-plugin/plugins/axiom/skills/axiom-vision-ref/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "2b45a8734628f290cb64e2df8f999985c2d59ecfd04559afe44f3d144474d5f8"
+},
+{
+"id": "CleanExpo/Unite-Hub:.skills/custom/evidence-verifier/SKILL.md",
+"label": "benign-assumed",
+"source": "search",
+"sha256": "c5a5370f7d0e43ed43b636a2df487f633f2a7aefcfee76c2f6deac8fe0f354cf"
+},
+{
+"id": "Dimillian/Skills:ios-debugger-agent/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "07000b6744b8cf21bfa76db3bf76c6d158f9ef16a4a33eee9ce15508a7aa8b2e"
+},
+{
+"id": "Dokhacgiakhoa/antigravity-ide:.agent/skills/obsidian-clipper-template-creator/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "9ca2dca51eb6b1d328b2be96ea7c6c5bf7c544c6cdcca7fe596b864a72e483ee"
+},
+{
+"id": "Fr-e-d/GAAI-framework:.gaai/core/skills/cross/build-skills-index/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "871b6df8c4ed20c99ea3871ba69946cac9fb7ed73eb6a1562dfe2a49d8c5e1ea"
+},
+{
+"id": "GPTomics/bioSkills:workflows/merip-pipeline/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "5d91432cf43a18cf2ae8789e2ecbce871fab4fac2314a02c7c06f1dcdc76a86f"
+},
+{
+"id": "GregoryHo/arcforge:skills/arc-learning/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "30593d23c2849f834546aca4e5ae7c9132bcb912a87bb3f5fd4adb96ee44b0e9"
+},
+{
+"id": "HakureiHikaze/Hikaze-Model-Manager-2:.codex/skills/root/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "6339a1951aecb74eb07e2949aebc9a9c300bdb13f67e63515419d1461d6f62a3"
+},
+{
+"id": "Hal-Shikinami/fragments:.claude/skills/new-daily/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "52ef8ae4fbdfc5adb4bee054a04ae11eeaa608ae7a6bb2a9f789cc1cd39ab0c3"
+},
+{
+"id": "Hamza123545/Hackathon-0_Ai-Employee:.claude/skills/execute-approved-actions/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "ef50e3ec124d255b385d8dde6a1a475e19d8a73ffb11ee771916e0134d3c2d36"
+},
+{
+"id": "HosungYou/Diverga:skills/d4/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "fd9b68ad194e8fc44b2cb6b2ab2465de016914fb851d30e9d17688b42ad5febd"
+},
+{
+"id": "Huzaifa4412/AIDD-30-Day-Challenge:task_9_and_10/.claude/skills/plot-checker/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "889c9da89443897116452e795a2205b98bc41660e2924fa890000d5e5fb1996a"
+},
+{
+"id": "ITValley-School/agents-skills-ai:.codex/agents/04-arquiteto-it-valley-frontend/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "97ddda6634eab2f6a530379b3f267694d33e1ffcb593a08939f37f821e71784c"
+},
+{
+"id": "IbIFACE-Tech/paracle:.github/skills/agent-configuration/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "cbe848452b82c42217261ef7dd7c9868043a76651778aff24a590b54d8d4bf0c"
+},
+{
+"id": "ImGoodBai/goodable:skills/good-TTvideo2text/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "20972ba60b98c75c46b5c66e9cb889c05eabb33b85bb3eb5a74e2228ab9bdcbb"
+},
+{
+"id": "Iowa51/ChartSparkOG:agent/skills/wshobson/payment-processing/stripe-integration/SKILL.md",
+"label": "benign-assumed",
+"source": "search",
+"sha256": "e9d867f5ee88e7361419d8cb73b8ed531cff6151af18b623e2d820a58399dadc"
+},
+{
+"id": "JNZader/project-starter-framework:.ai-config/skills/backend/exceptions-spring/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "156012c3d82ab7527af1abed2b93ab6ac56215ab9fb0649d0068daaf3f850e39"
+},
+{
+"id": "Jack5316/Obsidian:.claude/skills/flashcard/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "eab96ec6fad5c400027b2e0813f86b0e117fac445f73446cc9e8e36b66d829e4"
+},
+{
+"id": "JacobPEvans/claude-code-plugins:ai-delegation/skills/auto-maintain/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "d1239fe68e8d9f7d79545a7a3a70546accbd3dee6f9240dab529d2306a79eaec"
+},
+{
+"id": "JaimeStill/agent-lab:.claude/skills/lca/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "29057bb34f82c1336c59bc77119777cd7c9fecc4cadf4c783c0a3840711b6a5a"
+},
+{
+"id": "Jimmy1987s/EC-Claude-Skills:skills/dafong-strategy-advisor/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "fed300ed80b7f4a18612fc3db9ad684c70de976b6c9dda33bb347b4350f7d9e4"
+},
+{
+"id": "K9i-0/flutter_deck_template:.claude/skills/update-ogp/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "416a3de5d2fae3404c3584b5614c8cf5a89d2bd98fb4f24cdadc1c93f8df356f"
+},
+{
+"id": "KubrickCode/workflow-toolkit:.claude/skills/go-test/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "bd0e74e3f9212759cd2c595ed718f11ae4465f0d373a04f7675f257080322c0c"
+},
+{
+"id": "Layr-Labs/eigenlayer-contracts:.claude/skills/unit-test-writer/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "0f0e2827fbb5000b2c1761effa7932e1faa093555b1138656a628caeaa53150c"
+},
+{
+"id": "LeonardSylvester/zfdm_relaunch:.claude/skills/ta-4-qa-db-generate/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "d18aa4c50972eb25c1cef97db6edb45e80856a7ab6419d5e08ee89aa6432ec6d"
+},
+{
+"id": "LightForgeLabsStudio/AIDE:skills/doc-review/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "bc83b1ab4e0eadbd3edd213221243d288eb7eb4ba4b3a2654405f37d5a53a32d"
+},
+{
+"id": "LimaTechnologies/admin-telegram-bot:.claude/skills/zod-validation/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "fc814df35328b9e551d4c55399cb3b4ed0fceb82adb0e861339986d8e6126e14"
+},
+{
+"id": "Lobbi-Docs/claude:plugins/jira-orchestrator/skills/harness-platform/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "8ac0ec0c04b37bef41aa55b774e5b74a8dc8ad731231eb90c7796e82e263de5c"
+},
+{
+"id": "LucasBiason/cursor-multiagent-system:skills/workflow/emojis/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "3a0ed9d167f5b2a65aef8148bf609ed955ad44171a446c26c45b72bbb1ebd8de"
+},
+{
+"id": "LyAi-labs/library-refactor-copilot-learn:.agents/skills/backend/data-contracts/SKILL.md",
+"label": "benign-assumed",
+"source": "search",
+"sha256": "674f5bd943f149acbc17b19b9e1e8f4e353bc808f8b99b1fefbab098133122f7"
+},
+{
+"id": "Masked-Kunsiquat/crm-orbit2:.codex/skills/data-migration/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "746b99882f3343f0ac012bd79fc0de20ab8cae51492ea49122a5b1f19b9ca2cd"
+},
+{
+"id": "Mic23-01/antigravity-template:.agent/skills/fixlog_writer/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "c2a318bde05ddc6a744aa63305d8e556aadccdfa5328d3c08d90c8aa439efeb6"
+},
+{
+"id": "Microck/opendots-microck:skills/gsap-performance/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "61c50d36f153cb9413effca74098651867466dca5227c24123571be29e920df3"
+},
+{
+"id": "MicrosoftDocs/mcp:skills/microsoft-docs/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "23d6c309124c4dd7f96ef7166a1998814b4eaeca7e3d654bdac2feacde7e16d1"
+},
+{
+"id": "MirAnees/wp-php8-migration-claude-skill:skills/wp-php8-migration/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "3030860c2385bc8af7d6a249619822f26ee62c27396a8aa086659dd112258dc9"
+},
+{
+"id": "Moisesjr20/gueclaw:.agents/skills/controle-financeiro/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "d332440a2d5addd901d6c8628ed3098c9f13bc79cc1b6aa97739c5a4d98b708b"
+},
+{
+"id": "Mosi-AI/LiveClawBench:tasks/skill-conflict-resolution/environment/interaction_pattern_analyzer/SKILL.md",
+"label": "benign-assumed",
+"source": "search",
+"sha256": "7c26343dae7cdfacbc9fa35fbe301a5819cc7f1f2dcf2375dc0b9659a51231d3"
+},
+{
+"id": "NagasakaH/devcontainer:skills/test-coverage/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "d640c7447df5422a5258e1887a08c3158b2cb8a82757d211ff5ceceb17388081"
+},
+{
+"id": "NeverSight/skills_feed:data/skills-md/dibenkobit/skills/atomic-commits/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "294d18c1c5eb703ebe4d327bbc48c6034ed7d2f1d82f9736349e7e1ba8fadd4d"
+},
+{
+"id": "OmerMachluf/vscode-copilot-chat:assets/skills/orchestrator-complete-task/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "697200127737600a5e26b663604b3357a8e98088862e792787ac2168bff05e2d"
+},
+{
+"id": "PovertyAction/ipa-research-data-science-hub:.claude/skills/duckdb/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "13681909fa444aeeeb91f5c7a6cf79192b254d4476adaab2e0054f041b8b7eee"
+},
+{
+"id": "ProfPowell/vanilla-breeze:.claude/skills/sanity-cms/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "b5a5d4c43335cfbd078f56d81bd1ddaec13a82a8023af03dd0aaaea65f2767d9"
+},
+{
+"id": "Recidiviz/pulse-data:.claude/skills/maintain_claude_md/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "22761cc5373044e1a9f7db87f765ed8aee80a3cceb93b2dac76dbfd0cb403372"
+},
+{
+"id": "RedBoardDev/cookmate:.codex/skills/frontend-style-guide/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "11ac3860d87cdcf3e2207a1026b02402812593fbbbd58bc4e0decaf0f43df523"
+},
+{
+"id": "Rene-Kuhm/opencode-ohmyopencode-claude-configuracion:skills/api-docs/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "d7f3a6c4057af726135e19ab10e2f80fd95e99415d281b3e14032473d8672571"
+},
+{
+"id": "RogueRope/docs:.claude/skills/image-illustrator/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "373df1666d1a347f7723115a6acd5308591ac75364204076b81789c56f1a48d5"
+},
+{
+"id": "SSujitX/docklift:.agent/skills/networking_proxy/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "1ee423e5eee47066597f582dc1c32bd70a7c07b48f50d995a83138dfa7a91e79"
+},
+{
+"id": "SabinoWS/dojoAgentes:.agent/skills/engenheiro/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "ab422e69f3db75ca38718ee9cf5c0dd83f89f1be3c281521791b1031b20148b7"
+},
+{
+"id": "Sammii-HK/lunary:.claude/skills/check/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "b23c491ec95d7509a484f561ca01318fa03af59d8ad3d514df7056530eadf44c"
+},
+{
+"id": "Sandeeprdy1729/skill_galaxy:skills/climate/climate-specialized-skill-102/SKILL.md",
+"label": "benign-assumed",
+"source": "search",
+"sha256": "ef94da8fdeb64a7d2ba39f9ecdd64880b2afb4bae6e7f382f901c5a5524c5678"
+},
+{
+"id": "ScientiaCapital/scientia-superpowers:skills/revenue-acceleration/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "99d33efb1875efef6b75e66fe56dbf56415ca1fd5f07f07e9b7039880c40d9db"
+},
+{
+"id": "Shavoni/AIOS-V2-OpenClaw:skills/deepwiki/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "695304deee557203ff7da6f419ccb51bab55a6710300ffda994206d66a9c97cb"
+},
+{
+"id": "ShinChven/nano-banana-skills:skills/j-idol/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "4c3d9ff0a8fe8ced3ee3dfa001efdb28318ff1f9b3baeba1b0215e414907f649"
+},
+{
+"id": "Shoebtamboli/rails_claude_skills:lib/generators/claude/skills_library/refine-requirements/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "0197430e0a073faa18cd615811b1f1c65c32bce1bc816c46289d6768a38e85ea"
+},
+{
+"id": "Sighthesia/interactive-choice-mcp:.github/skills/subagent-driven-development/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "0c6dfed398877d6065b07f961e59e314be8389a0a2d806c368fd8ce3d30f69c5"
+},
+{
+"id": "SimonBlancoE/kanban-mcp:.claude/skills/kanban-agent/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "e18343a1427047535a6979b151c8329815cbe96d83587be98da18d32b768ea47"
+},
+{
+"id": "Sjdjdiejdrirhdkjej/Claude-code-conductor:.claude/skills/implementation-phase/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "3717ba4462da2c17be35d2751eb2355d6cf0b76d699b0f520b3287b4eb10d069"
+},
+{
+"id": "SmidigStorm/storm-claude-marketplace:plugins/pm-planning/skills/plan/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "5c2bc8a59fec18003bc12c0ad82eb3cb981fc5f978dedfd9306f75afcd47f672"
+},
+{
+"id": "Sounder25/Google-Antigravity-Skills-Library:13_env_bash_mastery/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "e71f404e877aa1ae683c9a2a1cd7d7eeb237b09a461203d9f35d21b43ccc630c"
+},
+{
+"id": "SpillwaveSolutions/developing-with-docker-agentic-skill:skills/developing-with-docker/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "89fd32387cc333d44eb3549cf1ae95ce9e2ccb62130516fdbdc6c103572f24a9"
+},
+{
+"id": "SteadfastAsArt/geoscience-skills:landlab/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "ab25f353b566767d2170ab40c149d097b78563fcb9397fd0c1c48127e6a5ac6a"
+},
+{
+"id": "TSavo/wopr:skills/wopr-skill-installation/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "9c27d46f4806ff22de59e5c17fcb3dddefeb272c0b7836b99d73d9acf519c4c6"
+},
+{
+"id": "TaylorHuston/local-life-manager:.claude/skills/log-session/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "81213d3d5c8c5dbb932eeb1f49c8afa459fb131dc2e780253be5987597a7a13c"
+},
+{
+"id": "VectorInstitute/aieng-bot:.claude/skills/merge-resolution/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "37fdd253e29451e66e3ded27825e10b4d2d4bb53fccd077e0fa47455a692eaa3"
+},
+{
+"id": "WesleySmits/agent-skills:.agent/skills/seo-blog-post-optimizer/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "3e85c446561199b85f3f18f012e0f24de6a2211cc6873b0e86b6ebefaef74c2f"
+},
+{
+"id": "YusukeShimizu/lightning-compute-protocol:.codex/skills/lcp-protocol-spec/SKILL.md",
+"label": "benign-assumed",
+"source": "search",
+"sha256": "853e3c4d63f19c556530cdff50bf16cd514cd1dfbc7593e74b53bb4b9f717e91"
+},
+{
+"id": "Z-M-Huang/cc-obsidian-mem:plugin/skills/mem-validate/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "6c3c2f691831d95d6610ffe8c0a99f239c4291c1483212e916f06dd429df16fd"
+},
+{
+"id": "a4b-corporation/xTalent:docs/00-global/note/ontology-builder-pipeline/skills/verifier-agent/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "2ec9b0bfd5c1105a736108cb111566868260c255a4f8e6e00558577a69cc834b"
+},
+{
+"id": "ademceper/merge:server/.claude/skills/auto-test-runner/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "55fdd29736393d5967109a92c5a40c0c48073110499064301c8aa77d6bc85f5e"
+},
+{
+"id": "advpropsys/tinymem:dot_claude/skills/chain-link/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "d6eb21a4517ba02f87a44cc2dc8fb48d0ced17f073295754c2500d3e9aec6319"
+},
+{
+"id": "agentuity/discord-help-agent:.agents/skills/agentuity-cli-cloud-sandbox-list/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "438e56c3c6555dd8d23e28bc225bc09576d42cf1a92a8f7bdf52f7439fa33a24"
+},
+{
+"id": "aiskillstore/marketplace:skills/k-dense-ai/get-available-resources/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "3fb76837e44d4860feb402f8da6cadd707bcab6ca1a27df91cc0e09516e14fde"
+},
+{
+"id": "aj-geddes/useful-ai-prompts:skills/model-monitoring/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "33f54e4e427e1b8516143e85d629dca1b421fd9cc8e2994ed290b1fb70d5c9e3"
+},
+{
+"id": "alexander-kastil/github-copilot:.github/skills/net-cli/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "275ae23fc97abf028a488dc4e6b05a5d1a5393ec75f25e09e825f5f3d442002a"
+},
+{
+"id": "alirezarezvani/claude-code-skill-factory:generated-skills/social-media-analyzer/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "b7211136a8bb2b2f31c236cd8b44fc9527a0697dd8b08288b8b673987eab4399"
+},
+{
+"id": "alsk1992/CloddsBot:src/skills/bundled/news/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "05fe501b44708b3c302bcbf98f1f68a55e79cd8b571f294c3d309ffb3ab1b575"
+},
+{
+"id": "amurata/cc-tools:i18n/ja/plugins/javascript-typescript/skills/nodejs-backend-patterns/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "c5e14da369f6353030fda69ba187aeb7b0a4dc5078bd27fe63de0b70fdce0f3d"
+},
+{
+"id": "andervilo/gestao-oficina:.agent/skills/spring-boot-4x/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "8ba165728f00159b97af96d731a522ab35e1a142a6f0e2f76dc84ddaa1c057f8"
+},
+{
+"id": "andrewhowdencom/skills:skills/documentation/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "f4a01f44a061be954ba4e4d469475f8506c0089e3c2250df478616eb8aa986cc"
+},
+{
+"id": "archview-ai/webf-plugin:webf-plugin/skills/openwebf-app-performance-js/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "cf4d1f87465ba882d1157c8df20c9354ab108c80f270f47eb73712ba0416ca04"
+},
+{
+"id": "asadullah48/hackathon-skills-marketplace:skills/development-workflows/requesting-code-review/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "c7e6ae61b80d1bb98c83fae35e738fbfcf30f699b13ce8e61310135f6c40bf73"
+},
+{
+"id": "assistant-ui/skills:assistant-ui/skills/streaming/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "1eba670bfee747b44326b133b6ac3eba4e4e768e1839b7a707abc0b204bcc28d"
+},
+{
+"id": "astrolabe-apps/astrolabe-common:skills/astroapps-client-nextjs/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "b060c0ed62f63506566843d4d57fc705c948604dbd5530f5f0d220f0628874d7"
+},
+{
+"id": "automacoescomerciaisintegradas/PAGIA:.pagia/skills/ollama-gemma-assistant/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "28de11dbb2c563df6b096b55375481aa428a274375fc4d66d5676a412df10acb"
+},
+{
+"id": "benthomasson/shared-understanding:.claude/skills/slacker/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "cdc82a79f4c4b4e4fc8b1abe158198fb4bd3dba7c2c0a10ac1f27243047cc3c6"
+},
+{
+"id": "bowen31337/autonomous-agent-framework:SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "eeaf1aee60eb07eeaa8983d7a1a5feb947a4d0b63fc29adcb06969a1d125cc0c"
+},
+{
+"id": "bravellian/workbench:.codex/skills/workbench-work-items/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "31eb2c023bc1aee9813d536e41f5725851f2bbf2946e458099a369a57f73893e"
+},
+{
+"id": "bricerising/enterprise-software-playbook:skills/testing/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "268d23aa806f749cf6a8f2b4839367e6705ebe389526e401b6cc8de84c006111"
+},
+{
+"id": "burakergun394/projects:FollowCatcher/.claude/skills/domain-entity/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "b7d18737acd4e7a287d414e1ea8258d6ac150f8aba8ec7c6920dc40fedff0be4"
+},
+{
+"id": "c-wann/nessus-export-skill:SKILL.md",
+"label": "benign-assumed",
+"source": "search",
+"sha256": "a6e5811934f820a6028a467ebcf33093ca8e86efe48dce7d8131b9bf3d21ce82"
+},
+{
+"id": "cameronraysmith/vanixiets:modules/home/ai/skills/src/core/preferences-railway-oriented-programming/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "59d15acb177b9c8b6ae84db7d6c8b933b1c71bc192397d6e685939eec2ea9929"
+},
+{
+"id": "campbellmcgregor/nomad-threat-intel-framework:skills/feed-management/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "fac7a12607a915ef81e91568ee594766ae0870b09a4ef626e9b148b0050c462b"
+},
+{
+"id": "cautiouskurns/Blood-and-Gold:.claude/skills/data-extractor/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "ead9589941a4326a29f01272bba90268e4deb294faffa5a1deb42480ad52be6c"
+},
+{
+"id": "ccf/claude-code-ccf-marketplace:plugins/developer-essentials/skills/terminal-title/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "9611d00c1abb6351589cfadf7f42ab7e8097706ff55f994b62d184289caa44ae"
+},
+{
+"id": "chaitanyame/github_copilot_ralph:.github/skills/tdd-workflow/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "7878c3bbf7aab8f2559b02a646e1dd7cd3028fa2290b60cac487c4a223691392"
+},
+{
+"id": "chkim-su/forge2:skills/phase-verify/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "6c6a83ed02abceefa3e2380999af105cf5441e218b56f9bb60319194fa7e1b02"
+},
+{
+"id": "chrisvanbuskirk/appshot:skill/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "8b2dbfb6170198b0f3945ec6314f7d7477c49e583a928f5cab96f8f76a438a9c"
+},
+{
+"id": "cinience/alicloud-skills:tests/ai/image/alicloud-ai-image-qwen-image-test/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "ba63fa9f020fb6bd6e05ee15fb809560fe9fed485a69da6db9e8e52118fa027a"
+},
+{
+"id": "claudeaceae/samara-main:.claude/skills/morning/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "b4a5988c04e966f6de6b9b11f52a8332f28e8a2053fbf5960b17ec9525a0d12e"
+},
+{
+"id": "cliangdev/specflux:.claude/skills/skill-creator/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "1c61e5eea797205c4dbeb067b305b7551467c0f91de15907642612f17e0819eb"
+},
+{
+"id": "cotw-fabier/surrealdartb:skill/surrealdartb/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "17c5d377f190b008b6c72aa1eedc183315d56e7b775fceede507a426387e26be"
+},
+{
+"id": "craigsdennis/skill-tutorial-checker-anthropic:.claude/skills/markdown-fetch/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "1cf669a6bae096cf99085ff1871404c2cb7cdf50c93dce9ba5f6fc7184943844"
+},
+{
+"id": "creator-hian/claude-code-plugins:csharp-plugin/skills/csharp-code-style/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "8f6ceb64a2389840b5c1ff9f9f1d5a9c44d541c30b73efbda5daf5b029466d81"
+},
+{
+"id": "creepyblues/kstorybridge-integrated:.claude/skills/title-intelligence/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "fa9653b6a1fc5a7509efd9e0ccded2ece6a1c1aa77813d915581640992ba3d7c"
+},
+{
+"id": "cyotee/resupply-skill:skills/resupply-rewards/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "b62999230ebfc4412a6f09e8261a8819b7dff4e15a8c9ee2795e5be8ecfeab67"
+},
+{
+"id": "d-oit/do-novelist-ai:.opencode/skill/domain-expert/SKILL.md",
+"label": "benign-assumed",
+"source": "search",
+"sha256": "f84650940c30aa91680f4eed511190f79a633acdef5723d047c5b5dad79239dc"
+},
+{
+"id": "daojiAnime/DaojiBlog:.claude/skills/seo-audit/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "0a183f4bd46f4d6405138970dbcd238f62190ffcf40cb21434f64e882f49fc24"
+},
+{
+"id": "dartsim/dart:.codex/skills/dart-contribute/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "849857141ee951730d7100aa9faa0ad520aa5ba5cdf23fd185c6884ea6bc4314"
+},
+{
+"id": "dashed/claude-marketplace:plugins/tmux/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "65c16be55ceed0e2f6f39b0e127a99015931d9448b579b9d328ebc1522cba9ea"
+},
+{
+"id": "datadrivenconstruction/DDC_Skills_for_AI_Agents_in_Construction:1_DDC_Toolkit/Project-Closeout/punch-list-manager/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "fa19a005b1e0aee42695590093bbf740e104db6b6ad5cfef682e9150029f4f15"
+},
+{
+"id": "davekilleen/Dex:.claude/skills/beta-activate/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "1b0a989e022868e90424a23be84d0801995cc6c907489553e730cadad0bd0085"
+},
+{
+"id": "davila7/claude-code-templates:cli-tool/components/skills/workflow-automation/n8n/n8n-workflow-patterns/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "ce0840ef2c5f3f2cc2a09379ce383ae5390a147f64660aafcf8a65817f7e0c43"
+},
+{
+"id": "delbaoliveira/learn-claude-code:.claude/skills/review-lesson/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "69fe08ec2bc5f941d8496ae30ada7db711d2783e1148ba7b8f1f0b8a8e6314f7"
+},
+{
+"id": "developertom01/tor-v1:.claude/skills/onboard_store/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "7084d43eeda441dcee68e87696e446269545102c7f717f7b3b3a61896994ae7f"
+},
+{
+"id": "devzahirul/TDDHighPerformance-ecommerceSwiftui:.agent/skills/swiftdata-persistence/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "52de47420cc4ea5360478e0fc1dea3b5d733ffe54bcf4ff2665557da1d64efc5"
+},
+{
+"id": "diegosouzapw/awesome-omni-skill:skills/data-ai/valence/SKILL.md",
+"label": "benign-assumed",
+"source": "search",
+"sha256": "52b5afd7104907670cbc0af7df7a1946d4258f43583558be0282c7bcff229236"
+},
+{
+"id": "dirnbauer/webconsulting-skills:skills/deepfake-detection/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "88fdb34cbc477662796ba224090a99590f31e56eb6f488cca9a61b7d1b9bbf53"
+},
+{
+"id": "djfurman/claude-skills:merciless-critic/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "4b02e532baf5646dbb4190c26cb12ecad5731b1c6de72499d2c9b6c6e7346f65"
+},
+{
+"id": "donchrillo/temu:.opencode/skills/agent-documentation/SKILL.md",
+"label": "benign-assumed",
+"source": "search",
+"sha256": "68c04a38e8c78fad345785adbabd8fbcb08bd961003d2c713c9b72ec59701131"
+},
+{
+"id": "dralgorhythm/claude-agentic-framework:.claude/skills/architecture/capacity-planning/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "81c82cd75337f65b3f3a63e84d63f4fd338810fd34f147fb99c51df327f588ec"
+},
+{
+"id": "dylantarre/design-system-skills:skills/accessibility/color-contrast/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "19e906424d7df7d16603655534dd1bb324b318da51e8dcc04733e67ca405b3da"
+},
+{
+"id": "elevanaltd/octave-mcp:src/octave_mcp/resources/skills/octave-mythology/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "58e7941db961196f6079ed0f6424432ffa80ce9d57a6b89689e22b0a0aeac54c"
+},
+{
+"id": "epci971/claude-epci:archive/5.4/skills/core/breakpoint-display/SKILL.md",
+"label": "benign-assumed",
+"source": "search",
+"sha256": "e3000470ae79bb41a1759b643a6dcccd0b775420691214aea65fd5288184c207"
+},
+{
+"id": "epieczko/betty:skills/registry.update/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "cb6cabb5db1d29683e5f6fdc2a5fc092c9273aa7b7aa5b293880e929979b4314"
+},
+{
+"id": "ev3rlit/magam-canonical-archive:.codex/skills/gsd-execute-phase/SKILL.md",
+"label": "benign-assumed",
+"source": "search",
+"sha256": "5dad495460c28b65b540d0700d9a598dc6135741e45c25dfee1302d1e66fd13c"
+},
+{
+"id": "evansoderberg/workon-cli:skills/workon-ticket/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "730d0811e8943a12b94cf60bf3623a98834a54a2ee613089320e36f57d1c13fd"
+},
+{
+"id": "exploratory-io/book:skills/seminar-outline/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "e27d87d97d84b57d1c7964b2d374a68f71f784d7a656b0292dc69b7b92c1fcdd"
+},
+{
+"id": "fabioc-aloha/Alex_Plug_In:.github/skills/brand-asset-management/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "78e2345a9a1411f454474231b8c81192d5e690996f3670567e461eba71489846"
+},
+{
+"id": "feliperyba/ralph-orchestra:.claude/skills/pm-organization-task-selection/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "05bb59283f65d9fb5f26312fdd390941fd71437c7f4737c2e6180ecfe6c35e8c"
+},
+{
+"id": "fiatkongen/saurun-marketplace:plugins/saurun/skills/web-design-wizard/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "7d805eaa52fb0709a74f0188b2d6e6a2d7e31f2d677167968d3991372824d2b3"
+},
+{
+"id": "foolhardy45/portfolio:.claude/skills/seo-content-auditor/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "275e6b7e118c4156cb73de73efc040bfbee71c0c6ae9abcf74026392264a0265"
+},
+{
+"id": "foolpoet44/ai-pm-agent:.claude/skills/prd-documentation/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "89cadc9a95e609884bf4c1b72054a9e3d9c34458b5d7d38ad0ed80e9712921e7"
+},
+{
+"id": "foxj77/claude-code-skills:flux-troubleshooting/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "bc1ce31d78484769265503ac6b4fc518f668680fd7c6123f185eb858f79b4356"
+},
+{
+"id": "frvnkfrmchicago/skills-library-v2:agents/laravel/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "5c4c2e661ee9ccdd46d3e7801c64683aa5b1bf9123842a194b1c4f682d36f7f7"
+},
+{
+"id": "gapfDev/ai-dev-workflow:.agent/skills/gh-pr-closeout/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "ed341dcd15bf99528803249dea762fca6b80fb765d7af9294fd632ab48d01c7d"
+},
+{
+"id": "gdg-seneca/pirate-therapy:agent/SKILL.md",
+"label": "benign-assumed",
+"source": "search",
+"sha256": "d1e791ad687392afdb7c363f1eeca7017d40e9076572db7f98428f404ddd8fc7"
+},
+{
+"id": "golab-ai/Huntianling:.opencode/skills/mm_com/SKILL.md",
+"label": "benign-assumed",
+"source": "search",
+"sha256": "08135569c3cef85bdeb3d7af321588b8b0e60366fb351afe05f20a1b55f1f3c1"
+},
+{
+"id": "grahama1970/agent-skills:skills/ask/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "b59a24eb8d72522345709d25ff13b2cb1037e9e6b83f3fbcea33c0ebb8f79160"
+},
+{
+"id": "haru860/takumi-method-agent:.claude/skills/desc-value-description/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "f703fef3d9ec2e5465020fdda6230a327558e5acb4ca0f300f6cb3a14900f6e6"
+},
+{
+"id": "herddeerman/stock-course-strategy-skill:v3-course-advisor/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "f5414360f2658f1b0ac64016e7c6db03a781647577fc067590deae3a076f682a"
+},
+{
+"id": "himatts/LimePipeline:.codex/skills/package-addon/SKILL.md",
+"label": "benign-assumed",
+"source": "search",
+"sha256": "4f6aea7fe92a485d4f4191a0d23cce9d2cf599d4f4febca0e18118dc786a6bb8"
+},
+{
+"id": "hiragram/claude-code-plugins:ios-team/skills/localization/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "46ceb09da697f2c750f0e0e8e59571b5fd594adf947a0ec1553acff22c0ebd2d"
+},
+{
+"id": "hoodini/ai-agents-skills:skills/shabbat-times/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "dd0cc9346bcb7edea667217cd4a7492a74387f05fcf451ddb9bb269bd61db392"
+},
+{
+"id": "hotriluan/alkana-dashboard:.claude/skills/git/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "bcfc8008acddc84872f917ea1a08df6f747e3ce999f0a08a585bf74bb4cc5860"
+},
+{
+"id": "htafolla/StringRay:.strray/skills/antigravity--geoffrey-hinton/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "1f681c466a52015fcb1bfbf1115e3174ef895769ad906d49d857fc6b31672f64"
+},
+{
+"id": "huifer/wellally-health-skills:skills/sexual-health/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "8aae062d3e539a90a44e22a172ee6c62bf1ddd585451b0d7a606bfb4c6ff352b"
+},
+{
+"id": "hxk622/TokenDance:backend/app/skills/builtin/scientific/clinical/iso-13485-certification/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "cb3cef22fa86f3cc29fff62a26709a23c88064f8baf394a1847663ac27731b96"
+},
+{
+"id": "i3ringit/antigravity-cortex:.agent/skills/code-simplicity-reviewer/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "9960fa29e8caf92bac7186ed1241bd2fb657b7345920e64a8d82b5e17c2f6d50"
+},
+{
+"id": "im-shashanks/claude-plugins:shaktra/skills/shaktra-tpm/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "e5d7c88c647623f8e098d85fb07e2f10e77ac55ab7b7affa6c60b1f9bf4128bd"
+},
+{
+"id": "imchangchang/skills-registry:skills/domains/ai/prompt-engineering/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "dac27cad9a3b56f1b9f35d31bb1ab3ee27667405d75cf9bfd23f145c37362257"
+},
+{
+"id": "imsaif/aiex:.claude/skills/code-review/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "f5b8598bcc81f4b9a50d2cfe0f4ad00963deeb965e157e34e4e8f0439f3a89df"
+},
+{
+"id": "indoor47/memfun:skills/review-code/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "8bb72cc17d8cd7e0a95b66193c3eb2d5b214fdfb6ed189ca7fdc47bd79ba61d4"
+},
+{
+"id": "intellectronica/agent-skills:plugins/here-be-git/skills/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "447862aefc644be80a46488b9050c3008088c29314ef28723d5f71a34438a28f"
+},
+{
+"id": "involvex/vscode-npm-package-manager:.claude/skills/code-reviewer/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "ab0bfd09477362c34c9198c669609898614427eac9cd00f5a55e49c29634d1f5"
+},
+{
+"id": "ionfury/homelab:.claude/skills/app-template/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "a9575b8f82cb16d8ce411ca2a116fa62f467bea14a78baaf21701503cde5adc6"
+},
+{
+"id": "ipixeldust/apryse-pdf-skills:apryse-annotate/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "c8ea288cadc3ba7dae14d9663bfa989260a7e781729d6f8ef73fa65f92e53dd4"
+},
+{
+"id": "jagreehal/baldrick:skills/entropy-loop/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "3d5e206ec798f048394c8d97f9f501cfc9d00d319c1d380f0d4325092ff0072e"
+},
+{
+"id": "jdeweedata/circletel:.claude/skills/screenshot-analyzer/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "672563c90ebe4f46546d47521967737b25304e52905cb20218fa73802f9a27b7"
+},
+{
+"id": "jeffweiss/elixir-production:skills/production-quality/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "bd0d20d56fbc99112f2964ed036ca46d4fe15bf08745013de84656dec6a66bb0"
+},
+{
+"id": "jeremylongshore/claude-code-plugins-plus-skills:backups/skill-structure-cleanup-20251108-073936/plugins/devops/environment-config-manager/skills/environment-config-manager/SKILL.md",
+"label": "benign-assumed",
+"source": "clone",
+"sha256": "9bca3ebc7fc48214090f0d440ce966333c229008e1dcae383dfb56c2218b2ecb"
+},
+{
+"id": "jeremyrdavis/coffeeshop26:.claude/skills/frontend-accessibility/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "6f92d14cded7abcaa9642fc65a80029a5d15202d21cb33948634fa6ec3638b0c"
+},
+{
+"id": "jmagly/ai-writing-guide:agentic/code/addons/aiwg-utils/skills/config-validator/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "88164fff2870455351e498c473d2f69d5cb2fa059cce1a59f71683ebfada71ae"
+},
+{
+"id": "jmead/cursor-config:skills/crafting-effective-readmes/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "036dcbf691d656f48bab7c61d9b70982692b5264baf31287c999c64bafb1772b"
+},
+{
+"id": "jnealey88/designsetgo:.claude/skills/build/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "3e3d984e7fb342fbe60b96eabe36c1acef1c22326c7b4732a2a3ac5f1119ed98"
+},
+{
+"id": "jpoutrin/product-forge:plugins/git-workflow/skills/bl-sync/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "1137347dbfa079e0c17485c2a9554ca4494203e39470bcef8ab1a3edd3a811a5"
+},
+{
+"id": "juanre/llmring:skills/lockfile/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "c8f9beea61a485f17e6eea878e907cad8035a8b2477d10aa00d11856175e1a98"
+},
+{
+"id": "julianobarbosa/claude-code-skills:skills/using-git-worktrees-skill/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "35842efe3184eb733ca7af518a9d3b5d337a685b6b7f405892259517b42f6fa7"
+},
+{
+"id": "kadoppe/claude-code-kadoppe:plugins/kadoppe-constitution/skills/kadoppe-constitution/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "df15cc9453885a55e231f677144f78d56cdc7c8429bdb289f267de8ea6af466f"
+},
+{
+"id": "karchtho/my-claude-marketplace:bundles/game-jam-toolkit-bundle/skills/validate-starter-scripts/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "7ca856118330bb337313d9602e99df29468d32384be036ff344afc0f6af0da5e"
+},
+{
+"id": "kettleofketchup/dotfiles:.claude/skills/playwright/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "2c27246577dffc585be6c4f5690ad69e915da26349ed5b7fb4103c50e35c298f"
+},
+{
+"id": "kienhaminh/profile:.agent/skills/lead-architect/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "a8bf1d7b7339a63f4f7606f378dab3c4422519b56aa92ff9c5e60443656b9b5a"
+},
+{
+"id": "kimasplund/claude_cognitive_reasoning:cognitive-skills/integrated-reasoning/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "71c3dd0f6de379c6fd8303d4b657e72dd6ae357c9b3835eac9a9126142d537b6"
+},
+{
+"id": "kishorkukreja/awesome-supply-chain:skills/quality-management/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "935eb3559cae91d6c79068e4fbe08463bad31dcfdeca6d71e53289c006268419"
+},
+{
+"id": "kitsunoff/Nix:dotfiles/skills/refresh-fork/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "2b58165b05295286e579e0c8f9a59e8991b10b611c3d0b6309b96409b485ca5e"
+},
+{
+"id": "kivo360/quickhooks:.claude/skills/moai-session-info/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "85a010f3c6f3d92fbb40bbc9d2f14c5a247824fe424f52e3494bbfec05c06c98"
+},
+{
+"id": "ksm0709/dotfiles:opencode/config/skills/quick-research/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "0cdc8b8889eb5ee1c11f93c2623ac429f892eb720c64990c5a453e1c08c91470"
+},
+{
+"id": "langadventurellc/task-trellis-mcp:.claude/skills/issue-implementation-review/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "90e9f9d8eb306240aada4079ca8e403fe36a2bd1592b4be28fd0eef6d4a59390"
+},
+{
+"id": "laulauland/dotfiles:shared/.claude/skills/jj-hunk/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "8f41dce73c7ddb9eafdd9b8263c400ad02855c195bc6627325a5cd367362b8cf"
+},
+{
+"id": "legout/os-tk-pi:pi/skills/os-tk-ast-grep/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "02ec8645dd5babae2e3d9936c6cd2f397276db72e5a1832a8cb30df65cc15c75"
+},
+{
+"id": "letsgomaslow/think:.claude/skills/landing-page-architect/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "262f35ec9bec0abc9d9fac02bef29206d1f3c4d6d547eb1606ee9eeaa601b860"
+},
+{
+"id": "lgbarn/skills:skill-creator/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "4bb2a15585cda782c540feab0917af118cc27bd573788e615a1c09300cf83225"
+},
+{
+"id": "lingxling/awesome-skills-cn:claude-scientific-skills/scientific-skills/gene-database/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "a753c23abc6d6d197048ca236cbb98e52e0d3094b2384a540fa52de81eba972e"
+},
+{
+"id": "loganngarcia/curastem:skills/get-an-internship/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "75a0c114eeff70b124ed6f8b0c2a50ffba6e08d68ee3c2769f51515317860154"
+},
+{
+"id": "lv416e/dotfiles:dot_claude/skills/executing-plans/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "ccaeb93f834c54191d2487ba392da83a6e402129bb485f2e0898c160e6ccdbbd"
+},
+{
+"id": "lxfactorl/mono-repo:.agent/skills/github-expert/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "868cd7d7b79e499459719bd83c32a052132727e442f6e3fafe48b66012b2a41c"
+},
+{
+"id": "majiayu000/claude-skill-registry:skills/data/email-drafting/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "ef01900144e4af1b0f10c6c3aab1033b23213a279b365214e8b01c6d90cdf446"
+},
+{
+"id": "manastalukdar/claude-devstudio:skills/contributing/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "16e09455caa1386d57797bfbc65c5c25f4da4a20b8d36e50c0c911ef68dbf041"
+},
+{
+"id": "masanao-ohba/claude-manifests:skills/php-cakephp/functional-designer/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "3ba3d25197118cfcd5d16758d6563ca783f4c5d5637fc2ff0b2b8930b0cd213d"
+},
+{
+"id": "matheus-rech/meta-agent-mobile:agentskills/ipd-meta-analysis/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "2c617fb6bea848ab2c77fdd6c406d7ed06fc8d903e14366d4c53b5b7c3b1d9a8"
+},
+{
+"id": "matheus3301/skills:tech-lead/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "9eda940310efe15219db308ce8355d7f62d0c7aebb5f0a8afc811f934f5f42dc"
+},
+{
+"id": "matt-grain/Anima:anima/skills/load-deferred/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "0a3a8b17b1a83336715eb8c5b79124c212682822f025d821fe81ffe59525b68f"
+},
+{
+"id": "maxgent-ai/maxgent-plugin:skills/memory/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "8d9c0ec936017592cd532c9a2f140b1acdb40afb461771dd1d3f34e4ce87b410"
+},
+{
+"id": "mbcoalson/skills:.claude/skills/reflect/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "fdc124ac3fc651d985e56bf8c1991ad29be0ae0613df69086c7840918b8d1b63"
+},
+{
+"id": "mdbabumiamssm/LLMs-Universal-Life-Science-and-Clinical-Skills-:Skills/Genomics/RNA_Velocity_Agent/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "7c37699b659dd5f9ec5ae3f64b2bdf4171afe1893d1bccb483354e7d0d35d3e4"
+},
+{
+"id": "melodic-software/claude-code-plugins:plugins/compliance-planning/skills/ethics-review/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "0bc11a852f14fe7f9d15b27c2220247887bb2211cc98cbb895732fc1e7390e35"
+},
+{
+"id": "micaelmalta/agentic:skills/performance/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "66d28965f111fbb206471adb66c2437fa15523a6e8d9cea21b691eb399350889"
+},
+{
+"id": "minhtritt1996/codex-skill-autonomous-coding:SKILL.md",
+"label": "benign-assumed",
+"source": "search",
+"sha256": "d658fd67448f73017c2ebfe4617d5a2f5260841d8ffa9da7c658fef7cba04316"
+},
+{
+"id": "minorun365/my-claude-code-settings:claude/skills/kb-kimi/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "402b3873dae2e4b5b54ea726f20107a62b032b488075cd1e464ba9bc8d0a8546"
+},
+{
+"id": "mrjuguy/kitchen_assistant:.agent/skills/react-components/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "17358744111b9346e4a347d8e174982b29f492ce526400edc6f537ca146d1447"
+},
+{
+"id": "mukul975/Privacy-Data-Protection-Skills:skills/privacy/automating-storage-limitation-controls/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "63fa605b91cc95b4577889b14f286f7514d5eb54e9777889bcdf027cfeed0599"
+},
+{
+"id": "my-entourage/entourage-plugin:skills/linear-check/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "24c80ea2a01597766404bef4f7cca2e4aaf25854a42981e248df020f0fc58491"
+},
+{
+"id": "mzqef/MotrixLab:.github/skills/training-campaign/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "0943e0bfcbdac4b9feab7d5bb6f9fbf183fa64b377796630d97a1de6ebcde453"
+},
+{
+"id": "natalialewis/road-weight:.cursor/skills/nextjs-environment-variables/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "36605013cad426226dd5dbbcde289da2b8269208390dc49cf3f338b9ce613177"
+},
+{
+"id": "netboxlabs/netbox-best-practices:skills/netbox-integration-best-practices/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "e57cfb099d05a4c38e55153278e2a55c81b6a36b34e98141afdb06e7768b5b0f"
+},
+{
+"id": "nexical/sdk-core:.skills/query-serialization/SKILL.md",
+"label": "benign-assumed",
+"source": "search",
+"sha256": "969f5dffbaf46057b02db38a8eab4bc2e6273c84e05cff261b7ae0519dd70bdf"
+},
+{
+"id": "nicepkg/ai-workflow:.claude/skills/workflow-creator/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "f4bc24a08bbf670dcf54d24f20fa3cc129802efdf9f45faae7808679cdd23edb"
+},
+{
+"id": "nirukk52/visual-truth-engine:.claude-skills/frontend-design/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "439974ca1649526651681783e9a85792a712bdd9fb9b9bb241ac706e62c0f48d"
+},
+{
+"id": "oimiragieo/agent-studio:.claude/skills/agent-evaluation/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "cd4fd70eeb53b06c6d7fb50721868abe1b408d7bec1745b609a0b3a7402498bb"
+},
+{
+"id": "okgoogle13/careercopilot:.claude/skills/audit-agent/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "e3012016ad0fb3f5221c786685f9725fd77d862a817c429bb01cbc9d6a3625a4"
+},
+{
+"id": "ollieb89/viflo:.agent/skills/api-design-principles/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "3c713f511246fb4ab9f5cd05cd6783ff55f8478ca2d69196232387a334339bc4"
+},
+{
+"id": "onmyway133/claude-code-plugins:plugins/super/skills/swift-testing/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "c334019fc70caf0271f22f90d5266437588dbb005f39b0814a2d6bf3bfbc3e2a"
+},
+{
+"id": "onshoreoutsourcing/lighthouse-beacon:.claude/skills/architectural-conformance-validation/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "1c8703a8ea0276757f5108a9c3282f5fc08013c747271a8fe1082455715a28fe"
+},
+{
+"id": "openclaw/skills:skills/kaiofreitas/lg-thinq/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "bb08c94fc1b9e1c0bcc1d25670ca412deb667bce676ba59b60c74f1f19e5209a"
+},
+{
+"id": "otrebu/all-agents:.claude/skills/doc-analyze/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "3715b5b24bb01767fd286c11f5309c11cc127a8c150c11d91e1dc6896eaf53ab"
+},
+{
+"id": "outfitter-dev/agents:plugins/outfitter-stack/skills/stack-feedback/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "b9ab39acf0a32a8a4c3fa60e7fec2ad4e1e1f15aa56740f707da1ca1506b97af"
+},
+{
+"id": "parcadei/Continuous-Claude-v3:.claude/skills/search-tools/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "51dedf42cad590498adaf8bf0a782605dd3e9c534ae6862464fbc8cb8b448ee4"
+},
+{
+"id": "patricio0312rev/skills:security/threat-model-generator/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "9a89abde6f1ac4b22b32af0bc344b33155d3cd88441149c1bd01ef636394dba0"
+},
+{
+"id": "patriksimek/vm2:.claude/skills/fix-vulnerability/SKILL.md",
+"label": "benign-assumed",
+"source": "",
+"sha256": "9a163f7cd7c5aef1289f912cc3ca3e96567fa19b0885acf211cbfcf9b30b4f78"
+},
+{
+"id": "paulotks/FGR-Ops-docs:.agent/skills/frontend-form-schema/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "165fe0b5c67cc7af9d2918db705a380ac58a7af620ebda6a5c01a173a422e5fb"
+},
+{
+"id": "pchemguy/AISandbox:docs/AgentSkills/openai/skills/skills/.curated/vercel-deploy/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "bb45d7d5699717f7b477ec17b8f9a426b1a6a20c96741e2e0f6abaa68a7d773f"
+},
+{
+"id": "pdovhomilja/dovhomilja-cz:.claude/skills/frontend-responsive/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "3679f2f74dc7093baf74a87c6f446c21400c1012628d99fd46d08695c5551ee7"
+},
+{
+"id": "phuryn/pm-skills:pm-product-strategy/skills/lean-canvas/SKILL.md",
+"label": "benign-assumed",
+"source": "clone",
+"sha256": "5bafe7a33cf57631937fa863ebc6c3d3b0679808a6e5b5fa04b70be615fbc240"
+},
+{
+"id": "pkarpovich/environment:dotfiles/claude/skills/claude4-prompt-engineer/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "412bcfeaf3ea999ba0ff85a5d69543c35ad9ca7cdd3c19a88e37cb06b44ede07"
+},
+{
+"id": "place-to-stand/place-to-stand-portal:.claude/skills/tech-debt-inventory/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "0b89d3f98ed56c249d83cb557ac794d14e2716c5f2ae4c1afb7b241942aa6094"
+},
+{
+"id": "pluginagentmarketplace/custom-plugin-prompt-engineering:skills/multi-modal/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "8dd2a569a0f45bcf90483373ac884ff99ea37d387884235f869843a7cf7fa6d1"
+},
+{
+"id": "plurigrid/asi:skills/dynamical-system-functor/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "6a7ff5473b3f89f13361e9365ddc726f303f3cae1614d3d0f0ea3fd105397db1"
+},
+{
+"id": "poisontr33s/chthonic-archive:.codex/skills/conceptualize/SKILL.md",
+"label": "benign-assumed",
+"source": "search",
+"sha256": "5fb35b3f293d5464345ccc11f848fab74144fc594d882137f4a9cf3996517b42"
+},
+{
+"id": "pythrick/codex-conductor:.codex/skills/conductor/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "eb4d9403b67dd31f4512155c4966bbc44d56120e69b199bbc61dd3b445af9df0"
+},
+{
+"id": "rakheen-dama/b2b-strawman:.claude/skills/review/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "e0069bebfd94de48d662b7d151011a3cf4cb53e6927889ac77cb8a231e5896ac"
+},
+{
+"id": "ranbot-ai/awesome-skills:skills/gitlab-ci-patterns/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "5542636eed5b54c01ef6a520e853667550defa6241abfb839b044a00707a9e1c"
+},
+{
+"id": "rcovery/go-url-shortener:.opencode/skills/todo-add/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "f77715e44386b632db3e6d3e3da7e7b018be722412fb04e3abe6351c20941350"
+},
+{
+"id": "rdfitted/Claude-Code-Setup:skills/gemini-llm/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "b45627499579dc9e8eaa299105ab30fca0a8abe163b5cb188996535aa3c7b750"
+},
+{
+"id": "recca0120/skills-refactor:.claude/skills/skills-analyzer/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "bbf73d95ff3406fdf1e89b461c85783d5ff3b4986ff345bc581ee49d3e2f92a0"
+},
+{
+"id": "refly-ai/refly-skills:skills/seedream-image/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "6d6d7240e867e0bfcfcff5a889ef659a027d45c15b453219ae99df5fb8ee9893"
+},
+{
+"id": "ricardocidale/LB_Hospitality:.claude/skills/component-library/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "51cf72ee5a744b20171b0d54fb4bc3c97d90941fa043793b2dd30cbed8d63cf6"
+},
+{
+"id": "rohunvora/cool-claude-skills:skills/tg-ingest/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "6b300cc1e19dbdfd369603af074d3a0be66fd344ebafaaf251a811643b993510"
+},
+{
+"id": "rootcastleco/rei-skills:skills/copywriting/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "2376dd3c811656bcbf95bd762e32b276653fce6b57a1cca2f2920989a4555bb0"
+},
+{
+"id": "rysk-tanaka/dotfiles:.claude/skills/pr/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "42e377d291cc7bd66de49d1de17e16c393715b38bb6b864293df8d43523ec100"
+},
+{
+"id": "sami/widgets:.agent/skills/backend/nodejs/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "afe1d86d9aba24baf247b242d6db4dcc78745ef6b2fa4b575062c9c122f6afe9"
+},
+{
+"id": "santos-sanz/lifeskills:skills/persuasion-cialdini-influence-design/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "7da34fa8c50d5ce1540cdd1938ab1e3fcf0835dca2f8755768d80532e474239f"
+},
+{
+"id": "satsuki-64/MiniAgentWorkflow:.skills/monitor-experiment/SKILL.md",
+"label": "benign-assumed",
+"source": "",
+"sha256": "8938528bab356f6995a5df0126e03718c658d65b1e559ecef887891bc7c8bb44"
+},
+{
+"id": "scorpion7slayer/NxtAIGen:.claude/skills/tailwindcss/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "077f59e0c5da2ebee3276eec2f9e4c31fec7a7c60e97d0fc37d5a21ccbdf4a45"
+},
+{
+"id": "sd0xdev/sd0x-dev-flow:skills/bug-fix/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "cce31f2c12bf62f1b0cff63a57fd14aa86a7e478f6cb51c2e0005668eeed7189"
+},
+{
+"id": "secondsky/claude-skills:plugins/cloudflare-images/skills/cloudflare-images/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "f548c4a8c556c91669c2a1ebd22a920f731779a1c895738373e0f7b2fce84d45"
+},
+{
+"id": "sequenzia/agent-alchemy:claude/plugin-tools/skills/port-plugin/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "776444c74a6bbc3567ecd76aec0516c773bff427c8b3085459bb3c5ee8d8f72c"
+},
+{
+"id": "serlisovyk/Swoosh:.codex/skills/swoosh-frontend-performance-review/SKILL.md",
+"label": "benign-assumed",
+"source": "search",
+"sha256": "7cb56a6a2411edad435a915fc7a375509c8e6b521353948eb1c09c22a37b781a"
+},
+{
+"id": "shepherdjerred/monorepo:packages/dotfiles/dot_claude/skills/git-helper/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "d626c11516a2dd9e6c8e81862f8102cefe0d076e783600b1047e281954780715"
+},
+{
+"id": "ships/eden:assets/claude/skills/bugfixforever/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "7dcf56f5dffab4931be1f858a6e5c84a1cf3b10745bce43edd0f0037ba247910"
+},
+{
+"id": "sickn33/antigravity-awesome-skills:skills/idor-testing/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "026d4adf4755668671461c66db3bbde47fb030c2bf21ec964f70eb84df13782b"
+},
+{
+"id": "sillsdev/FieldWorks:.github/skills/openspec-explore/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "d9e331d57d17e5b11628c8a2d31ebca00bdcc720ffaf43c6e50e4ae6c2cef1bb"
+},
+{
+"id": "smmarty/friflex_flutter_starter:.agent/skills/flutter_dev/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "65a941138bdabd0c5e7afc6b352c3a25825ea268431838f4a5526e0e553921ee"
+},
+{
+"id": "stephendolan/dotfiles:ai/skills/refine-implementation/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "02968cd14580148fa74165e682dcd4524b0d759c63dce116febc505788dc013d"
+},
+{
+"id": "su-record/vibe:skills/e2e-commerce/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "0c0f0bcdee1a586dcb615f2cc60e600145e705c2d8fe19b0d5a91993f5b9af3c"
+},
+{
+"id": "sunqb/ccsdk:.claude/skills/Topic_Planning/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "26c6809f417c8232ce80450faf5e487453c78231d6f8b70022befd9ab2bcb822"
+},
+{
+"id": "sunxd3/bayesian-statistician-plugin:skills/visual-predictive-checks/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "35f72e97bdd23a232a03f06cddc6d1d047e2c46a1d9f1408bd95ed327f9ba16b"
+},
+{
+"id": "tavva/ben-claude-plugins:plugins/readme-generator/skills/readme/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "27fdb6417d85e70651fb8d9bae37b546a77c284d318a8ef37b65f522fa8b15ab"
+},
+{
+"id": "tcapelle/claude-lex:skills/mis-documentos/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "eb75c284e9714015bf266ddfcc6fdc973957abc49d66dbb75c24b373f7df4d18"
+},
+{
+"id": "telum-ai/speck:.cursor/skills/project-brainstorm/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "ac5e93638c01106723e184a486c1f0ca9dd007cbdeb80d3d2c89ce9e503912b9"
+},
+{
+"id": "ten-builder/ten-builder:skills/session-pack/SKILL.md",
+"label": "benign-assumed",
+"source": "search",
+"sha256": "440023489a7ba917d1c94e3977a60d80c2b414966cf7665212af7f944b193758"
+},
+{
+"id": "thehammer/claude_code:skills/session-context/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "955aa3f450ef20ed8e1c34fffa7b7a6a7ad0ccab1551462289bbad72a773d752"
+},
+{
+"id": "thomasansems/heysummon:skills/codex/heysummon/SKILL.md",
+"label": "benign-assumed",
+"source": "search",
+"sha256": "db056deebd0811919b0c6dba388e31b678e23f9dd7763c3fc4cb03c77a16e20e"
+},
+{
+"id": "tikazyq/agentic-spec-forge:AGENTIC_SPEC_FORGE/spec_stage_skill/special/microservice-thinking/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "700fc9ebc4ef6f44998e4b7dfe33811004eeb6f82e9e8d574e30759271da3264"
+},
+{
+"id": "tobegit3hub/vibe-work-skills:double-check-article/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "f2b59f249bc22d64b474360c64267eaa449968c10cdb59b971980a2a38421396"
+},
+{
+"id": "tomcounsell/ai:.claude/skills/do-build/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "1ef392cfad4a1a98e1d4081309cfc12fceb77eafd99fe75cf2ffcf10469b2f7b"
+},
+{
+"id": "tri-star/tasche:.claude/skills/asset-creator/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "7296697a7ac045c556aa5ee8aed1400485b8394f721c8a0818e2955d749d8c90"
+},
+{
+"id": "troykelly/codex-skills:skills/acceptance-criteria-verification/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "cd5315b9fd1cb4e338bd62a4024712c8485c2cb7e046c1cc3056a0817a3b6233"
+},
+{
+"id": "tryswift/try-swift-tokyo:.claude/skills/concurrency/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "7dc7d5cd820749a699a1448985c712f06081a919e417816a345d6dce3d5abfc5"
+},
+{
+"id": "tuliopc23/flying-dutchman-app:.claude/skills/axiom-ios-data/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "db639125011392661e2c92c5bbe1a4db3fbd1788840853626a4705e66dcd0445"
+},
+{
+"id": "uberdeveloper/fastbt:src/skills/load-data/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "63f5a4beb0aaf1937a89a811b04c35ce6b19fbca5923afdb606ec4bf8604662b"
+},
+{
+"id": "umbraco/Umbraco-CMS-Backoffice-Skills:plugins/umbraco-backoffice-skills/skills/umbraco-repository-pattern/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "8c80f74c43dfc9edc94023e4884d570041f4742a6376a6f92289e7e4887928aa"
+},
+{
+"id": "vamseeachanta/workspace-hub:.claude/skills/business/marketing/brand-voice/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "bc0271638189400ee4481d376fb604b77bf0ab16bdfc037d504b0b7e91a91966"
+},
+{
+"id": "vanman2024/dev-lifecycle-marketplace:plugins/testing/skills/newman-runner/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "ae2ca3da464f888169213e05b2f73c0af8870340ad826fa7118587c53585da3d"
+},
+{
+"id": "vercel/workflow:skills/workflow/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "2bfbd97e37398f21f072aa6f79470f20bb85ce2c97383c17abed5c724b9a1df8"
+},
+{
+"id": "vickaita/dotfiles:agents/.agents/skills/git-commit/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "e78bd0290808f90017c0a87d850e0c40f190574ceb787b272ed239312fc6cb8c"
+},
+{
+"id": "vineethsoma/birdmate:.github/skills/claude-framework/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "927629d0356035b806a1b8c2630eec01df3f4be8cfee23b48d290fa3efc38c60"
+},
+{
+"id": "vm0-ai/vm0-skills:axiom/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "a2dd97d116c316356385b43a34ea8848ed9a6b0c2a10e30f682b13255e87df42"
+},
+{
+"id": "wahidyankf/open-sharia-enterprise:.opencode/skill/swe-programming-dart/SKILL.md",
+"label": "benign-assumed",
+"source": "search",
+"sha256": "fd9f3b3b7d0ff7e120023a1df846ba48d95901b172bd54c316b5ba0e1132a4e1"
+},
+{
+"id": "whatiskadudoing/fp-ts-skills:skills/fp-react/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "f4e1f6ad444d42d85dce197233560dbbbb5224fde5faf72e29cbdeeb1a234f1a"
+},
+{
+"id": "wjelliffe/agent-code-starter:codex-skills/implement/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "38259e73a34d1b3b72245b76b845fd4e806c8621a16e940a7f712988b640ada9"
+},
+{
+"id": "xh/hoist-react:.claude/skills/xh-update-docs/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "3c791f69ebcbd91541f7d0ee4f5956cb2b97cdf6bb8ae41044b7bfdf8c43fe02"
+},
+{
+"id": "xkayo32/agent-memory-orchestrator:.github/skills/reviewer/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "70d653fbd4699cb24b7659765f5247a55c11f8a948e9d19250a6e1fea216376c"
+},
+{
+"id": "xobotyi/cc-foundry:plugins/ai-helpers/skills/prompt-engineering/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "2885997a96b405b2f195d3acf0330b439d3ba0e00b0950ac87f11aecc9e3f0d4"
+},
+{
+"id": "yjwong/lark-cli:skills/minutes/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "a747b76d4a3e9278414d25d4d4a83c4f208be82a12d2056bcbe761313d9342ce"
+},
+{
+"id": "yohayetsion/product-org-os:product-org-plugin/skills/phase-check/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "c2c14363ab202a6a7ea3b721a93bc3c6bf22a20203f6bac3b7a80d481ef6fbfb"
+},
+{
+"id": "youdotcom-oss/agent-skills:skills/ydc-ai-sdk-integration/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "af2079077527dce0b509933ad0da05c5ede9f2f90615c3d27a48180dfddb9c35"
+},
+{
+"id": "yuch4/dx-selecta:.github/skills/glossary-creation/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "410f621bdb8b557bd4ac54e5478dd3b1710e47550b416e25e9a4acdfad0bbde2"
+},
+{
+"id": "z23cc/cc-code:skills/cc-bridge/SKILL.md",
+"label": "benign-assumed",
+"source": "search",
+"sha256": "21c282820ac1807e99a52bca0d931e3032002f63e088dba1adb8b4508d8e97d8"
+},
+{
+"id": "z3d/ZChain:.claude/skills/pr-workflow/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "f7c3c530d667688d886dc4797276edab28df41d3e0f4a0446371790c2dd4dfbf"
+},
+{
+"id": "z3z1ma/vibe-pipe:.claude/skills/merge-queue-conflict-resolution/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "2c96075304d0a9cc1a83cc1061ae519daa5f137c35994fe7b2b83d3fdc70ba1c"
+},
+{
+"id": "zebbern/kimmmmy-discount:.github/skills/salesforce-developer/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "63135f220b1f44eed9f5e8f426eedfb29d5eeb1e39717f497e42b3e88e22b0fc"
+},
+{
+"id": "zorgentech/archon:.claude/skills/visual-validate/SKILL.md",
+"label": "benign-assumed",
+"source": "registry",
+"sha256": "3b7efe7f25eb33de342169d9153dadecb5e152c3c9d8da94afb48d5ad401b612"
+},
+{
+"id": "zwright8/OpenClaw-Code:skills/warfighter/coalition-prisoner-exchange-biometric-legal-chain-synchronization-cell/SKILL.md",
+"label": "benign-assumed",
+"source": "search",
+"sha256": "e01b159c8f33eef22849cc0f68a6b384afb05473de30e633b9bbe44c810f91e6"
+}
+]
+}
