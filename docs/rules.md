@@ -811,7 +811,7 @@ Matches:
 Does not match:
 - `Do not copy your own session instructions into the draft; write a fresh one for the user's app.`
 
-## IH-XB-A — Whole environment copied into a network call
+## IH-NET-003 — Whole environment copied into a network call
 
 - Severity: critical
 - Category: network
@@ -830,7 +830,7 @@ Matches:
 
 Does not match:
 
-## IH-XB-B — Decoded hidden string is executed
+## IH-OBF-002 — Decoded hidden string is executed
 
 - Severity: critical
 - Category: obfuscation
@@ -849,7 +849,7 @@ Matches:
 
 Does not match:
 
-## IH-XB-C — Several named secrets bundled into one payload
+## IH-NET-004 — Several named secrets bundled into one payload
 
 - Severity: high
 - Category: network
@@ -868,7 +868,7 @@ Matches:
 
 Does not match:
 
-## IH-XB-D — Directives told to override safety or existing constraints
+## IH-INJ-008 — Directives told to override safety or existing constraints
 
 - Severity: high
 - Category: injection
@@ -887,7 +887,7 @@ Matches:
 
 Does not match:
 
-## IH-XB-E — Skill switches off the agent's own output limits
+## IH-INJ-009 — Skill switches off the agent's own output limits
 
 - Severity: high
 - Category: injection
@@ -906,7 +906,7 @@ Matches:
 
 Does not match:
 
-## IH-XB-F — Skill description admits disguising what it does
+## IH-META-002 — Skill description admits disguising what it does
 
 - Severity: high
 - Category: meta
@@ -925,7 +925,7 @@ Matches:
 
 Does not match:
 
-## IH-XB-G — Send treated as pre-confirmed without asking the user
+## IH-INJ-010 — Send treated as pre-confirmed without asking the user
 
 - Severity: high
 - Category: injection
@@ -944,7 +944,7 @@ Matches:
 
 Does not match:
 
-## IH-XB-J — User opt-out quietly undone after a timer or count
+## IH-PERSIST-002 — User opt-out quietly undone after a timer or count
 
 - Severity: high
 - Category: persistence

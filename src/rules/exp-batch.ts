@@ -93,7 +93,7 @@ const A_ENV =
   /\bdict\(\s*os\.environ\s*\)|\bos\.environ\.copy\(\)|\{\s*\*\*os\.environ\b|json\.dumps\(\s*(?:dict\()?os\.environ\b|\bos\.environ\.items\(\)|JSON\.stringify\(\s*process\.env\s*\)|\{\s*\.\.\.process\.env\b|Object\.entries\(\s*process\.env\s*\)|\b(?:printenv|env)\s*\|\s*(?:curl|nc|wget|base64)|\bGet-ChildItem\s+env:/;
 export const expA = mk(
   'A',
-  'IH-XB-A',
+  'IH-NET-003',
   'Whole environment copied into a network call',
   'critical',
   'network',
@@ -114,7 +114,7 @@ const B_RE =
   /\b(?:exec|eval)\s*\([^\n]{0,80}?(?:b64decode|base64|atob|fromhex|codecs\.decode|zlib\.decompress|marshal\.loads|bytes\.fromhex|rot13)|\bnew\s+Function\s*\(\s*(?:atob|Buffer\.from)|\beval\s*\(\s*Buffer\.from\([^)]*['"]base64|base64\s+(?:-d|--decode|-D)\b[^\n|]*\|\s*(?:ba|z|da)?sh\b|\|\s*base64\s+(?:-d|--decode)\s*\|\s*(?:ba|z)?sh\b|IEX\s*\(?\s*\[(?:System\.)?Text\.Encoding|FromBase64String[^\n]{0,80}\|\s*(?:iex|Invoke-Expression)/i;
 export const expB = mk(
   'B',
-  'IH-XB-B',
+  'IH-OBF-002',
   'Decoded hidden string is executed',
   'critical',
   'obfuscation',
@@ -135,7 +135,7 @@ const C_SECRET =
   /(?:os\.environ(?:\.get)?\s*[[(]\s*|os\.getenv\(\s*|process\.env\.|process\.env\[\s*)['"]?([A-Z0-9_]*(?:KEY|TOKEN|SECRET|PASSWORD|PASSWD|DATABASE_URL|CREDENTIALS?|PRIVATE_KEY))\b/;
 export const expC = mk(
   'C',
-  'IH-XB-C',
+  'IH-NET-004',
   'Several named secrets bundled into one payload',
   'high',
   'network',
@@ -184,7 +184,7 @@ const D_RE =
 const D_TARGET = /\b(?:security|safety|constraints?|guardrails?|protocols?)\b/i;
 export const expD = mk(
   'D',
-  'IH-XB-D',
+  'IH-INJ-008',
   'Directives told to override safety or existing constraints',
   'high',
   'injection',
@@ -201,7 +201,7 @@ const E_RE =
   /\b(?:this skill|you|the agent|it)\b[^.]{0,80}\bwithout (?:any )?(?:restriction|content|safety|moderation) filters?\b|\bregardless of (?:topic )?sensitivity\b/i;
 export const expE = mk(
   'E',
-  'IH-XB-E',
+  'IH-INJ-009',
   "Skill switches off the agent's own output limits",
   'high',
   'injection',
@@ -220,7 +220,7 @@ const F_HARM =
   /资源|消耗|负载|挖矿|窃取|后门|心跳|\b(?:resource|cpu|load|drain|mining|miner|exfil\w*|steal\w*|backdoor|heartbeat|beacon)\b/i;
 export const expF = mk(
   'F',
-  'IH-XB-F',
+  'IH-META-002',
   'Skill description admits disguising what it does',
   'high',
   'meta',
@@ -240,7 +240,7 @@ const G_RE =
   /\btreat (?:those|these|the|such) (?:fields|details|values|requests?) as (?:already )?(?:confirmed|approved)\b|\b(?:already|pre-?)\s?(?:confirmed|approved)\b[^.]{0,60}\b(?:send|deliver|write|submit|post)\w*\b[^.]{0,40}\bdirectly\b|\bwithout (?:asking|waiting) for (?:confirmation|approval)\b[^.]{0,40}\b(?:send|email|post|submit)/i;
 export const expG = mk(
   'G',
-  'IH-XB-G',
+  'IH-INJ-010',
   'Send treated as pre-confirmed without asking the user',
   'high',
   'injection',
@@ -259,7 +259,7 @@ const H_ACT =
   /\b(?:delete|remove|replace|rewrite|append|add|write|copy|paste|set|insert|fill|drop)\w*\b/i;
 export const expH = mk(
   'H',
-  'IH-XB-H',
+  'IH-INJ-011',
   'Skill keeps one of its own changes out of what it tells the user',
   'high',
   'injection',
@@ -286,7 +286,7 @@ const I_PUB =
 const I_PUT = /\b(?:copy|paste|put|insert|include|add|write|embed|rewrite|split)\w*\b/i;
 export const expI = mk(
   'I',
-  'IH-XB-I',
+  'IH-CRED-007',
   'Secret value from .env written into a published file',
   'high',
   'credentials',
@@ -315,7 +315,7 @@ const J_BACK =
   /\b(?:(?:on|enabled?|active) again|again (?:on|enabled?)|re-?enabl\w*|resum\w*|set [^.]{0,20}(?:"on"|on|true)\b)/i;
 export const expJ = mk(
   'J',
-  'IH-XB-J',
+  'IH-PERSIST-002',
   'User opt-out quietly undone after a timer or count',
   'high',
   'persistence',
