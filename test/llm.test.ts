@@ -249,11 +249,17 @@ describe('llm review over a mock server', () => {
         ),
       );
     });
+    // Raise the prompt cap so SKILL.md fits whatever order the OS lists the near-miss fixtures in.
+    const cfgDir = await mkdtemp(join(tmpdir(), 'ih-llm-cfg-'));
+    cleanups.push(() => rm(cfgDir, { recursive: true, force: true }));
+    const config = join(cfgDir, 'ironheights.config.json');
+    await writeFile(config, '{"llm":{"maxInputChars":100000}}\n');
     const result = await run({
       paths: [BENIGN],
       llm: true,
       llmUrl: server.origin,
       failOn: 'info',
+      config,
     });
     expect(server.hits).toHaveLength(1);
     expect(server.hits[0]?.url).toBe('/api/chat');
