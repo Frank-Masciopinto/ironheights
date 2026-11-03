@@ -61,6 +61,8 @@ describe('posture report', () => {
     const page = renderPostureHtml({
       tool: 'ironheights',
       version: '0',
+      scannerVersion: '0',
+      checkedAt: 'now',
       title: '<script>x</script>',
       generatedAt: 'now',
       totals: {

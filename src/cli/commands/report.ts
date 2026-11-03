@@ -5,6 +5,7 @@ import { resolve } from 'node:path';
 import { contentDigest } from '../../mcp/receipts.ts';
 import { diffHosts, type HostRef } from '../../report/metadata.ts';
 import { readJsonl, type ArtifactRecord, type RefusalEvent } from '../../report/extras.ts';
+import { notFlaggedWording, versionIsOlder } from '../../core/clean-wording.ts';
 import { TOOL_VERSION } from '../../version.ts';
 import type { PostureReport } from '../../report/posture.ts';
 import { loadConfig } from '../../core/config.ts';
@@ -209,6 +210,14 @@ export async function runReport(flags: ReportFlags): Promise<number> {
       if (s.regraded) out('config changed since last report; grade recomputed');
       if (!s.coverage.complete) out(`  not fully inspected: ${s.coverage.reasons.join('; ')}`);
     }
+    if ((t.verdicts['no-findings'] ?? 0) > 0)
+      out(notFlaggedWording(report.scannerVersion, report.checkedAt));
+    for (const earlier of report.history) {
+      if (!earlier.stale || earlier.at === report.checkedAt) continue;
+      out(
+        `earlier result ${earlier.at}: stale. ${earlier.staleReason ?? 'older than this scanner'}. ${earlier.rescan ?? 'Rescan before relying on this pass.'}`,
+      );
+    }
     out(
       `verdicts: block ${t.verdicts.block ?? 0}, review ${t.verdicts.review ?? 0}, incomplete ${t.verdicts.incomplete ?? 0}, no findings ${t.verdicts['no-findings'] ?? 0}`,
     );
@@ -239,12 +248,19 @@ async function verifySaved(
     return 64;
   }
   const now = (flags.now ?? new Date()).getTime();
-  const rows: Array<{ skill: string; status: string; reason: string }> = [];
+  const rows: Array<{
+    skill: string;
+    status: string;
+    reason: string;
+    stale?: boolean;
+    rescan?: string;
+  }> = [];
   for (const s of r.skills) {
     const repo = r.repos.find((x) => x.repo === s.repo);
     const root = repo ? resolve(repo.path, s.path) : resolve(s.path);
     const id = `${s.repo}/${s.path}`;
     const d = await contentDigest(root).catch(() => ({ digest: null }));
+    const scannerVersion = s.stamp?.gradedAgainstVersion ?? r.scannerVersion ?? r.version;
     let status = 'fresh';
     let reason = `grade ${s.grade} still describes these bytes`;
     if (!d.digest) [status, reason] = ['missing', 'the graded files are gone'];
@@ -253,14 +269,31 @@ async function verifySaved(
         'changed',
         'files changed since grading: the grade is greyed until re-graded',
       ];
-    else if ((s.stamp?.gradedAgainstVersion ?? r.version) !== TOOL_VERSION)
+    else if (scannerVersion !== TOOL_VERSION)
       [status, reason] = [
         'version-mismatch',
-        `graded with ${s.stamp?.gradedAgainstVersion ?? r.version}, running ${TOOL_VERSION}`,
+        `graded with ${scannerVersion}, running ${TOOL_VERSION}`,
       ];
     else if (s.stamp && Date.parse(s.stamp.validUntil) < now)
       [status, reason] = ['expired', `hard cutoff ${s.stamp.validUntil} passed`];
-    rows.push({ skill: id, status, reason });
+    const until = s.stamp?.validUntil ?? r.validUntil;
+    const older = versionIsOlder(scannerVersion, TOOL_VERSION);
+    const expired = Boolean(until && Date.parse(until) < now);
+    const stale = older || expired || status === 'expired';
+    if (stale) {
+      const debt = older
+        ? `stale: scanner ${scannerVersion} is older than ${TOOL_VERSION}. A pass from an older scanner is detection debt.`
+        : `stale: validUntil ${until} has passed.`;
+      reason = `${reason} ${debt} Rescan before relying on this pass.`;
+    }
+    rows.push({
+      skill: id,
+      status,
+      reason,
+      ...(stale
+        ? { stale: true, rescan: 'Rescan before relying on this pass.' }
+        : { stale: false }),
+    });
   }
   const stale = rows.filter((x) => x.status !== 'fresh').length;
   if (flags.json)

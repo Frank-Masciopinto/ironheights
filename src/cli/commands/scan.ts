@@ -6,6 +6,7 @@ import { annotateSkillReports } from '../../advisories/match.ts';
 import { readAdvisoryCache } from '../../advisories/cache.ts';
 import { pinnedAdvisoryPublicKey } from '../../advisories/pinned-key.ts';
 import type { AdvisoryFeedNote, Finding, SkillReport, Verdict } from '../../core/types.ts';
+import { maxAgeWindow, validUntilFrom } from '../../core/clean-wording.ts';
 import { UsageError, NetworkError } from '../../core/errors.ts';
 import { ironheightsHome, loadConfig } from '../../core/config.ts';
 import { TEXT_SCAN_LIMIT } from '../../core/grade.ts';
@@ -95,6 +96,8 @@ export interface ScanFlags {
   skillOwner?: string;
   /** Test seam for the terminal check. Production reads process.stdout/stderr.isTTY. */
   isTTY?: boolean;
+  /** Optional expiry window such as 30d, 12h, 15m or 30s. Unset means no validUntil. */
+  maxAge?: string;
 }
 
 export interface ScanExecution {
@@ -215,7 +218,10 @@ export async function executeScan(flags: ScanFlags): Promise<ScanExecution> {
         }
         if (format === 'json') {
           (flags.stdout ?? ((text: string) => process.stdout.write(text)))(
-            renderJson([], 'no-findings', scannedAt, { scanMode }),
+            renderJson([], 'no-findings', scannedAt, {
+              scanMode,
+              ...validUntilField(scannedAt, flags.maxAge),
+            }),
           );
         }
         return { code: 0, verdict: 'no-findings', skills: [] };
@@ -364,6 +370,7 @@ export async function executeScan(flags: ScanFlags): Promise<ScanExecution> {
     ...(limitNote ? { limitNote } : {}),
     ...(advisory.note ? { advisory: advisory.note } : {}),
     ...(llmReport ? { llmReview: llmReport } : {}),
+    ...validUntilField(scannedAt, flags.maxAge),
   };
   if (flags.printSuppressions) {
     write(renderSuppressionConfig(reported.flatMap((skill) => skill.findings)));
@@ -377,13 +384,15 @@ export async function executeScan(flags: ScanFlags): Promise<ScanExecution> {
       `${renderHtml(reported, reportedVerdict, scannedAt, scanMode, advisory.note, llmReport)}\n`,
     );
   } else {
-    write(`${renderHuman(reported, reportedVerdict, color, scanMode, advisory.note, llmReport)}\n`);
+    write(
+      `${renderHuman(reported, reportedVerdict, color, scanMode, advisory.note, llmReport, scannedAt)}\n`,
+    );
   }
   if (flags.sarif) await writeFile(flags.sarif, renderSarif(reported, scanMode));
   if (flags.md)
     await writeFile(
       flags.md,
-      renderMarkdown(reported, verdict, scanMode, advisory.note, llmReport),
+      renderMarkdown(reported, verdict, scanMode, advisory.note, llmReport, scannedAt),
     );
   if (flags.html)
     await writeFile(
@@ -391,6 +400,17 @@ export async function executeScan(flags: ScanFlags): Promise<ScanExecution> {
       renderHtml(reported, verdict, scannedAt, scanMode, advisory.note, llmReport),
     );
   return { skills: reported, verdict, code };
+}
+
+function validUntilField(
+  scannedAt: string,
+  maxAge: string | undefined,
+): { validUntil: string } | Record<string, never> {
+  if (maxAge === undefined) return {};
+  const window = maxAgeWindow(maxAge);
+  if (window === undefined || window === null)
+    throw new UsageError('--max-age must look like 30d, 12h, 15m or 30s');
+  return { validUntil: validUntilFrom(scannedAt, window) };
 }
 
 function describeChange(item: ChangeCheck): string {

@@ -30,6 +30,22 @@ Do not commit real malicious skills. On an isolated machine:
 
 Reports are written to `bench/results/latest.md` and `bench/results/latest.json`.
 
+## MaliciousSkillBench results (0.34.0)
+
+0.34.0 does not change scanner rules beyond what was already merged on main after 0.33.0. The numbers below are the ones those pull requests and the README recorded. They were not re-scored for this release note.
+
+| Setting                             | Result          |
+| ----------------------------------- | --------------- |
+| `block` only                        | 174/516 = 33.7% |
+| False positives at `block`          | 11/456 = 2.4%   |
+| `review` or `block`                 | 249/516         |
+| Clean skills at `review` or `block` | 31/456          |
+| Blind held-out attacks at `block`   | 219/600 = 36.5% |
+| Blind held-out clean at `block`     | 15/300 = 5.0%   |
+| Anthropic skills flagged            | 0/19            |
+
+Block-or-review was 248/516 (48.1%) after the detection experiment and 249/516 after IH-NET-001 on a cloud-metadata host started counting toward the verdict. Cisco skill-scanner 2.3.2 on the same set: 21.9% detection (113/516), 2.0% false positives (9/456), 1/19 Anthropic skills flagged.
+
 ## MaliciousSkillBench results (0.33.0)
 
 Run on 2 Nov 2026 against MaliciousSkillBench (Hugging Face revision `d4b42ce5`): 516 malicious and 456 clean skills, plus 19 Anthropic skills as an extra clean set. Static rules only. 0.33.0 is merged on `main`; on npm it is staged and goes live after maintainer approval.

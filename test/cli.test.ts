@@ -54,7 +54,7 @@ describe('cli', () => {
     try {
       const code = await main(['scan', 'test/fixtures/benign', '--no-color']);
       expect(code).toBe(0);
-      expect(lines.join('')).toContain('No findings');
+      expect(lines.join('')).toContain('not flagged by ironheights');
     } finally {
       process.stdout.write = original;
     }

@@ -1098,6 +1098,10 @@ function registerScan(program: Command, name: 'scan' | 'review', hooks: MainHook
       '--changed',
       'scan only skills that are new or whose content or version changed since their last scan',
     )
+    .option(
+      '--max-age <window>',
+      'optional expiry for this result, such as 30d, 12h, 15m or 30s. JSON then includes validUntil. Unset means no expiry.',
+    )
     .action(async (paths: string[], opts: Record<string, string | boolean | undefined>) => {
       const code = await runScan({
         paths,
@@ -1133,6 +1137,7 @@ function registerScan(program: Command, name: 'scan' | 'review', hooks: MainHook
         changed: Boolean(opts.changed),
         printSuppressions: Boolean(opts.printSuppressions),
         checkRegistry: Boolean(opts.checkRegistry),
+        ...(typeof opts.maxAge === 'string' ? { maxAge: opts.maxAge } : {}),
         ...(hooks.advisoryPublicKey !== undefined
           ? { advisoryPublicKey: hooks.advisoryPublicKey }
           : {}),

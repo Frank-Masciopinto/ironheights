@@ -39,6 +39,7 @@ import {
   type HostDiff,
   type HostRef,
 } from './metadata.ts';
+import { notFlaggedWording, verdictFreshness } from '../core/clean-wording.ts';
 import { TOOL_NAME, TOOL_VERSION } from '../version.ts';
 import {
   environmentStamp,
@@ -177,6 +178,10 @@ export interface RepoRow {
 export interface PostureReport {
   tool: string;
   version: string;
+  /** 0.34.0. Same value as version. Additive. */
+  scannerVersion: string;
+  /** 0.34.0. ISO UTC. Same instant as generatedAt. Additive. */
+  checkedAt: string;
   title: string;
   generatedAt: string;
   totals: {
@@ -261,6 +266,13 @@ export interface HistoryPoint {
   findingSkills?: string[];
   /** Unresolved loss paths and when they were first seen. */
   unresolved?: Record<string, string>;
+  /** 0.34.0. Absent on history written before this release. */
+  scannerVersion?: string;
+  checkedAt?: string;
+  validUntil?: string;
+  stale?: boolean;
+  staleReason?: string;
+  rescan?: string;
 }
 
 async function isDir(p: string): Promise<boolean> {
@@ -278,6 +290,23 @@ async function exists(p: string): Promise<boolean> {
   } catch {
     return false;
   }
+}
+
+function noteHistory(points: HistoryPoint[], now: Date): HistoryPoint[] {
+  return points.map((point) => {
+    const freshness = verdictFreshness({
+      scannerVersion: point.scannerVersion,
+      validUntil: point.validUntil,
+      now,
+    });
+    if (!freshness.stale) return point;
+    return {
+      ...point,
+      stale: true,
+      staleReason: freshness.reasons.join('; '),
+      rescan: freshness.rescan,
+    };
+  });
 }
 
 function previousConfigHashes(history: HistoryPoint[]): Record<string, string> | undefined {
@@ -792,10 +821,16 @@ export async function buildReport(opts: BuildOptions): Promise<PostureReport> {
     unresolved: Object.fromEntries(
       verification.map((v0) => [`${v0.repo}/${v0.path}`, v0.firstSeen as string]),
     ),
+    scannerVersion: TOOL_VERSION,
+    checkedAt: generatedAt,
+    validUntil,
   };
+  const history = noteHistory([...sameEnv, point], now);
   return {
     tool: TOOL_NAME,
     version: TOOL_VERSION,
+    scannerVersion: TOOL_VERSION,
+    checkedAt: generatedAt,
     title: opts.title ?? 'Agent security posture',
     generatedAt,
     totals,
@@ -815,7 +850,7 @@ export async function buildReport(opts: BuildOptions): Promise<PostureReport> {
     skills,
     violations,
     driftChanges,
-    history: [...sameEnv, point],
+    history,
     environment,
     measuredEnvironment: environment.id,
     cloudMetadata: opts.probeMetadata
@@ -994,6 +1029,7 @@ tr.ih-degraded td{opacity:.7}tr.ih-grey td{opacity:.4;filter:grayscale(1)}tr.ih-
 ${r.lead ? `<div class="result lead">${e(r.lead)}</div>` : ''}
 <div class="result ${t.coverage.complete ? '' : 'inc'}">${e(t.result)}</div>
 <div class="meta">Generated ${e(r.generatedAt)} by ${e(r.tool)} ${e(r.version)} · ${t.repos} repo(s) · local scan, no telemetry · valid until ${e(r.validUntil)} · fingerprint <code>${e(r.fingerprint.slice(0, 16))}</code></div>
+${(t.verdicts['no-findings'] ?? 0) > 0 ? `<p>${e(notFlaggedWording(r.scannerVersion, r.checkedAt))}</p>` : ''}
 ${envHtml}
 <div class="cards">
 ${card('Overall', t.overall, `${t.coverage.inspected} of ${t.coverage.loaded} fully inspected`)}
@@ -1025,7 +1061,7 @@ ${revHtml}
 ${changeHtml}
 <h2>Threat model violations</h2>${viol}
 <h2>Drift since approval</h2>${drift}
-${hist.length > 1 ? `<h2>Trend</h2><table><thead><tr><th>Run</th><th>Skills</th><th>Findings</th><th>Block</th><th>Review</th><th>Coverage</th><th>Drifted</th></tr></thead><tbody>${hist.map((h) => `<tr><td>${e(h.at)}</td><td>${h.skills}</td><td>${h.findings}</td><td>${h.block}</td><td>${h.review}</td><td>${h.threatModelCoverage ?? '—'}</td><td>${h.driftChanged}</td></tr>`).join('')}</tbody></table>` : ''}
+${hist.length > 1 ? `<h2>Trend</h2><table><thead><tr><th>Run</th><th>Skills</th><th>Findings</th><th>Block</th><th>Review</th><th>Coverage</th><th>Drifted</th></tr></thead><tbody>${hist.map((h) => `<tr><td>${e(h.at)}${h.stale ? ` stale. ${e(h.staleReason ?? '')} ${e(h.rescan ?? '')}` : ''}</td><td>${h.skills}</td><td>${h.findings}</td><td>${h.block}</td><td>${h.review}</td><td>${h.threatModelCoverage ?? '—'}</td><td>${h.driftChanged}</td></tr>`).join('')}</tbody></table>` : ''}
 ${r.cleanupEffort !== null && r.cleanupEffort !== undefined ? `<p class="p">Average score ${r.cleanupEffort}: a cleanup-effort measure, not a safety measure.</p>` : ''}
 <footer>Ironheights protects any AI bot that installs it. A grade reports what the rules matched in the files scanned; no findings is not proof of safety. OWASP mapping from each rule's references. https://www.ironheights.dev</footer>
 </main><script>(function(){var u=Date.parse(${JSON.stringify(r.validUntil)});if(Date.now()>u){document.body.className+=' expired';var b=document.getElementById('ih-expired');if(b)b.hidden=false;}var iv=${JSON.stringify((r.checkIntervalHours ?? 0) * 3600000)};var rows=document.querySelectorAll('tr.ih-row');for(var i=0;i<rows.length;i++){var tr=rows[i];var g=Date.parse(tr.getAttribute('data-graded'));var until=Date.parse(tr.getAttribute('data-until'));var age=Date.now()-g;var lvl=iv?Math.floor(age/iv):0;if(Date.now()>until&&lvl<2)lvl=2;var c=tr.querySelector('td.g');if(c)c.setAttribute('data-ts','graded '+tr.getAttribute('data-graded'));if(lvl>=3)tr.className+=' ih-grey ih-hidden';else if(lvl>=2)tr.className+=' ih-grey';else if(lvl>=1)tr.className+=' ih-degraded';}})();</script></body></html>

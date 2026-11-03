@@ -253,6 +253,12 @@ export interface ScanOutput {
   schemaVersion: number;
   tool: { name: string; version: string };
   scannedAt: string;
+  /** 0.34.0. Same value as tool.version. Additive. */
+  scannerVersion: string;
+  /** 0.34.0. ISO UTC. Same instant as scannedAt. Additive. */
+  checkedAt: string;
+  /** 0.34.0. Present only when --max-age was set. */
+  validUntil?: string;
   verdict: Verdict;
   skippedFileCount: number;
   /** Present when a `.git` or `node_modules` directory was not entered. */

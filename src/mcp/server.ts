@@ -28,6 +28,12 @@ import { downloadSkill, parseSkillRef } from '../net/clawhub.ts';
 import { referencesFor, rulePageUrl } from '../rules/references.ts';
 import { allRules, ruleById } from '../rules/index.ts';
 import { runThreatModel } from '../cli/commands/threatmodel.ts';
+import {
+  maxAgeWindow,
+  notFlaggedWording,
+  validUntilFrom,
+  verdictFreshness,
+} from '../core/clean-wording.ts';
 import { TOOL_NAME, TOOL_VERSION } from '../version.ts';
 import {
   checkIdFor,
@@ -60,7 +66,15 @@ import {
   reuseLogPath,
   type ReuseDecision,
 } from './reuse.ts';
-import { bareName, copiesOnPath, selectCopy } from './collisions.ts';
+import {
+  assembleNameCopies,
+  bareName,
+  copiesOnPath,
+  PRECEDENCE_UNKNOWN,
+  selectCopy,
+  type DescribedCopy,
+  type NameCopy,
+} from './collisions.ts';
 import { emitAlert } from '../premium/alerts.ts';
 import {
   checkCoverage,
@@ -186,6 +200,11 @@ export const TOOLS = [
           ...str,
           description:
             'Runtime environment. A path segment of the copy must equal it. Required, with or without resolver, before an allow when several copies share the name.',
+        },
+        maxAge: {
+          ...str,
+          description:
+            'Optional expiry for this result, such as 30d, 12h, 15m or 30s. When set, the response includes validUntil. Omitted by default, so a result does not expire unless you set it.',
         },
       },
     },
@@ -603,13 +622,12 @@ function timingOf(args: Record<string, unknown>, checkedAt: string) {
 }
 
 async function describeCandidate(
-  dir: string,
-  loadOrder: number,
+  copy: NameCopy,
   env: NodeJS.ProcessEnv,
-): Promise<Record<string, unknown>> {
+): Promise<DescribedCopy & Record<string, unknown>> {
   const config = await loadConfig({ env });
-  const result = await scanPath(dir, config).catch(() => null);
-  const judged = await skillDigests(dir).catch(() => null);
+  const result = await scanPath(copy.path, config).catch(() => null);
+  const judged = await skillDigests(copy.path).catch(() => null);
   const findings = result
     ? result.skills.flatMap((s) =>
         s.findings.map((f) => ({
@@ -622,15 +640,69 @@ async function describeCandidate(
         })),
       )
     : [];
+  const verdict = result?.verdict ?? 'unknown';
+  const decision = result ? decisionFor(result.verdict) : 'blocked';
   return {
-    path: dir,
-    loadOrder,
+    path: copy.path,
+    resolvedPath: copy.resolvedPath,
+    loadOrder: copy.loadOrder,
+    precedence: copy.precedence,
     digest: judged?.directory ?? null,
     digests: judged?.directory ? [judged.directory] : [],
     judgedManifest: judged?.manifest ?? null,
-    verdict: result?.verdict ?? 'unknown',
-    decision: result ? decisionFor(result.verdict) : 'blocked',
+    verdict,
+    decision,
     findings: findings.slice(0, 25),
+  };
+}
+
+function readMaxAge(args: Record<string, unknown>): number | null | undefined {
+  if (typeof args.maxAge !== 'string') return undefined;
+  return maxAgeWindow(args.maxAge);
+}
+
+function storedClock(entry: unknown): {
+  scannerVersion?: string;
+  validUntil?: string;
+  checkedAt?: string;
+  verdict?: string;
+  scanVerdict?: string;
+} {
+  if (!entry || typeof entry !== 'object') return {};
+  const row = entry as Record<string, unknown>;
+  const verdict =
+    row.verdict && typeof row.verdict === 'object' ? (row.verdict as Record<string, unknown>) : {};
+  return {
+    ...(typeof row.scannerVersion === 'string' ? { scannerVersion: row.scannerVersion } : {}),
+    ...(typeof row.validUntil === 'string' ? { validUntil: row.validUntil } : {}),
+    ...(typeof row.scanVerdict === 'string' ? { scanVerdict: row.scanVerdict } : {}),
+    ...(typeof verdict.checkedAt === 'string' ? { checkedAt: verdict.checkedAt } : {}),
+    ...(typeof verdict.verdict === 'string' ? { verdict: verdict.verdict } : {}),
+  };
+}
+
+function freshnessFields(clock: ReturnType<typeof storedClock>): Record<string, unknown> {
+  const freshness = verdictFreshness({
+    scannerVersion: clock.scannerVersion ?? null,
+    validUntil: clock.validUntil ?? null,
+  });
+  const checkedAt = clock.checkedAt ?? new Date().toISOString();
+  const version = clock.scannerVersion ?? TOOL_VERSION;
+  const noFindings = clock.scanVerdict === 'no-findings' || clock.verdict === 'allow';
+  return {
+    scannerVersion: version,
+    checkedAt,
+    ...(clock.validUntil ? { validUntil: clock.validUntil } : {}),
+    stale: freshness.stale,
+    ...(freshness.stale
+      ? {
+          staleReason: freshness.reasons.join('; '),
+          rescan: freshness.rescan,
+          decision: 'blocked',
+          authorizing: false,
+        }
+      : {}),
+    ...(noFindings ? { wording: notFlaggedWording(version, checkedAt) } : {}),
   };
 }
 
@@ -640,6 +712,16 @@ async function checkSkill(
   env: NodeJS.ProcessEnv,
   defaultLedger: string,
 ): Promise<Record<string, unknown>> {
+  const maxAge = readMaxAge(args);
+  if (maxAge === null)
+    return text(
+      {
+        error: 'maxAge must look like 30d, 12h, 15m or 30s',
+        decision: 'blocked',
+        overallVerdict: null,
+      },
+      true,
+    );
   const roots = Array.isArray(args.roots) ? args.roots.map(String) : undefined;
   const named = typeof args.name === 'string' ? args.name : undefined;
   const skillArg = typeof args.skill === 'string' ? args.skill : undefined;
@@ -684,19 +766,33 @@ async function checkSkill(
       ...(resolver ? { resolver } : {}),
       ...(environment ? { environment } : {}),
     });
-    if (selection.status !== 'chosen') {
-      const candidates = [];
-      for (const copy of copies)
-        candidates.push(await describeCandidate(copy.path, copy.loadOrder, env));
+    const described = [];
+    for (const copy of copies) described.push(await describeCandidate(copy, env));
+    const selectedPath = selection.status === 'chosen' ? selection.copy.resolvedPath : null;
+    const assembled = assembleNameCopies(described, selectedPath);
+    const checkedAt = new Date().toISOString();
+    const identity = {
+      scannerVersion: TOOL_VERSION,
+      checkedAt,
+      ...(maxAge !== undefined ? { validUntil: validUntilFrom(checkedAt, maxAge) } : {}),
+    };
+    if (!assembled.precedenceKnown || selection.status !== 'chosen') {
       return text({
         decision: 'blocked',
         verdict: 'ambiguous',
         overallVerdict: null,
-        ambiguous: true,
+        ambiguous: copies.length > 1 || !assembled.precedenceKnown,
         authorizing: false,
         name: token,
-        reason: selection.reason,
-        candidates,
+        reason:
+          !assembled.precedenceKnown || selection.status === 'chosen'
+            ? PRECEDENCE_UNKNOWN
+            : selection.reason,
+        winner: assembled.winner,
+        loadOrderWinner: assembled.loadOrderWinner,
+        copies: assembled.copies,
+        candidates: assembled.candidates,
+        ...identity,
       });
     }
     const inner = await checkSkill(
@@ -712,10 +808,17 @@ async function checkSkill(
       defaultLedger,
     );
     const body = (inner.structuredContent ?? {}) as Record<string, unknown>;
+    body.copies = assembled.copies;
+    body.winner = assembled.winner;
+    body.loadOrderWinner = assembled.loadOrderWinner;
+    body.candidates = assembled.candidates;
+    body.overallVerdict = null;
     if (copies.length > 1)
       body.resolved = {
         path: selection.copy.path,
+        resolvedPath: selection.copy.resolvedPath,
         loadOrder: selection.copy.loadOrder,
+        precedence: selection.copy.precedence,
         resolver: resolver ?? null,
         environment: environment ?? null,
       };
@@ -928,6 +1031,7 @@ async function checkSkill(
         ...(args.executableScope === true
           ? { executableScope: true, executableDigest: judged.executable?.content ?? null }
           : {}),
+        ...(typeof maxAge === 'number' ? { validUntil: validUntilFrom(checkedAt, maxAge) } : {}),
       };
       await writeReceipt(receiptFile, receipt);
       checkedThisSession.add(checkId);
@@ -984,6 +1088,12 @@ async function checkSkill(
         logLine,
         timing,
         receipt: receiptFile,
+        scannerVersion: TOOL_VERSION,
+        checkedAt,
+        ...(typeof maxAge === 'number' ? { validUntil: validUntilFrom(checkedAt, maxAge) } : {}),
+        ...(result.verdict === 'no-findings'
+          ? { wording: notFlaggedWording(TOOL_VERSION, checkedAt) }
+          : {}),
       };
       if (agentView)
         return text({
@@ -1011,7 +1121,10 @@ async function checkSkill(
           approved: d.approved,
           changes: d.changes,
         })),
-        advice: ADVICE[result.verdict] ?? ADVICE.review,
+        advice:
+          result.verdict === 'no-findings'
+            ? notFlaggedWording(TOOL_VERSION, checkedAt)
+            : (ADVICE[result.verdict] ?? ADVICE.review),
       });
     };
     const budget = typeof args.timeoutMs === 'number' && args.timeoutMs > 0 ? args.timeoutMs : 0;
@@ -1206,6 +1319,9 @@ export async function callTool(
             reuse.audit === 'reused'
               ? res.reason
               : 'executable digest matches; only documentation changed, and this caller opted into that scope',
+          ...(receipt.verdict === 'no-findings'
+            ? { wording: notFlaggedWording(TOOL_VERSION, receipt.provenance.checkedAt) }
+            : {}),
         });
       }
       await logReuse(reuseLogPath(env), {
@@ -1323,7 +1439,7 @@ export async function callTool(
       });
       const copies: Array<Record<string, unknown> & { sha256: string }> = [];
       for (const copy of found) {
-        const described = await describeCandidate(copy.path, copy.loadOrder, env);
+        const described = await describeCandidate(copy, env);
         const sha = (described.digest as { content?: string } | null)?.content ?? '';
         copies.push({ ...described, sha256: sha });
       }
@@ -1375,8 +1491,16 @@ export async function callTool(
         publisherVerified: args.publisherVerified === true,
         ...(typeof args.sha256 === 'string' ? { sha256: args.sha256 } : {}),
       });
-      if (res.status !== 'found' || typeof args.path !== 'string')
-        return text(res, res.status !== 'found');
+      if (res.status !== 'found') return text(res, true);
+      const clock = storedClock(
+        store.find(
+          (s) =>
+            s.sha256.toLowerCase() === res.verdict.sha256.toLowerCase() &&
+            s.publisher === res.verdict.publisher,
+        ),
+      );
+      const age = freshnessFields(clock);
+      if (typeof args.path !== 'string') return text({ ...res, ...age }, age.stale === true);
       const dir = resolve(args.path);
       const wantExec = args.executableScope === true;
       const nowDigests = await skillDigests(dir, { executable: wantExec }).catch(() => null);
@@ -1412,7 +1536,10 @@ export async function callTool(
           current: reuse.current,
           reused: reuse.audit,
         }).catch(() => undefined);
-        return text({ ...res, audit: reuse.audit, reused: reuse.audit });
+        return text(
+          { ...res, audit: reuse.audit, reused: reuse.audit, ...age },
+          age.stale === true,
+        );
       }
       await logReuse(reuseLogPath(env), {
         at,

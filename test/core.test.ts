@@ -83,7 +83,7 @@ describe('scanner', () => {
     expect(result.skills[0]?.findings).toEqual([]);
     expect(result.verdict).toBe('no-findings');
     const human = renderHuman(result.skills, result.verdict, false);
-    expect(human).toContain('No findings');
+    expect(human).toContain('not flagged by ironheights');
     expect(human).toContain(SAFETY_REMINDER);
     expect(human).not.toMatch(/\bsafe\b|\bclean\b/i);
     const json = JSON.parse(
@@ -145,7 +145,8 @@ describe('scanner', () => {
   }, 60_000); // setup writes 500 files; slow on Windows runners. The scan itself is still held to 2 s above.
 });
 
-describe('walker robustness', { timeout: 30_000 }, () => { // many fs writes; slow on Windows runners
+describe('walker robustness', { timeout: 30_000 }, () => {
+  // many fs writes; slow on Windows runners
   it('handles empty folders, huge files, invalid utf-8, binaries, symlink loops, long lines, and odd names', async () => {
     const dir = await mkdtemp(join(tmpdir(), 'ih-walk-'));
     const empty = join(dir, 'empty');

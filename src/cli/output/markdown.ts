@@ -12,7 +12,8 @@ import { acceptanceLabel } from '../../core/suppress.ts';
 import { blockingDirectoryCount } from '../../core/verdict.ts';
 import type { LlmReviewReport } from '../../llm/review.ts';
 import { referenceLinks, referencesFor, referenceTags } from '../../rules/references.ts';
-import { NO_FINDINGS_LABEL, SAFETY_REMINDER } from '../../version.ts';
+import { notFlaggedWording } from '../../core/clean-wording.ts';
+import { SAFETY_REMINDER, TOOL_VERSION } from '../../version.ts';
 import { llmStatusLines } from './llm-status.ts';
 
 export function renderMarkdown(
@@ -21,6 +22,7 @@ export function renderMarkdown(
   scanMode: ScanMode = 'directory',
   advisory?: AdvisoryFeedNote,
   llmReview?: LlmReviewReport,
+  checkedAt?: string,
 ): string {
   const grade = gradeFromSkills(skills);
   const lines = ['# Ironheights scan', ''];
@@ -51,7 +53,12 @@ export function renderMarkdown(
     );
     if (skill.knownSecurityTool) lines.push(`Note: ${skill.knownSecurityTool.note}`, '');
     if (skill.findings.length === 0 && skill.verdict !== 'incomplete') {
-      lines.push(skill.sinceBaseline ? 'No new findings' : NO_FINDINGS_LABEL, '');
+      lines.push(
+        skill.sinceBaseline
+          ? 'No new findings'
+          : notFlaggedWording(TOOL_VERSION, checkedAt ?? new Date().toISOString()),
+        '',
+      );
     }
     for (const finding of skill.findings) {
       const where = finding.line ? `${finding.file}:${finding.line}` : finding.file;
