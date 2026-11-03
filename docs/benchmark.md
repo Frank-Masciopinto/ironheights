@@ -43,6 +43,10 @@ Reports are written to `bench/results/latest.md` and `bench/results/latest.json`
 | Blind held-out attacks at `block`   | 219/600 = 36.5% |
 | Blind held-out clean at `block`     | 15/300 = 5.0%   |
 | Anthropic skills flagged            | 0/19            |
+| Prose-only attacks at `block`       | 33/98 = 33.7%   |
+| Prose-only at `review` or `block`   | 51/98 = 52.0%   |
+
+Prose-only (plain-language) numbers were re-scored on main `de19a25` (0.34.0) on 3 Nov 2026. The 6/98 and 2/98 figures further down are the historical 0.32.0 and 0.29.0 results. The benchmark badge workflow now writes the prose-only rows to the proof page on every run, so this number is kept current there.
 
 Block-or-review was 248/516 (48.1%) after the detection experiment and 249/516 after IH-NET-001 on a cloud-metadata host started counting toward the verdict. Cisco skill-scanner 2.3.2 on the same set: 21.9% detection (113/516), 2.0% false positives (9/456), 1/19 Anthropic skills flagged.
 
