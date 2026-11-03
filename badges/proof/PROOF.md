@@ -2,9 +2,9 @@
 
 Every number in the README benchmark table comes from this run.
 
-- Workflow run: https://github.com/Frank-Masciopinto/ironheights/actions/runs/41686141483
-- Commit: `de19a25490d1e37c29d45faeb3fb6a6e87aaa1e5`
-- Time (UTC): 2026-11-03T17:42:34+00:00
+- Workflow run: https://github.com/Frank-Masciopinto/ironheights/actions/runs/41699748927
+- Commit: `e07d5e32f3d142589a292265c199baca587c40d5`
+- Time (UTC): 2026-11-03T19:05:50+00:00
 - Ironheights 0.34.0; Cisco skill-scanner 2.3.2 (static analyzers only, no LLM)
 - MaliciousSkillBench revision `d4b42ce5766a6e0359c987cf59c1007cb3795a90`
 
@@ -16,8 +16,11 @@ Every number in the README benchmark table comes from this run.
 | Clean block or review | 6.8% (31/456) | 2.4% (11/456) |
 | Blind attacks blocked | 36.5% (219/600) | 31.7% (190/600) |
 | Blind clean blocked | 5.0% (15/300) | 2.0% (6/300) |
+| Prose-only attacks blocked | 33.7% (33/98) | 5.1% (5/98) |
+| Prose-only attacks block or review | 52.0% (51/98) | 5.1% (5/98) |
 | Anthropic skills flagged | 0/19 | 1/19 |
 
+Prose-only = the 98 attacks with no code fence or shell/python line (`kind: prose` in the manifest; regex tag, see docs/benchmark.md).
 Cisco has no review verdict: block = max severity HIGH or CRITICAL, block-or-review = MEDIUM or above.
 
 Files: [results.csv](results.csv) (one row per skill and scanner), [blind-aggregate.json](blind-aggregate.json)
