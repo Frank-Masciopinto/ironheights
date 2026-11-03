@@ -108,10 +108,15 @@ if (len(bmal), len(bben)) != (600, 300):
 def frac(v, sub):
     h = sum(v[s['id']] for s in sub)
     return h, f'{round(100 * h / len(sub), 1)}% ({h}/{len(sub)})'
+prose = [s for s in mal if s.get('kind') == 'prose']
+if len(prose) != 98:
+    sys.exit('unexpected prose-only attack count')
 def extra(block, review):
-    # rows beyond the main three: block-or-review on the main set, block on the blind set
+    # rows beyond the main three: block-or-review on the main set, block on the blind set,
+    # and the prose-only (plain-language) attacks, tagged `kind: prose` in bench/msb/manifest.json
     return dict(review_detect=frac(review, mal), review_fp=frac(review, ben),
-                blind_detect=frac(block, bmal), blind_fp=frac(block, bben))
+                blind_detect=frac(block, bmal), blind_fp=frac(block, bben),
+                prose_detect=frac(block, prose), prose_review=frac(review, prose))
 ih = score({k: v == 'block' for k, v in verdict.items()})
 ihx = extra({k: v == 'block' for k, v in verdict.items()}, {k: v in ('block', 'review') for k, v in verdict.items()})
 version = json.load(open(os.path.join(ROOT, 'package.json')))['version']
@@ -201,8 +206,11 @@ Every number in the README benchmark table comes from this run.
 | Clean block or review | {ihx['review_fp'][1]} | {summary.get('cisco', {}).get('review_fp', '')} |
 | Blind attacks blocked | {ihx['blind_detect'][1]} | {summary.get('cisco', {}).get('blind_detect', '')} |
 | Blind clean blocked | {ihx['blind_fp'][1]} | {summary.get('cisco', {}).get('blind_fp', '')} |
+| Prose-only attacks blocked | {ihx['prose_detect'][1]} | {summary.get('cisco', {}).get('prose_detect', '')} |
+| Prose-only attacks block or review | {ihx['prose_review'][1]} | {summary.get('cisco', {}).get('prose_review', '')} |
 | Anthropic skills flagged | {ih['anthropic']} | {summary.get('cisco', {}).get('anthropic', '')} |
 
+Prose-only = the 98 attacks with no code fence or shell/python line (`kind: prose` in the manifest; regex tag, see docs/benchmark.md).
 Cisco has no review verdict: block = max severity HIGH or CRITICAL, block-or-review = MEDIUM or above.
 
 Files: [results.csv](results.csv) (one row per skill and scanner), [blind-aggregate.json](blind-aggregate.json)
