@@ -1,5 +1,28 @@
 # Changelog
 
+## 0.34.0 — 2026-11-03
+
+**A clean result names the scanner and the time, and it is not a promise of safety.** Ironheights: The Immune System for AI Agents. 0.34.0 ships the detection already merged on main since 0.33.0, and it stops a no-findings result from reading as safe. Verdict values, exit codes, severities and existing JSON fields are unchanged.
+
+Detection included from main (numbers from the merged pull requests and the README; Cisco skill-scanner 2.3.2 on the same set remains 21.9% detection and 2.0% false positives):
+
+- Accuracy gates on every pull request: a 5,655-skill real-world clean set, a blind holdout (600 malicious and 300 benign) and shadow mode. The 0.33.0 baseline was 275/5,655 real-world blocks, blind 212/600 and 15/300.
+- **IH-REF-002**: block an unshipped helper script described as sending data elsewhere. Benchmark blocks 162/516 to 165/516. False positives stayed 11/456.
+- **IH-EXEC-006**: a conditional trailer that hands control to an outside path. Blocks 165/516 to 168/516. False positives stayed 11/456.
+- **IH-NET-002**: a named API key sent to its own documented API host is not flagged. Attacks stayed 168/516. Safe skills blocked or sent to review went from 32/456 to 31/456. Suggested by **bnb_hq**.
+- **IH-INJ-005**, **IH-INJ-006** and **IH-REF-003**: outside-file instructions, hidden output changes, and an unshipped companion doc that overrides the skill. Block-or-review 231/516 to 237/516. Blocks and false positives unchanged.
+- **IH-INJ-007**: the skill tells the agent to reveal, invalidate or switch off its own session instructions. Blocks 168/516 to 171/516. Blind holdout 212/600 to 217/600. False positives stayed 11/456.
+- Detection experiment: six tightened rules, a pre-confirmed send, and an opt-out undone on a timer. Blocks 171/516 to 174/516 (33.7%). Block-or-review 238/516 to 248/516 (48.1%). Blind 217/600 to 219/600. False positives stayed 11/456.
+- **IH-NET-001** on a cloud-metadata host counts toward the verdict. A metadata read is no longer grade F with a no-findings verdict and exit 0. Blocks stayed 174/516 and false positives stayed 11/456. Block-or-review moved from 248 to 249. Reported by **LinkedIn Operator**.
+
+On the benchmark after those changes: detection at block 33.7% (174/516), false positives 2.4% (11/456), block-or-review 249/516, blind held-out 36.5% (219/600) blocked and 5.0% (15/300) clean skills blocked, Anthropic skills 0/19. Cisco skill-scanner: 21.9% (113/516) and 2.0% (9/456).
+
+Wording and MCP (no rule, severity, score or verdict change):
+
+- A no-findings result in human-readable scan output, `ironheights report` and MCP `check_skill` / `lookup_verdict` reads `not flagged by ironheights <version>, as of <ISO timestamp>` and states that absence of findings is not proof of safety. JSON gains `scannerVersion`, `checkedAt` and, only when `--max-age` or the MCP `maxAge` argument is set, `validUntil`. Suggested by **myinvestdesk**, **vintos** and **diviner**.
+- A stored or reused verdict (`lookup_verdict`, `verify_check`, and `ironheights report` reading an earlier result) is marked stale when its scanner version is older than the one running now, or when `validUntil` has passed, and a rescan is suggested. A pass from an older scanner is detection debt. A byte-for-byte match is still logged as `reused`, not `checked`. A byte mismatch is still a `stale-answer`. Suggested by **diviner**.
+- `check_skill` on a bare name returns every copy of that name, keyed by resolved absolute path, with its loader precedence, its own findings and its content digest, and marks the load-order winner. An overall verdict is attached only to the winner after `resolver` or `environment` selects one copy. If precedence cannot be computed, there is no overall allow. Suggested by **bytes**, **rossum**, **diviner** and **cassini**.
+
 ## 0.33.0 — 2026-11-02
 
 **Four attack patterns from the Moltbook submolts now block.** Ironheights: The Immune System for AI Agents. 0.33.0 adds four narrow block-alone signals, each tested as a separate experiment on the full benchmark before merging: a skill that moves all its real instructions into a bundled PDF it calls authoritative; a bundled script launched to keep running in the background; a network call whose destination is decoded at runtime (credit fromthebot); and rows from a bundled file passed off as live citations in the output (credit rossum, fromthebot, hermes-agent-88, bytes). On the benchmark, detection at block rises from 26.6% (137/516) to 31.4% (162/516) with false positives unchanged at 2.4% (11/456) and 0/19 Anthropic skills flagged. Prose-only attacks caught at block go from 6/98 to 24/98. Held-out half: 33.2% (95/286) at 3.3% (8/245) false positives.

@@ -111,10 +111,10 @@ describe('suppressions', () => {
       expect(result.code).toBe(0);
       expect(result.text).toContain('Suppressed: 1');
       expect(result.text).toContain('IH-CRED-001 SKILL.md:6 reason=reviewed local demo');
-      expect(result.text).toContain('No findings');
+      expect(result.text).toContain('not flagged by ironheights');
       expect(result.text).toContain('Grade: A (100/100)');
       expect(result.text).toContain('1 suppressed');
-      expect(result.text.indexOf('Grade:')).toBeLessThan(result.text.indexOf(SAFETY_REMINDER));
+      expect(result.text.indexOf('Grade:')).toBeLessThan(result.text.lastIndexOf(SAFETY_REMINDER));
     } finally {
       await rm(home, { recursive: true, force: true });
     }
@@ -331,7 +331,7 @@ describe('text scan', () => {
       });
       expect(quiet.code).toBe(0);
       expect(quiet.text).toContain('Limited text scan');
-      expect(quiet.text).toContain('No findings');
+      expect(quiet.text).toContain('not flagged by ironheights');
       expect(quiet.text).toContain('Grade: A (100/100)');
       expect(quiet.text).toContain(SAFETY_REMINDER);
       expect(quiet.text).not.toMatch(/\bsafe\b|\bclean\b/i);
@@ -423,7 +423,7 @@ describe('html report', () => {
       expect(file).toContain('Grade: A (100/100)');
       expect(file).toContain(SAFETY_REMINDER);
       expect(file).toContain('README badge');
-      expect(file).toContain('ironheights 0.33.0: grade A (100/100), verdict no-findings');
+      expect(file).toContain('ironheights 0.34.0: grade A (100/100), verdict no-findings');
       expect(file).not.toMatch(/<script/i);
     } finally {
       await rm(home, { recursive: true, force: true });

@@ -89,10 +89,10 @@ The report names the environment it measured (`measuredEnvironment`, from `--env
 
 Cloud metadata is its own row for `169.254.169.254`:
 
-| Cell      | Values                                      |
-| --------- | ------------------------------------------- |
-| Reachable | `reachable`, `unreachable`, or `untested`   |
-| IMDSv2    | `required`, `not-required`, or `untested`   |
+| Cell      | Values                                          |
+| --------- | ----------------------------------------------- |
+| Reachable | `reachable`, `unreachable`, or `untested`       |
+| IMDSv2    | `required`, `not-required`, or `untested`       |
 | Hop limit | a number when the probe saw it, else `untested` |
 
 Nothing is probed unless you pass `--probe-metadata`. Without that flag every cell is `untested`, including when an earlier report or another environment had a real value. A cell stays `untested` when this run did not establish it: a connection failure does not invent an IMDSv2 answer, and a hop limit is recorded only from the `x-aws-ec2-metadata-hop-limit` response header.
@@ -105,6 +105,18 @@ npx ironheights report . --probe-metadata   # contacts 169.254.169.254; off by d
 `--previous-report` diffs this run's reachable hosts against that file. Added and removed hosts keep the skill name when the report has one. The previous report's metadata cells are not copied in.
 
 Suggested on Moltbook by rossum, bytes, diviner, cassini, riahstudio and KitSinclair.
+
+## A no-findings row is not a pass forever (0.34.0)
+
+When any skill's verdict is `no-findings`, the text summary and the HTML page say:
+
+`not flagged by ironheights <version>, as of <ISO timestamp>. Absence of findings is not proof of safety.`
+
+The JSON adds `scannerVersion` and `checkedAt` next to the existing `version` and `generatedAt`. The existing `validUntil` from `--valid-days` is unchanged.
+
+`ironheights report --verify` marks a saved grade `stale` when it was graded by an older scanner, or when its `validUntil` has passed, and tells you to rescan. The status is still `version-mismatch` or `expired` as before; `stale` is added so an old pass is visible. A history row written by 0.34.0 carries `scannerVersion`. A later report calls that row stale when the running scanner is newer or the row's `validUntil` has passed.
+
+Suggested on Moltbook by myinvestdesk, vintos and diviner. A pass from an older scanner is detection debt (diviner).
 
 ## Scheduled in CI
 

@@ -14,6 +14,7 @@ import { dirname, join } from 'node:path';
 import { ironheightsHome } from '../core/config.ts';
 import { snapshotSkill } from '../drift/drift.ts';
 import { allRules } from '../rules/index.ts';
+import { verdictFreshness, versionIsOlder } from '../core/clean-wording.ts';
 import { TOOL_NAME, TOOL_VERSION } from '../version.ts';
 import type { JudgedFile } from './digests.ts';
 
@@ -75,6 +76,8 @@ export interface Receipt {
   /** 0.31.0: set only when the caller opted into executable scope. */
   executableScope?: boolean;
   executableDigest?: string | null;
+  /** 0.34.0: set only when the caller passed maxAge. Absent means no extra expiry. */
+  validUntil?: string;
 }
 
 let cachedRuleset: string | undefined;
@@ -188,6 +191,12 @@ export interface VerifyResult {
   judged?: string | null;
   current?: string | null;
   operator?: string;
+  /** 0.34.0: true when this stored result is too old to treat as a current pass. */
+  stale?: boolean;
+  rescan?: string;
+  scannerVersion?: string;
+  checkedAt?: string;
+  validUntil?: string;
 }
 
 /** Re-check a receipt against the files on disk now and the rule set loaded now. */
@@ -215,11 +224,21 @@ export async function verifyReceipt(
   if (
     receipt.provenance.rulesetHash !== rulesetHash() ||
     receipt.provenance.version !== TOOL_VERSION
-  )
-    return blocked(
-      'stale',
-      'checked with a different Ironheights version or rule set; check again',
-    );
+  ) {
+    const older = versionIsOlder(receipt.provenance.version, TOOL_VERSION);
+    return {
+      ...blocked(
+        'stale',
+        older
+          ? `stale: scanner ${receipt.provenance.version} is older than ${TOOL_VERSION}. A pass from an older scanner is detection debt. Rescan before relying on this pass.`
+          : 'checked with a different Ironheights version or rule set; check again',
+      ),
+      stale: true,
+      rescan: 'Rescan before relying on this pass.',
+      scannerVersion: receipt.provenance.version,
+      checkedAt: receipt.provenance.checkedAt,
+    };
+  }
   const dir = pathNow ?? receipt.localPath;
   if (!dir)
     return blocked(
@@ -231,7 +250,26 @@ export async function verifyReceipt(
   if (now.digest !== receipt.provenance.contentDigest)
     return blocked('stale', 'the files changed since this check; check again');
   if (receipt.expiresAt && Date.parse(receipt.expiresAt) <= Date.now())
-    return blocked('stale', `the verdict expired at ${receipt.expiresAt}; check again`);
+    return {
+      ...blocked('stale', `the verdict expired at ${receipt.expiresAt}; check again`),
+      stale: true,
+      rescan: 'Rescan before relying on this pass.',
+      scannerVersion: receipt.provenance.version,
+      checkedAt: receipt.provenance.checkedAt,
+    };
+  const age = verdictFreshness({
+    scannerVersion: receipt.provenance.version,
+    validUntil: receipt.validUntil ?? null,
+  });
+  if (age.stale)
+    return {
+      ...blocked('stale', `stale: ${age.reasons.join('; ')}. ${age.rescan}`),
+      stale: true,
+      rescan: age.rescan,
+      scannerVersion: receipt.provenance.version,
+      checkedAt: receipt.provenance.checkedAt,
+      ...(receipt.validUntil ? { validUntil: receipt.validUntil } : {}),
+    };
   return {
     checkId,
     status: 'live',
@@ -239,5 +277,9 @@ export async function verifyReceipt(
     reason: 'same files, same rule set, same version as the receipt',
     clearanceAgeSeconds: Math.round((Date.now() - Date.parse(receipt.provenance.checkedAt)) / 1000),
     receipt,
+    stale: false,
+    scannerVersion: receipt.provenance.version,
+    checkedAt: receipt.provenance.checkedAt,
+    ...(receipt.validUntil ? { validUntil: receipt.validUntil } : {}),
   };
 }

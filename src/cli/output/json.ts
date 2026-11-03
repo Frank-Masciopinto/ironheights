@@ -18,6 +18,8 @@ export interface RenderContext {
   limitNote?: string;
   advisory?: AdvisoryFeedNote;
   llmReview?: LlmReviewReport;
+  /** Set only when the caller passed --max-age. */
+  validUntil?: string;
 }
 
 export function renderJson(
@@ -34,6 +36,9 @@ export function renderJson(
     schemaVersion: SCHEMA_VERSION,
     tool: { name: TOOL_NAME, version: TOOL_VERSION },
     scannedAt,
+    scannerVersion: TOOL_VERSION,
+    checkedAt: scannedAt,
+    ...(context.validUntil ? { validUntil: context.validUntil } : {}),
     verdict,
     skippedFileCount: skills.reduce((sum, skill) => sum + skill.filesSkipped.length, 0),
     ...directoryField(collectDirectories(skills)),

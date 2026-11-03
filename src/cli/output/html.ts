@@ -13,6 +13,7 @@ import { acceptanceLabel } from '../../core/suppress.ts';
 import { blockingDirectoryCount } from '../../core/verdict.ts';
 import type { LlmReviewReport } from '../../llm/review.ts';
 import { openCreUrl, referencesFor, referenceTags } from '../../rules/references.ts';
+import { notFlaggedWording } from '../../core/clean-wording.ts';
 import { SAFETY_REMINDER, TOOL_VERSION } from '../../version.ts';
 import { llmStatusLines } from './llm-status.ts';
 
@@ -77,7 +78,11 @@ export function renderHtml(
     parts.push(
       `<p>Score: ${escapeHtml(String(skill.score))}. Verdict: ${escapeHtml(skill.verdict)}</p>`,
     );
-    parts.push(findingsTable(skill.findings));
+    parts.push(
+      skill.findings.length === 0 && skill.verdict === 'no-findings'
+        ? `<p>${escapeHtml(notFlaggedWording(TOOL_VERSION, scannedAt))}</p>`
+        : findingsTable(skill.findings),
+    );
     parts.push(
       simpleList(
         'Suppressed',

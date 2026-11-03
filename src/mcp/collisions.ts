@@ -10,8 +10,15 @@ import { join, resolve, sep } from 'node:path';
 
 export interface NameCopy {
   path: string;
+  /** Absolute path after realpath. This is the key a caller uses to tell copies apart. */
+  resolvedPath: string;
   /** 1-based position on the search path (roots in the order given). */
   loadOrder: number;
+  /**
+   * Loader precedence. Same as loadOrder when it can be computed (lower loads first).
+   * Null when the directory cannot be resolved, which must not produce an overall allow.
+   */
+  precedence: number | null;
   root: string;
 }
 
@@ -35,13 +42,104 @@ export async function copiesOnPath(name: string, roots: string[]): Promise<NameC
     const dir = join(resolve(root), bare);
     const st = await lstat(dir).catch(() => undefined);
     if (!st?.isDirectory()) continue;
-    const real = await realpath(dir).catch(() => dir);
-    if (seen.has(real)) continue;
-    seen.add(real);
-    out.push({ path: dir, loadOrder: order, root: resolve(root) });
+    const abs = resolve(dir);
+    let resolvedPath = abs;
+    let precedence: number | null = order;
+    try {
+      resolvedPath = await realpath(dir);
+    } catch {
+      precedence = null;
+    }
+    if (seen.has(resolvedPath)) continue;
+    seen.add(resolvedPath);
+    out.push({ path: dir, resolvedPath, loadOrder: order, precedence, root: resolve(root) });
   }
   return out;
 }
+
+export interface DescribedCopy {
+  path: string;
+  resolvedPath: string;
+  loadOrder: number;
+  precedence: number | null;
+  findings: unknown[];
+  digest: unknown;
+  verdict: string;
+  decision: string;
+}
+
+export interface NamedCopyRecord {
+  path: string;
+  resolvedPath: string;
+  loadOrder: number;
+  precedence: number | null;
+  /** True for the copy that wins: the selected copy, or the load-order winner when none is selected. */
+  winner: boolean;
+  /** True for the earliest root. Stays put when a resolver picks a different copy. */
+  loadOrderWinner: boolean;
+  findings: unknown[];
+  digest: unknown;
+  verdict: string;
+  decision: string;
+  /** Set only on the winner, and only after resolver or environment has selected one copy. */
+  overallVerdict?: string;
+}
+
+export interface NameAssembly {
+  copies: Record<string, NamedCopyRecord>;
+  candidates: NamedCopyRecord[];
+  winner: string | null;
+  loadOrderWinner: string | null;
+  precedenceKnown: boolean;
+}
+
+/**
+ * Key every copy by its resolved absolute path. An overall verdict is attached
+ * only to the winner, and only once a selector has chosen that copy. When any
+ * copy has no precedence, nothing is a winner and nothing carries an overall verdict.
+ */
+export function assembleNameCopies(
+  described: DescribedCopy[],
+  selectedResolvedPath: string | null,
+): NameAssembly {
+  const precedenceKnown = described.length > 0 && described.every((c) => c.precedence !== null);
+  let loadOrderWinner: string | null = null;
+  if (precedenceKnown) {
+    const ranked = [...described].sort(
+      (a, b) => (a.precedence as number) - (b.precedence as number),
+    );
+    loadOrderWinner = ranked[0]?.resolvedPath ?? null;
+  }
+  const selected =
+    precedenceKnown &&
+    selectedResolvedPath !== null &&
+    described.some((c) => c.resolvedPath === selectedResolvedPath)
+      ? selectedResolvedPath
+      : null;
+  const winner = selected ?? (selectedResolvedPath === null ? loadOrderWinner : null);
+  const copies: Record<string, NamedCopyRecord> = {};
+  const candidates: NamedCopyRecord[] = [];
+  for (const copy of described) {
+    const record: NamedCopyRecord = {
+      path: copy.path,
+      resolvedPath: copy.resolvedPath,
+      loadOrder: copy.loadOrder,
+      precedence: copy.precedence,
+      winner: winner !== null && copy.resolvedPath === winner,
+      loadOrderWinner: loadOrderWinner !== null && copy.resolvedPath === loadOrderWinner,
+      findings: copy.findings,
+      digest: copy.digest,
+      verdict: copy.verdict,
+      decision: copy.decision,
+    };
+    if (selected !== null && copy.resolvedPath === selected) record.overallVerdict = copy.verdict;
+    copies[copy.resolvedPath] = record;
+    candidates.push(record);
+  }
+  return { copies, candidates, winner, loadOrderWinner, precedenceKnown };
+}
+
+export const PRECEDENCE_UNKNOWN = 'loader precedence cannot be computed; refusing an overall allow';
 
 export interface Selector {
   resolver?: string;

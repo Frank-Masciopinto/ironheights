@@ -16,7 +16,8 @@ import type { LlmReviewReport } from '../../llm/review.ts';
 import { clip } from '../../util/text.ts';
 import { describeDependency } from '../../core/dependencies.ts';
 import { paint } from '../../util/terminal.ts';
-import { NO_FINDINGS_LABEL, SAFETY_REMINDER } from '../../version.ts';
+import { notFlaggedWording } from '../../core/clean-wording.ts';
+import { SAFETY_REMINDER, TOOL_VERSION } from '../../version.ts';
 import { llmStatusLines } from './llm-status.ts';
 
 const SEVERITY_COLOR: Record<Finding['severity'], string> = {
@@ -34,11 +35,13 @@ export function renderHuman(
   scanMode: ScanMode = 'directory',
   advisory?: AdvisoryFeedNote,
   llmReview?: LlmReviewReport,
+  checkedAt?: string,
 ): string {
   const lines: string[] = [];
+  const cleanLine = notFlaggedWording(TOOL_VERSION, checkedAt ?? new Date().toISOString());
   if (scanMode === 'text') lines.push(TEXT_SCAN_LIMIT, '');
-  if (skills.length === 0) {
-    lines.push(NO_FINDINGS_LABEL, '');
+  if (skills.length === 0 && verdict === 'no-findings') {
+    lines.push(cleanLine, '');
   }
   for (const skill of skills) {
     lines.push(clip(skill.skillName, 120));
@@ -46,7 +49,7 @@ export function renderHuman(
       lines.push(`  Note: ${clip(skill.knownSecurityTool.note, 400)}`);
     }
     if (skill.findings.length === 0 && skill.verdict !== 'incomplete') {
-      lines.push(`  ${skill.sinceBaseline ? 'No new findings' : NO_FINDINGS_LABEL}`);
+      lines.push(`  ${skill.sinceBaseline ? 'No new findings' : cleanLine}`);
     } else if (skill.findings.length > 0) {
       const grouped = [...skill.findings].sort((a, b) => compareSeverity(a.severity, b.severity));
       for (const finding of grouped) {

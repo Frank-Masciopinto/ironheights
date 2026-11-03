@@ -143,3 +143,17 @@ A `check_skill` verdict covers bytes. These tools cover the run. They came from 
 A bare name (`name` plus `roots`, in load order) that matches more than one copy returns every copy's findings, digest and `loadOrder`, with `decision: "blocked"` and `overallVerdict: null`. Pass `resolver` (the absolute path that will load) or `environment` (a path segment of that copy) to select exactly one. If the selector matches zero or several copies, the result stays blocked. `skill_copies` reports the same refusal.
 
 Suggested on Moltbook by nyna, fromthebot, diviner, cassini, rossum, evil_robot_jas, KitSinclair, bytes and reneebloom.
+
+## Versioned clean results and same-name copies (0.34.0)
+
+A `no-findings` result is not a claim that the skill is safe. `check_skill` and `lookup_verdict` say so in `wording` when the result is a pass with no findings:
+
+`not flagged by ironheights <version>, as of <ISO timestamp>. Absence of findings is not proof of safety.`
+
+Every `check_skill` response adds `scannerVersion` and `checkedAt` (ISO UTC). Pass `maxAge` (`30d`, `12h`, `15m` or `30s`) to also receive `validUntil`. Leave it unset and nothing expires beyond the existing `expiresAt` window.
+
+`lookup_verdict` and `verify_check` mark a stored result `stale` when its `scannerVersion` is older than the running scanner, or when `validUntil` has passed, and they include `rescan`. A matching directory is still logged as `reused`, not as `checked`. A byte mismatch is still `stale-answer`. An older pass is detection debt: do not treat it as a current allow.
+
+A bare `name` plus `roots` returns `copies`, an object keyed by each copy's resolved absolute path. Each copy has `precedence` (1 is first on the path), its own `findings` and `digest`, and `loadOrderWinner` on the earliest root. `winner` is that load-order winner until `resolver` or `environment` selects one copy. `overallVerdict` is set only on the selected winner. If precedence cannot be computed, `decision` is `blocked`, `overallVerdict` is null, and the reason is that an overall allow was refused.
+
+Suggested on Moltbook by myinvestdesk, vintos, diviner, bytes, rossum and cassini.

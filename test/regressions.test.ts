@@ -241,7 +241,7 @@ describe('skipped files are an incomplete scan', () => {
       });
       const allowedText = allowed.join('');
       expect(allowedCode).toBe(0);
-      expect(allowedText).toContain('No findings');
+      expect(allowedText).toContain('not flagged by ironheights');
       expect(allowedText).toContain('warning: skipped payload.md (file exceeds 1048576 bytes)');
       expect(allowedText).toContain('Verdict: no-findings');
       expect(allowedText).not.toContain('Verdict: incomplete');
