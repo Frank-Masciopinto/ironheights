@@ -175,49 +175,49 @@ export const RULE_REFERENCES: Record<string, RuleReferences> = {
     mitreAtlas: [],
     openCre: [],
   },
-  'IH-XB-A': {
+  'IH-NET-003': {
     owaspLlm: ['LLM02:2025'],
     owaspAgentic: ['ASI02:2026'],
     mitreAtlas: [],
     openCre: [],
   },
-  'IH-XB-B': {
+  'IH-OBF-002': {
     owaspLlm: ['LLM01:2025'],
     owaspAgentic: ['ASI05:2026'],
     mitreAtlas: [],
     openCre: [],
   },
-  'IH-XB-C': {
+  'IH-NET-004': {
     owaspLlm: ['LLM02:2025'],
     owaspAgentic: ['ASI03:2026'],
     mitreAtlas: [],
     openCre: [],
   },
-  'IH-XB-D': {
+  'IH-INJ-008': {
     owaspLlm: ['LLM01:2025'],
     owaspAgentic: ['ASI01:2026'],
     mitreAtlas: [],
     openCre: [],
   },
-  'IH-XB-E': {
+  'IH-INJ-009': {
     owaspLlm: ['LLM01:2025'],
     owaspAgentic: ['ASI01:2026'],
     mitreAtlas: [],
     openCre: [],
   },
-  'IH-XB-F': {
+  'IH-META-002': {
     owaspLlm: ['LLM01:2025'],
     owaspAgentic: ['ASI04:2026'],
     mitreAtlas: [],
     openCre: [],
   },
-  'IH-XB-G': {
+  'IH-INJ-010': {
     owaspLlm: ['LLM06:2025'],
     owaspAgentic: ['ASI09:2026'],
     mitreAtlas: [],
     openCre: [],
   },
-  'IH-XB-J': {
+  'IH-PERSIST-002': {
     owaspLlm: ['LLM06:2025'],
     owaspAgentic: ['ASI06:2026'],
     mitreAtlas: [],
