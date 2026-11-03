@@ -17,8 +17,8 @@ is committed):
 Look-alike categories (a skill can be in several): monitoring/daemon/background 1,330, API key 1,267,
 scheduler 914, installer 860, backup 642.
 
-`bench/realworld/baseline.json` lists the skills `main` blocks today. **The job fails if a PR blocks
-any skill not on that list.** Removing entries (fixing false positives) is always fine; adding one
+`bench/realworld/baseline.json` lists the skills `main` blocks or sends to review today. **The job fails if a PR blocks,
+or sends to review, any skill not on that list.** Removing entries (fixing false positives) is always fine; adding one
 needs a written reason in the PR and the maintainer's approval.
 
 ## 2. Blind held-out attack set

@@ -96,16 +96,22 @@ def scan(path, env_extra=None):
     res = {}
     for sk in json.loads(p.stdout)['skills']:
         crit = sorted({f['ruleId'] for f in sk['findings'] if f['severity'] == 'critical'})
+        if sk['verdict'] == 'review':
+            crit = sorted({f['ruleId'] for f in sk['findings'] if f['severity'] in ('critical', 'high')})
         res[os.path.basename(os.path.realpath(sk['root']))] = (sk['verdict'], crit or ['score'])
     return res
 
 def blocked(res):
     return {names[k]: v[1] for k, v in res.items() if v[0] == 'block'}
 
+def reviewed(res):
+    return {names[k]: v[1] for k, v in res.items() if v[0] == 'review'}
+
 live = scan(rw_dir)
 if len(live) != len(RW['skills']):
     sys.exit(f'{len(RW["skills"]) - len(live)} real-world skills missing from scan output')
 now = blocked(live)
+rev = reviewed(live)
 would = {k: v for k, v in blocked(scan(rw_dir, {'IRONHEIGHTS_SHADOW': 'enforce'})).items() if k not in now}
 
 # --- blind held-out attacks (aggregate only)
@@ -138,33 +144,42 @@ for rules in now.values():
 version = json.load(open(os.path.join(ROOT, 'package.json')))['version']
 report = dict(version=version, realworld_total=len(RW['skills']), realworld_blocked=len(now),
               realworld_blocked_by_rule=dict(sorted(by_rule.items())),
+              realworld_review=len(rev),
               shadow_would_block=len(would),
               blind=dict(detect=f"{blind['malicious']}/{BL['counts']['malicious']}", fp=f"{blind['benign']}/{BL['counts']['benign']}"))
 os.makedirs(out_dir, exist_ok=True)
-json.dump(dict(report, blocked=now, shadow_would_block_ids=would), open(os.path.join(out_dir, 'realworld-gate.json'), 'w'), indent=1)
+json.dump(dict(report, blocked=now, review=rev, shadow_would_block_ids=would), open(os.path.join(out_dir, 'realworld-gate.json'), 'w'), indent=1)
 print(json.dumps(report, indent=1))
 
 if write_baseline:
-    json.dump({'note': 'Real-world skills main currently blocks (reviewed). The PR gate fails on any block not listed here. '
+    json.dump({'note': 'Real-world skills main currently blocks or sends to review (reviewed). The PR gate fails on any block or review not listed here. '
                        'Shrink this list freely; growing it needs an explicit reviewed reason in the PR.',
                'version': version, 'blind': dict(malicious=blind['malicious'], benign=blind['benign']),
-               'blocked': {k: now[k] for k in sorted(now)}}, open(BASE_PATH, 'w'), indent=1)
+               'blocked': {k: now[k] for k in sorted(now)},
+               'review': {k: rev[k] for k in sorted(rev)}}, open(BASE_PATH, 'w'), indent=1)
     print('baseline written')
     sys.exit(0)
 
 base = json.load(open(BASE_PATH))
 new = sorted(k for k in now if k not in base['blocked'])
 fixed = sorted(k for k in base['blocked'] if k not in now)
+base_rev = base.get('review', {})
+# A skill main already blocks or sends to review is not new; a block that drops to review is not new.
+new_rev = sorted(k for k in rev if k not in base_rev and k not in base['blocked'])
 fail = []
 lines = [f"## Accuracy gates ({version})", '',
          f"| Gate | Baseline (main) | This PR | Result |", '|---|---|---|---|',
          f"| Real-world clean skills blocked | {len(base['blocked'])}/{len(RW['skills'])} | {len(now)}/{len(RW['skills'])} | {'FAIL: ' + str(len(new)) + ' new' if new else 'pass'} |",
+         f"| Real-world clean skills sent to review | {len(base_rev)}/{len(RW['skills'])} | {len(rev)}/{len(RW['skills'])} | {'FAIL: ' + str(len(new_rev)) + ' new' if new_rev else 'pass'} |",
          f"| Blind attacks blocked | {base['blind']['malicious']}/{BL['counts']['malicious']} | {blind['malicious']}/{BL['counts']['malicious']} | {'FAIL' if blind['malicious'] < base['blind']['malicious'] else 'pass'} |",
          f"| Blind benign blocked | {base['blind']['benign']}/{BL['counts']['benign']} | {blind['benign']}/{BL['counts']['benign']} | {'FAIL' if blind['benign'] > base['blind']['benign'] else 'pass'} |",
          f"| Shadow checks would block (real-world) | - | {len(would)} | {'not promotable' if would else 'promotable'} |", '']
 if new:
     fail.append('new real-world blocks')
     lines += ['New real-world blocks (each is a likely false positive):', ''] + [f"- `{k}` ({', '.join(now[k])})" for k in new] + ['']
+if new_rev:
+    fail.append('new real-world review verdicts')
+    lines += ['New real-world review verdicts (each is a likely false positive):', ''] + [f"- `{k}` ({', '.join(rev[k])})" for k in new_rev] + ['']
 if fixed:
     lines += [f"{len(fixed)} baseline blocks no longer block (run with --write-baseline to shrink the baseline)."]
 if blind['malicious'] < base['blind']['malicious']:
