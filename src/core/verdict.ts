@@ -91,6 +91,7 @@ export function gradeRiskFor(findings: Finding[]): number {
  */
 export const CONTEXT_ONLY_RULES: ReadonlySet<string> = new Set([
   'IH-META-001',
+  'IH-META-005',
   'IH-REF-001',
   'IH-NET-001',
   'IH-FS-001',
@@ -140,7 +141,7 @@ export function isContextOnly(finding: Finding): boolean {
 export function verdictFor(
   allFindings: Finding[],
   thresholds: { block: number; review: number },
-  options?: { filesSkipped?: number; allowSkipped?: boolean },
+  options?: { filesSkipped?: number; allowSkipped?: boolean; rebuildableGap?: boolean },
 ): Verdict {
   const findings = allFindings.some((finding) => !isContextOnly(finding)) ? allFindings : [];
   const score = scoreFindings(findings);
@@ -154,6 +155,9 @@ export function verdictFor(
     return 'review';
   }
   if (!options?.allowSkipped && (options?.filesSkipped ?? 0) > 0) return 'incomplete';
+  // A placeholder package is incomplete even when `--allow-skipped` is set.
+  // Skipped directories are a different choice; a missing skill file is not.
+  if (options?.rebuildableGap) return 'incomplete';
   return 'no-findings';
 }
 

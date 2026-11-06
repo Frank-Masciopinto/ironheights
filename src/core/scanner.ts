@@ -394,9 +394,12 @@ function finishSkill(
     gradeRisk: gradeRiskFor(outcome.active),
     verdict: 'no-findings',
   };
+  const gap = outcome.active.find((finding) => finding.ruleId === 'IH-META-005');
+  if (gap) report.rebuildableGap = gap.message;
   report.verdict = verdictFor(outcome.active, config.thresholds, {
     filesSkipped: blockingSkipCount(report),
     allowSkipped,
+    rebuildableGap: gap !== undefined,
   });
   return report;
 }

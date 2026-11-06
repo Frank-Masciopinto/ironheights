@@ -26,6 +26,18 @@ export function gradeFor(riskScore: number, filesSkipped: number): Grade {
 export function gradeFromSkills(skills: SkillReport[]): Grade {
   const skipped = skills.reduce((sum, skill) => sum + blockingSkipCount(skill), 0);
   if (skipped > 0) return gradeFor(0, skipped);
+  // A block or review still shows its letter. Context-only points still grade
+  // (a broad path can be an F with verdict no-findings). A gap with no risk
+  // points must not become an A.
+  const risky = skills.some((skill) => skill.verdict === 'block' || skill.verdict === 'review');
+  if (!risky && skills.some((skill) => skill.rebuildableGap)) {
+    const scanned = skills.reduce((sum, skill) => sum + skill.filesScanned, 0);
+    if (scanned === 0) return { letter: 'nothing-scanned', disclaimer: SAFETY_REMINDER };
+    const risk = skills.reduce((max, skill) => Math.max(max, skill.gradeRisk ?? skill.score), 0);
+    const graded = gradeFor(risk, 0);
+    if (graded.letter === 'A') return { letter: 'incomplete', disclaimer: SAFETY_REMINDER };
+    return graded;
+  }
   // An empty folder (or no skills at all) earns no grade: an A would claim a review that never happened.
   const scanned = skills.reduce((sum, skill) => sum + skill.filesScanned, 0);
   if (scanned === 0) return { letter: 'nothing-scanned', disclaimer: SAFETY_REMINDER };
