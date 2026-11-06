@@ -6,7 +6,7 @@ The model reviews evidence the rules already extracted, plus a capped copy of th
 
 ## What the model is allowed to change
 
-Nothing about the verdict. The deterministic verdict and exit code are fixed before any note is added. The model can only add findings with rule id `IH-LLM-001`, category `llm-review`, and severity `info`. Those findings score zero. They do not move a `block` to `review`, `incomplete`, or `no-findings`, and they do not move `no-findings` to `block`. `--fail-on` ignores them, including `--fail-on info`.
+Nothing about the verdict. The deterministic verdict, grade, and exit code are fixed before any note is added. `--llm`, `--llm-stage`, and `--llm-rewrite` are a separate column (`llmOpinion` on the skill, and `llmReview` on the report). A stage answer of malicious, or a rewrite the rules would have blocked, is stored as `wouldVerdict` and is not applied. The model can only add findings with rule id `IH-LLM-001` and severity `info`. Those findings score zero. They do not move a `block` to `review`, `incomplete`, or `no-findings`, and they do not move `no-findings` to `block`. `--fail-on` ignores them, including `--fail-on info`.
 
 Each note says that its confidence is the model's claim, not a measurement.
 

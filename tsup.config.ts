@@ -8,7 +8,9 @@ export default defineConfig({
   format: ['esm'],
   target: 'node20',
   clean: true,
-  dts: false,
+  // Declarations so package.json "types" points at a file the build emits.
+  // Suggested by psfazila02-hub in https://github.com/Frank-Masciopinto/ironheights/pull/120.
+  dts: true,
   sourcemap: true,
   outDir: 'dist',
   banner: { js: '#!/usr/bin/env node' },

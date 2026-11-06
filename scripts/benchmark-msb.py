@@ -16,6 +16,7 @@ dir, runs `scan --json` (nothing is executed), and scores block-only verdicts.
 Exits non-zero on any mismatch, so the caller never publishes a bad number.
 """
 import hashlib, json, os, subprocess, sys, tempfile, time, urllib.error, urllib.request
+from collections import Counter
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 M = json.load(open(os.path.join(ROOT, 'bench/msb/manifest.json')))
@@ -76,13 +77,18 @@ for sk in M['skills']:
     open(os.path.join(d, 'SKILL.md'), 'wb').write(body)
 
 verdict = {}
+rule_hits = {}
+public_ids = {s['id'] for s in M['skills']}
 for top, label in SETS:
     p = subprocess.run(['node', cli, 'scan', '--json', '--allow-skipped', os.path.join(work, top, label)],
                        capture_output=True, text=True)
     if not p.stdout.strip():
         sys.exit(f'scan produced no output (exit {p.returncode}): {p.stderr[-2000:]}')
     for s in json.loads(p.stdout)['skills']:
-        verdict[os.path.basename(os.path.realpath(s['root']))] = s['verdict']
+        sid = os.path.basename(os.path.realpath(s['root']))
+        verdict[sid] = s['verdict']
+        if sid in public_ids:
+            rule_hits[sid] = sorted({f.get('ruleId', '') for f in s.get('findings', []) if f.get('ruleId')})
 
 missing = [s['id'] for s in M['skills'] + B['skills'] if s['id'] not in verdict]
 if missing:
@@ -123,7 +129,9 @@ version = json.load(open(os.path.join(ROOT, 'package.json')))['version']
 os.makedirs(out_dir, exist_ok=True)
 summary = dict(version=version, **{k: v for k, v in ih.items() if not k.startswith('_')},
                **{k: v[1] for k, v in ihx.items()},
-               msb_revision=msb['revision'], anthropic_commit=M['anthropic']['commit'])
+               msb_revision=msb['revision'], anthropic_commit=M['anthropic']['commit'],
+               llm=dict(status='not-run',
+                        note='Model opinion is a separate column. This command does not call a model, so it has no detection or false-positive count. It never changes the verdicts in this file.'))
 
 def endpoint(name, message, win):
     json.dump(dict(schemaVersion=1, label='', message=message + (' ✅' if win else ''),
@@ -217,6 +225,18 @@ Files: [results.csv](results.csv) (one row per skill and scanner), [blind-aggreg
 (blind set counts and a digest only), [benchmark-summary.json](benchmark-summary.json).
 How to reproduce: [docs/benchmark-proof.md](https://github.com/Frank-Masciopinto/ironheights/blob/main/docs/benchmark-proof.md).
 """)
+labels = {s['id']: s['label'] for s in M['skills']}
+per_label = {'malicious': Counter(), 'benign': Counter()}
+for sid, rules in rule_hits.items():
+    lab = labels.get(sid)
+    if lab not in per_label:
+        continue
+    for rule_id in rules:
+        per_label[lab][rule_id] += 1
+json.dump(dict(note='Public MaliciousSkillBench rows only. The blind set is not listed here.',
+               counts={lab: dict(sorted(per_label[lab].items())) for lab in per_label},
+               by_skill={sid: rule_hits[sid] for sid in sorted(rule_hits) if sid in labels}),
+          open(os.path.join(out_dir, 'rules.json'), 'w'), indent=1)
 json.dump(summary, open(os.path.join(out_dir, 'benchmark-summary.json'), 'w'), indent=1)
 json.dump(dict(schemaVersion=1, label='MaliciousSkillBench',
                message=f"{ih['detect_pct']:.1f}% detect · {ih['fp_pct']:.1f}% FP", color='blue'),

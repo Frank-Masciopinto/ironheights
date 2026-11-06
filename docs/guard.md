@@ -19,6 +19,18 @@ This is defense in depth. It is not a sandbox, and it is not a process outside t
 
 Absence of a block is not proof the call was safe.
 
+## What it covers, and what it cannot
+
+| The guard can | The guard cannot |
+| --- | --- |
+| See the tool name and parameters OpenClaw passes into `before_tool_call`, and log or block the four rules below | See content that is fetched at runtime and never appears in that tool call |
+| Match credential paths, a download piped into a shell, an undeclared or high-risk host, and writes to identity, memory, and skill files | Follow model-level instruction following. It does not see the model's reasoning or a prompt the hook never receives |
+| Apply allow entries and the skill's declared hosts when the call names that skill | See host features outside this hook: a shell that is already running, a browser the hook does not wrap, or another agent |
+| Fail closed on its own errors in enforce mode, and fail open (with a log line) in monitor mode | Stop a skill that can turn the plugin off, edit the policy, or run before the plugin is loaded |
+| Tell you the rule id in the block reason | Prove a call was safe. No match means no known pattern in the parameters, not a clearance |
+
+A quiet log is not proof of safety. The scanner's clean wording is the same idea for files: no known pattern found is not proof the skill is safe.
+
 ## Behaviors
 
 | Rule             | What it matches                                                                                                                                                                                                                  | Scanner rule it lines up with |

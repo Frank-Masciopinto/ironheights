@@ -3,13 +3,15 @@
 exports[`output snapshots > renders human, json, and sarif 1`] = `
 "demo
   [high] IH-CRED-001 SKILL.md:1
-    example
-    fix it
+    Evidence: example
+    Why this matters: example
+    Safe next step: fix it
     OWASP LLM02:2025 · CRE 368-633 · CRE 881-321 → https://www.opencre.org/cre/368-633
 
 Verdict: review
 Grade: D (60/100)
 Absence of findings is not proof of safety.
+review means inspect this; not a malicious verdict. Clean means no known pattern found; not proof of safety.
 ironheights 0.34.0 | demo | grade D (60/100) | verdict review | 1 finding
 Badge: [ironheights 0.34.0: grade D (60/100), verdict review](https://github.com/Frank-Masciopinto/ironheights) — Absence of findings is not proof of safety."
 `;

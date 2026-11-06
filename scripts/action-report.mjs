@@ -44,12 +44,17 @@ export function markdown(s) {
     '',
     `ironheights ${s.version}. ${s.findings.length} finding(s) in ${s.skills.length} skill(s). Absence of findings is not proof of safety.`,
     '',
+    'review means inspect this; not a malicious verdict. Clean means no known pattern found; not proof of safety.',
+    '',
   ];
   if (s.findings.length) {
-    lines.push('| Severity | Rule | Skill file | Line |', '| --- | --- | --- | --- |');
+    lines.push(
+      '| Severity | Rule | Skill file | Line | Evidence | Why this matters | Safe next step |',
+      '| --- | --- | --- | --- | --- | --- | --- |',
+    );
     for (const f of s.findings.slice(0, 20)) {
       lines.push(
-        `| ${esc(f.severity)} | [${esc(f.ruleId)}](https://www.ironheights.dev/rules/${String(f.ruleId ?? '').toLowerCase()}/) | ${esc(f.file)} | ${esc(f.line)} |`,
+        `| ${esc(f.severity)} | [${esc(f.ruleId)}](https://www.ironheights.dev/rules/${String(f.ruleId ?? '').toLowerCase()}/) | ${esc(f.file)} | ${esc(f.line)} | ${esc(f.evidence)} | ${esc(f.message)} | ${esc(f.remediation)} |`,
       );
     }
     if (s.findings.length > 20)

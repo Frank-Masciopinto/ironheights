@@ -99,6 +99,10 @@ Run on 2 Nov 2026 against MaliciousSkillBench (Hugging Face revision `d4b42ce5`)
 
 Most malicious skills in this corpus are not caught at `block`. Treat a clean result as "no known patterns found", not as proof of safety.
 
+## One command
+
+`npm run bench` builds the CLI, downloads the pinned MaliciousSkillBench and Anthropic inputs, checks every file's SHA-256, scans them, and writes `bench/results/public/`. That folder has `results.csv` (one row per public skill), `benchmark-summary.json`, `rules.json` (rule ids for the public set only), and `blind-aggregate.json` (counts and a digest, no skill ids). The `llm` field in the summary is `not-run`: the command does not call a model, and a model opinion never changes those verdicts. See [LABELING.md](LABELING.md) for where each label comes from.
+
 ## Automatic README badge
 
 The README's MaliciousSkillBench badge reads `badges/benchmark.json` from the `badges` branch through a shields.io endpoint. The `benchmark badge` workflow rebuilds that file on every release tag (or manual run): it downloads the skill text from the pinned upstream sources listed in `bench/msb/manifest.json` (MaliciousSkillBench at a fixed Hugging Face revision, CC BY 4.0, and `anthropics/skills` at a fixed commit), checks each file against its SHA-256, scans it with the built CLI (nothing is executed), and counts block verdicts. The repository stores only IDs and hashes, never the skill text. Downloads are pinned and hash-checked, and only transient network errors (timeouts, 429, 5xx) are retried, with backoff. If anything else fails, nothing is published, the workflow run fails, and an issue titled "Benchmark badge run failed" is opened so the cause gets fixed.

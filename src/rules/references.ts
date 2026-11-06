@@ -351,6 +351,54 @@ export const RULE_REFERENCES: Record<string, RuleReferences> = {
   },
   // Advisory notes are not a detection technique, so no framework id is cited.
   'IH-LLM-001': { owaspLlm: [], owaspAgentic: [], mitreAtlas: [], openCre: [] },
+  'IH-BIN-003': {
+    owaspLlm: ['LLM03:2025'],
+    owaspAgentic: ['ASI04:2026'],
+    mitreAtlas: ['AML.T0010'],
+    openCre: ['265-800'],
+  },
+  'IH-EXEC-007': {
+    owaspLlm: ['LLM01:2025'],
+    owaspAgentic: ['ASI05:2026'],
+    mitreAtlas: [],
+    openCre: ['012-625'],
+  },
+  'IH-INJ-012': {
+    owaspLlm: ['LLM01:2025'],
+    owaspAgentic: ['ASI01:2026'],
+    mitreAtlas: [],
+    openCre: [],
+  },
+  'IH-REF-004': {
+    owaspLlm: ['LLM03:2025'],
+    owaspAgentic: ['ASI04:2026'],
+    mitreAtlas: [],
+    openCre: [],
+  },
+  'IH-META-003': {
+    owaspLlm: ['LLM01:2025'],
+    owaspAgentic: ['ASI01:2026'],
+    mitreAtlas: [],
+    openCre: [],
+  },
+  'IH-FS-002': {
+    owaspLlm: [],
+    owaspAgentic: ['ASI05:2026'],
+    mitreAtlas: [],
+    openCre: [],
+  },
+  'IH-INJ-013': {
+    owaspLlm: ['LLM01:2025'],
+    owaspAgentic: ['ASI01:2026'],
+    mitreAtlas: [],
+    openCre: ['012-625'],
+  },
+  'IH-PERSIST-003': {
+    owaspLlm: [],
+    owaspAgentic: ['ASI05:2026'],
+    mitreAtlas: [],
+    openCre: [],
+  },
 };
 
 export function referencesFor(ruleId: string): RuleReferences {

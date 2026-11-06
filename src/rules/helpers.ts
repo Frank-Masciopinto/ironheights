@@ -11,6 +11,7 @@ export function createFinding(
     message: string;
     confidence: Confidence;
     severity?: Severity;
+    scoreExempt?: boolean;
   },
 ): Finding {
   return {
@@ -23,6 +24,7 @@ export function createFinding(
     evidence: clip(details.evidence),
     message: details.message,
     remediation: rule.remediation,
+    ...(details.scoreExempt ? { scoreExempt: true } : {}),
   };
 }
 

@@ -271,7 +271,9 @@ describe('llm review over a mock server', () => {
     expect(result.stdout).toContain('[info] IH-LLM-001');
     expect(result.stdout).toContain('Model confidence: low');
     expect(result.stdout).toContain('Verdict: no-findings');
-    expect(result.stdout).toContain('advisory and can be wrong');
+    expect(result.stdout).toContain(
+      'do not change the grade, the verdict, or the exit code',
+    );
     const verdicts = result.stdout.split('\n').filter((line) => line.startsWith('Verdict:'));
     expect(verdicts).toEqual(['Verdict: no-findings']);
   });

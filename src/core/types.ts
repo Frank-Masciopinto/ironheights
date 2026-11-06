@@ -68,6 +68,12 @@ export interface Rule {
   remediation: string;
   appliesTo: AppliesTo[];
   examples: RuleExamples;
+  /**
+   * Run this rule once on SKILL.md joined with the files it names, instead of
+   * once per file. Two-signal checks can then see a step in SKILL.md and the
+   * step it points at in `references/`.
+   */
+  joinsReferences?: boolean;
   check(file: ScannedFile, ctx: ScanContext): Finding[];
 }
 
@@ -100,6 +106,12 @@ export interface Finding {
   shadowCheck?: string;
   /** Set while `shadowCheck` is in shadow mode: the severity it would have once promoted. */
   wouldSeverity?: Severity;
+  /**
+   * When false, the finding still counts for the verdict (a medium is review) but adds no
+   * block-threshold points. Review-tier checks use this so they cannot push an existing
+   * review over the block line.
+   */
+  scoreExempt?: boolean;
 }
 
 export interface SkippedFile {
@@ -222,6 +234,19 @@ export interface SkillReport {
   unscannedDependencies?: UnscannedDependency[];
   /** Set by `scan --check-registry`. */
   registryCheck?: { checked: number; missing: number; notChecked: number; notes: string[] };
+  /**
+   * Model opinion from `--llm`, `--llm-stage`, or `--llm-rewrite`.
+   * It is not a scanner verdict and must not be copied onto `verdict`, the grade, or the exit code.
+   */
+  llmOpinion?: LlmOpinion;
+}
+
+/** A model path's own column. `wouldVerdict` is what that path would have said. */
+export interface LlmOpinion {
+  source: 'stage' | 'rewrite' | 'notes';
+  assessment: string;
+  wouldVerdict: string;
+  confidence?: string;
 }
 
 export interface KnownSecurityToolNote {

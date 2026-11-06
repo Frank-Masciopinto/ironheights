@@ -36,7 +36,9 @@ describe('0.34.0 versioned clean wording (myinvestdesk, vintos, diviner)', () =>
     expect(rendered).toContain(`not flagged by ironheights ${TOOL_VERSION}, as of ${at}`);
     expect(rendered).toContain(SAFETY_REMINDER);
     expect(rendered).toContain('Verdict: no-findings');
-    expect(rendered).not.toMatch(/\bsafe\b|\bclean\b/i);
+    expect(rendered).toContain('review means inspect this; not a malicious verdict.');
+    expect(rendered).toContain('Clean means no known pattern found; not proof of safety.');
+    expect(rendered).not.toMatch(/\bsafe\b/i);
 
     const jsonChunks: string[] = [];
     const jsonCode = await runScan({

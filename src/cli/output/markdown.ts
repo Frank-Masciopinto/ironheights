@@ -12,7 +12,7 @@ import { acceptanceLabel } from '../../core/suppress.ts';
 import { blockingDirectoryCount } from '../../core/verdict.ts';
 import type { LlmReviewReport } from '../../llm/review.ts';
 import { referenceLinks, referencesFor, referenceTags } from '../../rules/references.ts';
-import { notFlaggedWording } from '../../core/clean-wording.ts';
+import { notFlaggedWording, verdictWording } from '../../core/clean-wording.ts';
 import { SAFETY_REMINDER, TOOL_VERSION } from '../../version.ts';
 import { llmStatusLines } from './llm-status.ts';
 
@@ -33,6 +33,8 @@ export function renderMarkdown(
     `Grade: **${formatGrade(grade)}**`,
     '',
     SAFETY_REMINDER,
+    '',
+    verdictWording(),
     '',
   );
   lines.push(renderSummary({ skills, verdict, grade, scanMode }), '');
@@ -68,10 +70,10 @@ export function renderMarkdown(
       ];
       const suffix = tags.length > 0 ? ` (${tags.join(', ')})` : '';
       lines.push(`- **${finding.severity}** \`${finding.ruleId}\` ${where}${suffix}`);
-      lines.push(`  - ${finding.message}`);
       lines.push(`  - Evidence: \`${finding.evidence.replace(/`/g, "'")}\``);
+      lines.push(`  - Why this matters: ${finding.message}`);
       if (finding.acceptance) lines.push(`  - ${acceptanceLabel(finding.acceptance)}`);
-      lines.push(`  - ${finding.remediation}`);
+      lines.push(`  - Safe next step: ${finding.remediation}`);
       if (finding.note) lines.push(`  - Note: ${finding.note}`);
       const links = referenceLinks(finding.ruleId);
       if (links.length > 0) {
