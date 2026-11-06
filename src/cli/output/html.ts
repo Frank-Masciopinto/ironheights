@@ -13,7 +13,7 @@ import { acceptanceLabel } from '../../core/suppress.ts';
 import { blockingDirectoryCount } from '../../core/verdict.ts';
 import type { LlmReviewReport } from '../../llm/review.ts';
 import { openCreUrl, referencesFor, referenceTags } from '../../rules/references.ts';
-import { notFlaggedWording } from '../../core/clean-wording.ts';
+import { notFlaggedWording, verdictWording } from '../../core/clean-wording.ts';
 import { SAFETY_REMINDER, TOOL_VERSION } from '../../version.ts';
 import { llmStatusLines } from './llm-status.ts';
 
@@ -68,6 +68,7 @@ export function renderHtml(
     `<p class="grade">Grade: ${escapeHtml(formatGrade(grade))}</p>`,
     ...llmStatusLines(skills, llmReview).map((line) => `<p class="note">${escapeHtml(line)}</p>`),
     `<p class="disclaimer">${escapeHtml(SAFETY_REMINDER)}</p>`,
+    `<p class="disclaimer">${escapeHtml(verdictWording())}</p>`,
     `<pre>${escapeHtml(summary)}</pre>`,
     '<p>README badge</p>',
     `<pre>${escapeHtml(badge)}</pre>`,
@@ -152,9 +153,9 @@ function findingsTable(findings: Finding[]): string {
   const rows = findings.map((finding) => {
     const tags = referenceTags(finding.ruleId).join(', ');
     const drift = finding.acceptance ? ` (${acceptanceLabel(finding.acceptance)})` : '';
-    return `<tr><td class="${severityClass(finding.severity)}">${escapeHtml(finding.severity)}</td><td>${escapeHtml(finding.ruleId)}</td><td>${escapeHtml(place(finding))}</td><td>${escapeHtml(finding.evidence)}</td><td>${escapeHtml(finding.message)}${escapeHtml(drift)}</td><td>${escapeHtml(tags)}${creLinks(finding.ruleId)}</td></tr>`;
+    return `<tr><td class="${severityClass(finding.severity)}">${escapeHtml(finding.severity)}</td><td>${escapeHtml(finding.ruleId)}</td><td>${escapeHtml(place(finding))}</td><td>${escapeHtml(finding.evidence)}</td><td>${escapeHtml(finding.message)}${escapeHtml(drift)}</td><td>${escapeHtml(finding.remediation)}</td><td>${escapeHtml(tags)}${creLinks(finding.ruleId)}</td></tr>`;
   });
-  return `<table><thead><tr><th>Severity</th><th>Rule</th><th>Location</th><th>Evidence</th><th>Message</th><th>References</th></tr></thead><tbody>${rows.join('')}</tbody></table>`;
+  return `<table><thead><tr><th>Severity</th><th>Rule</th><th>Location</th><th>Evidence</th><th>Why this matters</th><th>Safe next step</th><th>References</th></tr></thead><tbody>${rows.join('')}</tbody></table>`;
 }
 
 function creLinks(ruleId: string): string {

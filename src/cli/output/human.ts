@@ -11,12 +11,11 @@ import type { ScanMode } from '../../core/grade.ts';
 import { acceptanceLabel } from '../../core/suppress.ts';
 import type { AdvisoryFeedNote, Finding, SkillReport, Verdict } from '../../core/types.ts';
 import { blockingDirectoryCount, compareSeverity } from '../../core/verdict.ts';
-import { LLM_RULE_ID } from '../../llm/constants.ts';
 import type { LlmReviewReport } from '../../llm/review.ts';
 import { clip } from '../../util/text.ts';
 import { describeDependency } from '../../core/dependencies.ts';
 import { paint } from '../../util/terminal.ts';
-import { notFlaggedWording } from '../../core/clean-wording.ts';
+import { notFlaggedWording, verdictWording } from '../../core/clean-wording.ts';
 import { SAFETY_REMINDER, TOOL_VERSION } from '../../version.ts';
 import { llmStatusLines } from './llm-status.ts';
 
@@ -133,6 +132,7 @@ export function renderHuman(
   lines.push(`Grade: ${formatGrade(grade)}`);
   lines.push(...llmStatusLines(skills, llmReview));
   lines.push(SAFETY_REMINDER);
+  lines.push(verdictWording());
   lines.push(renderSummary(summaryInput));
   lines.push(`Badge: ${renderBadge(summaryInput)}`);
   return lines.join('\n');
@@ -140,10 +140,13 @@ export function renderHuman(
 
 function findingLines(finding: Finding, color: boolean): string[] {
   const label = paint(color, SEVERITY_COLOR[finding.severity], `[${finding.severity}]`);
-  const lines = [`  ${label} ${finding.ruleId} ${where(finding)}`, `    ${clip(finding.evidence)}`];
+  const lines = [
+    `  ${label} ${finding.ruleId} ${where(finding)}`,
+    `    Evidence: ${clip(finding.evidence)}`,
+    `    Why this matters: ${clip(finding.message, 400)}`,
+    `    Safe next step: ${clip(finding.remediation, 400)}`,
+  ];
   if (finding.acceptance) lines.push(`    ${acceptanceLabel(finding.acceptance)}`);
-  if (finding.ruleId === LLM_RULE_ID) lines.push(`    ${finding.message}`);
-  lines.push(`    ${finding.remediation}`);
   const standards = standardsLine(finding.ruleId);
   const cre = referencesFor(finding.ruleId).openCre[0];
   if (standards) lines.push(`    ${standards}${cre ? ` → ${openCreUrl(cre)}` : ''}`);

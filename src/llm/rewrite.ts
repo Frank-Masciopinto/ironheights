@@ -8,14 +8,12 @@
  * list of the imperative orders it gives the agent, stripping prose - and then
  * the deterministic rules (IH-INTENT-001/002, IH-FLOW-001) judge that list.
  *
- * The model never decides maliciousness; it only normalises the text. The
- * deterministic verdict on the rewritten orders can escalate a skill to review or
- * block, and it can NEVER lower a verdict: a rule verdict on the rewrite is only
- * applied when it is worse than the current verdict.
+ * The model never decides maliciousness; it only normalises the text. Deterministic
+ * rules then judge that list. Their result is a model-path column (`wouldVerdict`)
+ * and does not change the grade, the verdict, or the exit code.
  */
 import type { Finding, ScannedFile, SkillReport, Verdict } from '../core/types.ts';
 import { contentRules } from '../rules/index.ts';
-import { worstVerdict } from '../core/verdict.ts';
 import { verdictFor } from '../core/verdict.ts';
 import { clip } from '../util/text.ts';
 import { LLM_REMEDIATION, LLM_RULE_ID } from './constants.ts';
@@ -132,15 +130,18 @@ export function rewriteFinding(verdict: Verdict, judged: Finding[], file: string
     evidence: clip(`llm-rewrite judged the normalised orders: ${verdict}`),
     message: clip(
       escalates
-        ? `The skill was rewritten as a flat list of imperative orders; the deterministic rules${why ? ` (${why})` : ''} then rated that list ${verdict}, so the verdict is at least ${verdict}. The model only normalised the text; the verdict is deterministic.`
-        : 'The skill was rewritten as a flat list of imperative orders; the deterministic rules found nothing. The verdict is unchanged.',
+        ? `Model opinion: rewritten orders would be ${verdict}${why ? ` (${why})` : ''}. This column does not change the grade, verdict, or exit code.`
+        : 'Model opinion: rewritten orders would be no-findings. This column does not change the grade, verdict, or exit code.',
       500,
     ),
     remediation: LLM_REMEDIATION,
   };
 }
 
-/** Apply the rewrite verdict. Escalates only: worstVerdict keeps the stronger of the two. */
+/**
+ * Records what the deterministic rules would say about the model's rewritten orders.
+ * That opinion is not applied to the skill verdict, score, or grade.
+ */
 export function applyRewrite(
   skill: SkillReport,
   orders: string[],
@@ -149,14 +150,18 @@ export function applyRewrite(
 ): SkillReport {
   const { findings, verdict } = judgeOrders(orders, thresholds);
   const finding = rewriteFinding(verdict, findings, file);
-  const escalated = worstVerdict([
-    skill.verdict,
-    verdict === 'no-findings' ? skill.verdict : verdict,
-  ]);
   return {
     ...skill,
-    findings: [...skill.findings, finding],
-    verdict: escalated,
+    findings: [...skill.findings, { ...finding, severity: 'info' }],
+    verdict: skill.verdict,
+    score: skill.score,
+    gradeRisk: skill.gradeRisk,
+    llmOpinion: {
+      source: 'rewrite',
+      assessment: verdict,
+      wouldVerdict: verdict,
+      confidence: 'medium',
+    },
   };
 }
 

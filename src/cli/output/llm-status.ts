@@ -24,7 +24,7 @@ export function llmStatusLines(
   );
   if (noted) {
     lines.push(
-      'LLM notes (IH-LLM-001) are advisory and can be wrong. They do not change the verdict.',
+      'LLM notes (IH-LLM-001) are a separate model-opinion column. They can be wrong. They do not change the grade, the verdict, or the exit code.',
     );
   } else if (report.status === 'ok') {
     lines.push(

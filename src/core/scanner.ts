@@ -1,4 +1,5 @@
 import { applyShadow } from '../rules/shadow.ts';
+import { joinSkillReferences } from './skill-join.ts';
 import { findSkillFile, isSkillFileName } from './skill-file.ts';
 import { readdir, readFile, stat } from 'node:fs/promises';
 import { basename, join, resolve } from 'node:path';
@@ -113,9 +114,17 @@ export async function scanSkill(
     ),
   };
   const raw: Finding[] = [];
+  const seen = new Set<string>();
+  const add = (finding: Finding): void => {
+    const key = `${finding.ruleId}|${finding.file}|${finding.line ?? ''}|${finding.evidence}`;
+    if (seen.has(key)) return;
+    seen.add(key);
+    raw.push(finding);
+  };
   for (const file of walked.files) {
-    raw.push(...scanFile(file, ctx));
+    for (const finding of scanFile(file, ctx, { skipJoined: true })) add(finding);
   }
+  for (const finding of scanJoined(walked.files, ctx)) add(finding);
   const deps = skillDependencies(walked.files, frontmatter);
   let registryCheck: SkillReport['registryCheck'];
   if (options.checkRegistry && deps.length > 0) {
@@ -245,7 +254,7 @@ export async function scanText(
 export function scanFile(
   file: ScannedFile,
   ctx: ScanContext,
-  options: { textMode?: boolean } = {},
+  options: { textMode?: boolean; skipJoined?: boolean } = {},
 ): Finding[] {
   // Install-tool metadata is hashed for tamper checks but not graded as author content.
   if (isInstallToolMetadata(file.relativePath)) return [];
@@ -254,6 +263,7 @@ export function scanFile(
   for (const rule of allContentRules()) {
     const override = ctx.config.ruleOverrides[rule.id];
     if (override?.enabled === false) continue;
+    if (options.skipJoined && rule.joinsReferences) continue;
     if (!ruleApplies(rule, file, options.textMode === true)) continue;
     for (const raw of rule.check(file, ctx)) {
       let finding = raw;
@@ -389,6 +399,27 @@ function finishSkill(
     allowSkipped,
   });
   return report;
+}
+
+/** Two-signal rules see SKILL.md and the files it names as one document. */
+function scanJoined(files: ScannedFile[], ctx: ScanContext): Finding[] {
+  const joined = joinSkillReferences(files);
+  if (!joined) return [];
+  const findings: Finding[] = [];
+  for (const rule of allContentRules()) {
+    if (!rule.joinsReferences) continue;
+    const override = ctx.config.ruleOverrides[rule.id];
+    if (override?.enabled === false) continue;
+    if (!ruleApplies(rule, joined.file, false)) continue;
+    for (const raw of rule.check(joined.file, ctx)) {
+      const located = raw.line === undefined ? undefined : joined.lines[raw.line - 1];
+      let finding = located ? { ...raw, file: located.file, line: located.line } : raw;
+      finding = applyShadow(finding);
+      const severity = override?.severity ?? finding.severity;
+      findings.push(severity === finding.severity ? finding : { ...finding, severity });
+    }
+  }
+  return findings;
 }
 
 function ruleApplies(

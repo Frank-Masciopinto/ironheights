@@ -6,9 +6,9 @@
  * code blocks) that the rules passed. Skills the rules already blocked are not sent.
  *
  * The model answers a fixed set of questions about data, credentials and network use.
- * A "malicious" answer with medium or high confidence raises the skill to `review`.
- * The model can never lower a verdict and can never block on its own. Skill text is
- * redacted for secrets before it is sent, and a non-local server still needs
+ * A "malicious" answer with medium or high confidence is recorded as a model opinion
+ * (`wouldVerdict: review`). It does not change the grade, the verdict, or the exit code.
+ * Skill text is redacted for secrets before it is sent, and a non-local server still needs
  * --llm-consent, exactly as for --llm.
  */
 import { z } from 'zod';
@@ -101,21 +101,32 @@ export function stageFinding(answer: StageAnswer, file: string): Finding {
       `llm-stage: ${answer.assessment}${signals.length > 0 ? ` (${signals.join(', ')})` : ''}`,
     ),
     message: clip(
-      `${escalates ? 'Second-stage model review rated this skill malicious, so the verdict is at least review.' : 'Second-stage model review note; the verdict is unchanged.'} Model confidence: ${answer.confidence} (the model's claim, not a measurement). ${reason}`,
+      `Model opinion (${answer.assessment}, confidence ${answer.confidence}, the model's claim, not a measurement). ${escalates ? 'Would be review.' : 'Would leave the verdict unchanged.'} This column does not change the grade, verdict, or exit code. ${reason}`,
       500,
     ),
     remediation: LLM_REMEDIATION,
   };
 }
 
-/** Adds the stage finding. Raises no-findings/incomplete to review when the model escalates; never lowers. */
+/**
+ * Records the model opinion beside the skill. The deterministic verdict, score and grade stay as they were.
+ * A confident "malicious" answer is reported as `wouldVerdict: review` and never applied.
+ */
 export function applyStage(skill: SkillReport, answer: StageAnswer, file: string): SkillReport {
   const finding = stageFinding(answer, file);
-  const escalate = stageEscalates(answer) && skill.verdict !== 'block';
+  const would = stageEscalates(answer) ? 'review' : 'unchanged';
   return {
     ...skill,
-    findings: [...skill.findings, finding],
-    verdict: escalate ? 'review' : skill.verdict,
+    findings: [...skill.findings, { ...finding, severity: 'info' }],
+    verdict: skill.verdict,
+    score: skill.score,
+    gradeRisk: skill.gradeRisk,
+    llmOpinion: {
+      source: 'stage',
+      assessment: answer.assessment,
+      wouldVerdict: would,
+      confidence: answer.confidence,
+    },
   };
 }
 

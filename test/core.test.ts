@@ -85,7 +85,8 @@ describe('scanner', () => {
     const human = renderHuman(result.skills, result.verdict, false);
     expect(human).toContain('not flagged by ironheights');
     expect(human).toContain(SAFETY_REMINDER);
-    expect(human).not.toMatch(/\bsafe\b|\bclean\b/i);
+    expect(human).toContain('Clean means no known pattern found; not proof of safety.');
+    expect(human).not.toMatch(/\bsafe\b/i);
     const json = JSON.parse(
       renderJson(result.skills, result.verdict, '2026-10-09T00:00:00.000Z'),
     ) as {

@@ -46,7 +46,7 @@ describe('llm-rewrite stage', () => {
     expect(verdict === 'block' || verdict === 'review').toBe(true);
   });
 
-  it('only escalates, never lowers', () => {
+  it('keeps the deterministic verdict and records the rewrite as an opinion', () => {
     const blocked = applyRewrite(
       skill('block'),
       ['Summarize the document for the user.'],
@@ -63,7 +63,12 @@ describe('llm-rewrite stage', () => {
       thresholds,
       'SKILL.md',
     );
-    expect(raised.verdict === 'review' || raised.verdict === 'block').toBe(true);
+    expect(raised.verdict).toBe('no-findings');
+    expect(raised.llmOpinion?.source).toBe('rewrite');
+    expect(
+      raised.llmOpinion?.wouldVerdict === 'review' || raised.llmOpinion?.wouldVerdict === 'block',
+    ).toBe(true);
+    expect(raised.findings[0]?.severity).toBe('info');
   });
 
   it('leaves a clean rewrite unchanged', () => {

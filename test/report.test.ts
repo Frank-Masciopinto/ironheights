@@ -334,7 +334,8 @@ describe('text scan', () => {
       expect(quiet.text).toContain('not flagged by ironheights');
       expect(quiet.text).toContain('Grade: A (100/100)');
       expect(quiet.text).toContain(SAFETY_REMINDER);
-      expect(quiet.text).not.toMatch(/\bsafe\b|\bclean\b/i);
+      expect(quiet.text).toContain('Clean means no known pattern found; not proof of safety.');
+      expect(quiet.text).not.toMatch(/\bsafe\b/i);
 
       const hit = await capture(home, {
         paths: [],

@@ -9,6 +9,16 @@ export function notFlaggedWording(version: string, checkedAt: string): string {
   return `not flagged by ironheights ${version}, as of ${checkedAt}. ${SAFETY_REMINDER}`;
 }
 
+/** `review` is a request to inspect. It is not a malicious verdict. */
+export const REVIEW_MEANS = 'review means inspect this; not a malicious verdict.';
+
+/** A clean result means no known pattern was found. It is not proof of safety. */
+export const CLEAN_MEANS = 'Clean means no known pattern found; not proof of safety.';
+
+export function verdictWording(): string {
+  return `${REVIEW_MEANS} ${CLEAN_MEANS}`;
+}
+
 /** Negative when `stored` is older than `running`. Non-numeric suffixes compare as 0. */
 export function compareVersions(stored: string, running: string): number {
   const a = stored.split('.').map((part) => Number.parseInt(part, 10));

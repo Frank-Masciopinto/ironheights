@@ -33,7 +33,10 @@ export const SEVERITY_RANK: Record<Severity, number> = {
 };
 
 export function scoreFindings(findings: Finding[]): number {
-  return findings.reduce((sum, finding) => sum + SEVERITY_POINTS[finding.severity], 0);
+  return findings.reduce((sum, finding) => {
+    if (finding.scoreExempt) return sum;
+    return sum + SEVERITY_POINTS[finding.severity];
+  }, 0);
 }
 
 /** Grade points for a first-party review item (remote instructions from the skill's own host). */

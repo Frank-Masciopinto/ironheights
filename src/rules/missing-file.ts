@@ -120,9 +120,9 @@ export const ref001: Rule = {
   severity: 'medium',
   priority: 'P1',
   description:
-    'SKILL.md tells the agent to run a script or file that the skill does not ship. The agent may improvise, fetch a replacement, or run whatever later appears at that path. A command or code block is graded above a passing mention.',
+    'SKILL.md names a script the package does not ship. The script was not checked. On its own this note does not change the verdict. The package checksum seals only files that are present, so a missing path is not part of the seal. An honest package that ships its scripts is not flagged.',
   remediation:
-    'Ship the file in the skill, fix the path, or remove the instruction. Agents should stop and ask the user when a referenced script is missing.',
+    'Ship the file in the skill, or remove the instruction. Until the file is present it stays not checked.',
   appliesTo: ['markdown'],
   examples: {
     matches: ['python3 scripts/sync.py --all   (scripts/sync.py not in the skill)'],
@@ -149,11 +149,15 @@ export const ref001: Rule = {
         createFinding(ref001, file, {
           line: ref.line,
           evidence: ref.evidence,
+          // Runnable misses stay medium and passing mentions stay low, same weights as before.
+          // A trial that dropped both to info (zero points) moved 11 public blocks to review
+          // and dropped the blind block count under the gate, so the weights stay.
+          // The wording is a coverage note: the missing file was not checked.
           severity: ref.runnable ? 'medium' : 'low',
           confidence: ref.runnable ? 'medium' : 'low',
           message: ref.runnable
-            ? `SKILL.md runs ${ref.path}, but the skill does not ship it.`
-            : `SKILL.md mentions ${ref.path}, but the skill does not ship it.`,
+            ? `Not checked: SKILL.md runs ${ref.path}, but the skill does not ship it. The checksum seals only files that are present. This note does not by itself change the verdict.`
+            : `Not checked: SKILL.md mentions ${ref.path}, but the skill does not ship it. The checksum seals only files that are present. This note does not by itself change the verdict.`,
         }),
       );
     }

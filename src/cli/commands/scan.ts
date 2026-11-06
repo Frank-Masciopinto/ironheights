@@ -345,16 +345,12 @@ export async function executeScan(flags: ScanFlags): Promise<ScanExecution> {
       llmReport = reviewed.report;
     }
   }
-  let code = exitCodeFor(verdict, deterministicFindings(skills), config.failOn, {
+  const code = exitCodeFor(verdict, deterministicFindings(skills), config.failOn, {
     filesSkipped: skills.reduce((sum, skill) => sum + blockingSkipCount(skill), 0),
     allowSkipped: flags.allowSkipped === true,
   });
-  let reportedVerdict = verdict;
-  if ((flags.llmStage || flags.llmRewrite) && !flags.dryRun) {
-    reportedVerdict = worstVerdict(reported.map((skill) => skill.verdict));
-    if (reportedVerdict === 'review' && (code === 0 || code === 3)) code = 1;
-    if (reportedVerdict === 'block' && code !== 2) code = 2;
-  }
+  // Model opinion stays on llmOpinion / llmReview. It does not change this verdict or exit code.
+  const reportedVerdict = verdict;
   if (flags.dryRun) return { skills, verdict, code };
   if (flags.changed && changedState) {
     const grades = new Map<string, Grade>();

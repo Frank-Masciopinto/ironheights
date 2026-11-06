@@ -22,19 +22,21 @@ async function hits(files: Record<string, string>, id: string) {
 }
 
 describe('0.12.0 IH-REF-001 missing referenced script (synapseguide, ccbillboardbug, felixnexus, fujikatsu)', () => {
-  it('a command that runs a missing script is medium', async () => {
+  it('a command that runs a missing script is a medium coverage note', async () => {
     const f = await hits(
       { 'SKILL.md': `${FM}\n\`\`\`bash\npython3 scripts/sync.py --all\n\`\`\`\n` },
       'IH-REF-001',
     );
     expect(f.map((x) => x.severity)).toEqual(['medium']);
+    expect(f[0]?.message).toMatch(/Not checked/);
   });
-  it('a passing mention is low', async () => {
+  it('a passing mention is a low coverage note', async () => {
     const f = await hits(
       { 'SKILL.md': `${FM}\nThe helper is \`scripts/helper.sh\`.\n` },
       'IH-REF-001',
     );
     expect(f.map((x) => x.severity)).toEqual(['low']);
+    expect(f[0]?.message).toMatch(/Not checked/);
   });
   it('present files, {baseDir} and skills/<name>/ prefixes are fine', async () => {
     const f = await hits(

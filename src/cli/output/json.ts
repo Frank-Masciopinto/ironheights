@@ -89,6 +89,7 @@ function stableSkill(skill: SkillReport): JsonSkillReport {
     ...(skill.knownSecurityTool ? { knownSecurityTool: skill.knownSecurityTool } : {}),
     score: skill.score,
     verdict: skill.verdict,
+    ...(skill.llmOpinion ? { llmOpinion: skill.llmOpinion } : {}),
   };
 }
 

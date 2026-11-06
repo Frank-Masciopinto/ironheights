@@ -11,6 +11,7 @@
     "url": "git+https://github.com/Frank-Masciopinto/ironheights.git"
   },
   "type": "module",
+  "types": "dist/cli/index.d.ts",
   "license": "Apache-2.0",
   "bin": {
     "ironheights": "dist/cli/index.js",
@@ -34,6 +35,7 @@
   },
   "scripts": {
     "build": "tsup",
+    "bench": "npm run build && node scripts/bench.mjs",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "vitest run --coverage",

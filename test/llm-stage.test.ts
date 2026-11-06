@@ -35,18 +35,19 @@ describe('--llm-stage', () => {
     expect(parseStageAnswer('{"assessment":"safe","confidence":"high"}').ok).toBe(false);
   });
 
-  it('raises to review on a confident malicious answer, never lowers, never blocks', () => {
+  it('records a model opinion and does not change the verdict', () => {
     const malicious = { assessment: 'malicious', confidence: 'high' } as const;
     const benign = { assessment: 'benign', confidence: 'high' } as const;
     expect(stageEscalates(malicious)).toBe(true);
     expect(stageEscalates({ assessment: 'malicious', confidence: 'low' })).toBe(false);
     expect(stageEscalates({ assessment: 'suspicious', confidence: 'high' })).toBe(false);
-    expect(applyStage(skill('no-findings'), malicious, 'SKILL.md').verdict).toBe('review');
+    const raised = applyStage(skill('no-findings'), malicious, 'SKILL.md');
+    expect(raised.verdict).toBe('no-findings');
+    expect(raised.llmOpinion?.wouldVerdict).toBe('review');
     expect(applyStage(skill('review'), benign, 'SKILL.md').verdict).toBe('review');
     expect(applyStage(skill('block'), benign, 'SKILL.md').verdict).toBe('block');
-    const raised = applyStage(skill('no-findings'), malicious, 'SKILL.md');
     expect(raised.findings[0]?.ruleId).toBe('IH-LLM-001');
-    expect(raised.findings[0]?.severity).toBe('medium');
+    expect(raised.findings[0]?.severity).toBe('info');
   });
 
   it('asks about data, credentials and network, and treats skill text as data', () => {
