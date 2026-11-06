@@ -128,7 +128,10 @@ describe('IH-REF-001 weight and checksum', () => {
     expect(ref.map((f) => f.severity)).toEqual(['medium']);
     expect(ref[0]?.message).toMatch(/Not checked/);
     expect(ref[0]?.message).toMatch(/scripts\/missing\.py/);
-    expect(result.skills[0]?.verdict).toBe('no-findings');
+    // REF-001 stays context-only. A multi-file package that runs a missing local
+    // script is incomplete (IH-META-005), not a clean pass and not a block.
+    expect(result.skills[0]?.verdict).toBe('incomplete');
+    expect(result.skills[0]?.findings.some((f) => f.ruleId === 'IH-META-005')).toBe(true);
     const digest = await contentDigest(dir);
     expect(digest.files['scripts/ok.py']).toMatch(/^[0-9a-f]{64}$/);
     expect(digest.files['scripts/missing.py']).toBeUndefined();

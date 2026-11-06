@@ -56,6 +56,7 @@ export async function applySinceBaseline(
       verdict: verdictFor(fresh, options.thresholds, {
         filesSkipped: blockingSkipCount(skill),
         allowSkipped: options.allowSkipped,
+        rebuildableGap: skill.rebuildableGap !== undefined,
       }),
       gradeRisk: skill.gradeRisk ?? skill.score,
       sinceBaseline: {

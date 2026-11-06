@@ -212,6 +212,12 @@ export interface SkillReport {
   filesSkipped: SkippedFile[];
   /** `.git` and `node_modules` directories that were not entered. */
   skippedDirectories?: SkippedDirectory[];
+  /**
+   * The package is not a rebuildable skill: no SKILL.md, a referenced local script is
+   * missing from a multi-file package, or the skill file is only a placeholder.
+   * A block or review verdict still wins. On its own this is an incomplete scan.
+   */
+  rebuildableGap?: string;
   findings: Finding[];
   score: number;
   verdict: Verdict;

@@ -399,6 +399,42 @@ export const RULE_REFERENCES: Record<string, RuleReferences> = {
     mitreAtlas: [],
     openCre: [],
   },
+  'IH-INJ-014': {
+    owaspLlm: ['LLM01:2025'],
+    owaspAgentic: ['ASI01:2026'],
+    mitreAtlas: [],
+    openCre: ['012-625'],
+  },
+  'IH-INJ-015': {
+    owaspLlm: ['LLM01:2025'],
+    owaspAgentic: ['ASI01:2026'],
+    mitreAtlas: [],
+    openCre: [],
+  },
+  'IH-CRED-007': {
+    owaspLlm: ['LLM02:2025'],
+    owaspAgentic: ['ASI03:2026'],
+    mitreAtlas: [],
+    openCre: ['340-375'],
+  },
+  'IH-INJ-016': {
+    owaspLlm: ['LLM01:2025'],
+    owaspAgentic: ['ASI01:2026'],
+    mitreAtlas: [],
+    openCre: ['012-625'],
+  },
+  'IH-META-004': {
+    owaspLlm: [],
+    owaspAgentic: ['ASI04:2026'],
+    mitreAtlas: [],
+    openCre: [],
+  },
+  'IH-META-005': {
+    owaspLlm: [],
+    owaspAgentic: ['ASI04:2026'],
+    mitreAtlas: [],
+    openCre: [],
+  },
 };
 
 export function referencesFor(ruleId: string): RuleReferences {

@@ -64,6 +64,7 @@ function stableSkill(skill: SkillReport): JsonSkillReport {
     filesScanned: skill.filesScanned,
     filesSkipped: skill.filesSkipped,
     ...directoryField(skill.skippedDirectories ?? []),
+    ...(skill.rebuildableGap ? { rebuildableGap: skill.rebuildableGap } : {}),
     skippedFileCount: skill.filesSkipped.length,
     findings: skill.findings.map(stableFinding),
     suppressed,

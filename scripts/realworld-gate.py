@@ -95,11 +95,26 @@ def scan(path, env_extra=None):
         sys.exit(f'scan produced no output (exit {p.returncode}): {p.stderr[-2000:]}')
     res = {}
     for sk in json.loads(p.stdout)['skills']:
+        rules = sorted({f['ruleId'] for f in sk['findings'] if f.get('ruleId')})
         crit = sorted({f['ruleId'] for f in sk['findings'] if f['severity'] == 'critical'})
         if sk['verdict'] == 'review':
-            crit = sorted({f['ruleId'] for f in sk['findings'] if f['severity'] in ('critical', 'high')})
-        res[os.path.basename(os.path.realpath(sk['root']))] = (sk['verdict'], crit or ['score'])
+            crit = [r for r in rules if r in {f['ruleId'] for f in sk['findings'] if f['severity'] in ('critical', 'high')}] or ['score']
+        else:
+            crit = crit or ['score']
+        res[os.path.basename(os.path.realpath(sk['root']))] = (sk['verdict'], crit, rules)
     return res
+
+def rule_counts(res):
+    counts = {}
+    for verdict, _crit, rules in res.values():
+        for rule_id in rules:
+            counts.setdefault(rule_id, {'skills': 0, 'block': 0, 'review': 0})
+            counts[rule_id]['skills'] += 1
+            if verdict == 'block':
+                counts[rule_id]['block'] += 1
+            elif verdict == 'review':
+                counts[rule_id]['review'] += 1
+    return {k: counts[k] for k in sorted(counts)}
 
 def blocked(res):
     return {names[k]: v[1] for k, v in res.items() if v[0] == 'block'}
@@ -112,7 +127,9 @@ if len(live) != len(RW['skills']):
     sys.exit(f'{len(RW["skills"]) - len(live)} real-world skills missing from scan output')
 now = blocked(live)
 rev = reviewed(live)
-would = {k: v for k, v in blocked(scan(rw_dir, {'IRONHEIGHTS_SHADOW': 'enforce'})).items() if k not in now}
+enforced = scan(rw_dir, {'IRONHEIGHTS_SHADOW': 'enforce'})
+would = {k: v for k, v in blocked(enforced).items() if k not in now}
+would_rev = {k: v for k, v in reviewed(enforced).items() if k not in rev and k not in now}
 
 # --- blind held-out attacks (aggregate only)
 msb = BL['msb']
@@ -146,9 +163,12 @@ report = dict(version=version, realworld_total=len(RW['skills']), realworld_bloc
               realworld_blocked_by_rule=dict(sorted(by_rule.items())),
               realworld_review=len(rev),
               shadow_would_block=len(would),
+              shadow_would_review=len(would_rev),
+              rule_counts=rule_counts(live),
+              enforce_rule_counts=rule_counts(enforced),
               blind=dict(detect=f"{blind['malicious']}/{BL['counts']['malicious']}", fp=f"{blind['benign']}/{BL['counts']['benign']}"))
 os.makedirs(out_dir, exist_ok=True)
-json.dump(dict(report, blocked=now, review=rev, shadow_would_block_ids=would), open(os.path.join(out_dir, 'realworld-gate.json'), 'w'), indent=1)
+json.dump(dict(report, blocked=now, review=rev, shadow_would_block_ids=would, shadow_would_review_ids=would_rev), open(os.path.join(out_dir, 'realworld-gate.json'), 'w'), indent=1)
 print(json.dumps(report, indent=1))
 
 if write_baseline:
@@ -173,7 +193,8 @@ lines = [f"## Accuracy gates ({version})", '',
          f"| Real-world clean skills sent to review | {len(base_rev)}/{len(RW['skills'])} | {len(rev)}/{len(RW['skills'])} | {'FAIL: ' + str(len(new_rev)) + ' new' if new_rev else 'pass'} |",
          f"| Blind attacks blocked | {base['blind']['malicious']}/{BL['counts']['malicious']} | {blind['malicious']}/{BL['counts']['malicious']} | {'FAIL' if blind['malicious'] < base['blind']['malicious'] else 'pass'} |",
          f"| Blind benign blocked | {base['blind']['benign']}/{BL['counts']['benign']} | {blind['benign']}/{BL['counts']['benign']} | {'FAIL' if blind['benign'] > base['blind']['benign'] else 'pass'} |",
-         f"| Shadow checks would block (real-world) | - | {len(would)} | {'not promotable' if would else 'promotable'} |", '']
+         f"| Shadow checks would block (real-world) | - | {len(would)} | {'not promotable' if would else 'promotable'} |",
+         f"| Shadow checks would send to review (real-world) | - | {len(would_rev)} | {'review hits' if would_rev else 'none'} |", '']
 if new:
     fail.append('new real-world blocks')
     lines += ['New real-world blocks (each is a likely false positive):', ''] + [f"- `{k}` ({', '.join(now[k])})" for k in new] + ['']

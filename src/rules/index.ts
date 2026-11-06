@@ -24,6 +24,8 @@ import { inj005, inj006, ref003 } from './hidden-instructions.ts';
 import { inj007 } from './session-instructions.ts';
 import { expBatchRules } from './exp-batch.ts';
 import { exp1106Rules } from './exp-1106.ts';
+import { exp1116Rules } from './exp-1116.ts';
+import { meta005 } from './rebuildable.ts';
 import { net001, net002 } from './network.ts';
 import { obf001 } from './obfuscation.ts';
 import { persist001 } from './persistence.ts';
@@ -67,6 +69,8 @@ export const contentRules: Rule[] = [
   inj007,
   ...expBatchRules,
   ...exp1106Rules,
+  ...exp1116Rules,
+  meta005,
   mcp001,
   mcp002,
   mcp003,

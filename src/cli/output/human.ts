@@ -106,7 +106,11 @@ export function renderHuman(
       );
       for (const note of check.notes.slice(0, 10)) lines.push(`    ${clip(note, 200)}`);
     }
-    if (skill.verdict === 'incomplete') {
+    if (skill.rebuildableGap) lines.push(`  ${skill.rebuildableGap}`);
+    if (
+      skill.verdict === 'incomplete' &&
+      (skill.filesSkipped.length > 0 || blockingDirectoryCount(skill) > 0)
+    ) {
       lines.push(
         `  ${incompleteScanLine(skill.filesSkipped.length, blockingDirectoryCount(skill))}`,
       );

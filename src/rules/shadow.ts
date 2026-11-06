@@ -10,7 +10,12 @@ import type { Finding } from '../core/types.ts';
  * A check is promoted by deleting its name from this set, which is only allowed once that list
  * is empty; after promotion the PR gate fails on any new real-world block. See docs/accuracy-gates.md.
  */
-export const SHADOW_CHECKS: ReadonlySet<string> = new Set<string>([]);
+export const SHADOW_CHECKS: ReadonlySet<string> = new Set<string>([
+  // 2026-11-06 four-idea checks (unlisted-payee, unlisted-other-field,
+  // memory-api-key-identity, third-party-principal, prose-stub-mismatch)
+  // were promoted after the enforce scan would block 0 and would review 0
+  // real-world skills. See docs/experiments/batch-2026-11-06-four/RESULTS.md.
+]);
 
 export function shadowEnforced(): boolean {
   return process.env.IRONHEIGHTS_SHADOW === 'enforce';

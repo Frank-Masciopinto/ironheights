@@ -42,6 +42,22 @@ A path with no slash matches that directory name anywhere in the skill. A path w
 
 `ignoreGlobs` is a separate filter. A pattern you set there drops matching paths and does not add a finding. The built-in list is empty. Do not copy `**/dist/**` into it if you want `dist/` scanned.
 
+## Rebuildable packages
+
+A skill the scanner treats as finished has to be a folder you can rebuild: `SKILL.md` (any capitalization) with the concrete steps, and every local script those steps run present in the folder. A meta rulebook, a placeholder gist, or a folder with no skill file is not that package.
+
+The verdict is `incomplete` when the package is not rebuildable and nothing else would block or send it to review. The grade is `incomplete` when that package also has no risk points. Context-only points, such as a broad path, still produce their letter so a graded finding is not wiped. A clean A is not used for a package that cannot be rebuilt.
+
+- The folder has files and none of them is `SKILL.md`.
+- `SKILL.md` is only a placeholder (a rulebook stub or a gist with no concrete skill text).
+- `SKILL.md` runs a local script, the package contains other files, and that script is not among them.
+
+`--allow-skipped` does not clear this. A skipped `.git` directory is a choice you can acknowledge. A missing skill file is not.
+
+A directory that contains only `SKILL.md` still gets the `IH-REF-001` note when the text names a script that is not in that one file. The note does not by itself change the verdict. A one-file extract cannot prove the sibling is missing from the published package. Point the scan at the whole folder when you need that check.
+
+A block or a review still wins. The incomplete verdict is what a package gets when the only gap is that it cannot be rebuilt. `IH-META-005` records the gap. It is context only and adds no review points.
+
 ## Exit codes
 
 | Exit | Meaning                                                                                                           |
