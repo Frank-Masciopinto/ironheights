@@ -16,11 +16,11 @@ Every row is in [dispositions.csv](dispositions.csv). The grouped read is [INVEN
 
 | Disposition | Rows |
 | --- | ---: |
-| implemented | 7 |
+| implemented | 12 |
 | already-covered | 7 |
-| duplicate | 44 |
+| duplicate | 53 |
 | dropped | 5 |
-| limited | 79 |
+| limited | 65 |
 | **sum** | **142** |
 
 Implemented means a new check, with fixtures and tests, not a fixture-only change. Already-covered means the check was on this main before the branch. Duplicate points at the canonical row. Dropped means a measured gate failure, listed in the discarded-rules log. Limited means the ask needs a runtime fact, a registry, a model, or a match-process ruling this static scan does not have, and the note says which.
@@ -73,6 +73,8 @@ Public attacks are 516 and public safe skills are 456, from the pinned manifest.
 | IH-PERSIST-004 template residue | 0/516 | 0/456 | 0/5655 | 1/1 review | 0/1 |
 | IH-PERSIST-005 silent unpack | 0/516 | 0/456 | 0/5655 | 1/1 review | 0/1 |
 | IH-INJ-020 candor suspends review | 1/516 | 0/456 | 0/5655 | no house pair | no house pair |
+| IH-PROV-001 shipped lock mismatch | 0/516 | 0/456 | 0/5655 | no house pair | no house pair |
+| IH-GUARD-PROXY undeclared proxy in a tool call | not a scan rule | not a scan rule | not a scan rule | not a scan rule | not a scan rule |
 
 The one public hit is ASB04_005544 (prose). Main already blocked it with IH-INJ-007. IH-INJ-020 is new coverage of that shape. It does not add a prose block, and the prose totals above do not move.
 
@@ -93,6 +95,31 @@ Per-sample public verdicts: [public/results.csv](public/results.csv). Per-rule p
 ## Dropped
 
 See `docs/experiments/DISCARDED-RULES.md`. Short form: sibling-markdown info, the credential-advice skip, the "when the user asks" skip on IH-INJ-003, and the high-to-medium downgrade for placeholder webhooks and tunnel hosts. Each was removed. The scan in this folder is the rerun without them.
+
+## Local checks added after the first ledger
+
+These are product checks, not extra static malice regexes. They do not call a registry and they do not add a publisher key.
+
+- `identityDrift` and `ironheights provenance check` compare two local records. Same version with a different digest is same-version drift. Same name with a different digest is a byte change under that name. Rows 44, 48, 50, 78, 106, and 114.
+- `IH-PROV-001` compares `ironheights.lock.json` in the folder to the file bytes. No lock, no finding. Row 104. A signed registry is still absent, so rows 49, 59, 75, 87, and 103 stay limited.
+- `verifyEvidence` rejects a receipt that omits the command, the version, the skill sha256, or whose findings digest does not match the finding list. Rows 10, 26, 120, 122, 131, and 139.
+- `IH-GUARD-PROXY` fires when a tool call sets `HTTP(S)_PROXY` or `ALL_PROXY` to a host outside the guard allowlist. The operator's ambient proxy is not copied onto the call. Row 9. A connect() trace is still absent, so rows 17 and 22 stay limited.
+
+## Independent look-alikes
+
+These are not the 5,655 clean-corpus gate. They are 48 skills from `FayeZC/SkillMD-138K` at `0d73048abf2fb6ee91f6f9f5ac598d5be8d6bdd7` whose content hash is not in `bench/realworld` and not in `bench/msb`. Eight per group, highest star count first, chosen by keyword before the scan. Pins and URLs: [lookalikes/manifest.json](lookalikes/manifest.json). Per-skill verdicts: [lookalikes/verdicts.csv](lookalikes/verdicts.csv).
+
+| Group | Skills | New-rule flags |
+| --- | ---: | ---: |
+| payment-invoice | 8 | 0/8 |
+| credential-config | 8 | 0/8 |
+| content-to-instruction | 8 | 0/8 |
+| uploads-backups | 8 | 0/8 |
+| extract-install | 8 | 0/8 |
+| template-scaffold | 8 | 0/8 |
+| **all** | **48** | **0/48** |
+
+Pre-existing rules still block or review some of these skills. That is not a new-rule flag. The skill text is not committed.
 
 ## Limitations
 

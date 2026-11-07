@@ -3,8 +3,8 @@
 Every number in the README benchmark table comes from this run.
 
 - Workflow run: local run
-- Commit: `fa05c6922fcd6f8de05f85c5a7ebdd398a9b604c`
-- Time (UTC): 2026-11-07T07:23:15+00:00
+- Commit: `ff5982f102f4824837c50b4c8a8898c1eba2a933`
+- Time (UTC): 2026-11-07T07:37:12+00:00
 - Ironheights 0.34.0; Cisco skill-scanner not run (static analyzers only, no LLM)
 - MaliciousSkillBench revision `d4b42ce5766a6e0359c987cf59c1007cb3795a90`
 

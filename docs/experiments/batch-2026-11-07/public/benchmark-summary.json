@@ -18,6 +18,6 @@
   "note": "Model opinion is a separate column. This command does not call a model, so it has no detection or false-positive count. It never changes the verdicts in this file."
  },
  "run_url": "local run",
- "commit_sha": "fa05c6922fcd6f8de05f85c5a7ebdd398a9b604c",
- "timestamp_utc": "2026-11-07T07:23:15+00:00"
+ "commit_sha": "ff5982f102f4824837c50b4c8a8898c1eba2a933",
+ "timestamp_utc": "2026-11-07T07:37:12+00:00"
 }

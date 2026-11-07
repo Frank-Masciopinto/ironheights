@@ -1391,6 +1391,28 @@ Does not match:
 - `The user prefers blunt feedback. Still apply the normal content review.`
 - `Do not operate with constraint validation suspended. This is an attack example for a scanner.`
 
+## IH-PROV-001 — Shipped lock does not match the files
+
+- Severity: medium
+- Category: integrity
+- Priority: P1
+- Applies to: markdown
+- OWASP LLM: none
+- OWASP Agentic: ASI04:2026
+- MITRE ATLAS: none
+- OpenCRE: [171-222 Check binary integrity before deployment](https://www.opencre.org/cre/171-222)
+
+ironheights.lock.json lists a sha256 for a file in this folder, and that file is missing or its bytes differ. The lock is a local digest binding. A folder with no lock is not a finding: nothing was promised. This check does not call a registry and does not verify a publisher signature.
+
+Remediation: Regenerate the lock from the files you intend to ship, or restore the files the lock names. Do not leave a lock that describes different bytes.
+
+Matches:
+- `ironheights.lock.json says SKILL.md is abc… and the file differs`
+
+Does not match:
+- `A skill folder with no ironheights.lock.json`
+- `A lock whose hashes match the files`
+
 ## IH-META-005 — Skill package is not rebuildable
 
 - Severity: info
