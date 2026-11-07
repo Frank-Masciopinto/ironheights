@@ -71,6 +71,7 @@ const DECLARED_KEYS = new Set([
   'api_base',
   'apibase',
   'api',
+  'apis',
   'network',
   'repository',
   'source',
@@ -105,11 +106,16 @@ function declaredHostsFrom(record: Record<string, unknown>): string[] {
 
 function declaredHostOf(value: string): string | undefined {
   const trimmed = value.trim();
-  if (!/^https?:\/\//i.test(trimmed)) return undefined;
-  try {
-    const host = new URL(trimmed).hostname.toLowerCase().replace(/\.$/, '');
-    return host.includes('.') ? host : undefined;
-  } catch {
-    return undefined;
+  if (/^https?:\/\//i.test(trimmed)) {
+    try {
+      const host = new URL(trimmed).hostname.toLowerCase().replace(/\.$/, '');
+      return host.includes('.') ? host : undefined;
+    } catch {
+      return undefined;
+    }
   }
+  // `metadata.requires.apis` often lists a bare vendor host, not a URL.
+  if (/^(?:[a-z0-9-]+\.)+[a-z]{2,}$/i.test(trimmed))
+    return trimmed.toLowerCase().replace(/\.$/, '');
+  return undefined;
 }
