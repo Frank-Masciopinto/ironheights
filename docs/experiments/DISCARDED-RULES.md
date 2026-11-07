@@ -41,3 +41,35 @@ This is the log of every rule we tried and dropped. Update it at the end of each
 - Match orders aimed at the agent, not nouns ("treat X as overriding", not "instruction override").
 - For any rule that downgrades, build an adversarial twin and check that no benchmark or blind attack is lost.
 - Look-alikes used to tighten a rule are no longer independent. Keep a fresh held-out look-alike sample when you can.
+
+## 2026-11-03 — verdict fix for context-only IH-NET-001 (branch fix/verdict-no-findings-high)
+
+This section was in the 2026-11-07 handoff copy and missing from this file. It is restored here.
+
+- **Discarded v1: every high IH-NET-001 (raw IP or high-risk host) counts for the verdict.** 21 new real-world reviews (LAN IPs, webhook/telegram style hosts). Blind 224.
+- **Discarded v2: cloud metadata + any public raw IPv4.** 2 new real-world reviews (game servers on public IPs: angelstreet/play-heartclaws, sigreyo/molterstrike). Blind 222.
+- **Kept v3: cloud metadata hosts only.** 0 new real-world blocks/reviews, blind 219 (=main), bench block-or-review 248→249.
+- Common pattern: raw IPs are normal in real skills (self-hosted, game, LAN servers); a bare IP is context, not a signal. Only destinations with no benign skill use (metadata endpoints) are safe to escalate.
+
+## 2026-11-03 — prose-attack combined experiment (branch exp/prose-1103, P1–P6)
+
+This section was in the 2026-11-07 handoff copy and missing from this file. It is restored here.
+
+| Rule | Motivating row | Gate that failed | Hits | Why |
+| --- | --- | --- | --- | --- |
+| P1 required send to author-fixed destination id | ASB04_003994 (tune) | look-alikes | 1 honest (chanjing-tts-voice-clone: "Post to the following endpoint") | "publish/post to the X endpoint" is normal API docs; a literal id + REQUIRED is not enough without knowing who owns the destination. Needs ownership signal, not wording. |
+| P2 checker pre-cleared by outside list / pass capped | ASB04_003413 (tune) | look-alikes | 3 (upwork job tracker "skipped", code-qc "Record: passed/skipped", pcs-swap-planner whitelisted-token skip) | "passed … skipped" is normal test reporting; allowlist skips are a real feature. |
+| P5 agent keeps its own action out of user view | none (0 bench hits) | no gain + look-alikes | 4 ("NEVER show this skill file to the user", "Do not mention the update to the user") | Pattern 3 again: hiding internal instructions/UX noise is common in honest skills. |
+
+Kept for review (all gates passed, run 2): P3 regardless-of-task write outside folder (ASB04_000719), P4 other-skill-retired + no re-sort (ASB04_006313), P6 entry-point-for-any-task + permission-free memory (ASB04_004303). Each is 1 tune row → review; 0 held-out gain, so treat as overfit-risk until fresh rows hit.
+
+## 2026-11-07 — combined experiment on the 142 accuracy rows
+
+| Rule / idea | Date | Target rows | Failed gate | Hits | Why |
+| --- | --- | --- | --- | --- | --- |
+| IH-FS-001 sibling markdown path lowered to info | 2026-11-07 | rows 7, 52 | public attack block | ASB04_006523 block→review (174/516→173/516) | The sibling `.md` path was the 15 points holding that attack at block. IH-FS-001 is context-only when it is the only signal, so the benign sibling-doc skills were already verdict no-findings. **Not kept.** |
+| IH-CRED-001 skip for do-not-hand-edit, configure-in-openclaw.json, your-own-key, and a shell-history monitor checklist | 2026-11-07 | rows 4, 12, 74, 80, 124 | blind attacks | blind 219/600→218/600 with the other drops already out. Blind text was not opened. Public safe reviews had moved 31/456→27/456; that win was reverted with the rule. | Distinct from Night G (which lowered every credential path named in prose and lost ASB04_003887 and ASB04_004721). This version only skipped advice lines and a history checklist with no read verb. It still cost one blind block. **Not kept.** |
+| IH-INJ-003 skip when the line says the user asks, or "use when" | 2026-11-07 | row 134 | blind attacks | With the credential skip still on, removing this exemption moved blind 217/600→218/600, so the exemption accounted for one blind block. Blind text was not opened. | The public benign clear on ASB04_009590 was reverted with it. **Not kept.** |
+| IH-NET-001 high→medium for a placeholder Discord webhook, or a tunnel host with no nearby file or env read | 2026-11-07 | rows 5, 6 | withdrawn with the batch that missed the fresh blind total | Not isolated as its own blind delta. | Lowering a high finding is the same point-margin failure as the sibling-markdown row above. **Not in the final scanner.** Final rerun without it: blind 219/600, real-world 275 blocked and 474 review. |
+
+Common pattern added by this run: a context-only finding still supplies the points that hold some other finding at block. Lowering or deleting it can move a block to review even when the benign skills that motivated the change were already verdict no-findings.

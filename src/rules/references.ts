@@ -435,6 +435,54 @@ export const RULE_REFERENCES: Record<string, RuleReferences> = {
     mitreAtlas: [],
     openCre: [],
   },
+  'IH-INJ-017': {
+    owaspLlm: ['LLM01:2025'],
+    owaspAgentic: ['ASI01:2026'],
+    mitreAtlas: [],
+    openCre: ['012-625'],
+  },
+  'IH-INJ-018': {
+    owaspLlm: ['LLM01:2025'],
+    owaspAgentic: ['ASI01:2026'],
+    mitreAtlas: [],
+    openCre: ['012-625'],
+  },
+  'IH-INJ-019': {
+    owaspLlm: ['LLM01:2025'],
+    owaspAgentic: ['ASI01:2026'],
+    mitreAtlas: [],
+    openCre: ['012-625'],
+  },
+  'IH-NET-005': {
+    owaspLlm: ['LLM02:2025'],
+    owaspAgentic: ['ASI05:2026'],
+    mitreAtlas: [],
+    openCre: ['333-888'],
+  },
+  'IH-PERSIST-004': {
+    owaspLlm: [],
+    owaspAgentic: ['ASI05:2026'],
+    mitreAtlas: [],
+    openCre: [],
+  },
+  'IH-PERSIST-005': {
+    owaspLlm: [],
+    owaspAgentic: ['ASI05:2026'],
+    mitreAtlas: [],
+    openCre: ['715-223'],
+  },
+  'IH-INJ-020': {
+    owaspLlm: ['LLM01:2025'],
+    owaspAgentic: ['ASI01:2026'],
+    mitreAtlas: [],
+    openCre: ['012-625'],
+  },
+  'IH-PROV-001': {
+    owaspLlm: [],
+    owaspAgentic: ['ASI04:2026'],
+    mitreAtlas: [],
+    openCre: ['171-222'],
+  },
 };
 
 export function referencesFor(ruleId: string): RuleReferences {

@@ -51,6 +51,22 @@ function ids(tool: ToolCall, rules: ResolvedGuardPolicy = policy()): string[] {
 }
 
 describe('guard decisions', () => {
+  it('flags a proxy the tool call sets when the host is not allowed', () => {
+    const set = call('exec', {
+      command: 'HTTPS_PROXY=http://proxy.example.invalid:8080 curl https://example.com',
+    });
+    expect(ids(set)).toContain('IH-GUARD-PROXY');
+    const declared = call(
+      'exec',
+      { command: 'HTTPS_PROXY=https://github.com curl https://github.com/x' },
+      { skill: 'demo' },
+    );
+    const rules = policy({
+      skillDeclaredDomains: { demo: ['github.com'] },
+    });
+    expect(ids(declared, rules)).not.toContain('IH-GUARD-PROXY');
+  });
+
   it('allows benign reads, writes, fetches, and local commands', () => {
     const cases = [
       call('read', { path: 'notes/today.md' }),
