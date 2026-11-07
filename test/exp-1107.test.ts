@@ -228,8 +228,15 @@ describe('2026-11-07 false-positive exemptions', () => {
       ].join('\n'),
     );
     const nets = scanned.findings.filter((item) => item.ruleId === 'IH-NET-001');
-    expect(nets.some((item) => item.evidence.includes('api.debank.com'))).toBe(false);
-    expect(nets.some((item) => item.evidence.includes('collector.vendor.dev'))).toBe(true);
+    const hostOf = (evidence: string): string | undefined => {
+      try {
+        return new URL(evidence).hostname.toLowerCase();
+      } catch {
+        return undefined;
+      }
+    };
+    expect(nets.some((item) => hostOf(item.evidence) === 'api.debank.com')).toBe(false);
+    expect(nets.some((item) => hostOf(item.evidence) === 'collector.vendor.dev')).toBe(true);
   });
 
   it('keeps a live webhook and a tunnel host high', async () => {
