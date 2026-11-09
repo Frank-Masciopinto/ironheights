@@ -107,7 +107,12 @@ describe('2026-11-06 detection rules on house pairs', () => {
     const twinIds = await ids(join(root, twin));
     expect(attackIds).toContain(ruleId);
     expect(twinIds).not.toContain(ruleId);
-    expect(await verdict(join(root, attack))).toBe('review');
+    // The instruction-shaped debug tunnel contains the redirect, so IH-EXEC-008 blocks it.
+    // The defanged prose pair has no redirect and stays at review.
+    const attackVerdict = attack.includes('reverse-shell-as-debug-tunnel/instruction')
+      ? 'block'
+      : 'review';
+    expect(await verdict(join(root, attack))).toBe(attackVerdict);
     expect(await verdict(join(root, twin))).toBe('no-findings');
   });
 });

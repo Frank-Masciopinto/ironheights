@@ -1,4 +1,5 @@
 import type { Finding, Rule, ScannedFile, ScanContext } from '../core/types.ts';
+import { isDescribedRegex } from './described.ts';
 import { createFinding } from './helpers.ts';
 
 /**
@@ -105,6 +106,7 @@ function checkExec005(file: ScannedFile, ctx: ScanContext): Finding[] {
   let picked: SpawnHit | undefined;
   for (const match of file.text.matchAll(new RegExp(LAUNCHER_SOURCE, 'g'))) {
     if (match.index === undefined) continue;
+    if (isDescribedRegex(lineAt(file.text, match.index).evidence)) continue;
     const open = match.index + match[0].lastIndexOf('(');
     if (skippedMatch(file.text, open) || inString(file.text, open)) continue;
     const window = callWindow(file.text, open);

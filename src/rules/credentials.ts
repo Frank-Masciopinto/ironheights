@@ -3,6 +3,7 @@ import { ENTROPY_MIN_LENGTH, ENTROPY_THRESHOLD, shannonEntropy } from '../util/e
 import { maskSecret, maskWithin } from '../util/mask.ts';
 import { eachLine } from '../util/text.ts';
 import { createFinding, pushUnique } from './helpers.ts';
+import { isDescribedRegex, placeholderConfigComment } from './described.ts';
 import { hasSensitiveMarker } from './network.ts';
 
 /**
@@ -78,6 +79,7 @@ export const cred001: Rule = {
     if (!hasSensitiveMarker(file.text)) return findings;
     eachLine(file.text, (line, lineNumber) => {
       if (!hasSensitiveMarker(line)) return;
+      if (placeholderConfigComment(line) || isDescribedRegex(line)) return;
       const config = configOnlyMarker(line);
       pushUnique(
         findings,

@@ -1,5 +1,6 @@
-import type { Finding, Rule, ScannedFile } from '../core/types.ts';
+import type { Finding, Rule, ScannedFile, Severity } from '../core/types.ts';
 import { eachLine } from '../util/text.ts';
+import { isDescribedRegex } from './described.ts';
 import { createFinding, pushUnique } from './helpers.ts';
 
 /**
@@ -33,7 +34,7 @@ export const exec001: Rule = {
   severity: 'critical',
   priority: 'P0',
   description:
-    'Fetching remote text and passing it straight to a shell or runtime executes attacker-controlled code.',
+    'Fetching remote text and passing it straight to a shell or runtime executes attacker-controlled code. A pipe whose URL is one documented vendor installer (Azure CLI, Docker, rustup, the Tavily CLI, the Hugging Face CLI, hf-mount, the Omni CLI, or the Apollo MCP installer) is reported at medium and does not add block points. Any other host, including a second pipe on the same line, stays critical.',
   remediation:
     'Download to a file, review it, and run a pinned local copy instead of piping a URL into a shell.',
   appliesTo: ['any'],
@@ -96,6 +97,36 @@ const DATA_PIPE = /\|\s*(?:python3?\s+(?:-m\s+json\.tool|-c\b)|node\s+-e\b|jq\b)
 const WARNING_LINE =
   /\b(?:never|don'?t|do\s+not|avoid|instead\s+of|rather\s+than|e\.g\.|for\s+example|such\s+as|always\s+use\s+a\s+package\s+manager)\b/i;
 
+/** Documented installers. Any other host stays a critical pipe. */
+const VENDOR_INSTALL =
+  /https?:\/\/(?:aka\.ms\/InstallAzureCLIDeb\b|get\.docker\.com\b|sh\.rustup\.rs\b|cli\.tavily\.com\/install\.sh\b|hf\.co\/cli\/install\.sh\b|raw\.githubusercontent\.com\/huggingface\/hf-mount\/|raw\.githubusercontent\.com\/exploreomni\/cli\/|mcp\.apollo\.dev\/download\/)/i;
+
+function vendorInstallOnly(line: string): boolean {
+  const pipes =
+    line.match(
+      /\b(?:curl|wget|iwr|Invoke-WebRequest|Invoke-RestMethod)\b[^|\n]{0,400}\|\s*(?:sudo\s+)?(?:sh|bash|zsh|python3?|node|iex|powershell|pwsh)\b/gi,
+    ) ?? [];
+  if (pipes.length === 0) return false;
+  return pipes.every((pipe) => VENDOR_INSTALL.test(pipe));
+}
+
+function emitExec001(file: ScannedFile, line: string, lineNumber: number): Finding {
+  if (
+    vendorInstallOnly(line) &&
+    !BASE64_PIPE.test(line) &&
+    !SUBSTITUTION.test(line) &&
+    !PROCESS_SUBST.test(line)
+  ) {
+    return emit(exec001, file, line, lineNumber, {
+      severity: 'medium',
+      scoreExempt: true,
+      message:
+        'A documented vendor installer is piped into a shell. It is sent to review and does not add block points. An installer from any other host still blocks.',
+    });
+  }
+  return emit(exec001, file, line, lineNumber);
+}
+
 function checkExec001(file: ScannedFile): Finding[] {
   const findings: Finding[] = [];
   eachLine(file.text, (line, lineNumber) => {
@@ -110,10 +141,10 @@ function checkExec001(file: ScannedFile): Finding[] {
       PROCESS_SUBST.test(line) ||
       BASE64_PIPE.test(line);
     if (!hit && FETCHER.test(line) && INTERPRETER.test(line) && line.includes('|')) {
-      findings.push(emit(exec001, file, line, lineNumber));
+      findings.push(emitExec001(file, line, lineNumber));
       return;
     }
-    if (hit) findings.push(emit(exec001, file, line, lineNumber));
+    if (hit) findings.push(emitExec001(file, line, lineNumber));
   });
   return findings;
 }
@@ -168,6 +199,7 @@ function checkExec003(file: ScannedFile): Finding[] {
   const findings: Finding[] = [];
   const patterns = [EVAL, NEW_FUNCTION, OS_SYSTEM, SUBPROCESS_SHELL, NODE_SHELL];
   eachLine(file.text, (line, lineNumber) => {
+    if (isDescribedRegex(line)) return;
     const hits = patterns.filter((pattern) => pattern.test(line));
     if (
       file.kind === 'markdown' &&
@@ -202,11 +234,19 @@ function checkExec003(file: ScannedFile): Finding[] {
   return findings;
 }
 
-function emit(rule: Rule, file: ScannedFile, line: string, lineNumber: number): Finding {
+function emit(
+  rule: Rule,
+  file: ScannedFile,
+  line: string,
+  lineNumber: number,
+  extra?: { severity?: Severity; scoreExempt?: boolean; message?: string },
+): Finding {
   return createFinding(rule, file, {
     line: lineNumber,
     evidence: line,
-    message: 'Remote content is passed to an interpreter.',
+    message: extra?.message ?? 'Remote content is passed to an interpreter.',
     confidence: 'high',
+    ...(extra?.severity ? { severity: extra.severity } : {}),
+    ...(extra?.scoreExempt ? { scoreExempt: true } : {}),
   });
 }
