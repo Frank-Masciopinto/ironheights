@@ -1,5 +1,6 @@
 import { posix } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { proxyHostsInText } from '../provenance/local.ts';
 import { badHost, extractUrls, hostAllowed, hostOf } from '../rules/network.ts';
 import { clip } from '../util/text.ts';
 import { redactSecrets } from './redact.ts';
@@ -106,6 +107,18 @@ export function collectViolations(call: ToolCall, policy: ResolvedGuardPolicy): 
         : `outbound request to undeclared host ${url.host}`,
       evidence: show(url.raw),
       host: url.host,
+    });
+  }
+  for (const host of proxyHostsInText(
+    `${command}\n${JSON.stringify(call.params).slice(0, MAX_TEXT)}`,
+  )) {
+    if (hostAllowed(host, allow)) continue;
+    pushViolation(violations, {
+      ruleId: 'IH-GUARD-PROXY',
+      severity: 'medium',
+      message: `tool call sets a proxy to undeclared host ${host}`,
+      evidence: host,
+      host,
     });
   }
   return violations.slice(0, MAX_VIOLATIONS);

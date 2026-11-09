@@ -1,0 +1,2557 @@
+{
+ "version": "0.34.0",
+ "realworld_total": 5655,
+ "realworld_blocked": 275,
+ "realworld_blocked_by_rule": {
+  "IH-EXEC-001": 60,
+  "IH-INTENT-001": 27,
+  "score": 191
+ },
+ "realworld_review": 474,
+ "shadow_would_block": 0,
+ "shadow_would_review": 0,
+ "rule_counts": {
+  "IH-CRED-001": {
+   "skills": 244,
+   "block": 104,
+   "review": 140
+  },
+  "IH-CRED-002": {
+   "skills": 5,
+   "block": 3,
+   "review": 2
+  },
+  "IH-CRED-003": {
+   "skills": 11,
+   "block": 3,
+   "review": 8
+  },
+  "IH-CRED-004": {
+   "skills": 23,
+   "block": 7,
+   "review": 12
+  },
+  "IH-CRED-005": {
+   "skills": 32,
+   "block": 6,
+   "review": 19
+  },
+  "IH-EXEC-001": {
+   "skills": 60,
+   "block": 60,
+   "review": 0
+  },
+  "IH-EXEC-002": {
+   "skills": 15,
+   "block": 9,
+   "review": 6
+  },
+  "IH-EXEC-003": {
+   "skills": 16,
+   "block": 10,
+   "review": 6
+  },
+  "IH-EXEC-004": {
+   "skills": 60,
+   "block": 12,
+   "review": 31
+  },
+  "IH-EXEC-005": {
+   "skills": 4,
+   "block": 3,
+   "review": 1
+  },
+  "IH-FLOW-001": {
+   "skills": 30,
+   "block": 16,
+   "review": 14
+  },
+  "IH-FS-001": {
+   "skills": 213,
+   "block": 15,
+   "review": 8
+  },
+  "IH-INJ-001": {
+   "skills": 9,
+   "block": 6,
+   "review": 2
+  },
+  "IH-INJ-002": {
+   "skills": 12,
+   "block": 5,
+   "review": 7
+  },
+  "IH-INJ-003": {
+   "skills": 39,
+   "block": 18,
+   "review": 21
+  },
+  "IH-INJ-004": {
+   "skills": 12,
+   "block": 4,
+   "review": 8
+  },
+  "IH-INJ-005": {
+   "skills": 1,
+   "block": 0,
+   "review": 1
+  },
+  "IH-INJ-006": {
+   "skills": 3,
+   "block": 0,
+   "review": 3
+  },
+  "IH-INTENT-001": {
+   "skills": 143,
+   "block": 46,
+   "review": 54
+  },
+  "IH-INTENT-002": {
+   "skills": 80,
+   "block": 22,
+   "review": 54
+  },
+  "IH-META-001": {
+   "skills": 5655,
+   "block": 275,
+   "review": 474
+  },
+  "IH-NET-001": {
+   "skills": 615,
+   "block": 98,
+   "review": 100
+  },
+  "IH-NET-002": {
+   "skills": 88,
+   "block": 48,
+   "review": 40
+  },
+  "IH-OBF-001": {
+   "skills": 1,
+   "block": 1,
+   "review": 0
+  },
+  "IH-PERSIST-001": {
+   "skills": 39,
+   "block": 26,
+   "review": 13
+  },
+  "IH-PRIV-001": {
+   "skills": 157,
+   "block": 68,
+   "review": 82
+  },
+  "IH-REF-001": {
+   "skills": 837,
+   "block": 56,
+   "review": 70
+  },
+  "IH-REF-003": {
+   "skills": 2,
+   "block": 1,
+   "review": 1
+  }
+ },
+ "enforce_rule_counts": {
+  "IH-CRED-001": {
+   "skills": 244,
+   "block": 104,
+   "review": 140
+  },
+  "IH-CRED-002": {
+   "skills": 5,
+   "block": 3,
+   "review": 2
+  },
+  "IH-CRED-003": {
+   "skills": 11,
+   "block": 3,
+   "review": 8
+  },
+  "IH-CRED-004": {
+   "skills": 23,
+   "block": 7,
+   "review": 12
+  },
+  "IH-CRED-005": {
+   "skills": 32,
+   "block": 6,
+   "review": 19
+  },
+  "IH-EXEC-001": {
+   "skills": 60,
+   "block": 60,
+   "review": 0
+  },
+  "IH-EXEC-002": {
+   "skills": 15,
+   "block": 9,
+   "review": 6
+  },
+  "IH-EXEC-003": {
+   "skills": 16,
+   "block": 10,
+   "review": 6
+  },
+  "IH-EXEC-004": {
+   "skills": 60,
+   "block": 12,
+   "review": 31
+  },
+  "IH-EXEC-005": {
+   "skills": 4,
+   "block": 3,
+   "review": 1
+  },
+  "IH-FLOW-001": {
+   "skills": 30,
+   "block": 16,
+   "review": 14
+  },
+  "IH-FS-001": {
+   "skills": 213,
+   "block": 15,
+   "review": 8
+  },
+  "IH-INJ-001": {
+   "skills": 9,
+   "block": 6,
+   "review": 2
+  },
+  "IH-INJ-002": {
+   "skills": 12,
+   "block": 5,
+   "review": 7
+  },
+  "IH-INJ-003": {
+   "skills": 39,
+   "block": 18,
+   "review": 21
+  },
+  "IH-INJ-004": {
+   "skills": 12,
+   "block": 4,
+   "review": 8
+  },
+  "IH-INJ-005": {
+   "skills": 1,
+   "block": 0,
+   "review": 1
+  },
+  "IH-INJ-006": {
+   "skills": 3,
+   "block": 0,
+   "review": 3
+  },
+  "IH-INTENT-001": {
+   "skills": 143,
+   "block": 46,
+   "review": 54
+  },
+  "IH-INTENT-002": {
+   "skills": 80,
+   "block": 22,
+   "review": 54
+  },
+  "IH-META-001": {
+   "skills": 5655,
+   "block": 275,
+   "review": 474
+  },
+  "IH-NET-001": {
+   "skills": 615,
+   "block": 98,
+   "review": 100
+  },
+  "IH-NET-002": {
+   "skills": 88,
+   "block": 48,
+   "review": 40
+  },
+  "IH-OBF-001": {
+   "skills": 1,
+   "block": 1,
+   "review": 0
+  },
+  "IH-PERSIST-001": {
+   "skills": 39,
+   "block": 26,
+   "review": 13
+  },
+  "IH-PRIV-001": {
+   "skills": 157,
+   "block": 68,
+   "review": 82
+  },
+  "IH-REF-001": {
+   "skills": 837,
+   "block": 56,
+   "review": 70
+  },
+  "IH-REF-003": {
+   "skills": 2,
+   "block": 1,
+   "review": 1
+  }
+ },
+ "blind": {
+  "detect": "219/600",
+  "fp": "15/300"
+ },
+ "blocked": {
+  "clawhub:byungkyu/box@1.0.5": [
+   "score"
+  ],
+  "clawhub:guillaumetch/moltworld-dashboard-deploy@0.1.3": [
+   "score"
+  ],
+  "clawhub:byungkyu/pdf-co@1.0.2": [
+   "score"
+  ],
+  "clawhub:gitgoodordietrying/infra-as-code@1.0.0": [
+   "score"
+  ],
+  "github:redpanda-data/connect/.claude-plugin/plugins/redpanda-connect/skills/pipeline-assistant/SKILL.md": [
+   "score"
+  ],
+  "clawhub:instant-picture/ddg@1.0.0": [
+   "score"
+  ],
+  "github:JimLiu/baoyu-skills/skills/baoyu-post-to-wechat/SKILL.md": [
+   "score"
+  ],
+  "clawhub:chelouche9/clawon@1.0.7": [
+   "score"
+  ],
+  "clawhub:melvynx/fly@1.0.0": [
+   "IH-EXEC-001"
+  ],
+  "clawhub:txc-z/ob1-install@1.0.0": [
+   "IH-EXEC-001"
+  ],
+  "clawhub:bigdaddyluke/instacart-skill@0.1.0": [
+   "IH-INTENT-001"
+  ],
+  "clawhub:byungkyu/zoho-bookings@1.0.3": [
+   "score"
+  ],
+  "clawhub:arnarsson/ssh-essentials@1.0.0": [
+   "score"
+  ],
+  "clawhub:byungkyu/buffer-api@1.0.1": [
+   "score"
+  ],
+  "clawhub:misaka43fd/mulerouter@0.1.10": [
+   "score"
+  ],
+  "github:ComposioHQ/awesome-claude-skills/document-skills/docx/SKILL.md": [
+   "score"
+  ],
+  "clawhub:sheetaa/create-agent-with-telegram-group@0.1.5": [
+   "score"
+  ],
+  "clawhub:satbot-mdk/moneydevkit@0.2.0": [
+   "score"
+  ],
+  "clawhub:zhangzhejian/agentgram-chat@2.4.0": [
+   "score"
+  ],
+  "github:alirezarezvani/claude-skills/.gemini/skills/pr-review-expert/SKILL.md": [
+   "score"
+  ],
+  "github:openclaw/openclaw/skills/gh-issues/SKILL.md": [
+   "score"
+  ],
+  "clawhub:katherineedwards2475/rdk-x5-network@1.0.0": [
+   "score"
+  ],
+  "clawhub:adamthompson33/moltcops@1.1.0": [
+   "IH-INTENT-001"
+  ],
+  "github:vectorize-io/hindsight/skills/hindsight-self-hosted/SKILL.md": [
+   "IH-EXEC-001"
+  ],
+  "clawhub:andyxinweiminicloud/capability-graph-mapper@1.0.0": [
+   "score"
+  ],
+  "github:vercel/turborepo/skills/turborepo/SKILL.md": [
+   "score"
+  ],
+  "clawhub:aj-dev-smith/clawtunes-social@1.3.1": [
+   "score"
+  ],
+  "clawhub:liuwujijay/agi-terminal-helper@1.0.2": [
+   "IH-EXEC-001"
+  ],
+  "clawhub:lgx281227231/cad2pdf@2.0.0": [
+   "score"
+  ],
+  "clawhub:maciejlis/resend-cli@1.0.5": [
+   "IH-INTENT-001"
+  ],
+  "clawhub:gogo6969/agent-republic-docs@0.1.1": [
+   "IH-INTENT-001"
+  ],
+  "clawhub:m9rco/p4u@0.0.0-nightly.e055304": [
+   "score"
+  ],
+  "clawhub:ivangdavila/cardano@1.0.0": [
+   "score"
+  ],
+  "clawhub:derick001/git-repo-auditor@1.0.0": [
+   "score"
+  ],
+  "clawhub:byungkyu/jobber@1.0.3": [
+   "score"
+  ],
+  "github:fzyzcjy/flutter_rust_bridge/.claude/skills/frb-test/SKILL.md": [
+   "IH-EXEC-001"
+  ],
+  "clawhub:swairshah/hackathon@1.0.6": [
+   "IH-INTENT-001"
+  ],
+  "clawhub:solomonneas/memory-forensics@1.0.1": [
+   "score"
+  ],
+  "clawhub:shawnwollenberg/guardrail-smart-accounts@1.1.1": [
+   "score"
+  ],
+  "clawhub:rk905/geeksdobyte-slack-botskill@0.1.1": [
+   "score"
+  ],
+  "clawhub:andyxinweiminicloud/protocol-doc-auditor@1.0.0": [
+   "IH-EXEC-001"
+  ],
+  "clawhub:byungkyu/zoom-api@1.0.6": [
+   "score"
+  ],
+  "clawhub:byungkyu/whatsapp-business@1.0.4": [
+   "score"
+  ],
+  "clawhub:zyl-hub/repo-runner@1.0.2": [
+   "IH-EXEC-001"
+  ],
+  "github:vectorize-io/hindsight/skills/hindsight-cloud/SKILL.md": [
+   "IH-EXEC-001"
+  ],
+  "clawhub:bpauli/garmin-connect-cli@1.8.0": [
+   "score"
+  ],
+  "clawhub:lemondepat/organise-photos@1.0.0": [
+   "score"
+  ],
+  "clawhub:byungkyu/reducto@1.0.1": [
+   "score"
+  ],
+  "clawhub:lion504/code-1-0-4@1.0.0": [
+   "IH-INTENT-001"
+  ],
+  "clawhub:rosasalberto/didit-face-search@1.1.0": [
+   "IH-INTENT-001"
+  ],
+  "clawhub:capt-marbles/attio@1.0.0": [
+   "score"
+  ],
+  "clawhub:wpank/turborepo@1.0.0": [
+   "score"
+  ],
+  "clawhub:david90232/driftguard@0.3.1": [
+   "IH-EXEC-001"
+  ],
+  "clawhub:yang1002378395-cmyk/openclaw-error-fix@1.1.0": [
+   "IH-EXEC-001"
+  ],
+  "clawhub:andybold/obsidian-sync@1.0.0": [
+   "score"
+  ],
+  "clawhub:cld1994/raspberry-pi-gpio@1.0.0": [
+   "score"
+  ],
+  "clawhub:parinll/bit@1.0.5": [
+   "score"
+  ],
+  "clawhub:yang1002378395-cmyk/side-hustle-agent@1.0.0": [
+   "IH-EXEC-001"
+  ],
+  "clawhub:mixerboxai/clawmail-me@1.2.9": [
+   "score"
+  ],
+  "clawhub:aksenkin/voice-stt-tts@1.0.3": [
+   "score"
+  ],
+  "github:openclaw/openclaw/skills/coding-agent/SKILL.md": [
+   "score"
+  ],
+  "clawhub:tinywatermonster/feishu-multiagent@1.0.1": [
+   "score"
+  ],
+  "github:ComposioHQ/awesome-claude-skills/langsmith-fetch/SKILL.md": [
+   "score"
+  ],
+  "clawhub:yang1002378395-cmyk/ai-side-hustle-agent@1.0.0": [
+   "IH-EXEC-001"
+  ],
+  "clawhub:solomonneas/pentest-commands@1.0.1": [
+   "score"
+  ],
+  "clawhub:misscrx/vivi-skill-vetter@1.0.0": [
+   "IH-EXEC-001"
+  ],
+  "clawhub:wykings/xcrawl@1.0.0": [
+   "score"
+  ],
+  "clawhub:ivangdavila/ansible@1.0.0": [
+   "score"
+  ],
+  "clawhub:wykings/xcrawl-map@1.0.2": [
+   "score"
+  ],
+  "clawhub:noahseeger/dht11-temp@1.0.0": [
+   "score"
+  ],
+  "clawhub:frmoretto/hs@1.4.8": [
+   "IH-EXEC-001"
+  ],
+  "clawhub:darinrowe/github-private-repo-ssh-routing@1.0.1": [
+   "score"
+  ],
+  "clawhub:sfdcbrewery/salesforce-sdr-admin@1.0.0": [
+   "score"
+  ],
+  "clawhub:gitgoodordietrying/emergency-rescue@1.0.0": [
+   "score"
+  ],
+  "clawhub:wykings/xcrawl-crawl@1.0.2": [
+   "score"
+  ],
+  "clawhub:adolago/meta-business@1.2.0": [
+   "score"
+  ],
+  "github:coreyhaines31/marketingskills/skills/referral-program/SKILL.md": [
+   "score"
+  ],
+  "clawhub:catafal/lead-gen-factory@1.0.0": [
+   "score"
+  ],
+  "github:accomplish-ai/accomplish/apps/desktop/bundled-skills/skill-creator/SKILL.md": [
+   "IH-INTENT-001"
+  ],
+  "clawhub:katherineedwards2475/rdk-x5-system@1.0.0": [
+   "score"
+  ],
+  "clawhub:nakedoshadow/shadows-deploy-guardian@1.1.0": [
+   "score"
+  ],
+  "github:sickn33/antigravity-awesome-skills/plugins/antigravity-awesome-skills-claude/skills/whatsapp-cloud-api/SKILL.md": [
+   "score"
+  ],
+  "github:github/awesome-copilot/skills/azure-devops-cli/SKILL.md": [
+   "IH-EXEC-001"
+  ],
+  "clawhub:maikimolto/browser-agent-pro@2.4.0": [
+   "score"
+  ],
+  "clawhub:antaeus001/free-stock-global-quotes-news@1.0.3": [
+   "score"
+  ],
+  "clawhub:xocio/skill-vetter-zh@1.0.0": [
+   "score"
+  ],
+  "clawhub:rogeecn/memos-cli@0.1.0": [
+   "score"
+  ],
+  "clawhub:zihaofeng2001/agent-health-optimizer@1.4.0": [
+   "score"
+  ],
+  "clawhub:andyxinweiminicloud/permission-creep-scanner@1.0.0": [
+   "score"
+  ],
+  "clawhub:yang1002378395-cmyk/openclaw-troubleshoot-cn@1.0.1": [
+   "score"
+  ],
+  "clawhub:xiaoluoboding/flomo-notes@0.1.0": [
+   "score"
+  ],
+  "clawhub:kylinr/hailuo-video-generator@1.0.0": [
+   "score"
+  ],
+  "clawhub:allthebadthings/gateway-safety@1.0.0": [
+   "score"
+  ],
+  "clawhub:evolinkai/best-image-generation@1.0.2": [
+   "IH-EXEC-001"
+  ],
+  "clawhub:doonot/zero-trust@1.0.0": [
+   "score"
+  ],
+  "clawhub:donovanpankratz-del/openclaw-skill-vetter@1.0.0": [
+   "score"
+  ],
+  "clawhub:akhmittra/skill-security-auditor@1.0.1": [
+   "IH-EXEC-001"
+  ],
+  "github:heroui-inc/heroui/skills/heroui-native/SKILL.md": [
+   "IH-EXEC-001"
+  ],
+  "clawhub:0xrapi/isnad-scan@1.0.0": [
+   "IH-INTENT-001"
+  ],
+  "clawhub:tristanmanchester/audit-openclaw-security@2.0.1": [
+   "score"
+  ],
+  "clawhub:icecat2005/roomsound@0.1.5": [
+   "score"
+  ],
+  "clawhub:vincentchan/claw-skill-guard@1.1.0": [
+   "IH-EXEC-001"
+  ],
+  "clawhub:sensahin/puffermind@1.0.0": [
+   "IH-INTENT-001"
+  ],
+  "clawhub:gitgoodordietrying/security-audit-toolkit@1.0.0": [
+   "score"
+  ],
+  "github:gavrielc/nanoclaw/.claude/skills/customize/SKILL.md": [
+   "score"
+  ],
+  "github:dyad-sh/dyad/.claude/skills/pr-push/SKILL.md": [
+   "IH-INTENT-001"
+  ],
+  "clawhub:6leonardo/m2m-ads@0.1.7": [
+   "score"
+  ],
+  "clawhub:tkim5574/sooda-bridge@2.0.0": [
+   "IH-INTENT-001"
+  ],
+  "clawhub:king-tero/vt-sentinel-installer@1.10.0": [
+   "score"
+  ],
+  "clawhub:khaney64/leak-check@0.1.8": [
+   "score"
+  ],
+  "github:ethereum/ethereum-org-website/.claude/skills/data-layer/SKILL.md": [
+   "score"
+  ],
+  "clawhub:n0nu/n0nu-security-audit@1.0.0": [
+   "IH-EXEC-001"
+  ],
+  "clawhub:andrewszk1/clawvault-payments@1.0.2": [
+   "IH-INTENT-001"
+  ],
+  "clawhub:ambarion/skill-integrity-auditor@0.1.12": [
+   "IH-EXEC-001",
+   "IH-INTENT-001"
+  ],
+  "clawhub:kerlos/hive-agent@1.0.2": [
+   "IH-INTENT-001"
+  ],
+  "clawhub:weichengwu/brew@1.0.0": [
+   "IH-EXEC-001"
+  ],
+  "clawhub:thebluehouse75/metrillm@0.2.11": [
+   "IH-INTENT-001"
+  ],
+  "clawhub:chrsh44e/ui-debug-methodology@1.0.0": [
+   "score"
+  ],
+  "clawhub:z-zihan/project-onboarding@2.0.0": [
+   "score"
+  ],
+  "clawhub:simmer/simmer-wallet-setup@0.3.1": [
+   "IH-EXEC-001",
+   "IH-INTENT-001"
+  ],
+  "github:shareAI-lab/learn-claude-code/skills/code-review/SKILL.md": [
+   "score"
+  ],
+  "clawhub:l1angjy/seedance-cli@2026.4.10-1": [
+   "IH-EXEC-001"
+  ],
+  "clawhub:balkanblbn/mayguard@1.0.0": [
+   "IH-INTENT-001"
+  ],
+  "github:dotnet/aspire/.github/skills/pr-testing/SKILL.md": [
+   "IH-EXEC-001"
+  ],
+  "clawhub:netanelrotem/telegram-interactive-buttons@1.1.2": [
+   "score"
+  ],
+  "clawhub:realm1lf/dev-team@1.0.1": [
+   "score"
+  ],
+  "clawhub:byungkyu/zoho-books@1.0.3": [
+   "score"
+  ],
+  "clawhub:melvynx/calcom-cli@0.1.0": [
+   "IH-EXEC-001"
+  ],
+  "clawhub:hegghammer/foam-notes@1.0.3": [
+   "score"
+  ],
+  "clawhub:byungkyu/google-bigquery@1.0.1": [
+   "score"
+  ],
+  "clawhub:niracler/nini-markdown-lint@0.3.0": [
+   "score"
+  ],
+  "clawhub:gugic/inworld-tts@1.0.0": [
+   "score"
+  ],
+  "clawhub:neldar/webchat-voice-full-stack@0.4.1": [
+   "score"
+  ],
+  "clawhub:byungkyu/clickup-api@1.0.5": [
+   "score"
+  ],
+  "clawhub:nakedoshadow/shadows-security-scanner@1.1.0": [
+   "score"
+  ],
+  "clawhub:r00tfe1/aegis-skill-vetter@2.0.0": [
+   "IH-EXEC-001"
+  ],
+  "clawhub:martianzenmonk/espeak-ng@1.0.2": [
+   "score"
+  ],
+  "clawhub:byungkyu/motion@1.0.1": [
+   "score"
+  ],
+  "clawhub:blackstorm/4todo@0.1.3": [
+   "score"
+  ],
+  "clawhub:mmmmssss8899/ai-agent-trading-on-dex@3.0.10": [
+   "score"
+  ],
+  "clawhub:bmdhodl/aws-infra@1.0.0": [
+   "score"
+  ],
+  "clawhub:okaris/customer-persona@0.1.5": [
+   "IH-EXEC-001"
+  ],
+  "clawhub:byungkyu/sharepoint@1.0.2": [
+   "score"
+  ],
+  "clawhub:kmasterrr/milaex-crypto-api@1.0.2": [
+   "score"
+  ],
+  "clawhub:byungkyu/tavily-api@1.0.0": [
+   "score"
+  ],
+  "clawhub:ivangdavila/sysadmin@1.0.0": [
+   "score"
+  ],
+  "clawhub:byungkyu/one-note@1.0.1": [
+   "score"
+  ],
+  "clawhub:jooey/add-minimax-provider@2.0.0": [
+   "score"
+  ],
+  "clawhub:byungkyu/zoho-recruit@1.0.4": [
+   "score"
+  ],
+  "clawhub:1987566643/openclaw-safe-change-flow@1.1.0": [
+   "score"
+  ],
+  "clawhub:szafranski/home-assistant-agent-secure@1.1.0": [
+   "score"
+  ],
+  "clawhub:byungkyu/zoho-inventory@1.0.4": [
+   "score"
+  ],
+  "clawhub:mkhaytman87/skill-firewall@1.0.0": [
+   "IH-EXEC-001"
+  ],
+  "clawhub:byungkyu/google-meet@1.0.5": [
+   "score"
+  ],
+  "clawhub:yb0554/website-monitor-skill@1.0.0": [
+   "score"
+  ],
+  "github:JimLiu/baoyu-skills/skills/baoyu-xhs-images/SKILL.md": [
+   "score"
+  ],
+  "clawhub:kjetilvaa/reef@0.2.15": [
+   "IH-INTENT-001"
+  ],
+  "clawhub:bythecult/shop-culture@1.0.12": [
+   "score"
+  ],
+  "clawhub:richardwei195/openclaw-reporter@1.0.13": [
+   "IH-INTENT-001"
+  ],
+  "clawhub:firefrog-pepe/websearch-ddgs-mcp@1.0.1": [
+   "score"
+  ],
+  "clawhub:celstnblacc/git-security-scanner@1.0.1": [
+   "score"
+  ],
+  "clawhub:authensor/authensor-gateway@0.7.0": [
+   "IH-EXEC-001"
+  ],
+  "clawhub:nicky1108/yida-app@1.0.0": [
+   "score"
+  ],
+  "clawhub:andyxinweiminicloud/supply-chain-poison-detector@1.0.1": [
+   "IH-EXEC-001"
+  ],
+  "clawhub:mohdalhashemi98-hue/awesome-skill@1.0.0": [
+   "IH-INTENT-001"
+  ],
+  "github:diet103/claude-code-infrastructure-showcase/.claude/skills/route-tester/SKILL.md": [
+   "score"
+  ],
+  "github:heroui-inc/heroui/skills/heroui-react/SKILL.md": [
+   "IH-EXEC-001"
+  ],
+  "clawhub:halandi/klawarena@1.6.0": [
+   "score"
+  ],
+  "clawhub:odrobnik/withings-family@1.1.2": [
+   "score"
+  ],
+  "clawhub:guifav/cloudflare-guard@0.1.2": [
+   "IH-EXEC-001"
+  ],
+  "github:vercel-labs/portless/skills/portless/SKILL.md": [
+   "score"
+  ],
+  "clawhub:yang1002378395-cmyk/api-debugger-cn@1.0.3": [
+   "IH-EXEC-001"
+  ],
+  "clawhub:samidh/ironclaw@1.3.1": [
+   "IH-EXEC-001"
+  ],
+  "clawhub:ivangdavila/dogecoin@1.0.0": [
+   "score"
+  ],
+  "clawhub:byungkyu/mailchimp@1.0.4": [
+   "score"
+  ],
+  "clawhub:rosasalberto/didit-phone-verification@1.3.0": [
+   "IH-INTENT-001"
+  ],
+  "clawhub:jaschadub/symbiont@1.1.0": [
+   "score"
+  ],
+  "github:JimLiu/baoyu-skills/skills/baoyu-cover-image/SKILL.md": [
+   "score"
+  ],
+  "clawhub:katherineedwards2475/rdk-x5-app@1.0.0": [
+   "score"
+  ],
+  "clawhub:byungkyu/granola-api@1.0.2": [
+   "score"
+  ],
+  "clawhub:dngpng/apix@1.0.0": [
+   "IH-EXEC-001"
+  ],
+  "clawhub:mahmoudadelbghany/ffmpeg-video-editor@1.0.0": [
+   "score"
+  ],
+  "clawhub:byungkyu/confluence-api@1.0.1": [
+   "score"
+  ],
+  "clawhub:byungkyu/zoho-crm@1.0.5": [
+   "score"
+  ],
+  "clawhub:byungkyu/monday@1.0.4": [
+   "score"
+  ],
+  "github:civitai/civitai/.claude/skills/flipt/SKILL.md": [
+   "score"
+  ],
+  "clawhub:byungkyu/calendly-api@1.0.4": [
+   "score"
+  ],
+  "clawhub:byungkyu/exa-api@1.0.0": [
+   "score"
+  ],
+  "clawhub:waydelyle/swarmclaw@2.4.1": [
+   "IH-EXEC-001"
+  ],
+  "clawhub:kiris-z/restic-workstation-backup@2.0.0": [
+   "score"
+  ],
+  "clawhub:hexavi8/qrcode@1.0.1": [
+   "score"
+  ],
+  "clawhub:fpsjago/binance-dca@1.2.0": [
+   "score"
+  ],
+  "github:gavrielc/nanoclaw/.claude/skills/debug/SKILL.md": [
+   "score"
+  ],
+  "clawhub:byungkyu/grafana-api@1.0.1": [
+   "score"
+  ],
+  "clawhub:twinsgeeks/adopt-a-greyhound@1.0.3": [
+   "score"
+  ],
+  "clawhub:claudiodrusus/json-toolkit@1.1.0": [
+   "IH-EXEC-001"
+  ],
+  "clawhub:melvynx/exa-cli@0.1.0": [
+   "IH-EXEC-001"
+  ],
+  "github:dyad-sh/dyad/.claude/skills/fast-push/SKILL.md": [
+   "IH-INTENT-001"
+  ],
+  "clawhub:melvynx/aviationstack-cli@0.1.0": [
+   "IH-EXEC-001"
+  ],
+  "clawhub:byungkyu/google-slides@1.0.4": [
+   "score"
+  ],
+  "github:civitai/civitai/.claude/skills/clickup/SKILL.md": [
+   "score"
+  ],
+  "clawhub:sergeykdev/syself-autopilot-hetzner@1.0.0": [
+   "score"
+  ],
+  "clawhub:ivangdavila/metaverse@1.0.0": [
+   "score"
+  ],
+  "clawhub:fclwtt/skills-5@0.1.0": [
+   "score"
+  ],
+  "clawhub:byungkyu/fal-ai-api@1.0.0": [
+   "score"
+  ],
+  "clawhub:laurentenhoor/moltresearch@1.1.0": [
+   "IH-INTENT-001"
+  ],
+  "github:anthropics/claude-plugins-official/plugins/hookify/skills/writing-rules/SKILL.md": [
+   "score"
+  ],
+  "clawhub:1231qaz2wsx/skill-safe-install-l0-strict@1.0.1": [
+   "score"
+  ],
+  "clawhub:bajie-git/ohyesai-mv@0.1.1": [
+   "score"
+  ],
+  "clawhub:kickook/skill-security-review@1.0.0": [
+   "score"
+  ],
+  "clawhub:jru001/roborock-2014@1.3.0": [
+   "IH-EXEC-001"
+  ],
+  "clawhub:flyfinec/camera-api@1.0.1": [
+   "IH-INTENT-001"
+  ],
+  "clawhub:yang1002378395-cmyk/cli-toolkit-cn@1.1.0": [
+   "score"
+  ],
+  "clawhub:haibingtown/robotx@1.0.1": [
+   "IH-EXEC-001"
+  ],
+  "github:openclaw/openclaw/extensions/open-prose/skills/prose/SKILL.md": [
+   "score"
+  ],
+  "clawhub:robinoppenstam/vigil@0.1.1": [
+   "score"
+  ],
+  "github:zhayujie/chatgpt-on-wechat/skills/skill-creator/SKILL.md": [
+   "score"
+  ],
+  "clawhub:2eux/prod-shield@1.2.1": [
+   "IH-EXEC-001"
+  ],
+  "clawhub:chyher/irene-tavily@1.0.0": [
+   "score"
+  ],
+  "clawhub:steamb23/kma-weather@1.0.3": [
+   "score"
+  ],
+  "clawhub:shaharsha/spotify-linux@1.2.0": [
+   "score"
+  ],
+  "clawhub:accolver/redshift@0.2.0": [
+   "score"
+  ],
+  "clawhub:tyronecoh/file-management@1.0.2": [
+   "score"
+  ],
+  "clawhub:delai/uimap@0.1.9": [
+   "IH-EXEC-001"
+  ],
+  "clawhub:enenkov/citrineos-assistant@1.0.1": [
+   "score"
+  ],
+  "clawhub:logikoma/agent-life@1.8.0": [
+   "score"
+  ],
+  "clawhub:twinsgeeks/adopt-a-border-collie@1.0.3": [
+   "score"
+  ],
+  "github:anthropics/knowledge-work-plugins/bio-research/skills/nextflow-development/SKILL.md": [
+   "IH-EXEC-001"
+  ],
+  "github:github/awesome-copilot/skills/gh-cli/SKILL.md": [
+   "score"
+  ],
+  "clawhub:andyxinweiminicloud/runtime-attestation-probe@1.0.0": [
+   "score"
+  ],
+  "clawhub:xlionjuan/trash-cli@1.0.5": [
+   "score"
+  ],
+  "clawhub:pasogott/hetzner-cloud@1.0.0": [
+   "score"
+  ],
+  "clawhub:samledger67-dotcom/solidity-audit-precheck@1.0.1": [
+   "IH-EXEC-001"
+  ],
+  "clawhub:byungkyu/zoho-mail@1.0.6": [
+   "score"
+  ],
+  "clawhub:agisearch/defi@2.0.0": [
+   "score"
+  ],
+  "clawhub:frrrrrrrrank/clawguard-scanner@0.1.0": [
+   "IH-EXEC-001"
+  ],
+  "clawhub:byungkyu/signnow@1.0.3": [
+   "score"
+  ],
+  "clawhub:tonyjb/clawguard-antimalware@1.0.4": [
+   "IH-EXEC-001"
+  ],
+  "clawhub:byungkyu/manus-api@1.0.1": [
+   "score"
+  ],
+  "clawhub:fluxmira-moltbot/clawsea-market@1.0.2": [
+   "score"
+  ],
+  "clawhub:alexrudloff/llmrouter@0.1.1": [
+   "score"
+  ],
+  "clawhub:redkiwi1688-prog/construction-law@2.11.5": [
+   "score"
+  ],
+  "github:civitai/civitai/.claude/skills/mod-actions/SKILL.md": [
+   "score"
+  ],
+  "clawhub:xieshaocong33ethan/exa-full@1.2.1": [
+   "score"
+  ],
+  "github:ComposioHQ/awesome-claude-skills/document-skills/pptx/SKILL.md": [
+   "score"
+  ],
+  "clawhub:nntrivi2001/agent-automation-scripter@1.0.0": [
+   "IH-EXEC-001"
+  ],
+  "clawhub:chucklong/alicloud-database-rds-custom@1.14.0": [
+   "IH-EXEC-001"
+  ],
+  "clawhub:jhauga/pdftk-server@1.0.1": [
+   "score"
+  ],
+  "clawhub:openlang-cn/auto@1.0.0": [
+   "score"
+  ],
+  "clawhub:parthghumatkar/claw-lint@1.0.4": [
+   "IH-EXEC-001"
+  ],
+  "clawhub:byungkyu/todoist-api@1.0.4": [
+   "score"
+  ],
+  "clawhub:datadrivenconstruction/llm-data-automation@2.1.0": [
+   "IH-EXEC-001"
+  ],
+  "clawhub:gumadeiras/llmwhisperer@0.0.7": [
+   "score"
+  ],
+  "clawhub:byungkyu/fireflies-api@1.0.1": [
+   "score"
+  ],
+  "clawhub:lephix/youdaonote@1.0.9": [
+   "IH-EXEC-001"
+  ],
+  "clawhub:cinience/alicloud-compute-fc-serverless-devs@1.0.3": [
+   "score"
+  ],
+  "github:qwibitai/nanoclaw/.claude/skills/setup/SKILL.md": [
+   "IH-EXEC-001",
+   "IH-INTENT-001"
+  ],
+  "clawhub:byungkyu/notion-mcp@1.0.1": [
+   "score"
+  ],
+  "clawhub:beyound87/coding-lead@3.0.6": [
+   "score"
+  ],
+  "github:browser-use/browser-use/skills/browser-use/SKILL.md": [
+   "score"
+  ],
+  "clawhub:byungkyu/fathom-api@1.0.6": [
+   "score"
+  ],
+  "clawhub:twinsgeeks/adopt-a-husky@1.0.3": [
+   "score"
+  ],
+  "github:web-infra-dev/rspack/.agents/skills/rspack-perf-profiling/SKILL.md": [
+   "score"
+  ],
+  "clawhub:rosasalberto/didit-email-verification@1.2.0": [
+   "IH-INTENT-001"
+  ],
+  "github:EveryInc/compound-engineering-plugin/plugins/compound-engineering/skills/rclone/SKILL.md": [
+   "IH-EXEC-001"
+  ],
+  "clawhub:ninihen1/power-automate-mcp@1.2.2": [
+   "IH-EXEC-001"
+  ],
+  "clawhub:morozred/skill-audit@1.0.0": [
+   "IH-EXEC-001"
+  ],
+  "clawhub:miniade/news-fetcher@0.1.8": [
+   "score"
+  ],
+  "clawhub:wangmerlyn/gpu-keepalive-with-keepgpu@1.0.0": [
+   "score"
+  ],
+  "clawhub:chonknick/chonkie-deepresearch@1.1.0": [
+   "IH-EXEC-001"
+  ],
+  "clawhub:bendusy/mlx-local-inference@2.2.1": [
+   "IH-EXEC-001"
+  ],
+  "clawhub:huamu668/browser-automation-pin@1.0.0": [
+   "IH-EXEC-001"
+  ],
+  "clawhub:abhibavishi/wp-to-static@1.2.0": [
+   "score"
+  ],
+  "clawhub:maiyu-swe/moltlog-ai@0.1.1": [
+   "score"
+  ],
+  "clawhub:carrotyuan/openclaw-voice-control@0.1.9": [
+   "score"
+  ]
+ },
+ "review": {
+  "clawhub:dcenatiempo/tandoor-cli@1.5.0": [
+   "score"
+  ],
+  "clawhub:weltspion/geomanic@2.0.2": [
+   "score"
+  ],
+  "clawhub:byungkyu/jotform@1.0.5": [
+   "IH-NET-002"
+  ],
+  "clawhub:haoruilee/add-to-awesome-list@1.4.0": [
+   "IH-FLOW-001"
+  ],
+  "clawhub:davidtaikocha/etherscan-api@1.0.0": [
+   "score"
+  ],
+  "clawhub:ivangdavila/sui-network@1.0.2": [
+   "IH-CRED-001"
+  ],
+  "clawhub:xejrax/image-ocr@1.0.0": [
+   "score"
+  ],
+  "clawhub:bastos/topydo@1.0.5": [
+   "score"
+  ],
+  "github:dotnet/aspire/.github/skills/deployment-e2e-testing/SKILL.md": [
+   "score"
+  ],
+  "clawhub:suryast/cron-doctor@1.0.1": [
+   "IH-PERSIST-001"
+  ],
+  "clawhub:fabriziogianni7/ens-skill@1.0.0": [
+   "score"
+  ],
+  "clawhub:wyuc/openmaic@0.3.1": [
+   "IH-CRED-001"
+  ],
+  "clawhub:guohongbin-git/dingtalk-feishu-cn@1.0.0": [
+   "score"
+  ],
+  "clawhub:byungkyu/typeform@1.0.5": [
+   "IH-NET-002"
+  ],
+  "clawhub:vidarbrekke/ollama-memory-embeddings@1.0.4": [
+   "score"
+  ],
+  "clawhub:ryan-wuxl/tavily-search-openclaw@1.0.0": [
+   "score"
+  ],
+  "clawhub:cyberash-dev/caldav-cli@0.1.5": [
+   "IH-EXEC-002"
+  ],
+  "github:davila7/claude-code-templates/cli-tool/components/skills/ai-research/evaluation-nemo-evaluator/SKILL.md": [
+   "IH-FLOW-001"
+  ],
+  "clawhub:steipete/notion@1.0.0": [
+   "score"
+  ],
+  "clawhub:evan966890/agent-batch-guard@1.0.1": [
+   "score"
+  ],
+  "clawhub:minchocoin/office-to-pdf@1.0.0": [
+   "score"
+  ],
+  "clawhub:brianrwagner/brw-content-idea-generator@1.0.0": [
+   "IH-INTENT-001"
+  ],
+  "clawhub:iamzifei/adwhiz@2.3.0": [
+   "score"
+  ],
+  "clawhub:jhc888007/cron-creator-feishu@1.0.13": [
+   "IH-CRED-001"
+  ],
+  "github:prowler-cloud/prowler/skills/prowler-ci/SKILL.md": [
+   "IH-CRED-002"
+  ],
+  "clawhub:vetas67/filesystem-1-0-0@1.0.0": [
+   "IH-PRIV-001"
+  ],
+  "clawhub:googleworkspace-bot/gws-chat@1.0.14": [
+   "score"
+  ],
+  "clawhub:yangms30/hotel-price-finder@1.1.0": [
+   "score"
+  ],
+  "clawhub:hayasam/ui-ux-pro-max-3@0.1.0": [
+   "score"
+  ],
+  "clawhub:gigabit-eth/router@1.0.2": [
+   "score"
+  ],
+  "clawhub:stuhorsman/yahoo-finance-cli@1.0.0": [
+   "score"
+  ],
+  "github:google-gemini/gemini-cli/.gemini/skills/docs-writer/SKILL.md": [
+   "IH-INJ-002"
+  ],
+  "clawhub:voxbase/echomindr-founder-retrieval@1.3.0": [
+   "IH-INTENT-002"
+  ],
+  "clawhub:byungkyu/quickbooks@1.0.6": [
+   "IH-NET-002"
+  ],
+  "clawhub:fuzzyb33s/fuzzy-cron-scheduler@1.0.0": [
+   "score"
+  ],
+  "clawhub:ivangdavila/growth-hacker@1.0.0": [
+   "score"
+  ],
+  "github:steipete/clawdis/skills/openai-whisper-api/SKILL.md": [
+   "score"
+  ],
+  "clawhub:popidge/journal-of-ai-slop@1.0.0": [
+   "IH-INJ-002"
+  ],
+  "github:ruvnet/claude-flow/v2/.claude/skills/verification-quality/SKILL.md": [
+   "IH-PERSIST-001"
+  ],
+  "clawhub:dadaniya99/windows-local-embedding@1.0.0": [
+   "score"
+  ],
+  "clawhub:wangshengli0421/tianshu-image@1.0.0": [
+   "score"
+  ],
+  "github:2025Emma/vibe-coding-cn/i18n/zh/skills/proxychains/SKILL.md": [
+   "score"
+  ],
+  "clawhub:sheetaa/delete-agent-with-telegram-group@0.1.2": [
+   "score"
+  ],
+  "clawhub:leebellon/wishfinity@1.0.0": [
+   "score"
+  ],
+  "clawhub:ivangdavila/qwen@1.0.0": [
+   "score"
+  ],
+  "clawhub:matthewxfz3/finnhub@1.0.0": [
+   "IH-CRED-001"
+  ],
+  "clawhub:evolinkai/web-research@v3.0.2": [
+   "IH-INJ-003"
+  ],
+  "clawhub:nyrosveil/mem0-config@1.0.0": [
+   "score"
+  ],
+  "clawhub:billylui/temporal-cortex@0.9.1": [
+   "score"
+  ],
+  "github:danielmiessler/Personal_AI_Infrastructure/Releases/v2.3/.claude/skills/Art/SKILL.md": [
+   "IH-CRED-001"
+  ],
+  "clawhub:xuanpass/cst-time@1.0.0": [
+   "score"
+  ],
+  "clawhub:itstauq/telegram-auto-topic@0.1.8": [
+   "score"
+  ],
+  "clawhub:jaredforreal/glmocr-sdk@1.0.4": [
+   "score"
+  ],
+  "github:luongnv89/claude-howto/03-skills/blog-draft/SKILL.md": [
+   "IH-INJ-003"
+  ],
+  "clawhub:steipete/gog@1.0.0": [
+   "score"
+  ],
+  "github:lightdash/lightdash/skills/developing-in-lightdash/SKILL.md": [
+   "score"
+  ],
+  "clawhub:byungkyu/google-play@1.0.4": [
+   "IH-NET-002"
+  ],
+  "clawhub:bezko/klausnomi@2.0.3": [
+   "score"
+  ],
+  "clawhub:byungkyu/keap@1.0.3": [
+   "IH-NET-002"
+  ],
+  "clawhub:gaowanqi08141999/feishu-bitable-creator@1.0.2": [
+   "score"
+  ],
+  "clawhub:maxceem/groq-whisper-api@1.0.0": [
+   "score"
+  ],
+  "clawhub:gostlightai/agent-step-sequencer@1.1.0": [
+   "IH-INJ-006"
+  ],
+  "github:Yeachan-Heo/oh-my-claudecode/skills/plan/SKILL.md": [
+   "IH-INJ-003"
+  ],
+  "github:github/awesome-copilot/skills/plantuml-ascii/SKILL.md": [
+   "score"
+  ],
+  "clawhub:adhambadr/halocard-virtualcards@1.0.2": [
+   "score"
+  ],
+  "clawhub:kankinku/aegis-intel-stack@0.1.0": [
+   "IH-CRED-001"
+  ],
+  "clawhub:haohanyang92/openclaw-backup-tool@1.0.0": [
+   "score"
+  ],
+  "clawhub:marcindudekdev/apify-hn-scraper@1.0.0": [
+   "score"
+  ],
+  "clawhub:byungkyu/elevenlabs-api@1.0.1": [
+   "IH-NET-002"
+  ],
+  "clawhub:stevenfengli/twofactor@0.1.0": [
+   "IH-INJ-003"
+  ],
+  "clawhub:wpank/10x-patterns@1.0.0": [
+   "IH-INTENT-002"
+  ],
+  "clawhub:michaelwang11394/video-translate@2.23.0": [
+   "IH-NET-002"
+  ],
+  "clawhub:ftois/generate-docx@1.0.0": [
+   "IH-PRIV-001"
+  ],
+  "github:alibaba/higress/.claude/skills/nginx-to-higress-migration/SKILL.md": [
+   "score"
+  ],
+  "clawhub:fabriziogianni7/openclast-wallet@1.0.0": [
+   "score"
+  ],
+  "clawhub:xejrax/pdf-extract@1.0.0": [
+   "score"
+  ],
+  "github:davila7/claude-code-templates/cli-tool/components/skills/ai-research/jira/SKILL.md": [
+   "score"
+  ],
+  "clawhub:sebclawops/retrospective-agent@1.0.0": [
+   "IH-INJ-003"
+  ],
+  "clawhub:lucasgeeksinthewood/church@1.17.0": [
+   "score"
+  ],
+  "clawhub:realorange1994/news-summary-voice@1.0.1": [
+   "score"
+  ],
+  "clawhub:madmantim/paperless-ngx-tools@1.0.2": [
+   "score"
+  ],
+  "clawhub:byungkyu/wati@1.0.2": [
+   "IH-NET-002"
+  ],
+  "clawhub:zhenstaff/swarm-orchestrator@1.0.0": [
+   "score"
+  ],
+  "clawhub:byungkyu/podio@1.0.1": [
+   "IH-NET-002"
+  ],
+  "clawhub:xejrax/file-search@1.0.0": [
+   "score"
+  ],
+  "clawhub:ivangdavila/urdu@1.0.0": [
+   "IH-INJ-002"
+  ],
+  "clawhub:noah-wu66/office-editor@1.0.1": [
+   "IH-PRIV-001"
+  ],
+  "clawhub:moroiser/skill-manager-all-in-one@4.5.14": [
+   "score"
+  ],
+  "clawhub:byungkyu/callrail@1.0.2": [
+   "IH-NET-002"
+  ],
+  "clawhub:xejrax/clipboard@1.0.0": [
+   "score"
+  ],
+  "clawhub:jaencarrodine/agntdata-tiktok@1.0.15": [
+   "score"
+  ],
+  "clawhub:nimrodkra/daily-dev-ask@1.0.0": [
+   "score"
+  ],
+  "clawhub:kryptopaid/warden-studio-deploy@1.0.0": [
+   "IH-CRED-001"
+  ],
+  "clawhub:u201013903/medgroup-drgdip-skill@1.0.10": [
+   "score"
+  ],
+  "clawhub:babpilt/pilt@1.0.1": [
+   "score"
+  ],
+  "clawhub:lucasgeeksinthewood/buy-amazon@1.2.4": [
+   "score"
+  ],
+  "clawhub:byungkyu/attio-api@1.0.5": [
+   "IH-NET-002"
+  ],
+  "clawhub:mohdalhashemi98-hue/mh-notion@1.0.0": [
+   "score"
+  ],
+  "clawhub:sergebulaev/publora-bluesky@1.2.1": [
+   "score"
+  ],
+  "clawhub:josephtandle/claude-code-switchboard@1.2.0": [
+   "IH-CRED-001"
+  ],
+  "clawhub:trips-ai/tripai-skill@1.0.5": [
+   "score"
+  ],
+  "github:ruvnet/claude-flow/v2/.claude/skills/agentdb-advanced/SKILL.md": [
+   "score"
+  ],
+  "clawhub:yesilsin-netizen/save-token@1.0.1": [
+   "score"
+  ],
+  "clawhub:wpank/monorepo@1.0.0": [
+   "IH-CRED-001"
+  ],
+  "clawhub:byungkyu/chargebee@1.0.7": [
+   "IH-NET-002"
+  ],
+  "github:patchy631/ai-engineering-hub/hugging-face-skills/skills/hugging-face-evaluation/SKILL.md": [
+   "score"
+  ],
+  "clawhub:codivion/codivupload-social-manager@1.0.17": [
+   "IH-INJ-003"
+  ],
+  "clawhub:m0nkmaster/hivehome@1.0.1": [
+   "score"
+  ],
+  "clawhub:xbralready/eleme-order@1.0.0": [
+   "score"
+  ],
+  "github:electron/electron/.claude/skills/electron-chromium-upgrade/SKILL.md": [
+   "IH-PERSIST-001"
+  ],
+  "clawhub:jaaneek/x-search@1.0.0": [
+   "score"
+  ],
+  "clawhub:unclejim21/pullthatupjamie@1.6.0": [
+   "IH-INJ-003"
+  ],
+  "clawhub:dboy233/amap@1.0.0": [
+   "score"
+  ],
+  "clawhub:glfruit/config-safe@1.0.0": [
+   "score"
+  ],
+  "clawhub:jaskies/tomtat-video-jaskies@1.1.0": [
+   "score"
+  ],
+  "clawhub:cinience/alicloud-network-dns-cli@1.0.2": [
+   "score"
+  ],
+  "clawhub:flotapponnier/mobula@1.0.1": [
+   "IH-CRED-001"
+  ],
+  "clawhub:agisearch/converter@2.0.0": [
+   "IH-INTENT-002"
+  ],
+  "clawhub:ivangdavila/software-engineer@1.0.0": [
+   "IH-INJ-002"
+  ],
+  "clawhub:nissan/langfuse-backup@1.0.2": [
+   "IH-PERSIST-001"
+  ],
+  "clawhub:yevhendiachenko0/hugging-face-cli@1.1.0": [
+   "IH-INJ-005"
+  ],
+  "clawhub:developmentcats/coder-workspaces@1.5.5": [
+   "IH-FLOW-001"
+  ],
+  "clawhub:tobewin/china-video-gen@1.1.0": [
+   "score"
+  ],
+  "clawhub:mike007jd/baseline-kit@1.0.1": [
+   "score"
+  ],
+  "clawhub:alexsjones/llmfit@0.2.2": [
+   "score"
+  ],
+  "clawhub:deadblue22/feishu-msg-reader@1.0.0": [
+   "score"
+  ],
+  "clawhub:jamesmenews/menews@1.0.11": [
+   "IH-PERSIST-001"
+  ],
+  "clawhub:byungkyu/netlify-api@1.0.4": [
+   "IH-NET-002"
+  ],
+  "clawhub:ivangdavila/gif@1.0.1": [
+   "score"
+  ],
+  "clawhub:xinhai-ai/exa-search@1.0.0": [
+   "IH-CRED-001"
+  ],
+  "clawhub:tate-kt/pixwith-ai-video-generation@1.0.1": [
+   "IH-INTENT-001"
+  ],
+  "clawhub:manifoldor/explorer@1.0.6": [
+   "IH-PERSIST-001"
+  ],
+  "clawhub:gumadeiras/lastfm@1.0.2": [
+   "IH-CRED-001"
+  ],
+  "clawhub:ivan830826/audio-video-to-text@1.0.0": [
+   "score"
+  ],
+  "clawhub:mattvalenta/pls-seo-audit@1.0.0": [
+   "score"
+  ],
+  "clawhub:utsavs/india-market-pulse@1.0.0": [
+   "score"
+  ],
+  "clawhub:byungkyu/sentry-api@1.0.1": [
+   "IH-NET-002"
+  ],
+  "clawhub:ivangdavila/video@1.0.1": [
+   "score"
+  ],
+  "clawhub:helloml0326/paper-review@1.0.0": [
+   "IH-INTENT-001"
+  ],
+  "github:cloudflare/moltworker/skills/cloudflare-browser/SKILL.md": [
+   "score"
+  ],
+  "clawhub:z13777869196/openclaw-docs-cn@1.1.0": [
+   "score"
+  ],
+  "clawhub:zxs1633079383/openclaw-session-reply-debug@1.0.1": [
+   "score"
+  ],
+  "clawhub:byungkyu/google-contacts@1.0.4": [
+   "IH-NET-002"
+  ],
+  "clawhub:leegitw/review-orchestrator@1.5.1": [
+   "score"
+  ],
+  "clawhub:ajitsingh25/placed-career-tools@1.1.0": [
+   "score"
+  ],
+  "clawhub:abhishek203/pidrive@1.9.0": [
+   "IH-PRIV-001"
+  ],
+  "clawhub:pupillen/membox-cloud-sync@0.1.12": [
+   "IH-INJ-003"
+  ],
+  "clawhub:byungkyu/gumroad@1.0.4": [
+   "IH-NET-002"
+  ],
+  "clawhub:obaid/sendook@1.1.0": [
+   "IH-CRED-001"
+  ],
+  "clawhub:peetzweg/atlassian-cli@1.1.0": [
+   "score"
+  ],
+  "github:prowler-cloud/prowler/skills/prowler-test-api/SKILL.md": [
+   "IH-CRED-002"
+  ],
+  "clawhub:idoziv/salai-mcp@0.0.4": [
+   "IH-INTENT-001"
+  ],
+  "clawhub:anlittledy/openstoryline-install@0.0.4": [
+   "score"
+  ],
+  "clawhub:ramsbaby/openclaw-memorybox@2.0.0": [
+   "score"
+  ],
+  "clawhub:wangyendt/chat-window@0.1.0": [
+   "score"
+  ],
+  "github:sickn33/antigravity-awesome-skills/skills/active-directory-attacks/SKILL.md": [
+   "score"
+  ],
+  "clawhub:noi1r/beamer-slide@1.0.2": [
+   "IH-REF-003"
+  ],
+  "clawhub:johstracke/plant-tracker@1.0.0": [
+   "IH-CRED-001"
+  ],
+  "clawhub:kirch/clawpay@1.0.1": [
+   "score"
+  ],
+  "clawhub:yoannarz/nod@1.0.0": [
+   "score"
+  ],
+  "clawhub:byungkyu/kit@1.0.3": [
+   "IH-NET-002"
+  ],
+  "clawhub:cettoana/gog-restricted@1.0.5": [
+   "score"
+  ],
+  "clawhub:realm1lf/wordpress-expert@1.0.12": [
+   "score"
+  ],
+  "clawhub:maoyutofu/doubao-seed-skill@0.1.0": [
+   "score"
+  ],
+  "clawhub:satoshistackalotto/greek-compliance-aade@0.1.2": [
+   "score"
+  ],
+  "clawhub:egemenyerdelen/spotify-controller@1.0.1": [
+   "score"
+  ],
+  "clawhub:wscats/xhs-cn@1.0.10": [
+   "score"
+  ],
+  "clawhub:jeck164/baidu-search-cn@1.0.2": [
+   "score"
+  ],
+  "clawhub:kolikoliko/multi-agent-feishu@1.0.0": [
+   "score"
+  ],
+  "clawhub:danielithomas/officeclaw@1.0.4": [
+   "IH-FLOW-001"
+  ],
+  "clawhub:fanyanggod/pipiads@1.0.6": [
+   "score"
+  ],
+  "clawhub:cyberforexblockchain/nexus-translate@2.1.0": [
+   "IH-INTENT-002"
+  ],
+  "clawhub:partnerboost-tech-team/partnerboost-brand@1.1.1": [
+   "IH-INTENT-001"
+  ],
+  "clawhub:byungkyu/zoho-projects@1.0.2": [
+   "IH-NET-002"
+  ],
+  "clawhub:byungkyu/vercel-api@1.0.2": [
+   "IH-NET-002"
+  ],
+  "clawhub:xander887/bloomin8@2.2.5": [
+   "IH-PRIV-001"
+  ],
+  "clawhub:pals-software/azure-devops@1.0.0": [
+   "score"
+  ],
+  "github:muratcankoylan/Agent-Skills-for-Context-Engineering/skills/advanced-evaluation/SKILL.md": [
+   "IH-FLOW-001"
+  ],
+  "github:dailydotdev/daily/skills/daily.dev/SKILL.md": [
+   "score"
+  ],
+  "clawhub:bajie-git/ohyesai-music@1.0.7": [
+   "score"
+  ],
+  "clawhub:1kalin/afrexai-cybersecurity-engine@1.0.0": [
+   "IH-INTENT-001"
+  ],
+  "clawhub:jack-yang-ai/token-optimization@1.1.0": [
+   "IH-INJ-003"
+  ],
+  "clawhub:drewautomates/noverload@1.0.0": [
+   "score"
+  ],
+  "clawhub:byungkyu/supabase-api@1.0.2": [
+   "IH-NET-002"
+  ],
+  "clawhub:0xm1kr/doppel-architect@1.0.0": [
+   "score"
+  ],
+  "clawhub:mjzj-tec/mjzj-gongxu@1.0.1": [
+   "score"
+  ],
+  "github:openclaw/openclaw/skills/sherpa-onnx-tts/SKILL.md": [
+   "score"
+  ],
+  "clawhub:ivangdavila/monero@1.0.0": [
+   "IH-CRED-001"
+  ],
+  "github:davila7/claude-code-templates/cli-tool/components/skills/ai-research/langgraph/SKILL.md": [
+   "IH-EXEC-003"
+  ],
+  "clawhub:byungkyu/google-classroom@1.0.3": [
+   "IH-NET-002"
+  ],
+  "clawhub:johstracke/seasonal-planting-guide@1.0.0": [
+   "IH-CRED-001"
+  ],
+  "clawhub:sangheraio/prompt-university@1.0.0": [
+   "score"
+  ],
+  "clawhub:otherpowers/content-id-guide@1.0.3": [
+   "score"
+  ],
+  "clawhub:ahaaiclub/agent-dream@1.0.6": [
+   "IH-INJ-003"
+  ],
+  "clawhub:minimax-ai-dev/minimax-multimodal@1.0.2": [
+   "score"
+  ],
+  "github:alibaba/higress/.claude/skills/higress-openclaw-integration/SKILL.md": [
+   "score"
+  ],
+  "clawhub:crispyangles/sparkforge-site-deployer@3.2.0": [
+   "score"
+  ],
+  "github:zarazhangrui/frontend-slides/SKILL.md": [
+   "IH-EXEC-002"
+  ],
+  "clawhub:0xfantommenace/0xarchive@1.10.0": [
+   "score"
+  ],
+  "github:MrLesk/Backlog.md/.codex/skills/context-hunter/SKILL.md": [
+   "score"
+  ],
+  "clawhub:matrixy/linear-skill@1.0.0": [
+   "IH-EXEC-002"
+  ],
+  "clawhub:jmceleney/openclaw-safe-exec@1.0.0": [
+   "score"
+  ],
+  "clawhub:gate-exchange/gate-exchange-unified@1.0.4": [
+   "IH-INJ-003"
+  ],
+  "clawhub:johstracke/research-assistant@1.0.1": [
+   "IH-CRED-001"
+  ],
+  "clawhub:shaoyunhao0107/openclaw-skill-dingtalk-setup@0.1.0": [
+   "score"
+  ],
+  "clawhub:brianhearn/expertpack@1.4.1": [
+   "IH-FLOW-001"
+  ],
+  "clawhub:irere123/clawnewz@1.0.0": [
+   "score"
+  ],
+  "clawhub:xejrax/dns-lookup@1.0.0": [
+   "score"
+  ],
+  "clawhub:keepwonder/zhihu@1.0.1": [
+   "score"
+  ],
+  "clawhub:nicccmy/feishu-cron-setup@1.0.0": [
+   "IH-CRED-001"
+  ],
+  "clawhub:noestelar/chrome-cdp-remote@1.0.0": [
+   "score"
+  ],
+  "clawhub:ivangdavila/symphony@1.0.0": [
+   "IH-INJ-003"
+  ],
+  "clawhub:johstracke/garden-layout-planner@1.0.0": [
+   "IH-CRED-001"
+  ],
+  "clawhub:pasogott/whcli@1.0.0": [
+   "IH-EXEC-002"
+  ],
+  "clawhub:steipete/trello@1.0.0": [
+   "score"
+  ],
+  "clawhub:hzzhuohui/openclaw-vulnerability-checker@1.0.1": [
+   "score"
+  ],
+  "clawhub:katherineedwards2475/rdk-x5-monitor@1.0.0": [
+   "IH-PRIV-001"
+  ],
+  "clawhub:coderomaster/moss@1.0.3": [
+   "score"
+  ],
+  "clawhub:rotorstar/hitl-protocol@0.7.2": [
+   "score"
+  ],
+  "clawhub:chrisbdz/kimi-search@1.0.1": [
+   "score"
+  ],
+  "clawhub:fwang108/scienceclaw-watch@1.0.2": [
+   "score"
+  ],
+  "clawhub:ivangdavila/security-best-practices@1.0.0": [
+   "score"
+  ],
+  "clawhub:xeroapi/xero-command-line@0.0.6": [
+   "IH-PRIV-001"
+  ],
+  "github:shanraisshan/claude-code-best-practice/.claude/skills/presentation/vibe-to-agentic-framework/SKILL.md": [
+   "IH-INJ-006"
+  ],
+  "github:github/awesome-copilot/skills/azure-deployment-preflight/SKILL.md": [
+   "IH-CRED-001"
+  ],
+  "clawhub:byungkyu/eventbrite@1.0.3": [
+   "IH-NET-002"
+  ],
+  "clawhub:meowlegemy-sudo/chrome-attach@1.0.0": [
+   "IH-CRED-001"
+  ],
+  "clawhub:theshadowrose/openclaw-windows-fix@1.0.0": [
+   "IH-PERSIST-001"
+  ],
+  "clawhub:yangye230147961/pyautogui-skill@1.0.0": [
+   "score"
+  ],
+  "github:Yeachan-Heo/oh-my-codex/skills/team/SKILL.md": [
+   "score"
+  ],
+  "clawhub:byungkyu/ticktick-api-skill@1.0.3": [
+   "IH-NET-002"
+  ],
+  "clawhub:mattius459/ppq-private-mode@1.0.1": [
+   "score"
+  ],
+  "clawhub:gyzx/openclaw-tavily-search-0-1-0@1.0.0": [
+   "IH-CRED-001"
+  ],
+  "github:openclaw/openclaw/skills/notion/SKILL.md": [
+   "score"
+  ],
+  "clawhub:1kalin/afrexai-spreadsheet-master@1.0.0": [
+   "score"
+  ],
+  "clawhub:trongnguyen29/focusnoteapp@1.0.0": [
+   "score"
+  ],
+  "github:muratcankoylan/Agent-Skills-for-Context-Engineering/skills/filesystem-context/SKILL.md": [
+   "score"
+  ],
+  "clawhub:igorls/context-builder@0.8.3-1": [
+   "IH-CRED-001"
+  ],
+  "clawhub:jacktian010105/openclaw-config-guide@1.0.0": [
+   "score"
+  ],
+  "clawhub:abdhilabs/config-guardian@1.0.1": [
+   "score"
+  ],
+  "clawhub:neil-bd/venn@2.0.1": [
+   "IH-CRED-001"
+  ],
+  "clawhub:vladkomudrich/esimagent@1.8.1": [
+   "IH-INTENT-001"
+  ],
+  "clawhub:joehoel/trein@1.0.0": [
+   "IH-EXEC-002"
+  ],
+  "clawhub:easeclick/friday@1.0.0": [
+   "IH-PRIV-001"
+  ],
+  "clawhub:apexfork/eth-readonly@1.0.0": [
+   "score"
+  ],
+  "clawhub:lingzuer/feishu-bitable-crud@1.1.0": [
+   "score"
+  ],
+  "clawhub:279458179/openclaw-whisper-asr@1.0.0": [
+   "score"
+  ],
+  "clawhub:mysmth2003/amazon-product-fetcher@1.0.0": [
+   "score"
+  ],
+  "github:antiwork/gumroad/.claude/skills/pr-description/SKILL.md": [
+   "IH-INJ-003"
+  ],
+  "clawhub:jx-76/jx76-gog@1.0.1": [
+   "score"
+  ],
+  "clawhub:tristanh/readwise-official@1.0.1": [
+   "IH-FLOW-001"
+  ],
+  "clawhub:junhongzhang77-ui/video-content-analyzer@0.1.0": [
+   "score"
+  ],
+  "clawhub:zealman2025/seedream5@1.0.0": [
+   "score"
+  ],
+  "clawhub:npfaerber/nodejs-security-audit@1.0.0": [
+   "IH-CRED-001"
+  ],
+  "clawhub:leegitw/code-patent-scanner@1.4.0": [
+   "score"
+  ],
+  "clawhub:phenomenoner/context-scope-tags@0.2.0": [
+   "IH-INTENT-001"
+  ],
+  "github:HKUDS/nanobot/nanobot/skills/memory/SKILL.md": [
+   "IH-INJ-003"
+  ],
+  "clawhub:byungkyu/xero@1.0.5": [
+   "IH-NET-002"
+  ],
+  "clawhub:ivangdavila/chef@1.0.0": [
+   "IH-INJ-002"
+  ],
+  "clawhub:guoxh/baidu-speech-synthesis@1.2.8": [
+   "score"
+  ],
+  "clawhub:efe-arv/sigil-security@4.2.1": [
+   "score"
+  ],
+  "clawhub:assembleai-crypto/crypto-news-ns3@1.0.7": [
+   "IH-INTENT-002"
+  ],
+  "clawhub:nicholasraimbault/skytale@0.5.2": [
+   "score"
+  ],
+  "clawhub:nicholasoxford/market-snapshot@1.0.0": [
+   "IH-CRED-001"
+  ],
+  "clawhub:eliaskress/popup-referrals@1.1.0": [
+   "IH-INTENT-001"
+  ],
+  "clawhub:brookswood/moltcombinator@1.0.3": [
+   "score"
+  ],
+  "clawhub:krnbwj/openclaw-antigravity-sync@1.0.0": [
+   "score"
+  ],
+  "clawhub:lakyfx/lovetago-skill@1.0.3": [
+   "score"
+  ],
+  "clawhub:mehserdar/enteriva-ai-social-hub@1.0.4": [
+   "score"
+  ],
+  "clawhub:billylui/temporal-cortex-scheduling@0.9.1": [
+   "score"
+  ],
+  "clawhub:lanhaixuan/minimax-usage-cn@1.1.0": [
+   "IH-PERSIST-001"
+  ],
+  "clawhub:byungkyu/snapchat@1.0.1": [
+   "IH-NET-002"
+  ],
+  "clawhub:ztj7728/gemini-image-generation@1.0.10": [
+   "score"
+  ],
+  "github:ace-step/ACE-Step-1.5/.claude/skills/acestep/SKILL.md": [
+   "IH-PRIV-001"
+  ],
+  "clawhub:justindobbs/openclaw-safety-coach@1.0.6": [
+   "IH-INTENT-001"
+  ],
+  "clawhub:johnnagro/isitwater@1.0.0": [
+   "score"
+  ],
+  "clawhub:grenghis-khan/moltoverflow-latest@1.0.0": [
+   "score"
+  ],
+  "clawhub:mcdoolz/openclaw-sulcus-skill@4.0.0": [
+   "score"
+  ],
+  "clawhub:byungkyu/systeme@1.0.5": [
+   "IH-NET-002"
+  ],
+  "clawhub:pengxiao-wang/claw-lark-patches@1.0.0": [
+   "score"
+  ],
+  "clawhub:zendenho7/workspace-analyzer@1.1.0": [
+   "score"
+  ],
+  "clawhub:wangdinglu/a-share-real-time-data@1.0.0": [
+   "score"
+  ],
+  "clawhub:jiangyukunok/sglang-diffusion@1.0.1": [
+   "IH-NET-001"
+  ],
+  "clawhub:zacjiang/md-to-pdf-cjk@1.0.0": [
+   "score"
+  ],
+  "clawhub:ivangdavila/imap@1.0.0": [
+   "score"
+  ],
+  "clawhub:hau823823/gen-paylink-govilo@1.0.1": [
+   "score"
+  ],
+  "clawhub:byungkyu/posthog-api@1.0.1": [
+   "IH-NET-002"
+  ],
+  "github:sickn33/antigravity-awesome-skills/skills/andrej-karpathy/SKILL.md": [
+   "IH-INTENT-001"
+  ],
+  "clawhub:leegitw/agentic-governance@1.3.1": [
+   "score"
+  ],
+  "clawhub:the-timebeing/elevenlabs-open-account@1.0.0": [
+   "IH-INTENT-001"
+  ],
+  "clawhub:deiu/warden-app@0.1.1": [
+   "IH-CRED-001"
+  ],
+  "clawhub:maciekish/nordvpn@1.0.2": [
+   "score"
+  ],
+  "clawhub:ivangdavila/news@1.0.1": [
+   "score"
+  ],
+  "clawhub:pors/pz@1.0.0": [
+   "score"
+  ],
+  "github:Shubhamsaboo/awesome-llm-apps/awesome_agent_skills/technical-writer/SKILL.md": [
+   "score"
+  ],
+  "clawhub:nerua1/nerua1-skill-vetter@1.0.0": [
+   "IH-CRED-001"
+  ],
+  "clawhub:wangyendt/tts-2@0.1.0": [
+   "IH-PRIV-001"
+  ],
+  "clawhub:mvanhorn/remotion-server@1.2.1": [
+   "score"
+  ],
+  "clawhub:dvnghiem/google-drive-skill@0.1.0": [
+   "score"
+  ],
+  "github:openai/openai-agents-python/.agents/skills/pr-draft-summary/SKILL.md": [
+   "score"
+  ],
+  "github:sickn33/antigravity-awesome-skills/skills/ai-engineer/SKILL.md": [
+   "IH-INTENT-001"
+  ],
+  "clawhub:luiseduardoaugusto/plane-so-cli@1.2.0": [
+   "IH-PERSIST-001"
+  ],
+  "github:leonardomso/33-js-concepts/.claude/skills/test-writer/SKILL.md": [
+   "IH-EXEC-003"
+  ],
+  "clawhub:gleb-urvanov/subagent-watchdog@0.1.0": [
+   "IH-CRED-001"
+  ],
+  "clawhub:axelhu/openclaw-office-toolkit@1.0.0": [
+   "score"
+  ],
+  "clawhub:tower1229/stella-selfie@1.3.3": [
+   "score"
+  ],
+  "clawhub:makepost/makepost-com-app-growth@1.0.7": [
+   "IH-INTENT-001"
+  ],
+  "clawhub:hailinhmacduc/asdasdas@1.0.0": [
+   "score"
+  ],
+  "clawhub:byungkyu/microsoft-excel@1.0.4": [
+   "IH-NET-002"
+  ],
+  "clawhub:shaiss/near-best-practices@1.0.0": [
+   "IH-CRED-001"
+  ],
+  "clawhub:sixel-et/sixel-email@1.0.6": [
+   "score"
+  ],
+  "clawhub:cyberforexblockchain/nexus-sentiment-analysis@2.1.0": [
+   "IH-INTENT-002"
+  ],
+  "clawhub:cinnabarhorse/aavegotchi-baazaar@0.1.4": [
+   "IH-FLOW-001"
+  ],
+  "clawhub:matthewspear/kosu@1.1.0": [
+   "score"
+  ],
+  "clawhub:oreoandyuumi/mmxagent-guardian@1.0.3": [
+   "IH-CRED-001"
+  ],
+  "github:htmlstreamofficial/preline/skills/theme-generator/SKILL.md": [
+   "score"
+  ],
+  "clawhub:wpank/quality-gates@0.1.0": [
+   "IH-PERSIST-001"
+  ],
+  "clawhub:ivangdavila/electron@1.0.0": [
+   "IH-EXEC-003"
+  ],
+  "github:github/awesome-copilot/skills/image-manipulation-image-magick/SKILL.md": [
+   "score"
+  ],
+  "clawhub:xejrax/wifi-qr@1.0.0": [
+   "score"
+  ],
+  "clawhub:cute-angel/openclaw-ics-reminder@1.0.1": [
+   "IH-CRED-001"
+  ],
+  "clawhub:lws803/agenthub@0.10.0": [
+   "IH-INTENT-001"
+  ],
+  "clawhub:nickylin/whisper-stt@1.0.0": [
+   "IH-PRIV-001"
+  ],
+  "clawhub:ksuriuri/noizai-daily-news-caster@1.0.3": [
+   "IH-INJ-003"
+  ],
+  "clawhub:ivangdavila/sync@1.0.0": [
+   "IH-CRED-001"
+  ],
+  "clawhub:spclaudehome/skill-vetter@1.0.0": [
+   "IH-CRED-001"
+  ],
+  "github:flashinfer-ai/flashinfer/.claude/skills/benchmark-kernel/SKILL.md": [
+   "score"
+  ],
+  "clawhub:angpenghian/agenttimes@8.1.1": [
+   "IH-INTENT-002"
+  ],
+  "clawhub:chrisvel/tududi@1.0.1": [
+   "score"
+  ],
+  "clawhub:ryanlee-gemini/postgres-skill@1.0.0": [
+   "score"
+  ],
+  "clawhub:clawkk/guard@1.0.0": [
+   "IH-INTENT-001"
+  ],
+  "clawhub:wangyendt/chat-bot@0.1.0": [
+   "score"
+  ],
+  "clawhub:pors/paperzilla@0.3.1": [
+   "score"
+  ],
+  "clawhub:clawdssen/solopreneur-assistant@1.0.0": [
+   "IH-INJ-003"
+  ],
+  "clawhub:cottom/translate-image@1.0.3": [
+   "IH-INTENT-002"
+  ],
+  "clawhub:djc00p/openclaw-ollama-memory@1.1.0": [
+   "IH-INJ-003"
+  ],
+  "clawhub:onenameneo/configure-openclaw@1.1.0": [
+   "IH-INJ-003"
+  ],
+  "github:basecamp/omarchy/default/omarchy-skill/SKILL.md": [
+   "IH-PRIV-001"
+  ],
+  "clawhub:m4vf14/perplexity-search-skill@1.0.0": [
+   "score"
+  ],
+  "clawhub:byungkyu/apify-api@1.0.2": [
+   "IH-NET-002"
+  ],
+  "github:openclaw/openclaw/skills/clawhub/SKILL.md": [
+   "score"
+  ],
+  "clawhub:jooey/add-siliconflow-provider@1.0.0": [
+   "IH-CRED-001"
+  ],
+  "github:RooCodeInc/Roo-Code/.roo/skills/evals-context/SKILL.md": [
+   "IH-FLOW-001"
+  ],
+  "clawhub:borahm/coloring-page@1.0.0": [
+   "IH-CRED-001"
+  ],
+  "clawhub:alan-stratcraftsai/clawnexus@0.4.1": [
+   "IH-INTENT-002"
+  ],
+  "clawhub:flowy-team/flowyteam-mcp@1.1.8": [
+   "IH-INTENT-002"
+  ],
+  "clawhub:johstracke/pest-disease-tracker@1.0.0": [
+   "IH-CRED-001"
+  ],
+  "clawhub:leegitw/visual-concept@1.0.1": [
+   "score"
+  ],
+  "clawhub:blovett80/pixeldojo@1.3.3": [
+   "IH-CRED-001"
+  ],
+  "clawhub:michaelwang11394/text-to-speech-heygen@2.23.0": [
+   "IH-NET-002"
+  ],
+  "clawhub:byungkyu/microsoft-to-do@1.0.3": [
+   "IH-NET-002"
+  ],
+  "clawhub:obaid/sendook-openclaw@1.1.0": [
+   "IH-CRED-001"
+  ],
+  "github:vercel-labs/agent-skills/skills/deploy-to-vercel/SKILL.md": [
+   "score"
+  ],
+  "clawhub:brasco05/deep-debugging@2.2.0": [
+   "IH-CRED-001"
+  ],
+  "clawhub:milleniumgenai/coder-openclaw-agent@0.1.3": [
+   "score"
+  ],
+  "clawhub:jhumanj/apollo@1.0.0": [
+   "IH-CRED-001"
+  ],
+  "github:patchy631/ai-engineering-hub/hugging-face-skills/skills/brightdata-web-mcp/SKILL.md": [
+   "score"
+  ],
+  "clawhub:crazytigerman/agent-android@0.1.6": [
+   "IH-FLOW-001"
+  ],
+  "clawhub:rogerwengch/dev-coding-agent@1.0.0": [
+   "IH-INJ-002"
+  ],
+  "clawhub:darkstards9/rpe-grafana@1.0.2": [
+   "score"
+  ],
+  "clawhub:hy-1990/dream-avatar@1.2.1": [
+   "score"
+  ],
+  "clawhub:jaredforreal/glmocr-table@1.0.3": [
+   "score"
+  ],
+  "clawhub:luntanwang/ezrouter@1.0.0": [
+   "score"
+  ],
+  "clawhub:jalexspringer/forage-shopping@1.0.0": [
+   "score"
+  ],
+  "clawhub:playdadev/polt-skill@0.1.3": [
+   "score"
+  ],
+  "clawhub:al-one/mcp-hass@1.0.1": [
+   "IH-FLOW-001"
+  ],
+  "clawhub:bguidolim/omnisearch@1.0.0": [
+   "score"
+  ],
+  "clawhub:dxiongya/moltvote@1.0.0": [
+   "score"
+  ],
+  "clawhub:byungkyu/vimeo@1.0.4": [
+   "IH-NET-002"
+  ],
+  "clawhub:sanky369/tweet-writer@1.0.0": [
+   "score"
+  ],
+  "clawhub:6tizer/axon-agent@1.0.4": [
+   "IH-PERSIST-001"
+  ],
+  "clawhub:coyote-git/gifhorse@1.2.0": [
+   "score"
+  ],
+  "clawhub:tangc/feishu-send-voice@0.1.0": [
+   "score"
+  ],
+  "clawhub:byungkyu/brevo-api@1.0.3": [
+   "IH-NET-002"
+  ],
+  "clawhub:ivangdavila/google-fonts@1.0.0": [
+   "IH-INJ-006"
+  ],
+  "clawhub:cerbug45/agents-skill-security-audit@0.1.0": [
+   "IH-CRED-001"
+  ],
+  "github:Yeachan-Heo/oh-my-claudecode/skills/ralph/SKILL.md": [
+   "score"
+  ],
+  "clawhub:ivangdavila/blockchain@1.0.0": [
+   "IH-CRED-001"
+  ],
+  "clawhub:jiangkaiqi2005/study-tutor@1.0.2": [
+   "IH-CRED-001"
+  ],
+  "clawhub:mupengi-bot/multi-agent-chat@1.0.0": [
+   "IH-INJ-002"
+  ],
+  "clawhub:lstpsche/gcalcli-calendar@3.0.0": [
+   "IH-INJ-003"
+  ],
+  "github:steipete/clawdis/skills/gog/SKILL.md": [
+   "IH-INTENT-002"
+  ],
+  "clawhub:krishnakumarmahadevan-cmd/agentsecly-ai-agent-security@1.0.2": [
+   "IH-INTENT-001"
+  ],
+  "clawhub:thewulf7/avatar-video-messages@0.1.2": [
+   "IH-PRIV-001"
+  ],
+  "clawhub:byungkyu/google-search-console@1.0.6": [
+   "IH-NET-002"
+  ],
+  "clawhub:ivangdavila/amazon@1.0.1": [
+   "IH-INTENT-001"
+  ],
+  "github:CherryHQ/cherry-studio/.agents/skills/prepare-release/SKILL.md": [
+   "IH-INJ-003"
+  ],
+  "clawhub:jaredforreal/glm-image-gen@1.0.4": [
+   "score"
+  ],
+  "clawhub:ruibaby/halo-cli-operations@0.1.1": [
+   "score"
+  ],
+  "clawhub:klautimus/openclaw-token-memory-optimizer@1.0.0": [
+   "score"
+  ],
+  "clawhub:byungkyu/manychat@1.0.3": [
+   "IH-NET-002"
+  ],
+  "clawhub:asteinberger/pm2@1.0.0": [
+   "score"
+  ],
+  "clawhub:wespeakallday/blog-automation@1.0.1": [
+   "score"
+  ],
+  "clawhub:rmssantos/plaza-one@1.2.7": [
+   "IH-INTENT-002"
+  ],
+  "clawhub:cyberforexblockchain/nexus-quick-translate@2.1.0": [
+   "IH-INTENT-002"
+  ],
+  "github:zulip/zulip/.claude/skills/visual-test/SKILL.md": [
+   "IH-EXEC-003"
+  ],
+  "github:home-assistant/home-assistant.io/.claude/skills/create-blog-post/SKILL.md": [
+   "IH-PRIV-001"
+  ],
+  "clawhub:ivangdavila/litecoin@1.0.0": [
+   "IH-CRED-001"
+  ],
+  "clawhub:jiayun/androidtv-netflix@1.0.0": [
+   "IH-PRIV-001"
+  ],
+  "clawhub:lstpsche/gog-calendar@1.0.0": [
+   "IH-FLOW-001"
+  ],
+  "clawhub:ivangdavila/s3@1.0.0": [
+   "score"
+  ],
+  "clawhub:byungkyu/zoho-calendar@1.0.4": [
+   "IH-NET-002"
+  ],
+  "clawhub:scikkk/subtitle@1.0.1": [
+   "score"
+  ],
+  "clawhub:angusthefuzz/mealie-api@1.0.0": [
+   "IH-CRED-001"
+  ],
+  "clawhub:egge21m/cocod@0.0.15": [
+   "IH-CRED-001"
+  ],
+  "clawhub:tobewin/china-id-photo@1.2.1": [
+   "score"
+  ],
+  "clawhub:highnoonoffice/brain-map-visualizer@3.3.5": [
+   "IH-NET-002"
+  ],
+  "clawhub:mstscmsn/anyvideos@1.0.4": [
+   "score"
+  ],
+  "clawhub:erxiza/official-baidu-search@1.0.0": [
+   "score"
+  ],
+  "clawhub:hogar23/home-assistant-control@1.0.3": [
+   "IH-CRED-001"
+  ],
+  "clawhub:kartinw/video-watcher@1.0.0": [
+   "score"
+  ],
+  "clawhub:jackleeio/skill-feed@0.2.1": [
+   "score"
+  ],
+  "clawhub:sweetsheldon/moltbook-curator@1.1.1": [
+   "score"
+  ],
+  "clawhub:shingo0620/telegram-rich-messages@1.0.1": [
+   "score"
+  ],
+  "clawhub:hs9021401/jable-downloader-lite@1.0.3": [
+   "IH-PRIV-001"
+  ],
+  "clawhub:artyomx33/reasoning-personas@1.0.0": [
+   "score"
+  ],
+  "clawhub:highlander89/billy-cron-guardrails-pack@0.1.1": [
+   "IH-PERSIST-001"
+  ],
+  "clawhub:wscats/bilibili-all-in-one@1.0.24": [
+   "IH-INTENT-001"
+  ],
+  "github:JimLiu/baoyu-skills/skills/baoyu-image-gen/SKILL.md": [
+   "IH-CRED-001"
+  ],
+  "clawhub:gumadeiras/the-sports-db@1.0.1": [
+   "IH-CRED-001"
+  ],
+  "clawhub:bezkom/glab@1.0.4": [
+   "IH-PRIV-001"
+  ],
+  "clawhub:dhvanilpatel/printer@1.0.0": [
+   "score"
+  ],
+  "clawhub:abuiles/shopify-directory@1.0.0": [
+   "IH-FLOW-001"
+  ],
+  "github:Yeachan-Heo/oh-my-claudecode/skills/project-session-manager/SKILL.md": [
+   "score"
+  ],
+  "clawhub:ciklopentan/openclaw-memory-canonical@4.6.14": [
+   "score"
+  ],
+  "clawhub:amos144/zerotoken@1.0.4": [
+   "score"
+  ],
+  "clawhub:leegitw/safety-checks@1.5.2": [
+   "score"
+  ],
+  "github:epicweb-dev/epic-stack/docs/skills/epic-deployment/SKILL.md": [
+   "score"
+  ],
+  "clawhub:yx9966/drillr@1.0.0": [
+   "IH-CRED-001"
+  ],
+  "clawhub:aprilox/clawstats@1.0.1": [
+   "score"
+  ],
+  "clawhub:snoopyrain/instagram-analytics@1.0.1": [
+   "score"
+  ],
+  "clawhub:ennno/liveavatar@1.0.1": [
+   "score"
+  ],
+  "clawhub:florianbansac/moltgate@0.2.6": [
+   "IH-INTENT-001"
+  ],
+  "clawhub:byungkyu/airtable@1.0.7": [
+   "IH-NET-002"
+  ],
+  "clawhub:byungkyu/pipedrive-api@1.0.4": [
+   "IH-NET-002"
+  ],
+  "clawhub:danielsinewe/openclaw-coding-agent-playbook@0.1.1": [
+   "score"
+  ],
+  "clawhub:jiangyukunok/sglang-diffusion-video@1.0.2": [
+   "IH-NET-001"
+  ],
+  "clawhub:stephancill/permissions-broker@1.0.9": [
+   "score"
+  ],
+  "github:civitai/civitai/.claude/skills/discord/SKILL.md": [
+   "IH-CRED-001"
+  ],
+  "clawhub:htranbee/beetrade@0.1.4": [
+   "IH-INTENT-001"
+  ],
+  "clawhub:araa47/local-whisper@1.0.0": [
+   "IH-EXEC-002"
+  ],
+  "clawhub:shadowloong/security-scan@1.0.0": [
+   "IH-EXEC-003"
+  ],
+  "clawhub:jooey/openclaw-starter-guide@1.2.0": [
+   "IH-CRED-001"
+  ],
+  "clawhub:byungkyu/cognito-forms@1.0.3": [
+   "IH-NET-002"
+  ],
+  "clawhub:kylin19860916/agent-collab@1.0.0": [
+   "score"
+  ],
+  "clawhub:tobewin/china-image-gen@1.0.1": [
+   "IH-CRED-001"
+  ],
+  "clawhub:aikarjal/wilma-triage@1.2.0": [
+   "IH-INJ-003"
+  ],
+  "clawhub:wpank/nextjs-guidelines@1.0.0": [
+   "IH-CRED-001"
+  ],
+  "clawhub:fossilizedcarlos/krea-api@0.2.4": [
+   "score"
+  ],
+  "clawhub:guanyang/gif-maker@1.0.0": [
+   "IH-PRIV-001"
+  ],
+  "clawhub:billylui/calendar-scheduling@0.9.1": [
+   "score"
+  ],
+  "clawhub:leegitw/patent-scanner@1.4.0": [
+   "score"
+  ],
+  "github:patchy631/ai-engineering-hub/hugging-face-skills/skills/hugging-face-cli/SKILL.md": [
+   "score"
+  ],
+  "clawhub:sarinali/gui-automation@1.0.1": [
+   "IH-PRIV-001"
+  ],
+  "github:davila7/claude-code-templates/cli-tool/components/skills/ai-research/autonomous-agent-patterns/SKILL.md": [
+   "IH-EXEC-003"
+  ],
+  "clawhub:compass-soul/grounding-practices@1.0.0": [
+   "IH-INTENT-001"
+  ],
+  "clawhub:porteden/gmail-cli@1.0.8": [
+   "IH-INTENT-002"
+  ],
+  "clawhub:danielsinewe/sherpa-onnx-tts@0.1.0": [
+   "score"
+  ],
+  "clawhub:rusynandriy/rescuetime@1.0.0": [
+   "score"
+  ],
+  "clawhub:eashish93/kitful@1.0.4": [
+   "score"
+  ],
+  "clawhub:mineru-extract/mineru-precision-extract@0.2.1": [
+   "IH-FLOW-001"
+  ],
+  "clawhub:mjzj-tec/mjzj-msg@1.0.2": [
+   "score"
+  ],
+  "clawhub:bjesuiter/mole-mac-cleanup@1.1.0": [
+   "score"
+  ],
+  "clawhub:ivangdavila/community-manager@1.0.0": [
+   "score"
+  ],
+  "clawhub:pbseiya/browser-download@1.0.0": [
+   "score"
+  ],
+  "clawhub:ivangdavila/stellar@1.0.0": [
+   "IH-CRED-001"
+  ],
+  "github:cockroachdb/cockroach/.claude/skills/reduce-unoptimized-query-oracle/SKILL.md": [
+   "score"
+  ],
+  "github:antinomyhq/forge/crates/forge_repo/src/skills/create-skill/SKILL.md": [
+   "score"
+  ],
+  "clawhub:evanl1/sage-week-rhythm@0.1.0": [
+   "score"
+  ],
+  "clawhub:wszhhx/hunyuan-3d@1.0.2": [
+   "IH-PERSIST-001"
+  ],
+  "clawhub:doureios39/preflyt@1.0.1": [
+   "IH-INTENT-001"
+  ],
+  "clawhub:scikkk/video-narrator@1.0.1": [
+   "score"
+  ],
+  "clawhub:tobewin/document-converter-pro@1.0.1": [
+   "score"
+  ],
+  "clawhub:sxliuyu/xianyu-sam-order@1.0.1": [
+   "IH-CRED-001"
+  ]
+ },
+ "shadow_would_block_ids": {},
+ "shadow_would_review_ids": {}
+}

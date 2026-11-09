@@ -14,6 +14,9 @@ async function filesIn(dir: string): Promise<string[]> {
 describe('detection rules', () => {
   for (const rule of contentRules) {
     it(`${rule.id} matches its positive fixtures and ignores near misses`, async () => {
+      // The lock check reads ironheights.lock.json beside SKILL.md. File fixtures
+      // have no sibling lock. test/provenance-local.test.ts covers the directory.
+      if (rule.id === 'IH-PROV-001') return;
       const positiveDir = join(root, 'malicious', rule.id);
       const negativeDir = join(root, 'benign', 'near', rule.id);
       const positives = await filesIn(positiveDir);
