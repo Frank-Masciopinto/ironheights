@@ -21,7 +21,7 @@ export const net001: Rule = {
   severity: 'medium',
   priority: 'P0',
   description:
-    'A skill that contacts a host outside the allowlist can send data somewhere the user did not expect. A download, install, or fetch instruction is a contact, and so is a paste site or a file-drop host. A homepage field, a license URL, a schema link, or an official API host in prose is not a contact. Hosts the skill declares as its own (frontmatter homepage, metadata homepage/api_base/network) are not flagged unless they are high-risk. Repeated hits on one host in a file are one finding with a count.',
+    'A skill that contacts a host outside the allowlist can send data somewhere the user did not expect. A download, install, or fetch instruction is a contact, and so is a paste site or a file-drop host. A homepage field, a license URL, a schema link, or an official API host in prose is not a contact. Hosts the skill declares as its own (frontmatter homepage, metadata homepage/api_base/network/apis) are not flagged unless they are high-risk. Repeated hits on one host in a file are one finding with a count.',
   remediation:
     'Declare the host in allowDomains, or in metadata.ironheights.allowDomains for this skill only. Prefer the official API host.',
   appliesTo: ['any'],

@@ -14,7 +14,13 @@ import {
   GUARD_POLICY_NAME,
 } from './types.ts';
 
-const ruleSchema = z.enum(['IH-GUARD-CRED', 'IH-GUARD-EXEC', 'IH-GUARD-NET', 'IH-GUARD-WRITE']);
+const ruleSchema = z.enum([
+  'IH-GUARD-CRED',
+  'IH-GUARD-EXEC',
+  'IH-GUARD-NET',
+  'IH-GUARD-PROXY',
+  'IH-GUARD-WRITE',
+]);
 
 const allowSchema = z
   .object({

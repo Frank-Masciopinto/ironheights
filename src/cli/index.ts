@@ -20,6 +20,7 @@ import { runSafeInstall } from './commands/safe-install.ts';
 import { runScan } from './commands/scan.ts';
 import { runWatch } from './commands/watch.ts';
 import { runActivityWatch, runInstall, runSandbox, runVerifyActivity } from './commands/runtime.ts';
+import { runProvenance } from './commands/provenance.ts';
 import {
   runAlerts,
   runAttest,
@@ -914,6 +915,31 @@ export async function main(argv: string[], hooks: MainHooks = {}): Promise<numbe
         ...(hooks.fetchImpl ? { fetchImpl: hooks.fetchImpl } : {}),
       });
     });
+
+  program
+    .command('provenance <action>')
+    .description(
+      'local digest record: record (write name, version, digest), check (compare a folder to a record), verify-evidence (command, version, skill sha256, findings digest)',
+    )
+    .argument('[dir]', 'skill directory for record and check')
+    .option('--record <file>', 'record: write here; check: the earlier record')
+    .option('--evidence <file>', 'verify-evidence: the receipt JSON')
+    .option('--json', 'print JSON')
+    .action(
+      async (
+        action: string,
+        dir: string | undefined,
+        opts: { record?: string; evidence?: string; json?: boolean },
+      ) => {
+        process.exitCode = await runProvenance({
+          action,
+          ...(dir ? { dir } : {}),
+          ...(opts.record ? { record: opts.record } : {}),
+          ...(opts.evidence ? { evidence: opts.evidence } : {}),
+          json: Boolean(opts.json),
+        });
+      },
+    );
 
   program
     .command('safe-install')

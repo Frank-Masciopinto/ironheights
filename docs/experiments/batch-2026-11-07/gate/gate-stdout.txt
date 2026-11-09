@@ -1,0 +1,312 @@
+{
+ "version": "0.34.0",
+ "realworld_total": 5655,
+ "realworld_blocked": 275,
+ "realworld_blocked_by_rule": {
+  "IH-EXEC-001": 60,
+  "IH-INTENT-001": 27,
+  "score": 191
+ },
+ "realworld_review": 474,
+ "shadow_would_block": 0,
+ "shadow_would_review": 0,
+ "rule_counts": {
+  "IH-CRED-001": {
+   "skills": 244,
+   "block": 104,
+   "review": 140
+  },
+  "IH-CRED-002": {
+   "skills": 5,
+   "block": 3,
+   "review": 2
+  },
+  "IH-CRED-003": {
+   "skills": 11,
+   "block": 3,
+   "review": 8
+  },
+  "IH-CRED-004": {
+   "skills": 23,
+   "block": 7,
+   "review": 12
+  },
+  "IH-CRED-005": {
+   "skills": 32,
+   "block": 6,
+   "review": 19
+  },
+  "IH-EXEC-001": {
+   "skills": 60,
+   "block": 60,
+   "review": 0
+  },
+  "IH-EXEC-002": {
+   "skills": 15,
+   "block": 9,
+   "review": 6
+  },
+  "IH-EXEC-003": {
+   "skills": 16,
+   "block": 10,
+   "review": 6
+  },
+  "IH-EXEC-004": {
+   "skills": 60,
+   "block": 12,
+   "review": 31
+  },
+  "IH-EXEC-005": {
+   "skills": 4,
+   "block": 3,
+   "review": 1
+  },
+  "IH-FLOW-001": {
+   "skills": 30,
+   "block": 16,
+   "review": 14
+  },
+  "IH-FS-001": {
+   "skills": 213,
+   "block": 15,
+   "review": 8
+  },
+  "IH-INJ-001": {
+   "skills": 9,
+   "block": 6,
+   "review": 2
+  },
+  "IH-INJ-002": {
+   "skills": 12,
+   "block": 5,
+   "review": 7
+  },
+  "IH-INJ-003": {
+   "skills": 39,
+   "block": 18,
+   "review": 21
+  },
+  "IH-INJ-004": {
+   "skills": 12,
+   "block": 4,
+   "review": 8
+  },
+  "IH-INJ-005": {
+   "skills": 1,
+   "block": 0,
+   "review": 1
+  },
+  "IH-INJ-006": {
+   "skills": 3,
+   "block": 0,
+   "review": 3
+  },
+  "IH-INTENT-001": {
+   "skills": 143,
+   "block": 46,
+   "review": 54
+  },
+  "IH-INTENT-002": {
+   "skills": 80,
+   "block": 22,
+   "review": 54
+  },
+  "IH-META-001": {
+   "skills": 5655,
+   "block": 275,
+   "review": 474
+  },
+  "IH-NET-001": {
+   "skills": 615,
+   "block": 98,
+   "review": 100
+  },
+  "IH-NET-002": {
+   "skills": 88,
+   "block": 48,
+   "review": 40
+  },
+  "IH-OBF-001": {
+   "skills": 1,
+   "block": 1,
+   "review": 0
+  },
+  "IH-PERSIST-001": {
+   "skills": 39,
+   "block": 26,
+   "review": 13
+  },
+  "IH-PRIV-001": {
+   "skills": 157,
+   "block": 68,
+   "review": 82
+  },
+  "IH-REF-001": {
+   "skills": 837,
+   "block": 56,
+   "review": 70
+  },
+  "IH-REF-003": {
+   "skills": 2,
+   "block": 1,
+   "review": 1
+  }
+ },
+ "enforce_rule_counts": {
+  "IH-CRED-001": {
+   "skills": 244,
+   "block": 104,
+   "review": 140
+  },
+  "IH-CRED-002": {
+   "skills": 5,
+   "block": 3,
+   "review": 2
+  },
+  "IH-CRED-003": {
+   "skills": 11,
+   "block": 3,
+   "review": 8
+  },
+  "IH-CRED-004": {
+   "skills": 23,
+   "block": 7,
+   "review": 12
+  },
+  "IH-CRED-005": {
+   "skills": 32,
+   "block": 6,
+   "review": 19
+  },
+  "IH-EXEC-001": {
+   "skills": 60,
+   "block": 60,
+   "review": 0
+  },
+  "IH-EXEC-002": {
+   "skills": 15,
+   "block": 9,
+   "review": 6
+  },
+  "IH-EXEC-003": {
+   "skills": 16,
+   "block": 10,
+   "review": 6
+  },
+  "IH-EXEC-004": {
+   "skills": 60,
+   "block": 12,
+   "review": 31
+  },
+  "IH-EXEC-005": {
+   "skills": 4,
+   "block": 3,
+   "review": 1
+  },
+  "IH-FLOW-001": {
+   "skills": 30,
+   "block": 16,
+   "review": 14
+  },
+  "IH-FS-001": {
+   "skills": 213,
+   "block": 15,
+   "review": 8
+  },
+  "IH-INJ-001": {
+   "skills": 9,
+   "block": 6,
+   "review": 2
+  },
+  "IH-INJ-002": {
+   "skills": 12,
+   "block": 5,
+   "review": 7
+  },
+  "IH-INJ-003": {
+   "skills": 39,
+   "block": 18,
+   "review": 21
+  },
+  "IH-INJ-004": {
+   "skills": 12,
+   "block": 4,
+   "review": 8
+  },
+  "IH-INJ-005": {
+   "skills": 1,
+   "block": 0,
+   "review": 1
+  },
+  "IH-INJ-006": {
+   "skills": 3,
+   "block": 0,
+   "review": 3
+  },
+  "IH-INTENT-001": {
+   "skills": 143,
+   "block": 46,
+   "review": 54
+  },
+  "IH-INTENT-002": {
+   "skills": 80,
+   "block": 22,
+   "review": 54
+  },
+  "IH-META-001": {
+   "skills": 5655,
+   "block": 275,
+   "review": 474
+  },
+  "IH-NET-001": {
+   "skills": 615,
+   "block": 98,
+   "review": 100
+  },
+  "IH-NET-002": {
+   "skills": 88,
+   "block": 48,
+   "review": 40
+  },
+  "IH-OBF-001": {
+   "skills": 1,
+   "block": 1,
+   "review": 0
+  },
+  "IH-PERSIST-001": {
+   "skills": 39,
+   "block": 26,
+   "review": 13
+  },
+  "IH-PRIV-001": {
+   "skills": 157,
+   "block": 68,
+   "review": 82
+  },
+  "IH-REF-001": {
+   "skills": 837,
+   "block": 56,
+   "review": 70
+  },
+  "IH-REF-003": {
+   "skills": 2,
+   "block": 1,
+   "review": 1
+  }
+ },
+ "blind": {
+  "detect": "219/600",
+  "fp": "15/300"
+ }
+}
+## Accuracy gates (0.34.0)
+
+| Gate | Baseline (main) | This PR | Result |
+|---|---|---|---|
+| Real-world clean skills blocked | 275/5655 | 275/5655 | pass |
+| Real-world clean skills sent to review | 474/5655 | 474/5655 | pass |
+| Blind attacks blocked | 217/600 | 219/600 | pass |
+| Blind benign blocked | 15/300 | 15/300 | pass |
+| Shadow checks would block (real-world) | - | 0 | promotable |
+| Shadow checks would send to review (real-world) | - | 0 | none |
+

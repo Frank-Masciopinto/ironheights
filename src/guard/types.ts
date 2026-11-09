@@ -4,6 +4,7 @@ export const GUARD_RULE_IDS = [
   'IH-GUARD-CRED',
   'IH-GUARD-EXEC',
   'IH-GUARD-NET',
+  'IH-GUARD-PROXY',
   'IH-GUARD-WRITE',
 ] as const;
 

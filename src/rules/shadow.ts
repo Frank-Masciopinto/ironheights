@@ -11,10 +11,12 @@ import type { Finding } from '../core/types.ts';
  * is empty; after promotion the PR gate fails on any new real-world block. See docs/accuracy-gates.md.
  */
 export const SHADOW_CHECKS: ReadonlySet<string> = new Set<string>([
-  // 2026-11-06 four-idea checks (unlisted-payee, unlisted-other-field,
-  // memory-api-key-identity, third-party-principal, prose-stub-mismatch)
-  // were promoted after the enforce scan would block 0 and would review 0
-  // real-world skills. See docs/experiments/batch-2026-11-06-four/RESULTS.md.
+  // 2026-11-06 four-idea checks were promoted after the enforce scan would
+  // block 0 and would review 0. See docs/experiments/batch-2026-11-06-four/RESULTS.md.
+  // 2026-11-07 checks (content-as-orders, catalog-disguise, payee-overwrite,
+  // hidden-full-upload, template-residue, silent-self-unpack, candor-suspend)
+  // were promoted after an enforce scan would block 0 and would review 0
+  // real-world skills. See docs/experiments/batch-2026-11-07/RESULTS.md.
 ]);
 
 export function shadowEnforced(): boolean {
