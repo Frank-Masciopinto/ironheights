@@ -3,8 +3,8 @@
  "ironheights": {
   "version": "0.34.0",
   "detect": "36.5% (219/600)",
-  "fp": "5.0% (15/300)",
-  "sha256": "363d1f55bd6d2f1689ceab560d8ce27854e909f085e37c671a1f863fddd0b292"
+  "fp": "4.7% (14/300)",
+  "sha256": "2e52268139e9074aefd70dc185ee9f39f54d713db6e43a92ecee9013084f6cd2"
  },
  "cisco": {
   "version": "2.3.2",

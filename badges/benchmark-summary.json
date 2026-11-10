@@ -1,16 +1,16 @@
 {
  "version": "0.34.0",
- "detect": "174/516",
- "fp": "11/456",
+ "detect": "211/516",
+ "fp": "6/456",
  "anthropic": "0/19",
- "detect_pct": 33.7,
- "fp_pct": 2.4,
- "review_detect": "49.6% (256/516)",
+ "detect_pct": 40.9,
+ "fp_pct": 1.3,
+ "review_detect": "56.4% (291/516)",
  "review_fp": "6.8% (31/456)",
  "blind_detect": "36.5% (219/600)",
- "blind_fp": "5.0% (15/300)",
- "prose_detect": "33.7% (33/98)",
- "prose_review": "53.1% (52/98)",
+ "blind_fp": "4.7% (14/300)",
+ "prose_detect": "35.7% (35/98)",
+ "prose_review": "55.1% (54/98)",
  "msb_revision": "d4b42ce5766a6e0359c987cf59c1007cb3795a90",
  "anthropic_commit": "ca45fc496a3436251f191354091d557da31c15b5",
  "llm": {
@@ -31,7 +31,7 @@
   "prose_detect": "5.1% (5/98)",
   "prose_review": "5.1% (5/98)"
  },
- "run_url": "https://github.com/Frank-Masciopinto/ironheights/actions/runs/42629905549",
- "commit_sha": "4b93c0b911415f20e0f6b6822d2513586fdc80b2",
- "timestamp_utc": "2026-11-09T13:59:17+00:00"
+ "run_url": "https://github.com/Frank-Masciopinto/ironheights/actions/runs/42782334343",
+ "commit_sha": "b97ed90935dd151ccd126441d634bae838916e14",
+ "timestamp_utc": "2026-11-10T08:26:11+00:00"
 }
