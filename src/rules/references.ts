@@ -477,6 +477,36 @@ export const RULE_REFERENCES: Record<string, RuleReferences> = {
     mitreAtlas: [],
     openCre: ['012-625'],
   },
+  'IH-EXEC-008': {
+    owaspLlm: ['LLM01:2025'],
+    owaspAgentic: ['ASI05:2026'],
+    mitreAtlas: [],
+    openCre: ['317-743'],
+  },
+  'IH-INJ-021': {
+    owaspLlm: ['LLM01:2025'],
+    owaspAgentic: ['ASI01:2026'],
+    mitreAtlas: [],
+    openCre: ['012-625'],
+  },
+  'IH-NET-006': {
+    owaspLlm: ['LLM02:2025'],
+    owaspAgentic: ['ASI05:2026'],
+    mitreAtlas: [],
+    openCre: ['333-888'],
+  },
+  'IH-CRED-008': {
+    owaspLlm: ['LLM02:2025'],
+    owaspAgentic: ['ASI05:2026'],
+    mitreAtlas: [],
+    openCre: ['340-375'],
+  },
+  'IH-PERSIST-006': {
+    owaspLlm: [],
+    owaspAgentic: ['ASI05:2026'],
+    mitreAtlas: [],
+    openCre: ['418-853'],
+  },
   'IH-PROV-001': {
     owaspLlm: [],
     owaspAgentic: ['ASI04:2026'],

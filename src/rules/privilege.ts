@@ -1,5 +1,6 @@
 import type { Finding, Rule } from '../core/types.ts';
 import { eachLine } from '../util/text.ts';
+import { echoHintOnly, isDescribedRegex } from './described.ts';
 import { createFinding, pushUnique } from './helpers.ts';
 
 const EXEC_PATTERN = /\bchmod\s+(?:-R\s+)?(?:777|666|755|\+x|a\+x|u\+x)\b/;
@@ -49,7 +50,8 @@ export const priv001: Rule = {
   check(file) {
     const findings: Finding[] = [];
     eachLine(file.text, (line, lineNumber) => {
-      if (!PATTERNS.some((pattern) => pattern.test(line))) return;
+      if (isDescribedRegex(line)) return;
+      if (!PATTERNS.some((pattern) => pattern.test(line) && !echoHintOnly(line, pattern))) return;
       if (negatedSudoOnly(line)) return;
       const onlyExecBit =
         EXEC_BIT.test(line) &&

@@ -1,5 +1,6 @@
 import type { Finding, Rule } from '../core/types.ts';
 import { eachLine } from '../util/text.ts';
+import { echoHintOnly, isDescribedRegex } from './described.ts';
 import { createFinding, pushUnique } from './helpers.ts';
 
 /**
@@ -37,7 +38,8 @@ export const persist001: Rule = {
   check(file) {
     const findings: Finding[] = [];
     eachLine(file.text, (line, lineNumber) => {
-      if (!PATTERNS.some((pattern) => pattern.test(line))) return;
+      if (isDescribedRegex(line)) return;
+      if (!PATTERNS.some((pattern) => pattern.test(line) && !echoHintOnly(line, pattern))) return;
       pushUnique(
         findings,
         createFinding(persist001, file, {

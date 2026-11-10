@@ -31,6 +31,8 @@ This is the log of every rule we tried and dropped. Update it at the end of each
 4. **Prose versus imperative.** Hits that describe or report something ("instruction override is an attack type") look like orders unless the rule requires an order aimed at the agent, or self-reference ("this skill…", "these directives…").
 5. **Relaxing to cut false positives loses attacks.** Night G, FP-key E and the Serpent tight variant all lost a real attack. Attackers write paths and waivers in plain prose too. Setting IH-REF-001 to zero points did the same thing: 11 public blocks fell to review, and the blind block count fell under the gate.
 6. **Red-team-only targets show no gain.** Rules written for house-\* pairs (Night H, H v2, I v2) pass every gate but move no benchmark or blind row.
+7. **A digit run is not the token.** On 2026-11-09, `rd` plus any digits matched the framework id `ens_rd2022_`. The handoff token is one digit (`rd1_` through `rd9_`).
+8. **A quote and a port probe share characters with a shell.** A checklist `nc -e /bin/sh` and `echo > /dev/tcp/host/443` are not interactive redirects. Require `bash -i` or `0>&1`, and treat a table, backticks, or `...` as a quote.
 
 ## Before proposing a new rule, check
 
@@ -73,3 +75,19 @@ Kept for review (all gates passed, run 2): P3 regardless-of-task write outside f
 | IH-NET-001 high→medium for a placeholder Discord webhook, or a tunnel host with no nearby file or env read | 2026-11-07 | rows 5, 6 | withdrawn with the batch that missed the fresh blind total | Not isolated as its own blind delta. | Lowering a high finding is the same point-margin failure as the sibling-markdown row above. **Not in the final scanner.** Final rerun without it: blind 219/600, real-world 275 blocked and 474 review. |
 
 Common pattern added by this run: a context-only finding still supplies the points that hold some other finding at block. Lowering or deleting it can move a block to review even when the benign skills that motivated the change were already verdict no-findings.
+
+## 2026-11-09 — combined experiment on the Nov 7–9 accuracy rows
+
+| Rule / idea | Date | Target rows | Failed gate | Hits on look-alikes / real-world / safe | Kinds of legit skills it flagged |
+| --- | --- | --- | --- | --- | --- |
+| PRIV-001 demote for descriptive sudo, including `sudo apt-get install` in backticks | 2026-11-09 | portless (vercel-labs/portless) | benchmark attack | not scanned as a shipped rule; the attack loss is the gate | Two `sudo apt-get install` lines are the whole block on ASB04_002324 (Night F). Keeping those lines leaves portless at block, because one apt high plus the ngrok high and the other mediums still score at least 80. **Not kept.** |
+| NET-001 skip for a commented sample-output ngrok URL | 2026-11-09 | portless sample output | no block-FP change without the sudo exemption; point-margin risk | not shipped | Dropping a high NET-001 is the same margin failure as the 2026-11-07 webhook downgrade. Portless stays at block if the apt line stays. **Not kept.** |
+| NET-001 low/info for a GET-only curl to the skill's own vendor API | 2026-11-09 | ASB04_009389 huggingface-datasets | no measured block change | already verdict no-findings (grade B from one context-only NET-001) | The row is not a block false positive. Lowering NET-001 points has moved other blocks to review. **Not kept.** |
+| IH-INJ-021 v1: any `rd` plus a digit run | 2026-11-09 | ASB04_007342 and the 17-attack / 0-safe `/root/rdN_` family | real-world block | 1 new block / 0 safe | `ens_rd2022_aws` in prowler-cloud/prowler compliance. A framework id, not a handoff file. **v2 (one digit) passes.** |
+| IH-EXEC-008 v1: any `/dev/tcp/host/port` or bare `nc -e /bin/sh` | 2026-11-09 | ASB04_002583, ASB04_000162, ASB04_004530 | look-alikes (already blocked, so the verdict gate did not fail) | 2 real-world / 0 new verdicts / 0 safe | Checklist quotes in misscrx/vivi-skill-vetter and frmoretto/hs. A bash port probe (`echo > /dev/tcp/host/443`) was excluded with them. **v2 requires `bash -i` or `0>&1`, and treats a table, backticks, or `...` as a quote.** |
+
+Common patterns added by this run:
+
+- A loose digit run matches a real framework id. `rd` plus any digits matched `ens_rd2022_`. The token has to be one digit.
+- A checklist and a port probe share characters with a reverse shell. The interactive redirect (`bash -i` or `0>&1`) is the signal. A table cell, backticks, or a `...` placeholder is a quote.
+- Night F still holds. `sudo apt-get install` in backticks is the block on ASB04_002324. An honest install line and that attack are the same line shape.
