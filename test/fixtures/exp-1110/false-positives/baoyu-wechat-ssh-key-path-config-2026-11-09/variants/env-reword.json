@@ -1,0 +1,348 @@
+{
+  "schemaVersion": 1,
+  "tool": {
+    "name": "ironheights",
+    "version": "0.34.0"
+  },
+  "scannedAt": "2026-11-09T16:07:00.636Z",
+  "scannerVersion": "0.34.0",
+  "checkedAt": "2026-11-09T16:07:00.636Z",
+  "verdict": "block",
+  "skippedFileCount": 0,
+  "grade": {
+    "letter": "F",
+    "score": 0,
+    "disclaimer": "Absence of findings is not proof of safety.",
+    "unscannedDependencies": 2
+  },
+  "scanMode": "directory",
+  "summary": "ironheights 0.34.0 | baoyu-post-to-wechat | grade F (0/100), skill files only: 2 dependencies unscanned | verdict block | 11 findings",
+  "badge": "[ironheights 0.34.0: grade F (0/100), skill files only: 2 dependencies unscanned, verdict block](https://github.com/Frank-Masciopinto/ironheights) — Absence of findings is not proof of safety.",
+  "skills": [
+    {
+      "skillName": "baoyu-post-to-wechat",
+      "root": "/tmp/fpn/v/env-reword",
+      "filesScanned": 1,
+      "filesSkipped": [],
+      "skippedFileCount": 0,
+      "findings": [
+        {
+          "ruleId": "IH-CRED-001",
+          "severity": "high",
+          "confidence": "high",
+          "file": "SKILL.md",
+          "line": 78,
+          "evidence": "# remote_publish_identity_file: ~/.ssh/id_ed25519",
+          "message": "The file references a sensitive credential or secret path.",
+          "remediation": "Do not read these paths from a skill. Use a scoped environment variable or the platform secret store.",
+          "references": {
+            "owaspLlm": [
+              "LLM02:2025"
+            ],
+            "owaspAgentic": [],
+            "mitreAtlas": [
+              "AML.T0055"
+            ],
+            "openCre": [
+              "368-633",
+              "881-321"
+            ]
+          },
+          "links": [
+            {
+              "label": "OWASP LLM02:2025 Sensitive Information Disclosure",
+              "url": "https://genai.owasp.org/llmrisk/llm022025-sensitive-information-disclosure/"
+            },
+            {
+              "label": "OpenCRE 368-633 Enforce least privilege",
+              "url": "https://www.opencre.org/cre/368-633"
+            },
+            {
+              "label": "OpenCRE 881-321 Store credentials securely",
+              "url": "https://www.opencre.org/cre/881-321"
+            }
+          ]
+        },
+        {
+          "ruleId": "IH-CRED-001",
+          "severity": "high",
+          "confidence": "high",
+          "file": "SKILL.md",
+          "line": 79,
+          "evidence": "# remote_publish_known_hosts_file: ~/.ssh/known_hosts",
+          "message": "The file references a sensitive credential or secret path.",
+          "remediation": "Do not read these paths from a skill. Use a scoped environment variable or the platform secret store.",
+          "references": {
+            "owaspLlm": [
+              "LLM02:2025"
+            ],
+            "owaspAgentic": [],
+            "mitreAtlas": [
+              "AML.T0055"
+            ],
+            "openCre": [
+              "368-633",
+              "881-321"
+            ]
+          },
+          "links": [
+            {
+              "label": "OWASP LLM02:2025 Sensitive Information Disclosure",
+              "url": "https://genai.owasp.org/llmrisk/llm022025-sensitive-information-disclosure/"
+            },
+            {
+              "label": "OpenCRE 368-633 Enforce least privilege",
+              "url": "https://www.opencre.org/cre/368-633"
+            },
+            {
+              "label": "OpenCRE 881-321 Store credentials securely",
+              "url": "https://www.opencre.org/cre/881-321"
+            }
+          ]
+        },
+        {
+          "ruleId": "IH-NET-001",
+          "severity": "medium",
+          "confidence": "medium",
+          "file": "SKILL.md",
+          "line": 206,
+          "evidence": "https://api.weixin.qq.com/cgi-bin/draft/add?access_token=ACCESS_TOKEN",
+          "message": "Destination api.weixin.qq.com is not in the allowlist.",
+          "remediation": "Declare the host in allowDomains, or in metadata.ironheights.allowDomains for this skill only. Prefer the official API host.",
+          "references": {
+            "owaspLlm": [
+              "LLM06:2025"
+            ],
+            "owaspAgentic": [],
+            "mitreAtlas": [],
+            "openCre": [
+              "814-322"
+            ]
+          },
+          "links": [
+            {
+              "label": "OWASP LLM06:2025 Excessive Agency",
+              "url": "https://genai.owasp.org/llmrisk/llm062025-excessive-agency/"
+            },
+            {
+              "label": "OpenCRE 814-322 Whitelist data sources and sinks",
+              "url": "https://www.opencre.org/cre/814-322"
+            }
+          ]
+        },
+        {
+          "ruleId": "IH-NET-001",
+          "severity": "medium",
+          "confidence": "medium",
+          "file": "SKILL.md",
+          "line": 223,
+          "evidence": "https://mp.weixin.qq.com",
+          "message": "Destination mp.weixin.qq.com is not in the allowlist.",
+          "remediation": "Declare the host in allowDomains, or in metadata.ironheights.allowDomains for this skill only. Prefer the official API host.",
+          "references": {
+            "owaspLlm": [
+              "LLM06:2025"
+            ],
+            "owaspAgentic": [],
+            "mitreAtlas": [],
+            "openCre": [
+              "814-322"
+            ]
+          },
+          "links": [
+            {
+              "label": "OWASP LLM06:2025 Excessive Agency",
+              "url": "https://genai.owasp.org/llmrisk/llm062025-excessive-agency/"
+            },
+            {
+              "label": "OpenCRE 814-322 Whitelist data sources and sinks",
+              "url": "https://www.opencre.org/cre/814-322"
+            }
+          ]
+        },
+        {
+          "ruleId": "IH-META-001",
+          "severity": "low",
+          "confidence": "high",
+          "file": "SKILL.md",
+          "line": 1,
+          "evidence": "baoyu-post-to-wechat",
+          "message": "Frontmatter name \"baoyu-post-to-wechat\" does not match the folder \"env-reword\".",
+          "remediation": "Add YAML frontmatter with name and description. The name should match the folder name.",
+          "references": {
+            "owaspLlm": [],
+            "owaspAgentic": [],
+            "mitreAtlas": [],
+            "openCre": []
+          }
+        },
+        {
+          "ruleId": "IH-REF-001",
+          "severity": "low",
+          "confidence": "low",
+          "file": "SKILL.md",
+          "line": 36,
+          "evidence": "| `scripts/wechat-browser.ts` | Image-text posts (图文) |",
+          "message": "SKILL.md mentions scripts/wechat-browser.ts, but the skill does not ship it.",
+          "remediation": "Ship the file in the skill, fix the path, or remove the instruction. Agents should stop and ask the user when a referenced script is missing.",
+          "references": {
+            "owaspLlm": [
+              "LLM03:2025"
+            ],
+            "owaspAgentic": [
+              "ASI04:2026"
+            ],
+            "mitreAtlas": [],
+            "openCre": []
+          },
+          "links": [
+            {
+              "label": "OWASP LLM03:2025 Supply Chain",
+              "url": "https://genai.owasp.org/llmrisk/llm032025-supply-chain/"
+            }
+          ]
+        },
+        {
+          "ruleId": "IH-REF-001",
+          "severity": "low",
+          "confidence": "low",
+          "file": "SKILL.md",
+          "line": 37,
+          "evidence": "| `scripts/wechat-article.ts` | Article posting via browser (文章) |",
+          "message": "SKILL.md mentions scripts/wechat-article.ts, but the skill does not ship it.",
+          "remediation": "Ship the file in the skill, fix the path, or remove the instruction. Agents should stop and ask the user when a referenced script is missing.",
+          "references": {
+            "owaspLlm": [
+              "LLM03:2025"
+            ],
+            "owaspAgentic": [
+              "ASI04:2026"
+            ],
+            "mitreAtlas": [],
+            "openCre": []
+          },
+          "links": [
+            {
+              "label": "OWASP LLM03:2025 Supply Chain",
+              "url": "https://genai.owasp.org/llmrisk/llm032025-supply-chain/"
+            }
+          ]
+        },
+        {
+          "ruleId": "IH-REF-001",
+          "severity": "low",
+          "confidence": "low",
+          "file": "SKILL.md",
+          "line": 38,
+          "evidence": "| `scripts/wechat-api.ts` | Article posting via API (文章) |",
+          "message": "SKILL.md mentions scripts/wechat-api.ts, but the skill does not ship it.",
+          "remediation": "Ship the file in the skill, fix the path, or remove the instruction. Agents should stop and ask the user when a referenced script is missing.",
+          "references": {
+            "owaspLlm": [
+              "LLM03:2025"
+            ],
+            "owaspAgentic": [
+              "ASI04:2026"
+            ],
+            "mitreAtlas": [],
+            "openCre": []
+          },
+          "links": [
+            {
+              "label": "OWASP LLM03:2025 Supply Chain",
+              "url": "https://genai.owasp.org/llmrisk/llm032025-supply-chain/"
+            }
+          ]
+        },
+        {
+          "ruleId": "IH-REF-001",
+          "severity": "low",
+          "confidence": "low",
+          "file": "SKILL.md",
+          "line": 39,
+          "evidence": "| `scripts/md-to-wechat.ts` | Markdown → WeChat-ready HTML with image placeholders |",
+          "message": "SKILL.md mentions scripts/md-to-wechat.ts, but the skill does not ship it.",
+          "remediation": "Ship the file in the skill, fix the path, or remove the instruction. Agents should stop and ask the user when a referenced script is missing.",
+          "references": {
+            "owaspLlm": [
+              "LLM03:2025"
+            ],
+            "owaspAgentic": [
+              "ASI04:2026"
+            ],
+            "mitreAtlas": [],
+            "openCre": []
+          },
+          "links": [
+            {
+              "label": "OWASP LLM03:2025 Supply Chain",
+              "url": "https://genai.owasp.org/llmrisk/llm032025-supply-chain/"
+            }
+          ]
+        },
+        {
+          "ruleId": "IH-REF-001",
+          "severity": "low",
+          "confidence": "low",
+          "file": "SKILL.md",
+          "line": 40,
+          "evidence": "| `scripts/check-permissions.ts` | Verify environment & permissions |",
+          "message": "SKILL.md mentions scripts/check-permissions.ts, but the skill does not ship it.",
+          "remediation": "Ship the file in the skill, fix the path, or remove the instruction. Agents should stop and ask the user when a referenced script is missing.",
+          "references": {
+            "owaspLlm": [
+              "LLM03:2025"
+            ],
+            "owaspAgentic": [
+              "ASI04:2026"
+            ],
+            "mitreAtlas": [],
+            "openCre": []
+          },
+          "links": [
+            {
+              "label": "OWASP LLM03:2025 Supply Chain",
+              "url": "https://genai.owasp.org/llmrisk/llm032025-supply-chain/"
+            }
+          ]
+        },
+        {
+          "ruleId": "IH-CRED-005",
+          "severity": "low",
+          "confidence": "medium",
+          "file": "SKILL.md",
+          "line": 206,
+          "evidence": "- Endpoint: `POST https://api.weixin.qq.com/cgi-bin/draft/add?access_token=ACCESS_TOKEN`",
+          "message": "A credential is sent in a URL query string, where logs and history keep it.",
+          "remediation": "Send the key in a header (Authorization, x-api-key, x-goog-api-key) and use a credential helper instead of a token in a git remote URL.",
+          "references": {
+            "owaspLlm": [
+              "LLM02:2025"
+            ],
+            "owaspAgentic": [],
+            "mitreAtlas": [],
+            "openCre": [
+              "333-888"
+            ]
+          },
+          "links": [
+            {
+              "label": "OWASP LLM02:2025 Sensitive Information Disclosure",
+              "url": "https://genai.owasp.org/llmrisk/llm022025-sensitive-information-disclosure/"
+            },
+            {
+              "label": "OpenCRE 333-888 Do not expose data through API URLs",
+              "url": "https://www.opencre.org/cre/333-888"
+            }
+          ]
+        }
+      ],
+      "suppressed": [],
+      "suppressedCount": 0,
+      "suppressionRefused": [],
+      "suppressionRefusedCount": 0,
+      "score": 145,
+      "verdict": "block"
+    }
+  ]
+}

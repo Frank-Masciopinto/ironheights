@@ -1,0 +1,233 @@
+{
+  "schemaVersion": 1,
+  "tool": {
+    "name": "ironheights",
+    "version": "0.34.0"
+  },
+  "scannedAt": "2026-11-10T00:22:43.687Z",
+  "scannerVersion": "0.34.0",
+  "checkedAt": "2026-11-10T00:22:43.687Z",
+  "verdict": "block",
+  "skippedFileCount": 0,
+  "grade": {
+    "letter": "F",
+    "score": 10,
+    "disclaimer": "Absence of findings is not proof of safety.",
+    "unscannedDependencies": 1
+  },
+  "scanMode": "directory",
+  "summary": "ironheights 0.34.0 | original | grade F (10/100), skill files only: 1 dependency unscanned | verdict block | 10 findings",
+  "badge": "[ironheights 0.34.0: grade F (10/100), skill files only: 1 dependency unscanned, verdict block](https://github.com/Frank-Masciopinto/ironheights) — Absence of findings is not proof of safety.",
+  "skills": [
+    {
+      "skillName": "original",
+      "root": "/workspace/ironheights/benchmark-candidates/false-positives/turborepo-env-glob-and-dotdot-warnings-2026-11-10/original",
+      "filesScanned": 1,
+      "filesSkipped": [],
+      "skippedFileCount": 0,
+      "findings": [
+        {
+          "ruleId": "IH-CRED-001",
+          "severity": "high",
+          "confidence": "high",
+          "file": "SKILL.md",
+          "line": 365,
+          "evidence": "\"globalDependencies\": [\"**/.env.*local\"]",
+          "message": "The file references a sensitive credential or secret path.",
+          "remediation": "Do not read these paths from a skill. Use a scoped environment variable or the platform secret store.",
+          "references": {
+            "owaspLlm": [
+              "LLM02:2025"
+            ],
+            "owaspAgentic": [],
+            "mitreAtlas": [
+              "AML.T0055"
+            ],
+            "openCre": [
+              "368-633",
+              "881-321"
+            ]
+          },
+          "links": [
+            {
+              "label": "OWASP LLM02:2025 Sensitive Information Disclosure",
+              "url": "https://genai.owasp.org/llmrisk/llm022025-sensitive-information-disclosure/"
+            },
+            {
+              "label": "OpenCRE 368-633 Enforce least privilege",
+              "url": "https://www.opencre.org/cre/368-633"
+            },
+            {
+              "label": "OpenCRE 881-321 Store credentials securely",
+              "url": "https://www.opencre.org/cre/881-321"
+            }
+          ]
+        },
+        {
+          "ruleId": "IH-FS-001",
+          "severity": "medium",
+          "confidence": "medium",
+          "file": "SKILL.md",
+          "line": 36,
+          "evidence": "- **NEVER use `../` in inputs** - Use `$TURBO_ROOT$/path` for repo root files",
+          "message": "Path traversal or an absolute symlink is described in the file.",
+          "remediation": "Keep every file inside the skill directory. Do not use symlinks that point elsewhere or dotfiles to hide content.",
+          "references": {
+            "owaspLlm": [],
+            "owaspAgentic": [],
+            "mitreAtlas": [],
+            "openCre": []
+          }
+        },
+        {
+          "ruleId": "IH-FS-001",
+          "severity": "medium",
+          "confidence": "medium",
+          "file": "SKILL.md",
+          "line": 498,
+          "evidence": "### Using `../` to Traverse Out of Package in `inputs`",
+          "message": "Path traversal or an absolute symlink is described in the file.",
+          "remediation": "Keep every file inside the skill directory. Do not use symlinks that point elsewhere or dotfiles to hide content.",
+          "references": {
+            "owaspLlm": [],
+            "owaspAgentic": [],
+            "mitreAtlas": [],
+            "openCre": []
+          }
+        },
+        {
+          "ruleId": "IH-FS-001",
+          "severity": "medium",
+          "confidence": "medium",
+          "file": "SKILL.md",
+          "line": 500,
+          "evidence": "Don't use relative paths like `../` to reference files outside the package. Use `$TURBO_ROOT$` instead.",
+          "message": "Path traversal or an absolute symlink is described in the file.",
+          "remediation": "Keep every file inside the skill directory. Do not use symlinks that point elsewhere or dotfiles to hide content.",
+          "references": {
+            "owaspLlm": [],
+            "owaspAgentic": [],
+            "mitreAtlas": [],
+            "openCre": []
+          }
+        },
+        {
+          "ruleId": "IH-REF-001",
+          "severity": "medium",
+          "confidence": "medium",
+          "file": "SKILL.md",
+          "line": 706,
+          "evidence": "src/utils.ts",
+          "message": "SKILL.md runs src/utils.ts, but the skill does not ship it.",
+          "remediation": "Ship the file in the skill, fix the path, or remove the instruction. Agents should stop and ask the user when a referenced script is missing.",
+          "references": {
+            "owaspLlm": [
+              "LLM03:2025"
+            ],
+            "owaspAgentic": [
+              "ASI04:2026"
+            ],
+            "mitreAtlas": [],
+            "openCre": []
+          },
+          "links": [
+            {
+              "label": "OWASP LLM03:2025 Supply Chain",
+              "url": "https://genai.owasp.org/llmrisk/llm032025-supply-chain/"
+            }
+          ]
+        },
+        {
+          "ruleId": "IH-META-001",
+          "severity": "low",
+          "confidence": "high",
+          "file": "SKILL.md",
+          "line": 1,
+          "evidence": "frontmatter",
+          "message": "SKILL.md frontmatter is missing name or description.",
+          "remediation": "Add YAML frontmatter with name and description. The name should match the folder name.",
+          "references": {
+            "owaspLlm": [],
+            "owaspAgentic": [],
+            "mitreAtlas": [],
+            "openCre": []
+          }
+        },
+        {
+          "ruleId": "IH-FS-001",
+          "severity": "low",
+          "confidence": "medium",
+          "file": "SKILL.md",
+          "line": 89,
+          "evidence": "\"build\": \"cd apps/web && next build && cd ../api && tsc\",",
+          "message": "Path traversal or an absolute symlink is described in the file.",
+          "remediation": "Keep every file inside the skill directory. Do not use symlinks that point elsewhere or dotfiles to hide content.",
+          "note": "Docs example: this line is in a fenced code block in Markdown, so the docs tell someone to run it. The same line in a shipped script is graded one step higher.",
+          "references": {
+            "owaspLlm": [],
+            "owaspAgentic": [],
+            "mitreAtlas": [],
+            "openCre": []
+          }
+        },
+        {
+          "ruleId": "IH-FS-001",
+          "severity": "low",
+          "confidence": "medium",
+          "file": "SKILL.md",
+          "line": 319,
+          "evidence": "\"prebuild\": \"cd ../../packages/types && bun run build && cd ../utils && bun run build\",",
+          "message": "Path traversal or an absolute symlink is described in the file.",
+          "remediation": "Keep every file inside the skill directory. Do not use symlinks that point elsewhere or dotfiles to hide content.",
+          "note": "Docs example: this line is in a fenced code block in Markdown, so the docs tell someone to run it. The same line in a shipped script is graded one step higher.",
+          "references": {
+            "owaspLlm": [],
+            "owaspAgentic": [],
+            "mitreAtlas": [],
+            "openCre": []
+          }
+        },
+        {
+          "ruleId": "IH-FS-001",
+          "severity": "low",
+          "confidence": "medium",
+          "file": "SKILL.md",
+          "line": 507,
+          "evidence": "\"inputs\": [\"$TURBO_DEFAULT$\", \"../shared-config.json\"]",
+          "message": "Path traversal or an absolute symlink is described in the file.",
+          "remediation": "Keep every file inside the skill directory. Do not use symlinks that point elsewhere or dotfiles to hide content.",
+          "note": "Docs example: this line is in a fenced code block in Markdown, so the docs tell someone to run it. The same line in a shipped script is graded one step higher.",
+          "references": {
+            "owaspLlm": [],
+            "owaspAgentic": [],
+            "mitreAtlas": [],
+            "openCre": []
+          }
+        },
+        {
+          "ruleId": "IH-FS-001",
+          "severity": "low",
+          "confidence": "medium",
+          "file": "SKILL.md",
+          "line": 713,
+          "evidence": "import { Button } from \"../../packages/ui/src/button\";",
+          "message": "Path traversal or an absolute symlink is described in the file.",
+          "remediation": "Keep every file inside the skill directory. Do not use symlinks that point elsewhere or dotfiles to hide content.",
+          "note": "Docs example: this line is in a fenced code block in Markdown, so the docs tell someone to run it. The same line in a shipped script is graded one step higher.",
+          "references": {
+            "owaspLlm": [],
+            "owaspAgentic": [],
+            "mitreAtlas": [],
+            "openCre": []
+          }
+        }
+      ],
+      "suppressed": [],
+      "suppressedCount": 0,
+      "suppressionRefused": [],
+      "suppressionRefusedCount": 0,
+      "score": 125,
+      "verdict": "block"
+    }
+  ]
+}

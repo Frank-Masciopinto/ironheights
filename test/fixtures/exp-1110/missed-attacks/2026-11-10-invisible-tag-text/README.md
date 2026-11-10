@@ -1,0 +1,1 @@
+Class: instruction hidden as Unicode tag characters (invisible in editors, read by models) in SKILL.md. Source ASB04_004158 (testing-guidelines). 0.33.0/0.34.0 review; Cisco CRITICAL. Post 88a4889f. Defanged: hidden text not reproduced; idea = decode tag chars and block on presence.

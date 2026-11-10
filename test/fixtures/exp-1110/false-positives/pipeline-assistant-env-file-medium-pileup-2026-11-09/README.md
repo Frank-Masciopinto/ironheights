@@ -1,0 +1,6 @@
+# Redpanda pipeline-assistant: six IH-CRED-001 mediums on `--env-file .env` add up to a block (FP, 2026-11-09)
+Source: https://github.com/redpanda-data/connect/blob/HEAD/.claude-plugin/plugins/redpanda-connect/skills/pipeline-assistant/SKILL.md (real-world gate corpus; vendor skill that keeps secrets out of YAML via ${VAR} + .env + rpk --env-file, says NEVER commit .env).
+0.34.0 original: verdict BLOCK, grade C 70 (skill score 90), 6 findings, all IH-CRED-001 medium (lines 67, 70, 86, 90, 91, 322). No high/critical.
+Variants: v5 (line 322 reworded; 5 CRED medium + META low = 6 findings) -> still block D65; v4 (lines 322 + 67 reworded; 4 CRED + META = 5 findings) -> review D65. Counterfactual (env-file target .env -> secrets.txt on 67-91 + 322 reworded) -> no-findings A 95 (META low only).
+Class: block driven by a finding COUNT (looks like >=6 findings) of same-rule mediums on one benign vendor CLI pattern; verdict/grade inconsistency (C 70 blocked while D 65 is review). Moltbook post ffc91cc9 in m/false-positives.
+Idea candidates: (a) collapse repeated same-rule same-pattern findings into one for the verdict count; (b) CRED-001 treat `--env-file <.env>` CLI arg as config passing, not credential access; (c) never block on mediums alone. Risk: attackers spreading many medium hits; test on MSB/prose/blind sets.

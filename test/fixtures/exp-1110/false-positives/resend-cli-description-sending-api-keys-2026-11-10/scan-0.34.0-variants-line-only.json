@@ -1,0 +1,92 @@
+{
+  "schemaVersion": 1,
+  "tool": {
+    "name": "ironheights",
+    "version": "0.34.0"
+  },
+  "scannedAt": "2026-11-10T03:07:55.693Z",
+  "scannerVersion": "0.34.0",
+  "checkedAt": "2026-11-10T03:07:55.693Z",
+  "verdict": "block",
+  "skippedFileCount": 0,
+  "grade": {
+    "letter": "F",
+    "score": 0,
+    "disclaimer": "Absence of findings is not proof of safety."
+  },
+  "scanMode": "directory",
+  "summary": "ironheights 0.34.0 | resend-line | grade F (0/100) | verdict block | 2 findings",
+  "badge": "[ironheights 0.34.0: grade F (0/100), verdict block](https://github.com/Frank-Masciopinto/ironheights) — Absence of findings is not proof of safety.",
+  "skills": [
+    {
+      "skillName": "resend-line",
+      "root": "/workspace/ironheights/benchmark-candidates/false-positives/resend-cli-description-sending-api-keys-2026-11-10/variants/line-only",
+      "filesScanned": 1,
+      "filesSkipped": [],
+      "skippedFileCount": 0,
+      "findings": [
+        {
+          "ruleId": "IH-INTENT-001",
+          "severity": "critical",
+          "confidence": "high",
+          "file": "SKILL.md",
+          "line": 6,
+          "evidence": "Official CLI for [Resend](https://resend.com). Covers sending, domains, contacts, segments, broadcasts, templates, webhooks, and API keys.",
+          "message": "Plain-language instructions: sends sensitive data to an outside address (line 6).",
+          "remediation": "Read the quoted lines. Remove instructions that send data to outside addresses, hide actions from the user, persist across sessions, or override safety review. If a phrase is legitimate, suppress it with a reason.",
+          "references": {
+            "owaspLlm": [
+              "LLM01:2025",
+              "LLM02:2025"
+            ],
+            "owaspAgentic": [
+              "ASI01:2026"
+            ],
+            "mitreAtlas": [
+              "AML.T0051.001"
+            ],
+            "openCre": [
+              "012-625"
+            ]
+          },
+          "links": [
+            {
+              "label": "OWASP LLM01:2025 Prompt Injection",
+              "url": "https://genai.owasp.org/llmrisk/llm01-prompt-injection/"
+            },
+            {
+              "label": "OWASP LLM02:2025 Sensitive Information Disclosure",
+              "url": "https://genai.owasp.org/llmrisk/llm022025-sensitive-information-disclosure/"
+            },
+            {
+              "label": "OpenCRE 012-625 Indirect prompt injection",
+              "url": "https://www.opencre.org/cre/012-625"
+            }
+          ]
+        },
+        {
+          "ruleId": "IH-META-001",
+          "severity": "low",
+          "confidence": "high",
+          "file": "SKILL.md",
+          "line": 1,
+          "evidence": "resend-line",
+          "message": "Frontmatter name \"resend-line\" does not match the folder \"line-only\".",
+          "remediation": "Add YAML frontmatter with name and description. The name should match the folder name.",
+          "references": {
+            "owaspLlm": [],
+            "owaspAgentic": [],
+            "mitreAtlas": [],
+            "openCre": []
+          }
+        }
+      ],
+      "suppressed": [],
+      "suppressedCount": 0,
+      "suppressionRefused": [],
+      "suppressionRefusedCount": 0,
+      "score": 105,
+      "verdict": "block"
+    }
+  ]
+}

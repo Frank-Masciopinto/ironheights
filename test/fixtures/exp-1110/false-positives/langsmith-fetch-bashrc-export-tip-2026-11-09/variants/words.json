@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "tool": {
+    "name": "ironheights",
+    "version": "0.34.0"
+  },
+  "scannedAt": "2026-11-09T18:55:01.516Z",
+  "scannerVersion": "0.34.0",
+  "checkedAt": "2026-11-09T18:55:01.516Z",
+  "verdict": "no-findings",
+  "skippedFileCount": 0,
+  "grade": {
+    "letter": "A",
+    "score": 95,
+    "disclaimer": "Absence of findings is not proof of safety.",
+    "unscannedDependencies": 1
+  },
+  "scanMode": "directory",
+  "summary": "ironheights 0.34.0 | langsmith-fetch | grade A (95/100), skill files only: 1 dependency unscanned | verdict no-findings | 1 finding",
+  "badge": "[ironheights 0.34.0: grade A (95/100), skill files only: 1 dependency unscanned, verdict no-findings](https://github.com/Frank-Masciopinto/ironheights) — Absence of findings is not proof of safety.",
+  "skills": [
+    {
+      "skillName": "langsmith-fetch",
+      "root": "/tmp/fpnew/ls/words",
+      "filesScanned": 1,
+      "filesSkipped": [],
+      "skippedFileCount": 0,
+      "findings": [
+        {
+          "ruleId": "IH-META-001",
+          "severity": "low",
+          "confidence": "high",
+          "file": "SKILL.md",
+          "line": 1,
+          "evidence": "langsmith-fetch",
+          "message": "Frontmatter name \"langsmith-fetch\" does not match the folder \"words\".",
+          "remediation": "Add YAML frontmatter with name and description. The name should match the folder name.",
+          "references": {
+            "owaspLlm": [],
+            "owaspAgentic": [],
+            "mitreAtlas": [],
+            "openCre": []
+          }
+        }
+      ],
+      "suppressed": [],
+      "suppressedCount": 0,
+      "suppressionRefused": [],
+      "suppressionRefusedCount": 0,
+      "score": 5,
+      "verdict": "no-findings"
+    }
+  ]
+}

@@ -1,0 +1,102 @@
+{
+  "schemaVersion": 1,
+  "tool": {
+    "name": "ironheights",
+    "version": "0.34.0"
+  },
+  "scannedAt": "2026-11-10T07:39:35.361Z",
+  "scannerVersion": "0.34.0",
+  "checkedAt": "2026-11-10T07:39:35.361Z",
+  "verdict": "block",
+  "skippedFileCount": 0,
+  "grade": {
+    "letter": "F",
+    "score": 40,
+    "disclaimer": "Absence of findings is not proof of safety.",
+    "unscannedDependencies": 5
+  },
+  "scanMode": "directory",
+  "summary": "ironheights 0.34.0 | organise-photos | grade F (40/100), skill files only: 5 dependencies unscanned | verdict block | 2 findings",
+  "badge": "[ironheights 0.34.0: grade F (40/100), skill files only: 5 dependencies unscanned, verdict block](https://github.com/Frank-Masciopinto/ironheights) — Absence of findings is not proof of safety.",
+  "skills": [
+    {
+      "skillName": "organise-photos",
+      "root": "/tmp/fpc/organise-photos",
+      "filesScanned": 1,
+      "filesSkipped": [],
+      "skippedFileCount": 0,
+      "findings": [
+        {
+          "ruleId": "IH-EXEC-003",
+          "severity": "high",
+          "confidence": "high",
+          "file": "SKILL.md",
+          "line": 96,
+          "evidence": "os.system(\"pip install Pillow numpy -q\")",
+          "message": "Dynamic code execution or a shell-enabled subprocess was found.",
+          "remediation": "Call a fixed function or pass an argument array with shell disabled.",
+          "references": {
+            "owaspLlm": [
+              "LLM05:2025"
+            ],
+            "owaspAgentic": [
+              "ASI05:2026"
+            ],
+            "mitreAtlas": [],
+            "openCre": [
+              "317-743"
+            ]
+          },
+          "links": [
+            {
+              "label": "OWASP LLM05:2025 Improper Output Handling",
+              "url": "https://genai.owasp.org/llmrisk/llm052025-improper-output-handling/"
+            },
+            {
+              "label": "OpenCRE 317-743 Do not use eval or dynamic code execution functions",
+              "url": "https://www.opencre.org/cre/317-743"
+            }
+          ]
+        },
+        {
+          "ruleId": "IH-EXEC-003",
+          "severity": "high",
+          "confidence": "high",
+          "file": "SKILL.md",
+          "line": 166,
+          "evidence": "os.system(\"pip install opencv-python-headless Pillow imagehash numpy -q\")",
+          "message": "Dynamic code execution or a shell-enabled subprocess was found.",
+          "remediation": "Call a fixed function or pass an argument array with shell disabled.",
+          "references": {
+            "owaspLlm": [
+              "LLM05:2025"
+            ],
+            "owaspAgentic": [
+              "ASI05:2026"
+            ],
+            "mitreAtlas": [],
+            "openCre": [
+              "317-743"
+            ]
+          },
+          "links": [
+            {
+              "label": "OWASP LLM05:2025 Improper Output Handling",
+              "url": "https://genai.owasp.org/llmrisk/llm052025-improper-output-handling/"
+            },
+            {
+              "label": "OpenCRE 317-743 Do not use eval or dynamic code execution functions",
+              "url": "https://www.opencre.org/cre/317-743"
+            }
+          ]
+        }
+      ],
+      "suppressed": [],
+      "suppressedCount": 0,
+      "suppressionRefused": [],
+      "suppressionRefusedCount": 0,
+      "score": 80,
+      "verdict": "block"
+    }
+  ]
+}

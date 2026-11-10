@@ -1,0 +1,202 @@
+{
+  "schemaVersion": 1,
+  "tool": {
+    "name": "ironheights",
+    "version": "0.34.0"
+  },
+  "scannedAt": "2026-11-10T05:38:24.749Z",
+  "scannerVersion": "0.34.0",
+  "checkedAt": "2026-11-10T05:38:24.749Z",
+  "verdict": "block",
+  "skippedFileCount": 0,
+  "grade": {
+    "letter": "F",
+    "score": 15,
+    "disclaimer": "Absence of findings is not proof of safety.",
+    "unscannedDependencies": 1
+  },
+  "scanMode": "directory",
+  "summary": "ironheights 0.34.0 | spotify-linux | grade F (15/100), skill files only: 1 dependency unscanned | verdict block | 5 findings",
+  "badge": "[ironheights 0.34.0: grade F (15/100), skill files only: 1 dependency unscanned, verdict block](https://github.com/Frank-Masciopinto/ironheights) — Absence of findings is not proof of safety.",
+  "skills": [
+    {
+      "skillName": "spotify-linux",
+      "root": "/workspace/ironheights/benchmark-candidates/false-positives/spotify-linux-own-cookie-store-2026-11-10/variants/cookies-only",
+      "filesScanned": 1,
+      "filesSkipped": [],
+      "skippedFileCount": 0,
+      "findings": [
+        {
+          "ruleId": "IH-CRED-001",
+          "severity": "high",
+          "confidence": "high",
+          "file": "SKILL.md",
+          "line": 7,
+          "evidence": "metadata: {\"openclaw\":{\"emoji\":\"🎵\",\"requires\":{\"anyBins\":[\"spogo\"]},\"install\":[{\"id\":\"go\",\"kind\":\"shell\",\"command\":\"go install github.com/steipete/spogo/cmd/spogo@latest\",\"bins\":[\"spogo\"],\"label\":...",
+          "message": "The file references a sensitive credential or secret path.",
+          "remediation": "Do not read these paths from a skill. Use a scoped environment variable or the platform secret store.",
+          "references": {
+            "owaspLlm": [
+              "LLM02:2025"
+            ],
+            "owaspAgentic": [],
+            "mitreAtlas": [
+              "AML.T0055"
+            ],
+            "openCre": [
+              "368-633",
+              "881-321"
+            ]
+          },
+          "links": [
+            {
+              "label": "OWASP LLM02:2025 Sensitive Information Disclosure",
+              "url": "https://genai.owasp.org/llmrisk/llm022025-sensitive-information-disclosure/"
+            },
+            {
+              "label": "OpenCRE 368-633 Enforce least privilege",
+              "url": "https://www.opencre.org/cre/368-633"
+            },
+            {
+              "label": "OpenCRE 881-321 Store credentials securely",
+              "url": "https://www.opencre.org/cre/881-321"
+            }
+          ]
+        },
+        {
+          "ruleId": "IH-CRED-001",
+          "severity": "high",
+          "confidence": "high",
+          "file": "SKILL.md",
+          "line": 69,
+          "evidence": "cookie_path = \"~/.config/spogo/cookies/default.json\"",
+          "message": "The file references a sensitive credential or secret path.",
+          "remediation": "Do not read these paths from a skill. Use a scoped environment variable or the platform secret store.",
+          "references": {
+            "owaspLlm": [
+              "LLM02:2025"
+            ],
+            "owaspAgentic": [],
+            "mitreAtlas": [
+              "AML.T0055"
+            ],
+            "openCre": [
+              "368-633",
+              "881-321"
+            ]
+          },
+          "links": [
+            {
+              "label": "OWASP LLM02:2025 Sensitive Information Disclosure",
+              "url": "https://genai.owasp.org/llmrisk/llm022025-sensitive-information-disclosure/"
+            },
+            {
+              "label": "OpenCRE 368-633 Enforce least privilege",
+              "url": "https://www.opencre.org/cre/368-633"
+            },
+            {
+              "label": "OpenCRE 881-321 Store credentials securely",
+              "url": "https://www.opencre.org/cre/881-321"
+            }
+          ]
+        },
+        {
+          "ruleId": "IH-CRED-001",
+          "severity": "high",
+          "confidence": "high",
+          "file": "SKILL.md",
+          "line": 76,
+          "evidence": "Create `~/.config/spogo/cookies/default.json`:",
+          "message": "The file references a sensitive credential or secret path.",
+          "remediation": "Do not read these paths from a skill. Use a scoped environment variable or the platform secret store.",
+          "references": {
+            "owaspLlm": [
+              "LLM02:2025"
+            ],
+            "owaspAgentic": [],
+            "mitreAtlas": [
+              "AML.T0055"
+            ],
+            "openCre": [
+              "368-633",
+              "881-321"
+            ]
+          },
+          "links": [
+            {
+              "label": "OWASP LLM02:2025 Sensitive Information Disclosure",
+              "url": "https://genai.owasp.org/llmrisk/llm022025-sensitive-information-disclosure/"
+            },
+            {
+              "label": "OpenCRE 368-633 Enforce least privilege",
+              "url": "https://www.opencre.org/cre/368-633"
+            },
+            {
+              "label": "OpenCRE 881-321 Store credentials securely",
+              "url": "https://www.opencre.org/cre/881-321"
+            }
+          ]
+        },
+        {
+          "ruleId": "IH-CRED-001",
+          "severity": "high",
+          "confidence": "high",
+          "file": "SKILL.md",
+          "line": 170,
+          "evidence": "- **Cookie handling**: `sp_dc` and `sp_t` are stored locally in `~/.config/spogo/cookies/` — treat them as secrets, never log or share them",
+          "message": "The file references a sensitive credential or secret path.",
+          "remediation": "Do not read these paths from a skill. Use a scoped environment variable or the platform secret store.",
+          "references": {
+            "owaspLlm": [
+              "LLM02:2025"
+            ],
+            "owaspAgentic": [],
+            "mitreAtlas": [
+              "AML.T0055"
+            ],
+            "openCre": [
+              "368-633",
+              "881-321"
+            ]
+          },
+          "links": [
+            {
+              "label": "OWASP LLM02:2025 Sensitive Information Disclosure",
+              "url": "https://genai.owasp.org/llmrisk/llm022025-sensitive-information-disclosure/"
+            },
+            {
+              "label": "OpenCRE 368-633 Enforce least privilege",
+              "url": "https://www.opencre.org/cre/368-633"
+            },
+            {
+              "label": "OpenCRE 881-321 Store credentials securely",
+              "url": "https://www.opencre.org/cre/881-321"
+            }
+          ]
+        },
+        {
+          "ruleId": "IH-META-001",
+          "severity": "low",
+          "confidence": "high",
+          "file": "SKILL.md",
+          "line": 1,
+          "evidence": "spotify-linux",
+          "message": "Frontmatter name \"spotify-linux\" does not match the folder \"cookies-only\".",
+          "remediation": "Add YAML frontmatter with name and description. The name should match the folder name.",
+          "references": {
+            "owaspLlm": [],
+            "owaspAgentic": [],
+            "mitreAtlas": [],
+            "openCre": []
+          }
+        }
+      ],
+      "suppressed": [],
+      "suppressedCount": 0,
+      "suppressionRefused": [],
+      "suppressionRefusedCount": 0,
+      "score": 165,
+      "verdict": "block"
+    }
+  ]
+}

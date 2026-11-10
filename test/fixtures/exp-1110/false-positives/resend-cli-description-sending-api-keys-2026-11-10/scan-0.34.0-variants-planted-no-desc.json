@@ -1,0 +1,387 @@
+{
+  "schemaVersion": 1,
+  "tool": {
+    "name": "ironheights",
+    "version": "0.34.0"
+  },
+  "scannedAt": "2026-11-10T03:08:05.669Z",
+  "scannerVersion": "0.34.0",
+  "checkedAt": "2026-11-10T03:08:05.669Z",
+  "verdict": "block",
+  "skippedFileCount": 0,
+  "grade": {
+    "letter": "D",
+    "score": 65,
+    "disclaimer": "Absence of findings is not proof of safety.",
+    "unscannedDependencies": 2
+  },
+  "scanMode": "directory",
+  "summary": "ironheights 0.34.0 | resend | grade D (65/100), skill files only: 2 dependencies unscanned | verdict block | 10 findings",
+  "badge": "[ironheights 0.34.0: grade D (65/100), skill files only: 2 dependencies unscanned, verdict block](https://github.com/Frank-Masciopinto/ironheights) — Absence of findings is not proof of safety.",
+  "skills": [
+    {
+      "skillName": "resend",
+      "root": "/workspace/ironheights/benchmark-candidates/false-positives/resend-cli-description-sending-api-keys-2026-11-10/variants/planted-no-desc",
+      "filesScanned": 1,
+      "filesSkipped": [],
+      "skippedFileCount": 0,
+      "findings": [
+        {
+          "ruleId": "IH-EXEC-004",
+          "severity": "medium",
+          "confidence": "medium",
+          "file": "SKILL.md",
+          "line": 134,
+          "evidence": "resend domains delete <domain-id> --yes --json",
+          "message": "A switch turns off confirmation (--yes).",
+          "remediation": "Keep approvals on, or run the agent in a disposable sandbox or container, and say when the switch is allowed (for example: only in CI, never on the user machine).",
+          "references": {
+            "owaspLlm": [
+              "LLM06:2025"
+            ],
+            "owaspAgentic": [
+              "ASI03:2026"
+            ],
+            "mitreAtlas": [],
+            "openCre": [
+              "202-604",
+              "333-480"
+            ]
+          },
+          "links": [
+            {
+              "label": "OWASP LLM06:2025 Excessive Agency",
+              "url": "https://genai.owasp.org/llmrisk/llm062025-excessive-agency/"
+            },
+            {
+              "label": "OpenCRE 202-604 Human AI oversight",
+              "url": "https://www.opencre.org/cre/202-604"
+            },
+            {
+              "label": "OpenCRE 333-480 Impact limitation of unwanted model behaviour",
+              "url": "https://www.opencre.org/cre/333-480"
+            }
+          ]
+        },
+        {
+          "ruleId": "IH-EXEC-004",
+          "severity": "medium",
+          "confidence": "medium",
+          "file": "SKILL.md",
+          "line": 162,
+          "evidence": "resend contacts delete <contact-id> --yes --json",
+          "message": "A switch turns off confirmation (--yes).",
+          "remediation": "Keep approvals on, or run the agent in a disposable sandbox or container, and say when the switch is allowed (for example: only in CI, never on the user machine).",
+          "references": {
+            "owaspLlm": [
+              "LLM06:2025"
+            ],
+            "owaspAgentic": [
+              "ASI03:2026"
+            ],
+            "mitreAtlas": [],
+            "openCre": [
+              "202-604",
+              "333-480"
+            ]
+          },
+          "links": [
+            {
+              "label": "OWASP LLM06:2025 Excessive Agency",
+              "url": "https://genai.owasp.org/llmrisk/llm062025-excessive-agency/"
+            },
+            {
+              "label": "OpenCRE 202-604 Human AI oversight",
+              "url": "https://www.opencre.org/cre/202-604"
+            },
+            {
+              "label": "OpenCRE 333-480 Impact limitation of unwanted model behaviour",
+              "url": "https://www.opencre.org/cre/333-480"
+            }
+          ]
+        },
+        {
+          "ruleId": "IH-EXEC-004",
+          "severity": "medium",
+          "confidence": "medium",
+          "file": "SKILL.md",
+          "line": 194,
+          "evidence": "resend segments delete <segment-id> --yes --json",
+          "message": "A switch turns off confirmation (--yes).",
+          "remediation": "Keep approvals on, or run the agent in a disposable sandbox or container, and say when the switch is allowed (for example: only in CI, never on the user machine).",
+          "references": {
+            "owaspLlm": [
+              "LLM06:2025"
+            ],
+            "owaspAgentic": [
+              "ASI03:2026"
+            ],
+            "mitreAtlas": [],
+            "openCre": [
+              "202-604",
+              "333-480"
+            ]
+          },
+          "links": [
+            {
+              "label": "OWASP LLM06:2025 Excessive Agency",
+              "url": "https://genai.owasp.org/llmrisk/llm062025-excessive-agency/"
+            },
+            {
+              "label": "OpenCRE 202-604 Human AI oversight",
+              "url": "https://www.opencre.org/cre/202-604"
+            },
+            {
+              "label": "OpenCRE 333-480 Impact limitation of unwanted model behaviour",
+              "url": "https://www.opencre.org/cre/333-480"
+            }
+          ]
+        },
+        {
+          "ruleId": "IH-EXEC-004",
+          "severity": "medium",
+          "confidence": "medium",
+          "file": "SKILL.md",
+          "line": 233,
+          "evidence": "resend broadcasts delete <broadcast-id> --yes --json",
+          "message": "A switch turns off confirmation (--yes).",
+          "remediation": "Keep approvals on, or run the agent in a disposable sandbox or container, and say when the switch is allowed (for example: only in CI, never on the user machine).",
+          "references": {
+            "owaspLlm": [
+              "LLM06:2025"
+            ],
+            "owaspAgentic": [
+              "ASI03:2026"
+            ],
+            "mitreAtlas": [],
+            "openCre": [
+              "202-604",
+              "333-480"
+            ]
+          },
+          "links": [
+            {
+              "label": "OWASP LLM06:2025 Excessive Agency",
+              "url": "https://genai.owasp.org/llmrisk/llm062025-excessive-agency/"
+            },
+            {
+              "label": "OpenCRE 202-604 Human AI oversight",
+              "url": "https://www.opencre.org/cre/202-604"
+            },
+            {
+              "label": "OpenCRE 333-480 Impact limitation of unwanted model behaviour",
+              "url": "https://www.opencre.org/cre/333-480"
+            }
+          ]
+        },
+        {
+          "ruleId": "IH-EXEC-004",
+          "severity": "medium",
+          "confidence": "medium",
+          "file": "SKILL.md",
+          "line": 269,
+          "evidence": "resend templates delete <template-id> --yes --json",
+          "message": "A switch turns off confirmation (--yes).",
+          "remediation": "Keep approvals on, or run the agent in a disposable sandbox or container, and say when the switch is allowed (for example: only in CI, never on the user machine).",
+          "references": {
+            "owaspLlm": [
+              "LLM06:2025"
+            ],
+            "owaspAgentic": [
+              "ASI03:2026"
+            ],
+            "mitreAtlas": [],
+            "openCre": [
+              "202-604",
+              "333-480"
+            ]
+          },
+          "links": [
+            {
+              "label": "OWASP LLM06:2025 Excessive Agency",
+              "url": "https://genai.owasp.org/llmrisk/llm062025-excessive-agency/"
+            },
+            {
+              "label": "OpenCRE 202-604 Human AI oversight",
+              "url": "https://www.opencre.org/cre/202-604"
+            },
+            {
+              "label": "OpenCRE 333-480 Impact limitation of unwanted model behaviour",
+              "url": "https://www.opencre.org/cre/333-480"
+            }
+          ]
+        },
+        {
+          "ruleId": "IH-EXEC-004",
+          "severity": "medium",
+          "confidence": "medium",
+          "file": "SKILL.md",
+          "line": 293,
+          "evidence": "resend topics delete <topic-id> --yes --json",
+          "message": "A switch turns off confirmation (--yes).",
+          "remediation": "Keep approvals on, or run the agent in a disposable sandbox or container, and say when the switch is allowed (for example: only in CI, never on the user machine).",
+          "references": {
+            "owaspLlm": [
+              "LLM06:2025"
+            ],
+            "owaspAgentic": [
+              "ASI03:2026"
+            ],
+            "mitreAtlas": [],
+            "openCre": [
+              "202-604",
+              "333-480"
+            ]
+          },
+          "links": [
+            {
+              "label": "OWASP LLM06:2025 Excessive Agency",
+              "url": "https://genai.owasp.org/llmrisk/llm062025-excessive-agency/"
+            },
+            {
+              "label": "OpenCRE 202-604 Human AI oversight",
+              "url": "https://www.opencre.org/cre/202-604"
+            },
+            {
+              "label": "OpenCRE 333-480 Impact limitation of unwanted model behaviour",
+              "url": "https://www.opencre.org/cre/333-480"
+            }
+          ]
+        },
+        {
+          "ruleId": "IH-EXEC-004",
+          "severity": "medium",
+          "confidence": "medium",
+          "file": "SKILL.md",
+          "line": 314,
+          "evidence": "resend webhooks delete <webhook-id> --yes --json",
+          "message": "A switch turns off confirmation (--yes).",
+          "remediation": "Keep approvals on, or run the agent in a disposable sandbox or container, and say when the switch is allowed (for example: only in CI, never on the user machine).",
+          "references": {
+            "owaspLlm": [
+              "LLM06:2025"
+            ],
+            "owaspAgentic": [
+              "ASI03:2026"
+            ],
+            "mitreAtlas": [],
+            "openCre": [
+              "202-604",
+              "333-480"
+            ]
+          },
+          "links": [
+            {
+              "label": "OWASP LLM06:2025 Excessive Agency",
+              "url": "https://genai.owasp.org/llmrisk/llm062025-excessive-agency/"
+            },
+            {
+              "label": "OpenCRE 202-604 Human AI oversight",
+              "url": "https://www.opencre.org/cre/202-604"
+            },
+            {
+              "label": "OpenCRE 333-480 Impact limitation of unwanted model behaviour",
+              "url": "https://www.opencre.org/cre/333-480"
+            }
+          ]
+        },
+        {
+          "ruleId": "IH-EXEC-004",
+          "severity": "medium",
+          "confidence": "medium",
+          "file": "SKILL.md",
+          "line": 336,
+          "evidence": "resend api-keys delete <api-key-id> --yes --json",
+          "message": "A switch turns off confirmation (--yes).",
+          "remediation": "Keep approvals on, or run the agent in a disposable sandbox or container, and say when the switch is allowed (for example: only in CI, never on the user machine).",
+          "references": {
+            "owaspLlm": [
+              "LLM06:2025"
+            ],
+            "owaspAgentic": [
+              "ASI03:2026"
+            ],
+            "mitreAtlas": [],
+            "openCre": [
+              "202-604",
+              "333-480"
+            ]
+          },
+          "links": [
+            {
+              "label": "OWASP LLM06:2025 Excessive Agency",
+              "url": "https://genai.owasp.org/llmrisk/llm062025-excessive-agency/"
+            },
+            {
+              "label": "OpenCRE 202-604 Human AI oversight",
+              "url": "https://www.opencre.org/cre/202-604"
+            },
+            {
+              "label": "OpenCRE 333-480 Impact limitation of unwanted model behaviour",
+              "url": "https://www.opencre.org/cre/333-480"
+            }
+          ]
+        },
+        {
+          "ruleId": "IH-META-001",
+          "severity": "low",
+          "confidence": "high",
+          "file": "SKILL.md",
+          "line": 1,
+          "evidence": "resend",
+          "message": "Frontmatter name \"resend\" does not match the folder \"planted-no-desc\".",
+          "remediation": "Add YAML frontmatter with name and description. The name should match the folder name.",
+          "references": {
+            "owaspLlm": [],
+            "owaspAgentic": [],
+            "mitreAtlas": [],
+            "openCre": []
+          }
+        },
+        {
+          "ruleId": "IH-EXEC-004",
+          "severity": "info",
+          "confidence": "low",
+          "file": "SKILL.md",
+          "line": 374,
+          "evidence": "3. **Destructive actions need `--yes`** — deletes require confirmation bypass.",
+          "message": "A switch turns off confirmation (--yes). A guard nearby limits when it is used.",
+          "remediation": "Keep approvals on, or run the agent in a disposable sandbox or container, and say when the switch is allowed (for example: only in CI, never on the user machine).",
+          "references": {
+            "owaspLlm": [
+              "LLM06:2025"
+            ],
+            "owaspAgentic": [
+              "ASI03:2026"
+            ],
+            "mitreAtlas": [],
+            "openCre": [
+              "202-604",
+              "333-480"
+            ]
+          },
+          "links": [
+            {
+              "label": "OWASP LLM06:2025 Excessive Agency",
+              "url": "https://genai.owasp.org/llmrisk/llm062025-excessive-agency/"
+            },
+            {
+              "label": "OpenCRE 202-604 Human AI oversight",
+              "url": "https://www.opencre.org/cre/202-604"
+            },
+            {
+              "label": "OpenCRE 333-480 Impact limitation of unwanted model behaviour",
+              "url": "https://www.opencre.org/cre/333-480"
+            }
+          ]
+        }
+      ],
+      "suppressed": [],
+      "suppressedCount": 0,
+      "suppressionRefused": [],
+      "suppressionRefusedCount": 0,
+      "score": 125,
+      "verdict": "block"
+    }
+  ]
+}

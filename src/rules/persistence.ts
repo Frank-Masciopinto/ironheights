@@ -9,6 +9,18 @@ import { createFinding, pushUnique } from './helpers.ts';
  * Windows Run keys, schtasks /create, git hook paths, and Startup folder writes.
  */
 
+/**
+ * `systemctl start` inside a Terraform user_data or cloud-init example boots a
+ * new VM. `systemctl enable` and a start outside that example stay persistence.
+ */
+function userDataServiceStart(text: string, lineNumber: number): boolean {
+  const lines = text.split(/\r?\n/);
+  const line = lines[lineNumber - 1] ?? '';
+  if (!/\bsystemctl\s+start\b/i.test(line) || /\bsystemctl\s+enable\b/i.test(line)) return false;
+  const around = lines.slice(Math.max(0, lineNumber - 40), lineNumber + 3).join('\n');
+  return /\b(?:user_data|cloud-init|cloud_config|runcmd:)\b/i.test(around);
+}
+
 const PATTERNS: RegExp[] = [
   /\bcrontab\b[^\n]{0,40}(?:-e|-l|-r|\s+[^\s]+\.cron)/i,
   /LaunchAgents\/|LaunchDaemons\/|\/Library\/LaunchAgents/i,
@@ -39,6 +51,7 @@ export const persist001: Rule = {
     const findings: Finding[] = [];
     eachLine(file.text, (line, lineNumber) => {
       if (isDescribedRegex(line)) return;
+      if (userDataServiceStart(file.text, lineNumber)) return;
       if (!PATTERNS.some((pattern) => pattern.test(line) && !echoHintOnly(line, pattern))) return;
       pushUnique(
         findings,

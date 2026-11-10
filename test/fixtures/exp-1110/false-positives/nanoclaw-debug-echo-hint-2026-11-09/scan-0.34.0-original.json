@@ -1,0 +1,257 @@
+{
+  "schemaVersion": 1,
+  "tool": {
+    "name": "ironheights",
+    "version": "0.34.0"
+  },
+  "scannedAt": "2026-11-09T08:47:07.713Z",
+  "scannerVersion": "0.34.0",
+  "checkedAt": "2026-11-09T08:47:07.713Z",
+  "verdict": "block",
+  "skippedFileCount": 0,
+  "grade": {
+    "letter": "F",
+    "score": 0,
+    "disclaimer": "Absence of findings is not proof of safety."
+  },
+  "scanMode": "directory",
+  "summary": "ironheights 0.34.0 | debug | grade F (0/100) | verdict block | 8 findings",
+  "badge": "[ironheights 0.34.0: grade F (0/100), verdict block](https://github.com/Frank-Masciopinto/ironheights) — Absence of findings is not proof of safety.",
+  "skills": [
+    {
+      "skillName": "debug",
+      "root": "/tmp/fpc2/ncdebug",
+      "filesScanned": 1,
+      "filesSkipped": [],
+      "skippedFileCount": 0,
+      "findings": [
+        {
+          "ruleId": "IH-CRED-001",
+          "severity": "high",
+          "confidence": "high",
+          "file": "SKILL.md",
+          "line": 141,
+          "evidence": "# EnvironmentFile=/home/[user]/nanoclaw/.env",
+          "message": "The file references a sensitive credential or secret path.",
+          "remediation": "Do not read these paths from a skill. Use a scoped environment variable or the platform secret store.",
+          "references": {
+            "owaspLlm": [
+              "LLM02:2025"
+            ],
+            "owaspAgentic": [],
+            "mitreAtlas": [
+              "AML.T0055"
+            ],
+            "openCre": [
+              "368-633",
+              "881-321"
+            ]
+          },
+          "links": [
+            {
+              "label": "OWASP LLM02:2025 Sensitive Information Disclosure",
+              "url": "https://genai.owasp.org/llmrisk/llm022025-sensitive-information-disclosure/"
+            },
+            {
+              "label": "OpenCRE 368-633 Enforce least privilege",
+              "url": "https://www.opencre.org/cre/368-633"
+            },
+            {
+              "label": "OpenCRE 881-321 Store credentials securely",
+              "url": "https://www.opencre.org/cre/881-321"
+            }
+          ]
+        },
+        {
+          "ruleId": "IH-PERSIST-001",
+          "severity": "high",
+          "confidence": "high",
+          "file": "SKILL.md",
+          "line": 288,
+          "evidence": "docker info &>/dev/null && echo \"OK\" || echo \"NOT RUNNING - start Docker Desktop (macOS) or sudo systemctl start docker (Linux)\"",
+          "message": "A persistence mechanism is described or invoked.",
+          "remediation": "Remove the persistence step. A skill should not install itself into login or scheduler configuration.",
+          "references": {
+            "owaspLlm": [],
+            "owaspAgentic": [],
+            "mitreAtlas": [],
+            "openCre": [
+              "838-636"
+            ]
+          },
+          "links": [
+            {
+              "label": "OpenCRE 838-636 Check source code and third party libraries to not contain backdoors",
+              "url": "https://www.opencre.org/cre/838-636"
+            }
+          ]
+        },
+        {
+          "ruleId": "IH-REF-001",
+          "severity": "medium",
+          "confidence": "medium",
+          "file": "SKILL.md",
+          "line": 17,
+          "evidence": "src/container-runner.ts container/agent-runner/src/",
+          "message": "SKILL.md runs src/container-runner.ts, but the skill does not ship it.",
+          "remediation": "Ship the file in the skill, fix the path, or remove the instruction. Agents should stop and ask the user when a referenced script is missing.",
+          "references": {
+            "owaspLlm": [
+              "LLM03:2025"
+            ],
+            "owaspAgentic": [
+              "ASI04:2026"
+            ],
+            "mitreAtlas": [],
+            "openCre": []
+          },
+          "links": [
+            {
+              "label": "OWASP LLM03:2025 Supply Chain",
+              "url": "https://genai.owasp.org/llmrisk/llm032025-supply-chain/"
+            }
+          ]
+        },
+        {
+          "ruleId": "IH-FS-001",
+          "severity": "medium",
+          "confidence": "medium",
+          "file": "SKILL.md",
+          "line": 32,
+          "evidence": "**Message flow:** host writes a row to `inbound.db` (`messages_in`) and wakes the container; the container's poll loop picks it up, runs the agent, and writes the reply to `outbound.db` (`messages_...",
+          "message": "Path traversal or an absolute symlink is described in the file.",
+          "remediation": "Keep every file inside the skill directory. Do not use symlinks that point elsewhere or dotfiles to hide content.",
+          "references": {
+            "owaspLlm": [],
+            "owaspAgentic": [],
+            "mitreAtlas": [],
+            "openCre": []
+          }
+        },
+        {
+          "ruleId": "IH-REF-001",
+          "severity": "medium",
+          "confidence": "medium",
+          "file": "SKILL.md",
+          "line": 71,
+          "evidence": "pnpm exec tsx scripts/q.ts data/v2.db \"SELECT id, agent_group_id, messaging_group_id, status, container_status, last_active FROM sessions\"",
+          "message": "SKILL.md runs scripts/q.ts, but the skill does not ship it.",
+          "remediation": "Ship the file in the skill, fix the path, or remove the instruction. Agents should stop and ask the user when a referenced script is missing.",
+          "references": {
+            "owaspLlm": [
+              "LLM03:2025"
+            ],
+            "owaspAgentic": [
+              "ASI04:2026"
+            ],
+            "mitreAtlas": [],
+            "openCre": []
+          },
+          "links": [
+            {
+              "label": "OWASP LLM03:2025 Supply Chain",
+              "url": "https://genai.owasp.org/llmrisk/llm032025-supply-chain/"
+            }
+          ]
+        },
+        {
+          "ruleId": "IH-EXEC-004",
+          "severity": "medium",
+          "confidence": "medium",
+          "file": "SKILL.md",
+          "line": 247,
+          "evidence": "permissionMode: 'bypassPermissions',",
+          "message": "A coding agent is started with approvals off (bypassPermissions).",
+          "remediation": "Keep approvals on, or run the agent in a disposable sandbox or container, and say when the switch is allowed (for example: only in CI, never on the user machine).",
+          "references": {
+            "owaspLlm": [
+              "LLM06:2025"
+            ],
+            "owaspAgentic": [
+              "ASI03:2026"
+            ],
+            "mitreAtlas": [],
+            "openCre": [
+              "202-604",
+              "333-480"
+            ]
+          },
+          "links": [
+            {
+              "label": "OWASP LLM06:2025 Excessive Agency",
+              "url": "https://genai.owasp.org/llmrisk/llm062025-excessive-agency/"
+            },
+            {
+              "label": "OpenCRE 202-604 Human AI oversight",
+              "url": "https://www.opencre.org/cre/202-604"
+            },
+            {
+              "label": "OpenCRE 333-480 Impact limitation of unwanted model behaviour",
+              "url": "https://www.opencre.org/cre/333-480"
+            }
+          ]
+        },
+        {
+          "ruleId": "IH-PRIV-001",
+          "severity": "medium",
+          "confidence": "high",
+          "file": "SKILL.md",
+          "line": 288,
+          "evidence": "docker info &>/dev/null && echo \"OK\" || echo \"NOT RUNNING - start Docker Desktop (macOS) or sudo systemctl start docker (Linux)\"",
+          "message": "The file elevates privileges or disables an OS protection.",
+          "remediation": "Do not elevate privileges or remove OS protections. Ask the user to install software through the normal path.",
+          "note": "Docs example: this line is in a fenced code block in Markdown, so the docs tell someone to run it. The same line in a shipped script is graded one step higher.",
+          "references": {
+            "owaspLlm": [
+              "LLM06:2025"
+            ],
+            "owaspAgentic": [
+              "ASI03:2026"
+            ],
+            "mitreAtlas": [],
+            "openCre": [
+              "368-633",
+              "330-281"
+            ]
+          },
+          "links": [
+            {
+              "label": "OWASP LLM06:2025 Excessive Agency",
+              "url": "https://genai.owasp.org/llmrisk/llm062025-excessive-agency/"
+            },
+            {
+              "label": "OpenCRE 368-633 Enforce least privilege",
+              "url": "https://www.opencre.org/cre/368-633"
+            },
+            {
+              "label": "OpenCRE 330-281 Use least privilege OS accounts for system (components)",
+              "url": "https://www.opencre.org/cre/330-281"
+            }
+          ]
+        },
+        {
+          "ruleId": "IH-META-001",
+          "severity": "low",
+          "confidence": "high",
+          "file": "SKILL.md",
+          "line": 1,
+          "evidence": "debug",
+          "message": "Frontmatter name \"debug\" does not match the folder \"ncdebug\".",
+          "remediation": "Add YAML frontmatter with name and description. The name should match the folder name.",
+          "references": {
+            "owaspLlm": [],
+            "owaspAgentic": [],
+            "mitreAtlas": [],
+            "openCre": []
+          }
+        }
+      ],
+      "suppressed": [],
+      "suppressedCount": 0,
+      "suppressionRefused": [],
+      "suppressionRefusedCount": 0,
+      "score": 160,
+      "verdict": "block"
+    }
+  ]
+}

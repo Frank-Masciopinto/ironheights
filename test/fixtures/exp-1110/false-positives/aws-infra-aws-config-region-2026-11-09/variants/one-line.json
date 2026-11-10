@@ -1,0 +1,90 @@
+{
+  "schemaVersion": 1,
+  "tool": {
+    "name": "ironheights",
+    "version": "0.34.0"
+  },
+  "scannedAt": "2026-11-09T17:36:38.231Z",
+  "scannerVersion": "0.34.0",
+  "checkedAt": "2026-11-09T17:36:38.231Z",
+  "verdict": "review",
+  "skippedFileCount": 0,
+  "grade": {
+    "letter": "F",
+    "score": 55,
+    "disclaimer": "Absence of findings is not proof of safety."
+  },
+  "scanMode": "directory",
+  "summary": "ironheights 0.34.0 | aws-infra | grade F (55/100) | verdict review | 2 findings",
+  "badge": "[ironheights 0.34.0: grade F (55/100), verdict review](https://github.com/Frank-Masciopinto/ironheights) — Absence of findings is not proof of safety.",
+  "skills": [
+    {
+      "skillName": "aws-infra",
+      "root": "/workspace/ironheights/benchmark-candidates/false-positives/aws-infra-aws-config-region-2026-11-09/variants/one-line",
+      "filesScanned": 4,
+      "filesSkipped": [],
+      "skippedFileCount": 0,
+      "findings": [
+        {
+          "ruleId": "IH-CRED-001",
+          "severity": "high",
+          "confidence": "high",
+          "file": "SKILL.md",
+          "line": 33,
+          "evidence": "- Otherwise use `AWS_PROFILE` / `AWS_REGION` if set, then fall back to `~/.aws/config`.",
+          "message": "The file references a sensitive credential or secret path.",
+          "remediation": "Do not read these paths from a skill. Use a scoped environment variable or the platform secret store.",
+          "references": {
+            "owaspLlm": [
+              "LLM02:2025"
+            ],
+            "owaspAgentic": [],
+            "mitreAtlas": [
+              "AML.T0055"
+            ],
+            "openCre": [
+              "368-633",
+              "881-321"
+            ]
+          },
+          "links": [
+            {
+              "label": "OWASP LLM02:2025 Sensitive Information Disclosure",
+              "url": "https://genai.owasp.org/llmrisk/llm022025-sensitive-information-disclosure/"
+            },
+            {
+              "label": "OpenCRE 368-633 Enforce least privilege",
+              "url": "https://www.opencre.org/cre/368-633"
+            },
+            {
+              "label": "OpenCRE 881-321 Store credentials securely",
+              "url": "https://www.opencre.org/cre/881-321"
+            }
+          ]
+        },
+        {
+          "ruleId": "IH-META-001",
+          "severity": "low",
+          "confidence": "high",
+          "file": "SKILL.md",
+          "line": 1,
+          "evidence": "aws-infra",
+          "message": "Frontmatter name \"aws-infra\" does not match the folder \"one-line\".",
+          "remediation": "Add YAML frontmatter with name and description. The name should match the folder name.",
+          "references": {
+            "owaspLlm": [],
+            "owaspAgentic": [],
+            "mitreAtlas": [],
+            "openCre": []
+          }
+        }
+      ],
+      "suppressed": [],
+      "suppressedCount": 0,
+      "suppressionRefused": [],
+      "suppressionRefusedCount": 0,
+      "score": 45,
+      "verdict": "review"
+    }
+  ]
+}

@@ -23,7 +23,18 @@ const NEGATED =
 const ACTION_VERB = String.raw`(?:run|runs|execute|executes|invoke|send|sends|upload|uploads|post|posts|POST|delete|deletes|remove|removes|collect|collects|copy|copies|install|installs|download|downloads|write|writes|modify|modifies|forward|forwards|append|appends|add|adds|clear|clears|read|reads|encode|exfiltrate|transmit|call|calls)`;
 
 const EXFIL_VERB =
-  /\b(?:send|sends|sending|upload|uploads|uploading|POST|forward|forwards|forwarding|transmit|transmits|exfiltrat\w*|beacon|leak|relay|bcc|cc)\b/i;
+  /\b(?:send|sends|sending|upload|uploads|uploading|POST|forward|forwards|forwarding|transmit|transmits|exfiltrat\w*|beacon|leak|relay|bcc|cc|(?:e-?mail|mail)(?=\s+(?:the|this|a|an|your|its|their|contents|out)\b))\b/i;
+
+/** "Covers sending, domains, webhooks, and API keys" is a noun list, not an instruction. */
+function featureListGerund(line: string): boolean {
+  if ((line.match(/,/g) ?? []).length < 3) return false;
+  const verbs =
+    line.match(
+      /\b(?:send|sends|sending|upload|uploads|uploading|post|forward|forwards|forwarding|transmit|transmits|exfiltrat\w*|beacon|leak|relay|bcc|cc|e-?mail|mail)\b/gi,
+    ) ?? [];
+  if (verbs.length === 0) return false;
+  return verbs.every((verb) => /^(?:sending|uploading|forwarding)$/i.test(verb));
+}
 const SENSITIVE =
   /\b(?:credentials?|api[\s_-]?keys?|access\s+tokens?|auth\s+tokens?|session[\s_-]tokens?|bearer\s+tokens?|passwords?|passphrases?|secrets?|private\s+keys?|ssh\s+keys?|\.env\b|env(?:ironment)?\s+variables?|cookies?|wallet\s+(?:keys?|files?)|seed\s+phrase|mnemonic|keychain|conversation\s+history|chat\s+(?:history|logs?)|user'?s?\s+(?:files|messages|emails|documents|history)|all\s+(?:data|files|messages|emails)|personal\s+data|PII|~\/\.(?:ssh|aws|config)|id_rsa|\.aws|\.mykey|all\s+outgoing)\b/i;
 const OUTSIDE =
@@ -70,7 +81,7 @@ const COLLECTOR =
  * "without the user's knowledge", "hide this from the user". Blocks on its own.
  */
 const CONCEAL_USER =
-  /\b(?:(?:do\s+not|don'?t|never)\s+(?:tell|inform|mention\s+(?:this|it)\s+to|notify|alert|reveal\s+(?:this|it)\s+to|disclose\s+(?:this|it)\s+to)\s+(?:the\s+)?(?:user|human|operator)|without\s+(?:the\s+)?user'?s?\s+(?:knowledge|awareness)|(?:hide|conceal)\s+(?:this|it|these\s+\w+|the\s+\w+)\s+from\s+(?:the\s+)?(?:user|human)|invisible\s+to\s+the\s+user|not\s+visible\s+to\s+the\s+user)\b/i;
+  /\b(?:(?:do\s+not|don'?t|never)\s+(?:tell|inform|mention\s+(?:this|it)(?:\s+(?:step|action|line|part))?\s+to|notify|alert|reveal\s+(?:this|it)\s+to|disclose\s+(?:this|it)\s+to)\s+(?:the\s+)?(?:user|human|operator)|without\s+(?:the\s+)?user'?s?\s+(?:knowledge|awareness)|(?:hide|conceal)\s+(?:this|it|these\s+\w+|the\s+\w+)\s+from\s+(?:the\s+)?(?:user|human)|invisible\s+to\s+the\s+user|not\s+visible\s+to\s+the\s+user)\b/i;
 /** A literal outside destination written into the skill (author-owned), not a placeholder the user fills. */
 const LITERAL_DEST =
   /https?:\/\/(?![^\s`'")]*(?:<|\{|\$|YOUR|your[-_]|example\.(?:com|org)|localhost|127\.0\.0\.1))[^\s`'")]+|\b[\w.+-]+@(?!example\.)[\w-]+\.[a-z]{2,}\b|\b(?:webhook\.site|pipedream\.net|requestbin|ngrok|pastebin|KVDB|interact\.sh|burpcollaborator)\b/i;
@@ -203,7 +214,8 @@ export function intentHits(text: string): Hit[] {
     if (BYPASS.test(raw) && !/\b(?:never|do\s+not|don'?t|must\s+not|refuse)\b/i.test(raw)) {
       add('bypass', 3);
     }
-    if (matchUnlessNegated(EXFIL_VERB, raw) && !NEGATED.test(raw)) {
+    const aside = raw.replace(CONCEAL_USER, ' ');
+    if (matchUnlessNegated(EXFIL_VERB, raw) && !NEGATED.test(aside) && !featureListGerund(raw)) {
       const outbound = !INBOUND.test(raw);
       const authorDest = LITERAL_DEST.test(raw) && !USER_DEST.test(raw);
       if (SENSITIVE.test(raw) && OUTSIDE.test(window)) {

@@ -1,0 +1,1 @@
+Class: instructions moved into a binary companion document. Source ASB04_003814 (pdf). SKILL.md says it is a routing shell with no procedures and requires reading SKILL_guide.pdf end to end, including preflight, first. 0.33.0/0.34.0 no-findings; Cisco SAFE. Post 718e0dbe.

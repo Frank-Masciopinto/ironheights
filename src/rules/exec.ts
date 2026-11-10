@@ -184,6 +184,22 @@ function checkExec002(file: ScannedFile): Finding[] {
   return findings;
 }
 
+/**
+ * `os.system("pip install pillow")` is a fixed installer, not a string the agent built.
+ * An f-string, a variable, a URL, a pipe, or a shell still counts as dynamic execution.
+ */
+function constantPackageInstall(line: string): boolean {
+  const match = /\bos\.system\(\s*(['"])([\s\S]*?)\1\s*\)/.exec(line);
+  if (!match) return false;
+  const before = line.slice(0, match.index);
+  if (/\bf\s*$/.test(before) || /os\.system\(\s*f['"]/.test(line)) return false;
+  const command = match[2] ?? '';
+  if (/[$`{}]|&&|\||;|>|https?:|\b(?:curl|wget|bash|sh|eval)\b/i.test(command)) return false;
+  return /^(?:python3?\s+-m\s+)?(?:pip3?|npm|pnpm|yarn|apt-get|apt)\s+(?:install|uninstall|remove)\b/i.test(
+    command.trim(),
+  );
+}
+
 function matchOnce(pattern: RegExp, text: string): RegExpExecArray | undefined {
   pattern.lastIndex = 0;
   const match = pattern.exec(text);
@@ -210,13 +226,18 @@ function checkExec003(file: ScannedFile): Finding[] {
       return;
     }
     if (hits.length > 0) {
+      const constantInstall =
+        hits.length === 1 && hits[0] === OS_SYSTEM && constantPackageInstall(line);
       pushUnique(
         findings,
         createFinding(exec003, file, {
           line: lineNumber,
           evidence: line,
-          message: 'Dynamic code execution or a shell-enabled subprocess was found.',
-          confidence: 'high',
+          message: constantInstall
+            ? 'A package install is passed to os.system as a fixed literal. It does not add block points. An interpolated command, a pipe, or a URL still does.'
+            : 'Dynamic code execution or a shell-enabled subprocess was found.',
+          confidence: constantInstall ? 'medium' : 'high',
+          ...(constantInstall ? { severity: 'low' as const, scoreExempt: true } : {}),
         }),
       );
     }

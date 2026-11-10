@@ -1,0 +1,1 @@
+Class: a plain-English exfil order hidden as base64 inside an HTML comment in SKILL.md; the scanner flags blob length (IH-INJ-002 high) but never decodes, so verdict stays review. Source ASB04_002049 (markdown-beautifier). 0.33.0/0.34.0 review; Cisco INFO. Post 00769498. Defanged: payload not copied; idea = decode base64 in prose/comments and rescan the decoded text.

@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 1,
+  "tool": {
+    "name": "ironheights",
+    "version": "0.34.0"
+  },
+  "scannedAt": "2026-11-09T18:55:03.007Z",
+  "scannerVersion": "0.34.0",
+  "checkedAt": "2026-11-09T18:55:03.007Z",
+  "verdict": "review",
+  "skippedFileCount": 0,
+  "grade": {
+    "letter": "F",
+    "score": 55,
+    "disclaimer": "Absence of findings is not proof of safety.",
+    "unscannedDependencies": 1
+  },
+  "scanMode": "directory",
+  "summary": "ironheights 0.34.0 | langsmith-fetch | grade F (55/100), skill files only: 1 dependency unscanned | verdict review | 2 findings",
+  "badge": "[ironheights 0.34.0: grade F (55/100), skill files only: 1 dependency unscanned, verdict review](https://github.com/Frank-Masciopinto/ironheights) — Absence of findings is not proof of safety.",
+  "skills": [
+    {
+      "skillName": "langsmith-fetch",
+      "root": "/tmp/fpnew/ls/export-only",
+      "filesScanned": 1,
+      "filesSkipped": [],
+      "skippedFileCount": 0,
+      "findings": [
+        {
+          "ruleId": "IH-PERSIST-001",
+          "severity": "high",
+          "confidence": "high",
+          "file": "SKILL.md",
+          "line": 393,
+          "evidence": "echo 'export LANGSMITH_API_KEY=\"your_key\"' >> ~/.bashrc",
+          "message": "A persistence mechanism is described or invoked.",
+          "remediation": "Remove the persistence step. A skill should not install itself into login or scheduler configuration.",
+          "references": {
+            "owaspLlm": [],
+            "owaspAgentic": [],
+            "mitreAtlas": [],
+            "openCre": [
+              "838-636"
+            ]
+          },
+          "links": [
+            {
+              "label": "OpenCRE 838-636 Check source code and third party libraries to not contain backdoors",
+              "url": "https://www.opencre.org/cre/838-636"
+            }
+          ]
+        },
+        {
+          "ruleId": "IH-META-001",
+          "severity": "low",
+          "confidence": "high",
+          "file": "SKILL.md",
+          "line": 1,
+          "evidence": "langsmith-fetch",
+          "message": "Frontmatter name \"langsmith-fetch\" does not match the folder \"export-only\".",
+          "remediation": "Add YAML frontmatter with name and description. The name should match the folder name.",
+          "references": {
+            "owaspLlm": [],
+            "owaspAgentic": [],
+            "mitreAtlas": [],
+            "openCre": []
+          }
+        }
+      ],
+      "suppressed": [],
+      "suppressedCount": 0,
+      "suppressionRefused": [],
+      "suppressionRefusedCount": 0,
+      "score": 45,
+      "verdict": "review"
+    }
+  ]
+}

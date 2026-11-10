@@ -25,6 +25,15 @@ const PATTERNS: RegExp[] = [
 const NEGATED_SUDO =
   /\b(?:never|don'?t|do\s+not|doesn'?t|does\s+not|won'?t|will\s+not|avoid(?:ing)?|without|no\s+need\s+(?:for|to)|not\s+require|no)\b(?:\s+(?:use|using|run|running|need|needs|require|requires|prefix|with|as|any|ever|be|it|this|the|command|commands|script|install|installer)){0,4}\s+(?:with\s+)?[`'"(]?sudo\b|\bsudo\b[`'")]?\s+(?:is\s+)?(?:not\s+(?:needed|required)|never\s+needed|isn'?t\s+(?:needed|required)|is\s+unnecessary)/gi;
 
+/** `sudo apt`, `sudo tee`. A bare mention (`become_method: sudo`) is not a command. */
+function sudoMentionOnly(line: string): boolean {
+  if (!/\bsudo\b/i.test(line)) return false;
+  if (PATTERNS.some((pattern) => pattern !== PATTERNS[0] && pattern.test(line))) return false;
+  if (/\bsudo\s+(?:-[A-Za-z]+\s+)*[A-Za-z0-9./][\w./-]*/.test(line)) return false;
+  if (/sudoers|NOPASSWD/i.test(line)) return false;
+  return true;
+}
+
 export function negatedSudoOnly(line: string): boolean {
   if (!/\bsudo\b/.test(line)) return false;
   const rest = line.replace(NEGATED_SUDO, ' ');
@@ -56,16 +65,20 @@ export const priv001: Rule = {
       const onlyExecBit =
         EXEC_BIT.test(line) &&
         !PATTERNS.some((pattern) => pattern !== EXEC_PATTERN && pattern.test(line));
+      const mention = sudoMentionOnly(line);
       pushUnique(
         findings,
         createFinding(priv001, file, {
           line: lineNumber,
           evidence: line,
-          message: onlyExecBit
-            ? 'The file marks a file executable (chmod +x / 755). Check what that file runs.'
-            : 'The file elevates privileges or disables an OS protection.',
-          confidence: onlyExecBit ? 'medium' : 'high',
-          ...(onlyExecBit ? { severity: 'medium' as const } : {}),
+          message: mention
+            ? 'The line names sudo and does not run it. A sudo command and a sudoers write stay at full severity.'
+            : onlyExecBit
+              ? 'The file marks a file executable (chmod +x / 755). Check what that file runs.'
+              : 'The file elevates privileges or disables an OS protection.',
+          confidence: mention || onlyExecBit ? 'medium' : 'high',
+          ...(mention ? { severity: 'low' as const, scoreExempt: true } : {}),
+          ...(onlyExecBit && !mention ? { severity: 'medium' as const } : {}),
         }),
       );
     });

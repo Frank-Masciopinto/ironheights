@@ -1,0 +1,6 @@
+Source: github:gavrielc/nanoclaw/.claude/skills/debug/SKILL.md (real-world gate corpus; in the 275/5655 realworld-clean blocked list of the 0.33.0 gate). Re-fetched from main 2026-11-09 (blob 9dd18687).
+What it is: troubleshooting guide for NanoClaw's container agent (logs, session DBs, mounts, service unit). Documentation only.
+ironheights 0.34.0: BLOCK F 0, 8 findings. Two lines drive the block: L288 a health check that prints a hint string `echo "NOT RUNNING - start Docker Desktop (macOS) or sudo systemctl start docker (Linux)"` -> IH-PERSIST-001 high + IH-PRIV-001 medium (text inside echo read as a command); L141 a commented example line `# EnvironmentFile=/home/[user]/nanoclaw/.env` -> IH-CRED-001 high.
+Counterfactuals: hint string reworded -> still BLOCK F 2 (CRED-001 high on L141); hint + comment line placeholder -> REVIEW F 42 (remaining: REF-001 x2, FS-001, EXEC-004 on documented bypassPermissions in the project's own runner config).
+Class: words inside a quoted echo/print string, and commented example config lines, scored as live commands/credential access.
+Fix idea (not implemented, no PR): don't match PERSIST/PRIV inside the argument of echo/printf; treat a commented config example with a [placeholder] path as described, not accessed. Needs full benchmark + look-alike gate (attackers also hide commands in echo | sh).
