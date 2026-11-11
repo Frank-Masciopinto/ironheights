@@ -11,5 +11,13 @@
   "detect": "31.7% (190/600)",
   "fp": "2.0% (6/300)",
   "sha256": "f7507440925566409bf69fd8d4b0434f9d9d1b3a14a675960a3ad4482791e0b8"
+ },
+ "nvidia": {
+  "version": "SkillSpector v2.12.0",
+  "commit": "7d9b4be35d0f995cc33db72875a62bdbad00db5d",
+  "detect": "28.8% (173/600)",
+  "fp": "11.7% (35/300)",
+  "scan_failures": 0,
+  "sha256": "ee5832f72c539bd193d96d5e870f78a8e94746e74f9307a693c01c9f9c2fe350"
  }
 }

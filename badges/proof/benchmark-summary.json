@@ -31,7 +31,30 @@
   "prose_detect": "5.1% (5/98)",
   "prose_review": "5.1% (5/98)"
  },
- "run_url": "https://github.com/Frank-Masciopinto/ironheights/actions/runs/43008857319",
- "commit_sha": "12b03205784a73791466d4471c527ca44e561437",
- "timestamp_utc": "2026-11-11T11:07:02+00:00"
+ "nvidia": {
+  "version": "SkillSpector v2.12.0",
+  "commit": "7d9b4be35d0f995cc33db72875a62bdbad00db5d",
+  "command": "skillspector scan <skill-dir> --no-llm --format json",
+  "elapsed_seconds": 541.1,
+  "scan_failures": {
+   "public": 0,
+   "blind": 0,
+   "public_ids": [],
+   "counted": "not blocked and not review; still in the denominator"
+  },
+  "detect": "134/516",
+  "fp": "48/456",
+  "anthropic": "4/19",
+  "detect_pct": 26.0,
+  "fp_pct": 10.5,
+  "review_detect": "42.6% (220/516)",
+  "review_fp": "30.9% (141/456)",
+  "blind_detect": "28.8% (173/600)",
+  "blind_fp": "11.7% (35/300)",
+  "prose_detect": "7.1% (7/98)",
+  "prose_review": "11.2% (11/98)"
+ },
+ "run_url": "https://github.com/Frank-Masciopinto/ironheights/actions/runs/43008957367",
+ "commit_sha": "66108f237fd73aef23a1b82011f9a4c2a3276941",
+ "timestamp_utc": "2026-11-11T11:19:16+00:00"
 }
