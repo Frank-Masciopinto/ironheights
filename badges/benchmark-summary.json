@@ -1,5 +1,5 @@
 {
- "version": "0.34.0",
+ "version": "0.35.0",
  "detect": "243/516",
  "fp": "6/456",
  "anthropic": "0/19",
@@ -31,7 +31,7 @@
   "prose_detect": "5.1% (5/98)",
   "prose_review": "5.1% (5/98)"
  },
- "run_url": "https://github.com/Frank-Masciopinto/ironheights/actions/runs/42994725153",
- "commit_sha": "b3c3f6468c07cee11a905b6804257abe49d0f7b3",
- "timestamp_utc": "2026-11-11T09:24:48+00:00"
+ "run_url": "https://github.com/Frank-Masciopinto/ironheights/actions/runs/43004967349",
+ "commit_sha": "18a2e9cbb822e0c361a77ec314604e2f3d933ccd",
+ "timestamp_utc": "2026-11-11T10:38:36+00:00"
 }
