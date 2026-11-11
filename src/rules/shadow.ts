@@ -17,6 +17,11 @@ export const SHADOW_CHECKS: ReadonlySet<string> = new Set<string>([
   // hidden-full-upload, template-residue, silent-self-unpack, candor-suspend)
   // were promoted after an enforce scan would block 0 and would review 0
   // real-world skills. See docs/experiments/batch-2026-11-07/RESULTS.md.
+  // 2026-11-11 checks tag findings with shadowCheck (widen-secret,
+  // flag-attack-value, pr-comment-push, heartbeat-no-dest,
+  // unpinned-spend-runtime, verdict-sync-no-fallback, preflight-receipt,
+  // present-wrapper, policy-fanout). Promoted checks stay out of this set.
+  // sandbox-key-spend was dropped: the same file is in the real-world clean set.
 ]);
 
 export function shadowEnforced(): boolean {
