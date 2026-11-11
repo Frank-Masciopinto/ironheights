@@ -12,8 +12,8 @@ Verdict: review
 Grade: D (60/100)
 Absence of findings is not proof of safety.
 review means inspect this; not a malicious verdict. Clean means no known pattern found; not proof of safety.
-ironheights 0.34.0 | demo | grade D (60/100) | verdict review | 1 finding
-Badge: [ironheights 0.34.0: grade D (60/100), verdict review](https://github.com/Frank-Masciopinto/ironheights) — Absence of findings is not proof of safety."
+ironheights 0.35.0 | demo | grade D (60/100) | verdict review | 1 finding
+Badge: [ironheights 0.35.0: grade D (60/100), verdict review](https://github.com/Frank-Masciopinto/ironheights) — Absence of findings is not proof of safety."
 `;
 
 exports[`output snapshots > renders human, json, and sarif 2`] = `
@@ -21,10 +21,10 @@ exports[`output snapshots > renders human, json, and sarif 2`] = `
   "schemaVersion": 1,
   "tool": {
     "name": "ironheights",
-    "version": "0.34.0"
+    "version": "0.35.0"
   },
   "scannedAt": "2026-10-09T00:00:00.000Z",
-  "scannerVersion": "0.34.0",
+  "scannerVersion": "0.35.0",
   "checkedAt": "2026-10-09T00:00:00.000Z",
   "verdict": "review",
   "skippedFileCount": 0,
@@ -34,8 +34,8 @@ exports[`output snapshots > renders human, json, and sarif 2`] = `
     "disclaimer": "Absence of findings is not proof of safety."
   },
   "scanMode": "directory",
-  "summary": "ironheights 0.34.0 | demo | grade D (60/100) | verdict review | 1 finding",
-  "badge": "[ironheights 0.34.0: grade D (60/100), verdict review](https://github.com/Frank-Masciopinto/ironheights) — Absence of findings is not proof of safety.",
+  "summary": "ironheights 0.35.0 | demo | grade D (60/100) | verdict review | 1 finding",
+  "badge": "[ironheights 0.35.0: grade D (60/100), verdict review](https://github.com/Frank-Masciopinto/ironheights) — Absence of findings is not proof of safety.",
   "skills": [
     {
       "skillName": "demo",
@@ -103,7 +103,7 @@ exports[`output snapshots > renders human, json, and sarif 3`] = `
       "tool": {
         "driver": {
           "name": "ironheights",
-          "version": "0.34.0",
+          "version": "0.35.0",
           "informationUri": "https://github.com/Frank-Masciopinto/ironheights",
           "rules": [
             {
