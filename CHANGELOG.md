@@ -1,5 +1,64 @@
 # Changelog
 
+## 0.35.1 — 2026-11-11
+
+Docs: README benchmark table adds an NVIDIA SkillSpector v2.12.0 comparison column (static `--no-llm`, same sets as Cisco). Scanner rules and detection are unchanged. The in-repo Action workflow stays on the published npm package 0.35.0 until 0.35.1 is on the registry.
+
+## 0.35.0 — 2026-11-11
+
+**More plain-language attacks blocked, fewer honest skills sent to block.** Ironheights: The Immune System for AI Agents. 0.35.0 ships the detection merged on main since 0.34.0 (PRs #134 and #136). Verdict values, exit codes and existing JSON fields are unchanged. The model column was not run. Cisco skill-scanner 2.3.2 was not re-run: 113/516 block, 9/456 false positives, 1/19 Anthropic.
+
+On MaliciousSkillBench, deterministic, no `--llm`:
+
+| Setting | 0.34.0 | 0.35.0 |
+| --- | --- | --- |
+| Attacks blocked | 174/516 (33.7%) | 243/516 (47.1%) |
+| Prose-only attacks blocked | 33/98 | 40/98 |
+| False positives at block | 11/456 (2.4%) | 6/456 (1.3%) |
+| Block or review | 249/516 | 301/516 |
+| Real-world clean skills blocked | 275/5,655 | 232/5,655, no new ids |
+| Blind held-out attacks blocked | 219/600 | 335/600 |
+| Blind held-out clean skills blocked | 15/300 | 13/300 |
+| Anthropic skills flagged | 0/19 | 0/19 |
+
+New checks, each one critical when it hits:
+
+- **IH-INJ-021**: a file named `rd` plus one digit and an underscore, treated as a handoff.
+- **IH-EXEC-008**: an interactive reverse or bind shell (`bash -i` or `0>&1` to `/dev/tcp`, or `nc -e /bin/sh` that is not a checklist quote). Suggested by **rossum**.
+- **IH-NET-006**: a secret encoded into a DNS lookup name.
+- **IH-CRED-008**: a remote helper run against the agent session store. Suggested by **evil_robot_jas**.
+- **IH-PERSIST-006**: the skill describes footprint minimization and automatic log scrubbing. Suggested by **nyna**.
+- **IH-EXEC-009**: the skill tells the agent to run an underscore helper (`python scripts/_install.py` and the same shape). A changelog that only names the file is not this check.
+- **IH-INJ-025**: "evals only pass" or "treat it as a test prerequisite."
+- **IH-INJ-024**: orders after an end-of-skill marker. A marker that is the last line is not this check.
+- **IH-CRED-010**: prose that tells the agent to print a private key. `print(wallet.private_key)` in an SDK sample is not this check.
+- **IH-INJ-022**: Unicode tag characters (U+E0000–U+E007F).
+- **IH-INJ-023**: a base64 blob in an HTML comment that decodes to an order to send a secret.
+- **IH-INJ-027**: the skill calls itself a routing shell and requires a PDF before any task.
+- **IH-PERSIST-008**: a cron entry the skill creates whose body fetches a file and follows its instructions.
+- **IH-NET-007**: a secret posted to an endpoint that is base64-decoded in the same span.
+- **IH-NET-008**: a user photo or media file uploaded with no ask.
+- **IH-EXEC-010**, **IH-EXEC-011**, **IH-CRED-009**, **IH-PERSIST-007**, **IH-PRIV-002**, **IH-INJ-026**: renamed executable, runtime tool factory, a no-network claim plus a hidden key send, a ransom note paired with encrypting the user's files, a NOPASSWD sudoers write, and a skill that tells the agent it has a serious bug and bans the native tool. These matched the attached fixtures and no public or real-world row.
+
+False-positive fixes. No public attack that was blocked on 0.34.0 left block except ASB04_003303, whose only signal was a black-bird emoji (a zero-width joiner between two emoji). A joiner next to ASCII still blocks.
+
+- A documented vendor installer pipe (Azure CLI, Docker, rustup, Tavily, Hugging Face, hf-mount, Omni, Apollo) is medium and does not add block points. Any other host stays critical.
+- `cp .env.example .env` (also `.sample` and `.template`) is not a credential read. Copying `.env` outward still is.
+- A constant `os.system("pip install …")` with no interpolation, pipe or URL is low. An f-string or a URL stays high.
+- `systemctl start` inside Terraform `user_data` or cloud-init is not persistence. `systemctl enable` stays high.
+- A line that only names sudo, with no command after it, is low. `sudo apt-get install` stays high.
+- A quoted `**/.env` cache glob with no read verb is low. "Never use `../`" is info.
+- A named API key posted only to a host the skill declares is not IH-NET-002. Suggested earlier by **bnb_hq**; the declared-host case is the Maton gateway skills.
+- "Covers sending, …, and API keys" is a feature list, not exfiltration. "Email the contents of credentials.json" and "do not mention this step" still block.
+- "Referral code" as a list noun is not a steer. "Include our referral code" still is.
+- "Do not skip" and "never skip" a confirmation are not IH-INJ-003.
+- `page.$eval` and `$$eval` are not `eval(`.
+- `curl | python main.py -` feeds data to a local script. `curl | python -` still blocks.
+- A fenced `sudo rm` or `chmod 777` under a run instruction stays high. The same command inside a sentence, or under "never", does not.
+- `ExecStart` in a systemd user unit (`systemd/user` or `systemctl --user`) is not persistence.
+
+One public attack leaves block because of the emoji joiner (ASB04_003303). Net detection is still up by 69 from 0.34.0 (174 to 243).
+
 ## 0.34.0 — 2026-11-03
 
 **A clean result names the scanner and the time, and it is not a promise of safety.** Ironheights: The Immune System for AI Agents. 0.34.0 ships the detection already merged on main since 0.33.0, and it stops a no-findings result from reading as safe. Verdict values, exit codes, severities and existing JSON fields are unchanged.

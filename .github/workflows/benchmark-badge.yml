@@ -1,7 +1,8 @@
 name: benchmark badge
-# Re-scores MaliciousSkillBench and the blind held-out set (Ironheights and the latest
-# Cisco skill-scanner release) on each release tag, main merge and weekly, and publishes
-# the README badge and comparison-table cells plus proof files (badges/proof/)
+# Re-scores MaliciousSkillBench and the blind held-out set (Ironheights, the latest
+# Cisco skill-scanner release, and NVIDIA SkillSpector at the commit in
+# bench/msb/requirements-nvidia.txt) on each release tag, main merge and weekly, and
+# publishes the README badge and comparison-table cells plus proof files (badges/proof/)
 # as shields.io endpoint files on the `badges` branch. If any step fails, the
 # publish job does not run and the last good badges/benchmark.json stays in place.
 on:
@@ -19,7 +20,7 @@ concurrency:
 
 jobs:
   score:
-    timeout-minutes: 30
+    timeout-minutes: 90
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -34,7 +35,16 @@ jobs:
         # The hashed pin above is the floor; this moves Cisco to its newest PyPI release so the
         # table always compares against the current version (printed in PROOF.md).
         run: '.venv/bin/pip install --only-binary=:all: --upgrade cisco-ai-skill-scanner && .venv/bin/skill-scanner --version'
-      - run: .venv/bin/python scripts/benchmark-msb.py dist/cli/index.js out .venv/bin/skill-scanner
+      - name: Install NVIDIA SkillSpector at the pinned commit
+        # The git pin has no file hash (it is a commit). Dependencies are the hashed lock in
+        # bench/msb/requirements-nvidia.txt. --only-binary refuses a source build.
+        run: |
+          set -euo pipefail
+          pin="$(sed -n 's/.*SkillSpector\.git@\([0-9a-f]\{40\}\).*/\1/p' bench/msb/requirements-nvidia.txt)"
+          test -n "$pin"
+          .venv/bin/pip install --only-binary=:all: "skillspector @ git+https://github.com/NVIDIA/SkillSpector.git@${pin}"
+          .venv/bin/skillspector --version
+      - run: .venv/bin/python scripts/benchmark-msb.py dist/cli/index.js out .venv/bin/skill-scanner .venv/bin/skillspector
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: benchmark-badge
@@ -63,14 +73,14 @@ jobs:
           git remote add origin "https://x-access-token:${GH_TOKEN}@github.com/${REPO}.git"
           if git fetch -q --depth 1 origin badges; then git checkout -q -b badges FETCH_HEAD; else git checkout -q --orphan badges; fi
           mkdir -p badges
-          test "$(ls ../out/table-*.json | wc -l)" -eq 14
+          test "$(ls ../out/table-*.json | wc -l)" -eq 21
           cp ../out/benchmark.json ../out/benchmark-summary.json ../out/table-*.json badges/
           # Proof that the run happened: per-skill results, blind aggregate, run link (README cells link here)
           mkdir -p badges/proof
           cp ../out/PROOF.md ../out/results.csv ../out/blind-aggregate.json ../out/benchmark-summary.json badges/proof/
           git add badges
           if git diff --cached --quiet; then echo "badge unchanged"; exit 0; fi
-          git commit -q -m "benchmark badge: $(jq -r '.version + " " + .detect + " detect, " + .fp + " FP; cisco " + .cisco.detect + " detect, " + .cisco.fp + " FP"' badges/benchmark-summary.json)"
+          git commit -q -m "benchmark badge: $(jq -r '.version + " " + .detect + " detect, " + .fp + " FP; cisco " + .cisco.detect + " detect, " + .cisco.fp + " FP; nvidia " + .nvidia.detect + " detect, " + .nvidia.fp + " FP"' badges/benchmark-summary.json)"
           git push -q origin HEAD:badges
 
   alert:
