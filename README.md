@@ -55,26 +55,6 @@ Website: [www.ironheights.dev](https://www.ironheights.dev)
       <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/badges/badges/proof/PROOF.md"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FFrank-Masciopinto%2Fironheights%2Fbadges%2Fbadges%2Ftable-cisco-fp.json" alt="2.0% (9/456)"></a></td>
     </tr>
     <tr>
-      <td align="left">🔎 Malicious skills blocked or sent to review (higher is better)</td>
-      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/badges/badges/proof/PROOF.md"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FFrank-Masciopinto%2Fironheights%2Fbadges%2Fbadges%2Ftable-ih-review-detect.json" alt="48.3% (249/516)"></a></td>
-      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/badges/badges/proof/PROOF.md"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FFrank-Masciopinto%2Fironheights%2Fbadges%2Fbadges%2Ftable-cisco-review-detect.json" alt="22.3% (115/516)"></a></td>
-    </tr>
-    <tr>
-      <td align="left">🔎 Clean skills blocked or sent to review (lower is better)</td>
-      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/badges/badges/proof/PROOF.md"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FFrank-Masciopinto%2Fironheights%2Fbadges%2Fbadges%2Ftable-ih-review-fp.json" alt="6.8% (31/456)"></a></td>
-      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/badges/badges/proof/PROOF.md"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FFrank-Masciopinto%2Fironheights%2Fbadges%2Fbadges%2Ftable-cisco-review-fp.json" alt="2.4% (11/456)"></a></td>
-    </tr>
-    <tr>
-      <td align="left">🙈 Blind held-out attacks blocked (higher is better)</td>
-      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/badges/badges/proof/PROOF.md"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FFrank-Masciopinto%2Fironheights%2Fbadges%2Fbadges%2Ftable-ih-blind-detect.json" alt="36.5% (219/600)"></a></td>
-      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/badges/badges/proof/PROOF.md"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FFrank-Masciopinto%2Fironheights%2Fbadges%2Fbadges%2Ftable-cisco-blind-detect.json" alt="31.7% (190/600)"></a></td>
-    </tr>
-    <tr>
-      <td align="left">🙈 Blind held-out clean skills blocked (lower is better)</td>
-      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/badges/badges/proof/PROOF.md"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FFrank-Masciopinto%2Fironheights%2Fbadges%2Fbadges%2Ftable-ih-blind-fp.json" alt="5.0% (15/300)"></a></td>
-      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/badges/badges/proof/PROOF.md"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FFrank-Masciopinto%2Fironheights%2Fbadges%2Fbadges%2Ftable-cisco-blind-fp.json" alt="2.0% (6/300)"></a></td>
-    </tr>
-    <tr>
       <td align="left">📦 Official Anthropic skills flagged (lower is better)</td>
       <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/badges/badges/proof/PROOF.md"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FFrank-Masciopinto%2Fironheights%2Fbadges%2Fbadges%2Ftable-ih-anthropic.json" alt="0/19"></a></td>
       <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/badges/badges/proof/PROOF.md"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FFrank-Masciopinto%2Fironheights%2Fbadges%2Fbadges%2Ftable-cisco-anthropic.json" alt="1/19"></a></td>
@@ -82,7 +62,7 @@ Website: [www.ironheights.dev](https://www.ironheights.dev)
   </tbody>
 </table>
 
-<sub>Ironheights is our project. Both scanners ran on the same <a href="https://huggingface.co/datasets/ProtectSkills/MaliciousSkillBench">MaliciousSkillBench</a> set (516 malicious and 456 clean skills, 19 of the clean ones official Anthropic skills), counting <code>block</code> verdicts unless a row says review (Cisco: HIGH or CRITICAL), static analysis only, no LLM. ✅ marks the better result. CI re-runs both scanners on every release and main merge and updates these numbers automatically, and every cell links to <a href="https://github.com/Frank-Masciopinto/ironheights/blob/badges/badges/proof/PROOF.md">proof of the latest run</a> (workflow run, per-skill results, commit; <a href="docs/benchmark-proof.md">how to reproduce</a>). For the block-or-review rows Cisco counts as review at MEDIUM severity or above (it has no review verdict). The blind set is a separate 600/300 MaliciousSkillBench slice that is never read when writing rules; see <a href="docs/accuracy-gates.md">docs/accuracy-gates.md</a>. Full method and numbers: <a href="docs/benchmark.md#maliciousskillbench-results-0320">docs/benchmark.md</a>.</sub>
+<sub>Ironheights is our project. Both scanners ran on the same <a href="https://huggingface.co/datasets/ProtectSkills/MaliciousSkillBench">MaliciousSkillBench</a> set (516 malicious skills, 456 clean skills, and 19 official Anthropic skills), counting <code>block</code> verdicts (Cisco: HIGH or CRITICAL), static analysis only, no LLM. CI re-runs both scanners on every release and main merge and updates these numbers automatically, and every cell links to <a href="https://github.com/Frank-Masciopinto/ironheights/blob/badges/badges/proof/PROOF.md">proof of the latest run</a> (workflow run, per-skill results, commit; <a href="docs/benchmark-proof.md">how to reproduce</a>). Block-or-review counts and the blind held-out slice are written up with the rest of the method in <a href="docs/benchmark.md#maliciousskillbench-results-0320">docs/benchmark.md</a> and <a href="docs/accuracy-gates.md">docs/accuracy-gates.md</a>.</sub>
 
 </div>
 
