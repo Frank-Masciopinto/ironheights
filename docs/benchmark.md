@@ -30,6 +30,25 @@ Do not commit real malicious skills. On an isolated machine:
 
 Reports are written to `bench/results/latest.md` and `bench/results/latest.json`.
 
+## MaliciousSkillBench results (0.35.0)
+
+Run on 11 Nov 2026 against the same MaliciousSkillBench checkout as 0.34.0 (revision `d4b42ce5`): 516 malicious and 456 clean skills, plus 19 Anthropic skills. Static rules only. No `--llm`. Cisco skill-scanner was not re-run.
+
+| Setting                             | Result          |
+| ----------------------------------- | --------------- |
+| `block` only                        | 243/516 = 47.1% |
+| False positives at `block`          | 6/456 = 1.3%    |
+| `review` or `block`                 | 301/516         |
+| Clean skills at `review` or `block` | 30/456          |
+| Blind held-out attacks at `block`   | 335/600 = 55.8% |
+| Blind held-out clean at `block`     | 13/300 = 4.3%   |
+| Anthropic skills flagged            | 0/19            |
+| Prose-only attacks at `block`       | 40/98 = 40.8%   |
+| Prose-only at `review` or `block`   | 55/98 = 56.1%   |
+| Real-world clean skills blocked     | 232/5655        |
+
+0.34.0 on the same set was 174/516 block and 11/456 false positives. Cisco skill-scanner 2.3.2: 113/516 (21.9%), 9/456 (2.0%), 1/19 Anthropic. One public attack leaves block (ASB04_003303): its only signal was an emoji joiner. A joiner next to ASCII still blocks. The write-up is [docs/experiments/batch-2026-11-10/RESULTS.md](experiments/batch-2026-11-10/RESULTS.md).
+
 ## MaliciousSkillBench results (0.34.0)
 
 0.34.0 does not change scanner rules beyond what was already merged on main after 0.33.0. The numbers below are the ones those pull requests and the README recorded. They were not re-scored for this release note.

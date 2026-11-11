@@ -133,7 +133,7 @@ node dist/cli/index.js scan test/fixtures/benign
 
 ## MCP server
 
-`npx -y ironheights@0.34.0 mcp` runs Ironheights as an MCP server, so Claude, Cursor, VS Code, Grok Bot or any MCP client can call `check_skill` (a fail-closed `allow`/`blocked` decision with provenance, an expiry and a server-written receipt, plus grade, findings, dependency closure and drift) before installing a skill, `check_shortlist` before choosing between several, `redeem_authorization` as the single-use install gate, `tool_manifest_check` for MCP tool-description drift, `verify_check` to re-confirm a remembered verdict, plus `drift_status`, `threatmodel_check` and `get_rule`. Local. See [docs/mcp.md](docs/mcp.md).
+`npx -y ironheights@0.35.0 mcp` runs Ironheights as an MCP server, so Claude, Cursor, VS Code, Grok Bot or any MCP client can call `check_skill` (a fail-closed `allow`/`blocked` decision with provenance, an expiry and a server-written receipt, plus grade, findings, dependency closure and drift) before installing a skill, `check_shortlist` before choosing between several, `redeem_authorization` as the single-use install gate, `tool_manifest_check` for MCP tool-description drift, `verify_check` to re-confirm a remembered verdict, plus `drift_status`, `threatmodel_check` and `get_rule`. Local. See [docs/mcp.md](docs/mcp.md).
 
 ## Threat model as code (checked on every PR)
 
@@ -605,7 +605,7 @@ Scans stay on the machine. There is no telemetry. The 6-hourly version check rea
 
 After a clean scan in an interactive terminal, `scan` prints one line to stderr suggesting a star on ClawHub. It is never printed when `CI` is set, when output is not a terminal, with `--quiet`, `--json`, or `--format html`, or when `IRONHEIGHTS_NO_STAR_HINT=1` is set. It is a printed line only; nothing is sent anywhere.
 
-The repository root `action.yml` is a composite action. After a release tag, call it as `Frank-Masciopinto/ironheights@v0.34.0` (pin the tag you trust). It runs `npx ironheights@<version> scan` and does not read secrets. Exit codes match the scanner, including `3` when a file or a `.git` / `node_modules` directory was skipped. See [docs/ci.md](docs/ci.md) for the pre-commit hook and a SARIF upload example.
+The repository root `action.yml` is a composite action. After a release tag, call it as `Frank-Masciopinto/ironheights@v0.35.0` (pin the tag you trust). It runs `npx ironheights@<version> scan` and does not read secrets. Exit codes match the scanner, including `3` when a file or a `.git` / `node_modules` directory was skipped. See [docs/ci.md](docs/ci.md) for the pre-commit hook and a SARIF upload example.
 
 ```yaml
 name: ironheights
@@ -615,9 +615,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: Frank-Masciopinto/ironheights@v0.34.0
+      - uses: Frank-Masciopinto/ironheights@v0.35.0
         with:
-          version: '0.34.0'
+          version: '0.35.0'
           path: skills
           fail-on: high
 ```
