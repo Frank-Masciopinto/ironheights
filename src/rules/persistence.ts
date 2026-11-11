@@ -13,6 +13,19 @@ import { createFinding, pushUnique } from './helpers.ts';
  * `systemctl start` inside a Terraform user_data or cloud-init example boots a
  * new VM. `systemctl enable` and a start outside that example stay persistence.
  */
+/**
+ * A documented user unit (`systemd/user` or `systemctl --user`) for this skill.
+ * A system unit, or a line that fetches a payload, stays a normal persistence hit.
+ */
+function userScopeUnit(text: string, lineNumber: number): boolean {
+  const lines = text.split(/\r?\n/);
+  const line = lines[lineNumber - 1] ?? '';
+  if (!/\b(?:ExecStart|WantedBy)=|\bsystemctl\b/i.test(line)) return false;
+  if (/\/tmp\/|\b(?:curl|wget)\b|https?:\/\//i.test(line)) return false;
+  const around = lines.slice(Math.max(0, lineNumber - 25), lineNumber + 8).join('\n');
+  return /systemd\/user|systemctl\s+--user/i.test(around);
+}
+
 function userDataServiceStart(text: string, lineNumber: number): boolean {
   const lines = text.split(/\r?\n/);
   const line = lines[lineNumber - 1] ?? '';
@@ -51,8 +64,11 @@ export const persist001: Rule = {
     const findings: Finding[] = [];
     eachLine(file.text, (line, lineNumber) => {
       if (isDescribedRegex(line)) return;
-      if (userDataServiceStart(file.text, lineNumber)) return;
       if (!PATTERNS.some((pattern) => pattern.test(line) && !echoHintOnly(line, pattern))) return;
+      if (userDataServiceStart(file.text, lineNumber)) return;
+      // A documented user unit is not a hidden login hook. Emitting even a low
+      // finding would pull context-only URL notes into the verdict.
+      if (userScopeUnit(file.text, lineNumber)) return;
       pushUnique(
         findings,
         createFinding(persist001, file, {

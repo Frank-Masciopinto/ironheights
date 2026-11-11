@@ -109,3 +109,4 @@ Common patterns added by this run:
 - A `print(` of a key field is an SDK sample. The finding is a sentence that tells the agent to print the key into the transcript.
 - "Never mention \<internal files\> to the user" is ordinary setup writing. The concealment that matters names the step ("mention this step").
 - Trigger-family verbs stay out of the verdict. The papers say to tag them unverifiable. Promoting them would review honest skills that sync, upload, or report.
+- A ZWJ between two emoji is a character, not an instruction. Treating every ZWJ as hidden text blocked honest pet skills and one public row (ASB04_003303) whose only signal was the black-bird emoji. A ZWJ next to ASCII still counts.

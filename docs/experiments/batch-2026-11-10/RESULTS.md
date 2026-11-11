@@ -14,9 +14,9 @@ No public attack moved off block. No public safe skill moved onto block. Anthrop
 
 | Metric                                    | main `b97ed90`                                          | experiment              | change          |
 | ----------------------------------------- | ------------------------------------------------------- | ----------------------- | --------------- |
-| Detection at block                        | 211/516 (40.9%)                                         | 244/516 (47.3%)         | +33             |
+| Detection at block                        | 211/516 (40.9%)                                         | 243/516 (47.1%)         | +32             |
 | False positives at block                  | 6/456 (1.3%)                                            | 6/456 (1.3%)            | 0               |
-| Block or review                           | 291/516                                                 | 302/516                 | +11             |
+| Block or review                           | 291/516                                                 | 301/516                 | +10             |
 | False positives at block or review        | 31/456                                                  | 30/456                  | −1              |
 | Anthropic skills flagged                  | 0/19                                                    | 0/19                    | 0               |
 | Held-out half at block (id hash, 266/228) | 109/266 block, 4/228 FP                                 | 126/266 block, 4/228 FP | +17 block, 0 FP |
@@ -24,11 +24,13 @@ No public attack moved off block. No public safe skill moved onto block. Anthrop
 | Blind clean skills at block               | 14/300                                                  | 13/300                  | −1              |
 | Prose-only attacks at block               | 35/98                                                   | 40/98                   | +5              |
 | Prose-only block or review                | 54/98                                                   | 55/98                   | +1              |
-| Real-world clean blocked                  | 275/5655 in the CI baseline file (273 in the #134 note) | 241/5655                | 0 new ids       |
-| Real-world clean sent to review           | 474/5655 in the CI baseline file                        | 462/5655                | 0 new ids       |
+| Real-world clean blocked                  | 275/5655 in the CI baseline file (273 in the #134 note) | 232/5655                | 0 new ids       |
+| Real-world clean sent to review           | 474/5655 in the CI baseline file                        | 452/5655                | 0 new ids       |
 | Cisco reference (not re-run)              | 113/516 (21.9%) block, 9/456 (2.0%) FP, 1/19 Anthropic  | same reference          | —               |
 
-The CI baseline file was not rewritten. It still lists the 275 blocked and 474 review ids. This branch blocks 34 of those and adds none. The blind set was not opened. The gate prints counts only. The +116 blind blocks are a result, not a tuning target.
+The CI baseline file was not rewritten. It still lists the 275 blocked and 474 review ids. This branch blocks 43 of those and adds none. The blind set was not opened. The gate prints counts only. The +116 blind blocks are a result, not a tuning target.
+
+One public attack, ASB04_003303, leaves block. Its only signal was the black-bird emoji (a ZWJ between two non-ASCII characters). The same joiner blocked honest pet skills. A ZWJ next to ASCII still blocks. Net detection is still up by 32.
 
 Look-alike fixtures copied to `test/fixtures/exp-1110/` (27 honest `original/` and `control/` skills) had zero hits from the new rules. The 5,655 real-world skills had zero hits from every new rule id.
 
@@ -74,6 +76,13 @@ Each one left every public attack that was block on main at block. `sudo apt-get
 - A quoted `**/.env.*local` cache glob with no read verb is low. `cat .env` stays high.
 - "Never use `../`" is info. A write on the same line stays.
 - A named API key posted only to a host the skill declares (homepage or metadata), with no credential file and no environment dump, is not IH-NET-002. An undeclared host stays high.
+- "Referral code" as a list noun is not a steer. "Include our referral code" still is.
+- "Do not skip" and "never skip" a confirmation are not IH-INJ-003. "Skip confirmation" still is.
+- `page.$eval` and `$$eval` are not `eval(`. `eval(userInput)` still is.
+- `curl | python main.py -` feeds data to a local script. `curl | python -` still blocks.
+- A ZWJ between two emoji is not hidden text. A ZWJ next to ASCII still is.
+- A fenced `sudo rm` or `chmod 777` under a run instruction stays high. The same command inside a sentence, or under "never" / ❌, does not. `sudo apt-get install` stays high.
+- `ExecStart` / `WantedBy` in a systemd user unit (`systemd/user` or `systemctl --user`) is not persistence. A system `systemctl enable` stays high.
 
 ## Dropped
 

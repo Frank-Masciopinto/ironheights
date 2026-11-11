@@ -84,15 +84,20 @@ export const exec003: Rule = {
   check: checkExec003,
 };
 
-const EVAL = /\beval\s*\(/;
+/** `eval(`. Not Playwright `page.$eval(` or `$$eval(`. */
+const EVAL = /(?<![$])\beval\s*\(/;
 const NEW_FUNCTION = /\bnew\s+Function\s*\(/;
 const OS_SYSTEM = /\bos\.system\s*\(/;
 const SUBPROCESS_SHELL =
   /\bsubprocess\.(?:run|Popen|call|check_output|check_call)\s*\([\s\S]{0,180}?shell\s*=\s*True/;
 const NODE_SHELL = /\b(?:exec|execSync|spawn)\s*\([\s\S]{0,160}?shell\s*:\s*true/;
 
-/** `| python -m json.tool`, `| python3 -c "..."`, `| jq`: the fetched text is data, not code. */
-const DATA_PIPE = /\|\s*(?:python3?\s+(?:-m\s+json\.tool|-c\b)|node\s+-e\b|jq\b)/i;
+/**
+ * The fetched text is data, not code: `| jq`, `| python -m json.tool`, `| python -c`,
+ * or a pipe into a local script file (`python main.py -`). `python -` and `python /dev/stdin` still execute the download.
+ */
+const DATA_PIPE =
+  /\|\s*(?:python3?\s+(?:-m\s+json\.tool|-c\b|[A-Za-z0-9_./-]+\.py\b)|node\s+(?:-e\b|[A-Za-z0-9_./-]+\.js\b)|jq\b)/i;
 /** A line that quotes the pattern as something to avoid. */
 const WARNING_LINE =
   /\b(?:never|don'?t|do\s+not|avoid|instead\s+of|rather\s+than|e\.g\.|for\s+example|such\s+as|always\s+use\s+a\s+package\s+manager)\b/i;

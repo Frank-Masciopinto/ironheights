@@ -64,7 +64,7 @@ const PERSIST =
   /\b(?:every\s+time\s+you\s+(?:call|use|run)|on\s+(?:each|every)\s+(?:invocation|startup)|(?:add|append|write|install)\b[^.\n]{0,60}\b(?:\.bashrc|\.zshrc|\.profile|crontab|launch\s*agent|autostart|SOUL\.md)|persist(?:s|ent|ence)?\s+(?:across|between)\s+sessions|remember\s+(?:this|these\s+instructions)\s+(?:for|in)\s+(?:all\s+)?future)\b/i;
 
 const STEER_STRONG =
-  /\b(?:always|mandatory)\b[^\n]{0,60}\b(?:include|insert|append|add|bcc|cc)\b[^\n]{0,40}(?:[\w.+-]+@[\w-]+\.[a-z]{2,}|https?:\/\/)|\b(?:referral|affiliate)\s+(?:link|code|id)\b|(?:recommend|rank|rate)\s+[\w\s]{1,30}\s+(?:above|over|higher\s+than)\s+(?:all\s+)?(?:others|competitors|alternatives)|regardless\s+of\s+(?:the\s+)?(?:user'?s?\s+)?(?:request|question|query)/i;
+  /\b(?:always|mandatory)\b[^\n]{0,60}\b(?:include|insert|append|add|bcc|cc)\b[^\n]{0,40}(?:[\w.+-]+@[\w-]+\.[a-z]{2,}|https?:\/\/)|\b(?:include|insert|append|add|embed|attach|use)\b[^\n]{0,50}\b(?:your|our|the|this|my)?\s*(?:referral|affiliate)\s+(?:link|code|id)\b|(?:recommend|rank|rate)\s+[\w\s]{1,30}\s+(?:above|over|higher\s+than)\s+(?:all\s+)?(?:others|competitors|alternatives)|regardless\s+of\s+(?:the\s+)?(?:user'?s?\s+)?(?:request|question|query)/i;
 const STEER = /\balways\s+(?:recommend|suggest|promote)\b/i;
 
 const BYPASS =

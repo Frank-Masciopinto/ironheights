@@ -15,8 +15,15 @@ const PHRASES = phrases.map((phrase) => phrase.toLowerCase());
 const HIDDEN_CODE_POINTS = new Set([0x200b, 0x200c, 0x200d, 0x2060, 0xfeff, 0xe0001]);
 
 function hasHiddenChars(line: string): boolean {
-  for (const char of line) {
-    const code = char.codePointAt(0) ?? 0;
+  const chars = [...line];
+  for (let i = 0; i < chars.length; i += 1) {
+    const code = chars[i]?.codePointAt(0) ?? 0;
+    // A ZWJ between two non-ASCII characters joins emoji (🐕‍🦺). A ZWJ next to ASCII still hides text.
+    if (code === 0x200d) {
+      const prev = chars[i - 1]?.codePointAt(0) ?? 0;
+      const next = chars[i + 1]?.codePointAt(0) ?? 0;
+      if (prev > 127 && next > 127) continue;
+    }
     if (HIDDEN_CODE_POINTS.has(code)) return true;
     if (code >= 0x202a && code <= 0x202e) return true;
     if (code >= 0x2066 && code <= 0x2069) return true;
@@ -29,6 +36,15 @@ const LONG_BASE64 = /(?:^|[^A-Za-z0-9+/])([A-Za-z0-9+/]{200,2000}={0,2})(?:[^A-Z
 
 const WEAKEN =
   /\b(?:disable|skip|bypass|turn off)\b[^\n]{0,60}\b(?:confirmation|confirmations|approval|approvals)\b/i;
+
+/** Negation sits immediately before the waiver verb ("do not skip", "never skip"). */
+function negatedWeaken(line: string): boolean {
+  const match = /\b(?:disable|skip|bypass|turn off)\b/i.exec(line);
+  if (!match || match.index === undefined) return false;
+  const before = line.slice(Math.max(0, match.index - 30), match.index);
+  if (/[.!?]\s/.test(before)) return false;
+  return /\b(?:do not|don't|never|must not|cannot|can't)\b/i.test(before);
+}
 const EDIT_AGENT =
   /\b(?:edit|modify|overwrite|rewrite|patch|change)\b[^\n]{0,80}\b(?:openclaw\.json|AGENTS\.md|SOUL\.md|MEMORY\.md|agent config|another skill|other skills)\b/i;
 const STARTUP = /\badd (?:itself|this skill) to (?:startup|login items)\b/i;
@@ -206,6 +222,8 @@ function checkInj003(file: ScannedFile): Finding[] {
     if (!WEAKEN.test(line) && !edit) return;
     // A documented CLI switch ("--yes | skip confirmation") is graded by IH-EXEC-004 instead.
     if (!edit && hasApprovalSwitch(line)) return;
+    // "do not skip" and "never skip" require the confirmation. They are not a waiver.
+    if (!edit && negatedWeaken(line)) return;
     pushUnique(
       findings,
       createFinding(inj003, file, {
