@@ -56,6 +56,7 @@ This section was in the 2026-11-07 handoff copy and missing from this file. It i
 - **Discarded v2: cloud metadata + any public raw IPv4.** 2 new real-world reviews (game servers on public IPs: angelstreet/play-heartclaws, sigreyo/molterstrike). Blind 222.
 - **Kept v3: cloud metadata hosts only.** 0 new real-world blocks/reviews, blind 219 (=main), bench block-or-review 248→249.
 - Common pattern: raw IPs are normal in real skills (self-hosted, game, LAN servers); a bare IP is context, not a signal. Only destinations with no benign skill use (metadata endpoints) are safe to escalate.
+- **Later kept (2026-11-11): paste sites and file-drop hosts also count.** These already scored high and did not appear on the 5,655-skill real-world clean set. ASB04_006304 and ASB04_002167 (rentry.co) had been grade F with verdict no-findings and exit 0. Tunnels, Slack/Telegram webhooks, DynDNS, and raw IPs stay with v3 (they are the 21 real-world reviews that dropped v1 and v2).
 
 ## 2026-11-03 — prose-attack combined experiment (branch exp/prose-1103, P1–P6)
 
