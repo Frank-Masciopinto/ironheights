@@ -630,7 +630,7 @@ jobs:
           fail-on: high
 ```
 
-This repository's [action workflow](.github/workflows/action.yml) runs that action against a benign fixture (exit 0), a malicious fixture (exit 1 or 2), and an oversized file (exit 3). It installs npm package `0.35.0`, the current latest on the registry, and stays there until `0.35.1` is published. The action file in this commit is what the workflow executes.
+This repository's [action workflow](.github/workflows/action.yml) runs that action against a benign fixture (exit 0), a malicious fixture (exit 1 or 2), and an oversized file (exit 3). It installs npm package `0.35.1`, the current latest on the registry, and stays there until `0.36.0` is published. The action file in this commit is what the workflow executes.
 
 ## Windows
 
