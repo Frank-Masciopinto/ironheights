@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.35.1 — 2026-11-11
+
+Docs: README benchmark table adds an NVIDIA SkillSpector v2.12.0 comparison column (static `--no-llm`, same sets as Cisco). Scanner rules and detection are unchanged. The in-repo Action workflow stays on the published npm package 0.35.0 until 0.35.1 is on the registry.
+
 ## 0.35.0 — 2026-11-11
 
 **More plain-language attacks blocked, fewer honest skills sent to block.** Ironheights: The Immune System for AI Agents. 0.35.0 ships the detection merged on main since 0.34.0 (PRs #134 and #136). Verdict values, exit codes and existing JSON fields are unchanged. The model column was not run. Cisco skill-scanner 2.3.2 was not re-run: 113/516 block, 9/456 false positives, 1/19 Anthropic.
