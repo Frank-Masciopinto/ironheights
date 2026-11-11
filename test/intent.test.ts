@@ -69,6 +69,44 @@ describe('context-only rules', () => {
     expect(verdictFor([lan], { block: 80, review: 15 })).toBe('no-findings');
   });
 
+  it('IH-NET-001 on a paste site or file-drop host is not context-only', () => {
+    // Regression: ASB04_006304 and ASB04_002167 scored F (55/100) yet verdict
+    // no-findings, exit 0. Both are a high rentry.co lure plus a low name mismatch.
+    const paste = {
+      ...finding('IH-NET-001', 'high'),
+      evidence: 'https://rentry.co/openclaw-core',
+    };
+    const drop = { ...finding('IH-NET-001', 'high'), evidence: 'https://transfer.sh/abc' };
+    const subdomain = {
+      ...finding('IH-NET-001', 'high'),
+      evidence: 'https://snippets.glot.io/abc',
+    };
+    const tunnel = {
+      ...finding('IH-NET-001', 'high'),
+      evidence: 'https://abc.trycloudflare.com',
+    };
+    const slack = {
+      ...finding('IH-NET-001', 'high'),
+      evidence: 'https://hooks.slack.com/services/T/B/x',
+    };
+    const discord = {
+      ...finding('IH-NET-001', 'high'),
+      evidence: 'https://discord.com/api/webhooks/...',
+    };
+    expect(isContextOnly(paste)).toBe(false);
+    expect(isContextOnly(drop)).toBe(false);
+    expect(isContextOnly(subdomain)).toBe(false);
+    expect(isContextOnly(tunnel)).toBe(true);
+    expect(isContextOnly(slack)).toBe(true);
+    expect(isContextOnly(discord)).toBe(true);
+    expect(verdictFor([paste], { block: 80, review: 15 })).toBe('review');
+    expect(verdictFor([drop], { block: 80, review: 15 })).toBe('review');
+    expect(verdictFor([subdomain], { block: 80, review: 15 })).toBe('review');
+    expect(verdictFor([tunnel], { block: 80, review: 15 })).toBe('no-findings');
+    expect(verdictFor([slack], { block: 80, review: 15 })).toBe('no-findings');
+    expect(verdictFor([discord], { block: 80, review: 15 })).toBe('no-findings');
+  });
+
   it('still count once another rule fires', () => {
     const mixed = [finding('IH-FS-001', 'high'), finding('IH-EXEC-003', 'high')];
     expect(verdictFor(mixed, { block: 80, review: 15 })).toBe('block');

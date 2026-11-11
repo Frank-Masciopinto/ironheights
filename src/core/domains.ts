@@ -67,6 +67,49 @@ export const BAD_HOST_SUFFIXES = [
   'hopto.org',
 ] as const;
 
+/**
+ * Paste sites and file-drop hosts from BAD_HOST_SUFFIXES. These already raise
+ * IH-NET-001 to high. Unlike tunnels, Slack/Telegram webhooks, DynDNS, or raw
+ * IPs, they did not appear on the 5,655-skill real-world clean set, so a hit
+ * can count for the verdict. A broader "every high IH-NET-001" rule was tried
+ * and dropped (21 new real-world reviews). See experiments/DISCARDED-RULES.md.
+ */
+export const SIGNAL_HOST_SUFFIXES = [
+  'pastebin.com',
+  'paste.ee',
+  'hastebin.com',
+  'dpaste.org',
+  'dpaste.com',
+  'rentry.co',
+  'rentry.org',
+  'glot.io',
+  'ghostbin.com',
+  'ghostbin.co',
+  'paste.rs',
+  'ix.io',
+  '0bin.net',
+  'justpaste.it',
+  'controlc.com',
+  'termbin.com',
+  'paste2.org',
+  'pastebin.pl',
+  'privatebin.net',
+  'transfer.sh',
+  'file.io',
+  'gofile.io',
+  'catbox.moe',
+  'pixeldrain.com',
+  'anonfiles.com',
+  'uguu.se',
+  'tmpfiles.org',
+] as const;
+
+/** True when `host` is exactly a suffix, or a subdomain of one. */
+export function hostMatchesSuffix(host: string, suffixes: readonly string[]): boolean {
+  const normalized = host.toLowerCase();
+  return suffixes.some((suffix) => normalized === suffix || normalized.endsWith(`.${suffix}`));
+}
+
 export const BAD_HOST_MARKERS = [
   'webhook.site',
   'bit.ly',

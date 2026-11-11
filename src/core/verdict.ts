@@ -1,3 +1,4 @@
+import { SIGNAL_HOST_SUFFIXES, hostMatchesSuffix } from './domains.ts';
 import type { Severity, SkippedDirectory, Verdict } from './types.ts';
 import type { Finding } from './types.ts';
 
@@ -112,19 +113,24 @@ function evidenceHost(evidence: string): string | undefined {
 }
 
 /**
- * Cloud instance-metadata endpoints. A skill has no reason to reach them, and they hold the
- * host's cloud credentials. Public raw IPs alone were tried and dropped (2 real-world game
- * servers sent to review), see experiments/DISCARDED-RULES.md.
+ * Destinations that are a signal, not context, when IH-NET-001 is the only finding.
+ *
+ * Cloud instance-metadata endpoints hold the host's cloud credentials; a skill has no
+ * reason to reach them. Paste sites and file-drop hosts are already scored high, and
+ * they did not appear on the 5,655-skill real-world clean set. Public raw IPs, tunnels,
+ * Slack/Telegram webhooks, and DynDNS were tried and dropped (21 new real-world reviews,
+ * including 2 game servers on public IPs). See experiments/DISCARDED-RULES.md.
  */
 export function isSignalDestination(evidence: string): boolean {
   const host = evidenceHost(evidence);
   if (!host) return false;
-  return METADATA_HOSTS.has(host);
+  if (METADATA_HOSTS.has(host)) return true;
+  return hostMatchesSuffix(host, SIGNAL_HOST_SUFFIXES);
 }
 
 export function isContextOnly(finding: Finding): boolean {
-  // A cloud metadata address is a signal, not context: 0.29.0-0.33.0
-  // reported such a skill as grade F with verdict no-findings and exit 0.
+  // A cloud metadata address or a paste/file-drop host is a signal, not context.
+  // Those skills were reported as grade F with verdict no-findings and exit 0.
   if (finding.ruleId === 'IH-NET-001' && isSignalDestination(finding.evidence)) return false;
   if (CONTEXT_ONLY_RULES.has(finding.ruleId)) return true;
   if (

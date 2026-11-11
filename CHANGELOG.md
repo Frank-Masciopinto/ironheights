@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+**IH-NET-001 on a paste site or file-drop host counts toward the verdict.** A high finding for hosts such as rentry.co, pastebin.com, glot.io, or transfer.sh is no longer grade F with a no-findings verdict and exit 0. ASB04_006304 and ASB04_002167 (both a rentry.co lure) move from no-findings to review. Tunnels, Slack or Telegram webhooks, DynDNS, and raw IPs stay context-only; a broader "every high IH-NET-001" rule was tried and dropped (21 new real-world reviews). Public attacks stay 252/516 at block and move from 309/516 to 311/516 at block-or-review. Clean false positives stay 6/456 at block and 30/456 at block-or-review. Real-world stays 232/5,655 blocked, with no new ids. Prose-only stays 40/98 block and 55/98 block-or-review. Blind stays 335/600 blocked and 13/300 clean blocked.
+
 ## 0.35.1 — 2026-11-11
 
 Docs: README benchmark table adds an NVIDIA SkillSpector v2.12.0 comparison column (static `--no-llm`, same sets as Cisco). Scanner rules and detection are unchanged. The in-repo Action workflow stays on the published npm package 0.35.0 until 0.35.1 is on the registry.
