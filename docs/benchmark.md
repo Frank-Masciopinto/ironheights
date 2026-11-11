@@ -49,6 +49,29 @@ Run on 11 Nov 2026 against the same MaliciousSkillBench checkout as 0.34.0 (revi
 
 0.34.0 on the same set was 174/516 block and 11/456 false positives. Cisco skill-scanner 2.3.2: 113/516 (21.9%), 9/456 (2.0%), 1/19 Anthropic. One public attack leaves block (ASB04_003303): its only signal was an emoji joiner. A joiner next to ASCII still blocks. The write-up is [docs/experiments/batch-2026-11-10/RESULTS.md](experiments/batch-2026-11-10/RESULTS.md).
 
+### Ironheights, Cisco, and NVIDIA SkillSpector
+
+Same samples as the table above. Ironheights 0.35.0 and Cisco skill-scanner 2.3.2 are the published figures and were not replaced. NVIDIA SkillSpector v2.12.0 was run on 11 Nov 2026 at commit `7d9b4be35d0f995cc33db72875a62bdbad00db5d`, static mode only (`skillspector scan <skill-dir> --no-llm --format json`, no API key). The 1,872 skill directories (516 + 456 public, 600 + 300 blind; the 19 Anthropic skills are inside the 456) finished in 240 seconds. None failed to scan. A failed scan would stay in the denominator and count as not blocked. ✅ is the best of the three on that row.
+
+| MaliciousSkillBench | Ironheights | Cisco skill-scanner | NVIDIA SkillSpector |
+| --- | --- | --- | --- |
+| Malicious skills detected (higher is better) | 47.1% (243/516) ✅ | 21.9% (113/516) | 26.0% (134/516) |
+| False positives on clean skills (lower is better) | 1.3% (6/456) ✅ | 2.0% (9/456) | 10.5% (48/456) |
+| Malicious skills blocked or sent to review (higher is better) | 58.3% (301/516) ✅ | 22.3% (115/516) | 42.6% (220/516) |
+| Clean skills blocked or sent to review (lower is better) | 6.6% (30/456) | 2.4% (11/456) ✅ | 30.9% (141/456) |
+| Blind held-out attacks blocked (higher is better) | 55.8% (335/600) ✅ | 31.7% (190/600) | 28.8% (173/600) |
+| Blind held-out clean skills blocked (lower is better) | 4.3% (13/300) | 2.0% (6/300) ✅ | 11.7% (35/300) |
+| Official Anthropic skills flagged (lower is better) | 0/19 ✅ | 1/19 | 4/19 |
+
+NVIDIA verdicts use `risk_assessment` from that JSON report:
+
+- **Block:** score-band severity or `max_issue_severity` is CRITICAL or HIGH, or `recommendation` is `DO_NOT_INSTALL`.
+- **Block or review:** a block, or either severity is MEDIUM, or `recommendation` is `CAUTION`.
+
+Score bands at this commit are CRITICAL at 81, HIGH at 51, MEDIUM at 21, and LOW below that. Recommendations are `SAFE`, `CAUTION`, and `DO_NOT_INSTALL`. `max_issue_severity` is the worst finding. It can be HIGH while the score band is still LOW and the recommendation is still `SAFE`; that finding counts as block, the same way Cisco counts its highest severity. `CAUTION` is SkillSpector's review-level label. An incomplete scan that would have been `SAFE` is raised to `CAUTION` by SkillSpector, and that counts as review. LOW with no finding and recommendation `SAFE` counts as neither.
+
+Per-skill public verdicts are `severity|max_issue_severity|recommendation|score` in `results.csv`, one row per scanner, same as the Cisco rows. Blind verdicts stay aggregate-only. The pin and the hashed dependency lock are `bench/msb/requirements-nvidia.txt`.
+
 ## MaliciousSkillBench results (0.34.0)
 
 0.34.0 does not change scanner rules beyond what was already merged on main after 0.33.0. The numbers below are the ones those pull requests and the README recorded. They were not re-scored for this release note.

@@ -1,27 +1,38 @@
 #!/usr/bin/env python3
 """Score the built CLI on MaliciousSkillBench and write a shields.io endpoint JSON.
 
-usage: benchmark-msb.py <cli.js> <out-dir> [<cisco skill-scanner binary>]
+usage: benchmark-msb.py <cli.js> <out-dir> [<cisco skill-scanner>] [<skillspector>]
 
 With the third argument it also runs Cisco skill-scanner (pinned in
 bench/msb/requirements-cisco.txt, static analyzers only, no LLM/API key) on the
 same corpus, scored the way docs/benchmark.md does: HIGH or CRITICAL = block, and
 MEDIUM or above = "blocked or sent to review" (Cisco has no review verdict, so a MEDIUM
-finding is treated as its review tier; LOW and INFO are advisory). It also scores both
-scanners on the blind held-out set (bench/blind/manifest.json, aggregate counts only).
-It then writes one shields.io endpoint file per cell of the README comparison table.
+finding is treated as its review tier; LOW and INFO are advisory).
+
+With the fourth argument it also runs NVIDIA SkillSpector at the commit pinned in
+bench/msb/requirements-nvidia.txt. Each sample is `skillspector scan <skill-dir>
+--no-llm --format json` (static analyzers only, no API key). Block is critical/high
+severity or recommendation DO_NOT_INSTALL. Block-or-review also counts medium
+severity or recommendation CAUTION. See docs/benchmark.md.
+
+It also scores every scanner that was passed on the blind held-out set
+(bench/blind/manifest.json, aggregate counts only). It then writes one shields.io
+endpoint file per cell of the README comparison table. The green check goes to the
+unique best value on that row. A tie gets no check.
 
 Fetches skill text from pinned upstream sources (hash-checked), writes it to a temp
 dir, runs `scan --json` (nothing is executed), and scores block-only verdicts.
 Exits non-zero on any mismatch, so the caller never publishes a bad number.
 """
-import hashlib, json, os, subprocess, sys, tempfile, time, urllib.error, urllib.request
+import csv, datetime, hashlib, json, os, re, shutil, subprocess, sys, tempfile, time, urllib.error, urllib.request
 from collections import Counter
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 M = json.load(open(os.path.join(ROOT, 'bench/msb/manifest.json')))
 cli, out_dir = sys.argv[1], sys.argv[2]
-cisco = sys.argv[3] if len(sys.argv) > 3 else None
+cisco = sys.argv[3] if len(sys.argv) > 3 and sys.argv[3] else None
+nvidia = sys.argv[4] if len(sys.argv) > 4 and sys.argv[4] else None
 
 def fetch(url, tries=5):
     # Retry only transient errors (network, timeout, 429, 5xx). Content is pinned and
@@ -41,6 +52,170 @@ def fetch(url, tries=5):
 
 def sha(b):
     return hashlib.sha256(b).hexdigest()
+
+def pinned_nvidia_commit():
+    text = open(os.path.join(ROOT, 'bench/msb/requirements-nvidia.txt')).read()
+    found = re.search(r'SkillSpector\.git@([0-9a-f]{40})', text)
+    if not found:
+        sys.exit('bench/msb/requirements-nvidia.txt has no pinned SkillSpector commit')
+    return found.group(1)
+
+def installed_nvidia_commit(binary):
+    shebang = open(binary).readline().strip()
+    if not shebang.startswith('#!'):
+        sys.exit(f'{binary} has no Python shebang, so its install commit cannot be checked')
+    py = shebang[2:].strip().split()[0]
+    # abspath, not realpath: the venv python is often a symlink to /usr/bin/python3.
+    root = os.path.dirname(os.path.dirname(os.path.abspath(py)))
+    commits = set()
+    found = False
+    for dirpath, dirnames, filenames in os.walk(root):
+        if 'direct_url.json' not in filenames or not os.path.basename(dirpath).startswith('skillspector-'):
+            continue
+        found = True
+        info = json.load(open(os.path.join(dirpath, 'direct_url.json')))
+        commit = (info.get('vcs_info') or {}).get('commit_id') or ''
+        if not re.fullmatch(r'[0-9a-f]{40}', commit):
+            sys.exit(f'{dirpath}/direct_url.json has no commit_id')
+        commits.add(commit)
+    if not found or len(commits) != 1:
+        sys.exit(f'expected one SkillSpector commit under {root}, found {sorted(commits)}')
+    return commits.pop()
+
+# SkillSpector risk_assessment (nodes/report.py at the pinned commit):
+# score >= 81 CRITICAL, >= 51 HIGH, >= 21 MEDIUM, else LOW.
+# recommendation is SAFE, CAUTION, or DO_NOT_INSTALL.
+# max_issue_severity is the worst finding and can be HIGH while the score band is LOW.
+NV_BLOCK_SEVERITY = {'HIGH', 'CRITICAL'}
+NV_REVIEW_SEVERITY = {'MEDIUM', 'HIGH', 'CRITICAL'}
+
+def nvidia_flags(report):
+    ra = report.get('risk_assessment') or {}
+    severity = str(ra.get('severity') or '').upper()
+    worst = str(ra.get('max_issue_severity') or '').upper()
+    recommendation = str(ra.get('recommendation') or '').upper()
+    if not severity or not recommendation:
+        return None
+    blocked = severity in NV_BLOCK_SEVERITY or worst in NV_BLOCK_SEVERITY or recommendation == 'DO_NOT_INSTALL'
+    review = blocked or severity in NV_REVIEW_SEVERITY or worst in NV_REVIEW_SEVERITY or recommendation == 'CAUTION'
+    verdict = f'{severity}|{worst}|{recommendation}|score={ra.get("score")}'
+    failed = report.get('execution_successful') is False
+    return dict(blocked=False if failed else blocked, review=False if failed else review,
+                verdict=verdict, failed=failed)
+
+def _link_tree(src, dest):
+    os.makedirs(dest, exist_ok=True)
+    for dirpath, dirnames, filenames in os.walk(src):
+        rel = os.path.relpath(dirpath, src)
+        target = dest if rel == '.' else os.path.join(dest, rel)
+        os.makedirs(target, exist_ok=True)
+        for name in filenames:
+            src_file = os.path.join(dirpath, name)
+            dest_file = os.path.join(target, name)
+            try:
+                os.link(src_file, dest_file)
+            except OSError:
+                shutil.copy2(src_file, dest_file)
+
+def _nvidia_entries(data):
+    if data.get('multi_skill'):
+        if data.get('skills_omitted') or data.get('skills_output_omitted'):
+            return None
+        entries = {}
+        for entry in data.get('skills') or []:
+            if entry.get('omitted') or entry.get('error') or not entry.get('risk_assessment'):
+                return None
+            sid = os.path.basename(str(entry.get('path') or '').rstrip('/'))
+            if not sid or sid in entries:
+                return None
+            entries[sid] = entry
+        return entries
+    if not data.get('risk_assessment'):
+        return None
+    return {'.': data}
+
+def scan_nvidia_batch(binary, batch):
+    """Scan one skill directory, or a hardlinked batch, with static SkillSpector.
+
+    Exit 1 means the tool found risk above its threshold. That report still counts.
+    A missing report, exit 2, or an omitted skill returns None so the caller can split.
+    """
+    tmp = tempfile.mkdtemp(prefix='nvb-')
+    try:
+        if len(batch) == 1:
+            target = batch[0]
+            expected = [os.path.basename(batch[0])]
+        else:
+            target = os.path.join(tmp, 'skills')
+            os.makedirs(target)
+            expected = []
+            for src in batch:
+                sid = os.path.basename(src)
+                expected.append(sid)
+                _link_tree(src, os.path.join(target, sid))
+        report_path = os.path.join(tmp, 'report.json')
+        try:
+            proc = subprocess.run(
+                [binary, 'scan', target, '--no-llm', '--format', 'json', '--output', report_path]
+                + ([] if len(batch) == 1 else ['--recursive', '--max-skills', str(len(batch))]),
+                capture_output=True, text=True, timeout=120 if len(batch) == 1 else 240)
+        except subprocess.TimeoutExpired:
+            return None
+        if proc.returncode not in (0, 1) or not os.path.exists(report_path):
+            return None
+        try:
+            data = json.load(open(report_path))
+        except json.JSONDecodeError:
+            return None
+        entries = _nvidia_entries(data)
+        if entries is None:
+            return None
+        if len(batch) == 1:
+            entries = {expected[0]: data}
+        if set(entries) != set(expected):
+            return None
+        parsed = {}
+        for sid, entry in entries.items():
+            flags = nvidia_flags(entry)
+            if flags is None:
+                return None
+            parsed[sid] = flags
+        return parsed
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+def scan_nvidia(binary, skill_dirs):
+    """Return id -> flags. A skill that never produces a report is marked failed.
+
+    Failed skills stay in the denominator and count as not blocked. Their ids are
+    returned separately so the public CSV can name them and the blind set can stay
+    aggregate-only.
+    """
+    pending = [skill_dirs[i:i + 16] for i in range(0, len(skill_dirs), 16)]
+    done = {}
+    failed = {}
+    with ThreadPoolExecutor(max_workers=min(4, len(pending) or 1)) as pool:
+        inflight = {}
+        def submit(batch):
+            inflight[pool.submit(scan_nvidia_batch, binary, batch)] = batch
+        for batch in pending:
+            submit(batch)
+        while inflight:
+            fut = next(as_completed(list(inflight)))
+            batch = inflight.pop(fut)
+            parsed = fut.result()
+            if parsed is None:
+                if len(batch) == 1:
+                    sid = os.path.basename(batch[0])
+                    failed[sid] = True
+                    done[sid] = dict(blocked=False, review=False, verdict='FAILED', failed=True)
+                else:
+                    mid = len(batch) // 2
+                    submit(batch[:mid])
+                    submit(batch[mid:])
+            else:
+                done.update(parsed)
+    return done, failed
 
 work = tempfile.mkdtemp(prefix='msb-')
 msb = M['msb']
@@ -159,25 +334,71 @@ if cisco:
     cx = extra(cs, csr)
     summary['cisco'] = dict(version=ver, **{k: v for k, v in c.items() if not k.startswith('_')},
                             **{k: v[1] for k, v in cx.items()})
-    for k, higher in (('review_detect', True), ('review_fp', False), ('blind_detect', True), ('blind_fp', False)):
-        a, b = ihx[k][0], cx[k][0]
-        endpoint(f"table-ih-{k.replace('_', '-')}.json", ihx[k][1], a > b if higher else a < b)
-        endpoint(f"table-cisco-{k.replace('_', '-')}.json", cx[k][1], b > a if higher else b < a)
-    endpoint('table-ih-detect.json', f"{ih['detect_pct']}% ({ih['detect']})", ih['_tp'] > c['_tp'])
-    endpoint('table-cisco-detect.json', f"{c['detect_pct']}% ({c['detect']})", c['_tp'] > ih['_tp'])
-    endpoint('table-ih-fp.json', f"{ih['fp_pct']}% ({ih['fp']})", ih['_fp'] < c['_fp'])
-    endpoint('table-cisco-fp.json', f"{c['fp_pct']}% ({c['fp']})", c['_fp'] < ih['_fp'])
-    endpoint('table-ih-anthropic.json', ih['anthropic'], ih['_an'] < c['_an'])
-    endpoint('table-cisco-anthropic.json', c['anthropic'], c['_an'] < ih['_an'])
+
+nv = {}
+nv_started = None
+if nvidia:
+    pin = pinned_nvidia_commit()
+    got = installed_nvidia_commit(nvidia)
+    if got != pin:
+        sys.exit(f'SkillSpector install commit {got} does not match pin {pin}')
+    nv_started = time.perf_counter()
+    print(f'SkillSpector {got} static scan starting', file=sys.stderr)
+    skill_dirs = []
+    for top, label in SETS:
+        base = os.path.join(work, top, label)
+        skill_dirs.extend(os.path.join(base, name) for name in sorted(os.listdir(base)))
+    nv, nv_failed = scan_nvidia(nvidia, skill_dirs)
+    missing = [s['id'] for s in M['skills'] + B['skills'] if s['id'] not in nv]
+    if missing:
+        sys.exit(f'{len(missing)} skills missing from SkillSpector output')
+    public_failed = sorted(s['id'] for s in M['skills'] if nv[s['id']]['failed'])
+    blind_failed = sum(1 for s in B['skills'] if nv[s['id']]['failed'])
+    nver = re.sub(r'\x1b\[[0-9;]*m', '', subprocess.run(
+        [nvidia, '--version'], capture_output=True, text=True, check=True).stdout).strip()
+    n = score({k: v['blocked'] for k, v in nv.items()})
+    nx = extra({k: v['blocked'] for k, v in nv.items()}, {k: v['review'] for k, v in nv.items()})
+    summary['nvidia'] = dict(version=nver, commit=pin,
+                            command='skillspector scan <skill-dir> --no-llm --format json',
+                            elapsed_seconds=round(time.perf_counter() - nv_started, 1),
+                            scan_failures=dict(public=len(public_failed), blind=blind_failed,
+                                               public_ids=public_failed,
+                                               counted='not blocked and not review; still in the denominator'),
+                            **{k: v for k, v in n.items() if not k.startswith('_')},
+                            **{k: v[1] for k, v in nx.items()})
+
+columns = [('ih', ih, ihx)]
+if cisco:
+    columns.append(('cisco', c, cx))
+if nvidia:
+    columns.append(('nvidia', n, nx))
+if len(columns) > 1:
+    # One green check per row, and only when a single scanner is strictly best.
+    table_rows = (
+        ('detect', True, lambda s, x: (s['_tp'], f"{s['detect_pct']}% ({s['detect']})")),
+        ('fp', False, lambda s, x: (s['_fp'], f"{s['fp_pct']}% ({s['fp']})")),
+        ('review-detect', True, lambda s, x: x['review_detect']),
+        ('review-fp', False, lambda s, x: x['review_fp']),
+        ('blind-detect', True, lambda s, x: x['blind_detect']),
+        ('blind-fp', False, lambda s, x: x['blind_fp']),
+        ('anthropic', False, lambda s, x: (s['_an'], s['anthropic'])),
+    )
+    for key, higher, getter in table_rows:
+        measured = [(name, getter(s, x)) for name, s, x in columns]
+        best = max(item[1][0] for item in measured) if higher else min(item[1][0] for item in measured)
+        winners = [name for name, (count, _msg) in measured if count == best]
+        winner = winners[0] if len(winners) == 1 else None
+        for name, (_count, message) in measured:
+            endpoint(f'table-{name}-{key}.json', message, name == winner)
 
 # Proof files: per-skill verdicts for the public set, aggregate-only digest for the blind set
 # (blind ids and per-skill verdicts are never published, so nobody can tune rules against them).
-import csv, datetime
 sha_c = os.environ.get('GITHUB_SHA') or subprocess.run(['git', '-C', ROOT, 'rev-parse', 'HEAD'], capture_output=True, text=True).stdout.strip()
 stamp = datetime.datetime.now(datetime.timezone.utc).isoformat(timespec='seconds')
 run_url = (f"{os.environ['GITHUB_SERVER_URL']}/{os.environ['GITHUB_REPOSITORY']}/actions/runs/{os.environ['GITHUB_RUN_ID']}"
            if os.environ.get('GITHUB_RUN_ID') else 'local run')
 cver = summary.get('cisco', {}).get('version', '')
+nver = summary.get('nvidia', {}).get('version', '')
 with open(os.path.join(out_dir, 'results.csv'), 'w', newline='') as f:
     w = csv.writer(f)
     w.writerow(['row_id', 'label', 'scanner', 'scanner_version', 'verdict', 'counted_block', 'counted_block_or_review', 'timestamp_utc', 'commit_sha'])
@@ -186,6 +407,9 @@ with open(os.path.join(out_dir, 'results.csv'), 'w', newline='') as f:
         w.writerow([s_['id'], s_['label'], 'ironheights', version, v, v == 'block', v in ('block', 'review'), stamp, sha_c])
         if cisco:
             w.writerow([s_['id'], s_['label'], 'cisco-skill-scanner', cver, cs_sev[s_['id']], cs[s_['id']], csr[s_['id']], stamp, sha_c])
+        if nvidia:
+            row = nv[s_['id']]
+            w.writerow([s_['id'], s_['label'], 'nvidia-skillspector', nver, row['verdict'], row['blocked'], row['review'], stamp, sha_c])
 def digest(fn):
     rows = sorted(f"{s_['id']}:{fn(s_['id'])}" for s_ in B['skills'])
     return hashlib.sha256('\n'.join(rows).encode()).hexdigest()
@@ -194,6 +418,11 @@ blind = dict(note='Aggregate only. sha256 is over sorted "id:verdict" lines; rer
                               sha256=digest(lambda i: verdict[i])))
 if cisco:
     blind['cisco'] = dict(version=cver, detect=cx['blind_detect'][1], fp=cx['blind_fp'][1], sha256=digest(lambda i: cs_sev[i]))
+if nvidia:
+    blind['nvidia'] = dict(version=nver, commit=summary['nvidia']['commit'],
+                           detect=nx['blind_detect'][1], fp=nx['blind_fp'][1],
+                           scan_failures=summary['nvidia']['scan_failures']['blind'],
+                           sha256=digest(lambda i: nv[i]['verdict']))
 json.dump(blind, open(os.path.join(out_dir, 'blind-aggregate.json'), 'w'), indent=1)
 summary.update(run_url=run_url, commit_sha=sha_c, timestamp_utc=stamp)
 open(os.path.join(out_dir, 'PROOF.md'), 'w').write(f"""# Benchmark proof
@@ -203,23 +432,24 @@ Every number in the README benchmark table comes from this run.
 - Workflow run: {run_url}
 - Commit: `{sha_c}`
 - Time (UTC): {stamp}
-- Ironheights {version}; Cisco skill-scanner {cver or 'not run'} (static analyzers only, no LLM)
+- Ironheights {version}; Cisco skill-scanner {cver or 'not run'}; NVIDIA SkillSpector {nver or 'not run'} commit `{summary.get('nvidia', {}).get('commit', 'not run')}` (static analyzers only, no LLM)
 - MaliciousSkillBench revision `{msb['revision']}`
 
-| Row | Ironheights | Cisco |
-|---|---|---|
-| Malicious detected (block) | {ih['detect']} | {summary.get('cisco', {}).get('detect', '')} |
-| Clean false positives (block) | {ih['fp']} | {summary.get('cisco', {}).get('fp', '')} |
-| Malicious block or review | {ihx['review_detect'][1]} | {summary.get('cisco', {}).get('review_detect', '')} |
-| Clean block or review | {ihx['review_fp'][1]} | {summary.get('cisco', {}).get('review_fp', '')} |
-| Blind attacks blocked | {ihx['blind_detect'][1]} | {summary.get('cisco', {}).get('blind_detect', '')} |
-| Blind clean blocked | {ihx['blind_fp'][1]} | {summary.get('cisco', {}).get('blind_fp', '')} |
-| Prose-only attacks blocked | {ihx['prose_detect'][1]} | {summary.get('cisco', {}).get('prose_detect', '')} |
-| Prose-only attacks block or review | {ihx['prose_review'][1]} | {summary.get('cisco', {}).get('prose_review', '')} |
-| Anthropic skills flagged | {ih['anthropic']} | {summary.get('cisco', {}).get('anthropic', '')} |
+| Row | Ironheights | Cisco | NVIDIA SkillSpector |
+|---|---|---|---|
+| Malicious detected (block) | {ih['detect']} | {summary.get('cisco', {}).get('detect', '')} | {summary.get('nvidia', {}).get('detect', '')} |
+| Clean false positives (block) | {ih['fp']} | {summary.get('cisco', {}).get('fp', '')} | {summary.get('nvidia', {}).get('fp', '')} |
+| Malicious block or review | {ihx['review_detect'][1]} | {summary.get('cisco', {}).get('review_detect', '')} | {summary.get('nvidia', {}).get('review_detect', '')} |
+| Clean block or review | {ihx['review_fp'][1]} | {summary.get('cisco', {}).get('review_fp', '')} | {summary.get('nvidia', {}).get('review_fp', '')} |
+| Blind attacks blocked | {ihx['blind_detect'][1]} | {summary.get('cisco', {}).get('blind_detect', '')} | {summary.get('nvidia', {}).get('blind_detect', '')} |
+| Blind clean blocked | {ihx['blind_fp'][1]} | {summary.get('cisco', {}).get('blind_fp', '')} | {summary.get('nvidia', {}).get('blind_fp', '')} |
+| Prose-only attacks blocked | {ihx['prose_detect'][1]} | {summary.get('cisco', {}).get('prose_detect', '')} | {summary.get('nvidia', {}).get('prose_detect', '')} |
+| Prose-only attacks block or review | {ihx['prose_review'][1]} | {summary.get('cisco', {}).get('prose_review', '')} | {summary.get('nvidia', {}).get('prose_review', '')} |
+| Anthropic skills flagged | {ih['anthropic']} | {summary.get('cisco', {}).get('anthropic', '')} | {summary.get('nvidia', {}).get('anthropic', '')} |
 
 Prose-only = the 98 attacks with no code fence or shell/python line (`kind: prose` in the manifest; regex tag, see docs/benchmark.md).
 Cisco has no review verdict: block = max severity HIGH or CRITICAL, block-or-review = MEDIUM or above.
+NVIDIA SkillSpector (`--no-llm`): block = risk severity or max issue severity CRITICAL or HIGH, or recommendation DO_NOT_INSTALL. Block-or-review also counts MEDIUM or recommendation CAUTION. A skill that fails to scan counts as not blocked and stays in the denominator.
 
 Files: [results.csv](results.csv) (one row per skill and scanner), [blind-aggregate.json](blind-aggregate.json)
 (blind set counts and a digest only), [benchmark-summary.json](benchmark-summary.json).
