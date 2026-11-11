@@ -62,6 +62,13 @@ export function staysInsideSkill(line: string, relativePath: string): boolean {
   });
 }
 
+/** "Never use ../" is a warning, not a walk. A write verb on the same line stays. */
+function refusedTraversal(line: string): boolean {
+  if (!/\b(?:never|do not|don't|avoid|wrong)\b/i.test(line)) return false;
+  const rest = line.replace(/\.\.[/\\]/g, ' ');
+  return !WRITE_OR_WALK.test(rest);
+}
+
 export const fs001: Rule = {
   id: 'IH-FS-001',
   title: 'Suspicious filesystem access',
@@ -115,16 +122,19 @@ export const fs001: Rule = {
       if (!TRAVERSAL.test(scrubbed) && !symlink) return;
       if (!symlink && staysInsideSkill(scrubbed, file.relativePath)) return;
       const readOnly = !symlink && declaredReadOnlyReference(scrubbed);
+      const refused = !symlink && refusedTraversal(line);
       pushUnique(
         findings,
         createFinding(fs001, file, {
           line: lineNumber,
           evidence: line,
-          ...(readOnly ? { severity: 'info' as const } : {}),
-          message: readOnly
-            ? 'Declared read-only reference to one named file outside the skill folder.'
-            : 'Path traversal or an absolute symlink is described in the file.',
-          confidence: readOnly ? 'low' : 'medium',
+          ...(readOnly || refused ? { severity: 'info' as const } : {}),
+          message: refused
+            ? 'The line tells the reader not to use a parent-directory path.'
+            : readOnly
+              ? 'Declared read-only reference to one named file outside the skill folder.'
+              : 'Path traversal or an absolute symlink is described in the file.',
+          confidence: readOnly || refused ? 'low' : 'medium',
         }),
       );
     });

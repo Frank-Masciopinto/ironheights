@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "tool": {
+    "name": "ironheights",
+    "version": "0.34.0"
+  },
+  "scannedAt": "2026-11-09T12:33:24.703Z",
+  "scannerVersion": "0.34.0",
+  "checkedAt": "2026-11-09T12:33:24.703Z",
+  "verdict": "no-findings",
+  "skippedFileCount": 0,
+  "grade": {
+    "letter": "A",
+    "score": 100,
+    "disclaimer": "Absence of findings is not proof of safety.",
+    "unscannedDependencies": 1
+  },
+  "scanMode": "directory",
+  "summary": "ironheights 0.34.0 | code-review | grade A (100/100), skill files only: 1 dependency unscanned | verdict no-findings | 0 findings",
+  "badge": "[ironheights 0.34.0: grade A (100/100), skill files only: 1 dependency unscanned, verdict no-findings](https://github.com/Frank-Masciopinto/ironheights) — Absence of findings is not proof of safety.",
+  "skills": [
+    {
+      "skillName": "code-review",
+      "root": "/tmp/fpc/cfc/code-review",
+      "filesScanned": 1,
+      "filesSkipped": [],
+      "skippedFileCount": 0,
+      "findings": [],
+      "suppressed": [],
+      "suppressedCount": 0,
+      "suppressionRefused": [],
+      "suppressionRefusedCount": 0,
+      "score": 0,
+      "verdict": "no-findings"
+    }
+  ]
+}

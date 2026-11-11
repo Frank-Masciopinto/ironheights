@@ -1,0 +1,506 @@
+{
+  "schemaVersion": 1,
+  "tool": {
+    "name": "ironheights",
+    "version": "0.34.0"
+  },
+  "scannedAt": "2026-11-09T07:53:16.074Z",
+  "scannerVersion": "0.34.0",
+  "checkedAt": "2026-11-09T07:53:16.074Z",
+  "verdict": "block",
+  "skippedFileCount": 0,
+  "grade": {
+    "letter": "F",
+    "score": 0,
+    "disclaimer": "Absence of findings is not proof of safety.",
+    "unscannedDependencies": 1
+  },
+  "scanMode": "directory",
+  "summary": "ironheights 0.34.0 | portless | grade F (0/100), skill files only: 1 dependency unscanned | verdict block | 13 findings",
+  "badge": "[ironheights 0.34.0: grade F (0/100), skill files only: 1 dependency unscanned, verdict block](https://github.com/Frank-Masciopinto/ironheights) — Absence of findings is not proof of safety.",
+  "skills": [
+    {
+      "skillName": "portless",
+      "root": "/tmp/fpc/portless",
+      "filesScanned": 1,
+      "filesSkipped": [],
+      "skippedFileCount": 0,
+      "findings": [
+        {
+          "ruleId": "IH-PRIV-001",
+          "severity": "high",
+          "confidence": "high",
+          "file": "SKILL.md",
+          "line": 168,
+          "evidence": "1. `portless proxy start` starts an HTTPS reverse proxy on port 443 as a background daemon. Auto-elevates with sudo on macOS/Linux; falls back to port 1355 if sudo is unavailable. Use `--no-tls` fo...",
+          "message": "The file elevates privileges or disables an OS protection.",
+          "remediation": "Do not elevate privileges or remove OS protections. Ask the user to install software through the normal path.",
+          "references": {
+            "owaspLlm": [
+              "LLM06:2025"
+            ],
+            "owaspAgentic": [
+              "ASI03:2026"
+            ],
+            "mitreAtlas": [],
+            "openCre": [
+              "368-633",
+              "330-281"
+            ]
+          },
+          "links": [
+            {
+              "label": "OWASP LLM06:2025 Excessive Agency",
+              "url": "https://genai.owasp.org/llmrisk/llm062025-excessive-agency/"
+            },
+            {
+              "label": "OpenCRE 368-633 Enforce least privilege",
+              "url": "https://www.opencre.org/cre/368-633"
+            },
+            {
+              "label": "OpenCRE 330-281 Use least privilege OS accounts for system (components)",
+              "url": "https://www.opencre.org/cre/330-281"
+            }
+          ]
+        },
+        {
+          "ruleId": "IH-PRIV-001",
+          "severity": "high",
+          "confidence": "high",
+          "file": "SKILL.md",
+          "line": 174,
+          "evidence": "With `--unprivileged` (or `PORTLESS_UNPRIVILEGED=1`) the proxy takes a port below 1024 without `sudo`: it binds the wildcard addresses, which macOS allows for non-root processes, and refuses every ...",
+          "message": "The file elevates privileges or disables an OS protection.",
+          "remediation": "Do not elevate privileges or remove OS protections. Ask the user to install software through the normal path.",
+          "references": {
+            "owaspLlm": [
+              "LLM06:2025"
+            ],
+            "owaspAgentic": [
+              "ASI03:2026"
+            ],
+            "mitreAtlas": [],
+            "openCre": [
+              "368-633",
+              "330-281"
+            ]
+          },
+          "links": [
+            {
+              "label": "OWASP LLM06:2025 Excessive Agency",
+              "url": "https://genai.owasp.org/llmrisk/llm062025-excessive-agency/"
+            },
+            {
+              "label": "OpenCRE 368-633 Enforce least privilege",
+              "url": "https://www.opencre.org/cre/368-633"
+            },
+            {
+              "label": "OpenCRE 330-281 Use least privilege OS accounts for system (components)",
+              "url": "https://www.opencre.org/cre/330-281"
+            }
+          ]
+        },
+        {
+          "ruleId": "IH-PRIV-001",
+          "severity": "high",
+          "confidence": "high",
+          "file": "SKILL.md",
+          "line": 207,
+          "evidence": "Portless stores its state (routes, PID file, port file) in `~/.portless`. When the proxy runs under sudo, this remains the invoking user's home directory so unprivileged apps and the proxy share ro...",
+          "message": "The file elevates privileges or disables an OS protection.",
+          "remediation": "Do not elevate privileges or remove OS protections. Ask the user to install software through the normal path.",
+          "references": {
+            "owaspLlm": [
+              "LLM06:2025"
+            ],
+            "owaspAgentic": [
+              "ASI03:2026"
+            ],
+            "mitreAtlas": [],
+            "openCre": [
+              "368-633",
+              "330-281"
+            ]
+          },
+          "links": [
+            {
+              "label": "OWASP LLM06:2025 Excessive Agency",
+              "url": "https://genai.owasp.org/llmrisk/llm062025-excessive-agency/"
+            },
+            {
+              "label": "OpenCRE 368-633 Enforce least privilege",
+              "url": "https://www.opencre.org/cre/368-633"
+            },
+            {
+              "label": "OpenCRE 330-281 Use least privilege OS accounts for system (components)",
+              "url": "https://www.opencre.org/cre/330-281"
+            }
+          ]
+        },
+        {
+          "ruleId": "IH-PRIV-001",
+          "severity": "high",
+          "confidence": "high",
+          "file": "SKILL.md",
+          "line": 254,
+          "evidence": "LAN mode depends on the system mDNS helpers that portless launches: macOS includes `dns-sd`, while Linux uses `avahi-publish-address` from `avahi-utils` (install via `sudo apt install avahi-utils` ...",
+          "message": "The file elevates privileges or disables an OS protection.",
+          "remediation": "Do not elevate privileges or remove OS protections. Ask the user to install software through the normal path.",
+          "references": {
+            "owaspLlm": [
+              "LLM06:2025"
+            ],
+            "owaspAgentic": [
+              "ASI03:2026"
+            ],
+            "mitreAtlas": [],
+            "openCre": [
+              "368-633",
+              "330-281"
+            ]
+          },
+          "links": [
+            {
+              "label": "OWASP LLM06:2025 Excessive Agency",
+              "url": "https://genai.owasp.org/llmrisk/llm062025-excessive-agency/"
+            },
+            {
+              "label": "OpenCRE 368-633 Enforce least privilege",
+              "url": "https://www.opencre.org/cre/368-633"
+            },
+            {
+              "label": "OpenCRE 330-281 Use least privilege OS accounts for system (components)",
+              "url": "https://www.opencre.org/cre/330-281"
+            }
+          ]
+        },
+        {
+          "ruleId": "IH-NET-001",
+          "severity": "high",
+          "confidence": "high",
+          "file": "SKILL.md",
+          "line": 292,
+          "evidence": "https://abc123.ngrok.app",
+          "message": "Destination abc123.ngrok.app is a raw address or a known high-risk host.",
+          "remediation": "Declare the host in allowDomains, or in metadata.ironheights.allowDomains for this skill only. Prefer the official API host.",
+          "references": {
+            "owaspLlm": [
+              "LLM06:2025"
+            ],
+            "owaspAgentic": [],
+            "mitreAtlas": [],
+            "openCre": [
+              "814-322"
+            ]
+          },
+          "links": [
+            {
+              "label": "OWASP LLM06:2025 Excessive Agency",
+              "url": "https://genai.owasp.org/llmrisk/llm062025-excessive-agency/"
+            },
+            {
+              "label": "OpenCRE 814-322 Whitelist data sources and sinks",
+              "url": "https://www.opencre.org/cre/814-322"
+            }
+          ]
+        },
+        {
+          "ruleId": "IH-PRIV-001",
+          "severity": "high",
+          "confidence": "high",
+          "file": "SKILL.md",
+          "line": 460,
+          "evidence": "The default ports (80 for HTTP, 443 for HTTPS) require `sudo` on macOS and Linux. Portless auto-elevates with sudo when needed. If sudo is unavailable, it falls back to port 1355 (no sudo needed). ...",
+          "message": "The file elevates privileges or disables an OS protection.",
+          "remediation": "Do not elevate privileges or remove OS protections. Ask the user to install software through the normal path.",
+          "references": {
+            "owaspLlm": [
+              "LLM06:2025"
+            ],
+            "owaspAgentic": [
+              "ASI03:2026"
+            ],
+            "mitreAtlas": [],
+            "openCre": [
+              "368-633",
+              "330-281"
+            ]
+          },
+          "links": [
+            {
+              "label": "OWASP LLM06:2025 Excessive Agency",
+              "url": "https://genai.owasp.org/llmrisk/llm062025-excessive-agency/"
+            },
+            {
+              "label": "OpenCRE 368-633 Enforce least privilege",
+              "url": "https://www.opencre.org/cre/368-633"
+            },
+            {
+              "label": "OpenCRE 330-281 Use least privilege OS accounts for system (components)",
+              "url": "https://www.opencre.org/cre/330-281"
+            }
+          ]
+        },
+        {
+          "ruleId": "IH-PRIV-001",
+          "severity": "high",
+          "confidence": "high",
+          "file": "SKILL.md",
+          "line": 500,
+          "evidence": "Stops the proxy if needed, removes the portless CA from the trust store (when portless added it), deletes known files under state directories, and removes the portless `/etc/hosts` block. May requi...",
+          "message": "The file elevates privileges or disables an OS protection.",
+          "remediation": "Do not elevate privileges or remove OS protections. Ask the user to install software through the normal path.",
+          "references": {
+            "owaspLlm": [
+              "LLM06:2025"
+            ],
+            "owaspAgentic": [
+              "ASI03:2026"
+            ],
+            "mitreAtlas": [],
+            "openCre": [
+              "368-633",
+              "330-281"
+            ]
+          },
+          "links": [
+            {
+              "label": "OWASP LLM06:2025 Excessive Agency",
+              "url": "https://genai.owasp.org/llmrisk/llm062025-excessive-agency/"
+            },
+            {
+              "label": "OpenCRE 368-633 Enforce least privilege",
+              "url": "https://www.opencre.org/cre/368-633"
+            },
+            {
+              "label": "OpenCRE 330-281 Use least privilege OS accounts for system (components)",
+              "url": "https://www.opencre.org/cre/330-281"
+            }
+          ]
+        },
+        {
+          "ruleId": "IH-INTENT-001",
+          "severity": "medium",
+          "confidence": "medium",
+          "file": "SKILL.md",
+          "line": 51,
+          "evidence": "The proxy auto-starts when you run an app. You can also start it explicitly with `portless proxy start`. Auto-start reuses the configuration (port, TLS, TLDs) from the most recent proxy run, so a r...",
+          "message": "Plain-language instructions: hides an action from the user (line 51).",
+          "remediation": "Read the quoted lines. Remove instructions that send data to outside addresses, hide actions from the user, persist across sessions, or override safety review. If a phrase is legitimate, suppress it with a reason.",
+          "references": {
+            "owaspLlm": [
+              "LLM01:2025",
+              "LLM02:2025"
+            ],
+            "owaspAgentic": [
+              "ASI01:2026"
+            ],
+            "mitreAtlas": [
+              "AML.T0051.001"
+            ],
+            "openCre": [
+              "012-625"
+            ]
+          },
+          "links": [
+            {
+              "label": "OWASP LLM01:2025 Prompt Injection",
+              "url": "https://genai.owasp.org/llmrisk/llm01-prompt-injection/"
+            },
+            {
+              "label": "OWASP LLM02:2025 Sensitive Information Disclosure",
+              "url": "https://genai.owasp.org/llmrisk/llm022025-sensitive-information-disclosure/"
+            },
+            {
+              "label": "OpenCRE 012-625 Indirect prompt injection",
+              "url": "https://www.opencre.org/cre/012-625"
+            }
+          ]
+        },
+        {
+          "ruleId": "IH-PRIV-001",
+          "severity": "medium",
+          "confidence": "high",
+          "file": "SKILL.md",
+          "line": 463,
+          "evidence": "portless proxy start --https # Auto-elevates with sudo for port 443",
+          "message": "The file elevates privileges or disables an OS protection.",
+          "remediation": "Do not elevate privileges or remove OS protections. Ask the user to install software through the normal path.",
+          "note": "Docs example: this line is in a fenced code block in Markdown, so the docs tell someone to run it. The same line in a shipped script is graded one step higher.",
+          "references": {
+            "owaspLlm": [
+              "LLM06:2025"
+            ],
+            "owaspAgentic": [
+              "ASI03:2026"
+            ],
+            "mitreAtlas": [],
+            "openCre": [
+              "368-633",
+              "330-281"
+            ]
+          },
+          "links": [
+            {
+              "label": "OWASP LLM06:2025 Excessive Agency",
+              "url": "https://genai.owasp.org/llmrisk/llm062025-excessive-agency/"
+            },
+            {
+              "label": "OpenCRE 368-633 Enforce least privilege",
+              "url": "https://www.opencre.org/cre/368-633"
+            },
+            {
+              "label": "OpenCRE 330-281 Use least privilege OS accounts for system (components)",
+              "url": "https://www.opencre.org/cre/330-281"
+            }
+          ]
+        },
+        {
+          "ruleId": "IH-PRIV-001",
+          "severity": "medium",
+          "confidence": "high",
+          "file": "SKILL.md",
+          "line": 466,
+          "evidence": "portless proxy stop # Stop (use sudo if started with sudo)",
+          "message": "The file elevates privileges or disables an OS protection.",
+          "remediation": "Do not elevate privileges or remove OS protections. Ask the user to install software through the normal path.",
+          "note": "Docs example: this line is in a fenced code block in Markdown, so the docs tell someone to run it. The same line in a shipped script is graded one step higher.",
+          "references": {
+            "owaspLlm": [
+              "LLM06:2025"
+            ],
+            "owaspAgentic": [
+              "ASI03:2026"
+            ],
+            "mitreAtlas": [],
+            "openCre": [
+              "368-633",
+              "330-281"
+            ]
+          },
+          "links": [
+            {
+              "label": "OWASP LLM06:2025 Excessive Agency",
+              "url": "https://genai.owasp.org/llmrisk/llm062025-excessive-agency/"
+            },
+            {
+              "label": "OpenCRE 368-633 Enforce least privilege",
+              "url": "https://www.opencre.org/cre/368-633"
+            },
+            {
+              "label": "OpenCRE 330-281 Use least privilege OS accounts for system (components)",
+              "url": "https://www.opencre.org/cre/330-281"
+            }
+          ]
+        },
+        {
+          "ruleId": "IH-NET-001",
+          "severity": "medium",
+          "confidence": "medium",
+          "file": "SKILL.md",
+          "line": 530,
+          "evidence": "https://tailscale.com/download",
+          "message": "Destination tailscale.com is not in the allowlist.",
+          "remediation": "Declare the host in allowDomains, or in metadata.ironheights.allowDomains for this skill only. Prefer the official API host.",
+          "references": {
+            "owaspLlm": [
+              "LLM06:2025"
+            ],
+            "owaspAgentic": [],
+            "mitreAtlas": [],
+            "openCre": [
+              "814-322"
+            ]
+          },
+          "links": [
+            {
+              "label": "OWASP LLM06:2025 Excessive Agency",
+              "url": "https://genai.owasp.org/llmrisk/llm062025-excessive-agency/"
+            },
+            {
+              "label": "OpenCRE 814-322 Whitelist data sources and sinks",
+              "url": "https://www.opencre.org/cre/814-322"
+            }
+          ]
+        },
+        {
+          "ruleId": "IH-NET-001",
+          "severity": "medium",
+          "confidence": "medium",
+          "file": "SKILL.md",
+          "line": 541,
+          "evidence": "https://ngrok.com/download",
+          "message": "Destination ngrok.com is not in the allowlist.",
+          "remediation": "Declare the host in allowDomains, or in metadata.ironheights.allowDomains for this skill only. Prefer the official API host.",
+          "references": {
+            "owaspLlm": [
+              "LLM06:2025"
+            ],
+            "owaspAgentic": [],
+            "mitreAtlas": [],
+            "openCre": [
+              "814-322"
+            ]
+          },
+          "links": [
+            {
+              "label": "OWASP LLM06:2025 Excessive Agency",
+              "url": "https://genai.owasp.org/llmrisk/llm062025-excessive-agency/"
+            },
+            {
+              "label": "OpenCRE 814-322 Whitelist data sources and sinks",
+              "url": "https://www.opencre.org/cre/814-322"
+            }
+          ]
+        },
+        {
+          "ruleId": "IH-INTENT-002",
+          "severity": "low",
+          "confidence": "low",
+          "file": "SKILL.md",
+          "line": 456,
+          "evidence": "- **Custom servers**: read `process.env.PORT` and listen on it",
+          "message": "Reach past the stated purpose: reads credentials though the stated purpose is unrelated (line 456).",
+          "remediation": "Compare each quoted line with the skill's stated purpose. Remove setup steps that run hidden helpers, touch credentials, or send data the purpose does not call for. If a step is legitimate, state it plainly in the description or suppress it with a reason.",
+          "references": {
+            "owaspLlm": [
+              "LLM01:2025",
+              "LLM02:2025"
+            ],
+            "owaspAgentic": [
+              "ASI01:2026",
+              "ASI04:2026"
+            ],
+            "mitreAtlas": [
+              "AML.T0051.001",
+              "AML.T0055"
+            ],
+            "openCre": [
+              "012-625"
+            ]
+          },
+          "links": [
+            {
+              "label": "OWASP LLM01:2025 Prompt Injection",
+              "url": "https://genai.owasp.org/llmrisk/llm01-prompt-injection/"
+            },
+            {
+              "label": "OWASP LLM02:2025 Sensitive Information Disclosure",
+              "url": "https://genai.owasp.org/llmrisk/llm022025-sensitive-information-disclosure/"
+            },
+            {
+              "label": "OpenCRE 012-625 Indirect prompt injection",
+              "url": "https://www.opencre.org/cre/012-625"
+            }
+          ]
+        }
+      ],
+      "suppressed": [],
+      "suppressedCount": 0,
+      "suppressionRefused": [],
+      "suppressionRefusedCount": 0,
+      "score": 360,
+      "verdict": "block"
+    }
+  ]
+}

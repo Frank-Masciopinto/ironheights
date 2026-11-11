@@ -5,6 +5,7 @@ import { readdir, readFile, stat } from 'node:fs/promises';
 import { basename, join, resolve } from 'node:path';
 import { parseSkillMarkdown, type SkillFrontmatter } from '../openclaw/skill.ts';
 import { skillHoldsAmbientSecret } from '../rules/ambient-env.ts';
+import { isDestructivePrivilegeLine } from '../rules/privilege.ts';
 import { allContentRules } from '../rules/index.ts';
 import type { Finding, ResolvedConfig, ScanContext, ScannedFile, SkillReport } from './types.ts';
 import { applySuppressions, reconcileEvidenceDrift } from './suppress.ts';
@@ -269,7 +270,17 @@ export function scanFile(
       let finding = raw;
       if (file.kind === 'markdown' && DOC_EXAMPLE_RULES.has(rule.id) && raw.line !== undefined) {
         fenced ??= fencedLineNumbers(file.text);
-        if (fenced.has(raw.line)) finding = asDocExample(raw);
+        const sourceLine = file.text.split(/\r?\n/)[raw.line - 1] ?? '';
+        const runCue =
+          rule.id === 'IH-PRIV-001' &&
+          isDestructivePrivilegeLine(sourceLine) &&
+          /\b(?:run|execute)\b/i.test(
+            file.text
+              .split(/\r?\n/)
+              .slice(Math.max(0, raw.line - 12), raw.line - 1)
+              .join('\n'),
+          );
+        if (fenced.has(raw.line) && !runCue) finding = asDocExample(raw);
       }
       if (isRegistrySkillCard(file.relativePath)) finding = asRegistryCard(finding);
       else if (isChangelog(file.relativePath)) finding = asChangelogFix(finding, file.text);

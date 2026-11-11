@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "tool": {
+    "name": "ironheights",
+    "version": "0.34.0"
+  },
+  "scannedAt": "2026-11-09T09:52:53.381Z",
+  "scannerVersion": "0.34.0",
+  "checkedAt": "2026-11-09T09:52:53.381Z",
+  "verdict": "review",
+  "skippedFileCount": 0,
+  "grade": {
+    "letter": "B",
+    "score": 85,
+    "disclaimer": "Absence of findings is not proof of safety.",
+    "unscannedDependencies": 1
+  },
+  "scanMode": "directory",
+  "summary": "ironheights 0.34.0 | azure-devops-cli | grade B (85/100), skill files only: 1 dependency unscanned | verdict review | 1 finding",
+  "badge": "[ironheights 0.34.0: grade B (85/100), skill files only: 1 dependency unscanned, verdict review](https://github.com/Frank-Masciopinto/ironheights) — Absence of findings is not proof of safety.",
+  "skills": [
+    {
+      "skillName": "azure-devops-cli",
+      "root": "/tmp/fpc/cf/azure-devops-cli",
+      "filesScanned": 1,
+      "filesSkipped": [],
+      "skippedFileCount": 0,
+      "findings": [
+        {
+          "ruleId": "IH-PRIV-001",
+          "severity": "medium",
+          "confidence": "high",
+          "file": "SKILL.md",
+          "line": 17,
+          "evidence": "sudo apt-get install azure-cli # Linux (after adding Microsoft's apt repo)",
+          "message": "The file elevates privileges or disables an OS protection.",
+          "remediation": "Do not elevate privileges or remove OS protections. Ask the user to install software through the normal path.",
+          "note": "Docs example: this line is in a fenced code block in Markdown, so the docs tell someone to run it. The same line in a shipped script is graded one step higher.",
+          "references": {
+            "owaspLlm": [
+              "LLM06:2025"
+            ],
+            "owaspAgentic": [
+              "ASI03:2026"
+            ],
+            "mitreAtlas": [],
+            "openCre": [
+              "368-633",
+              "330-281"
+            ]
+          },
+          "links": [
+            {
+              "label": "OWASP LLM06:2025 Excessive Agency",
+              "url": "https://genai.owasp.org/llmrisk/llm062025-excessive-agency/"
+            },
+            {
+              "label": "OpenCRE 368-633 Enforce least privilege",
+              "url": "https://www.opencre.org/cre/368-633"
+            },
+            {
+              "label": "OpenCRE 330-281 Use least privilege OS accounts for system (components)",
+              "url": "https://www.opencre.org/cre/330-281"
+            }
+          ]
+        }
+      ],
+      "suppressed": [],
+      "suppressedCount": 0,
+      "suppressionRefused": [],
+      "suppressionRefusedCount": 0,
+      "score": 15,
+      "verdict": "review"
+    }
+  ]
+}

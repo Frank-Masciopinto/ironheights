@@ -1,0 +1,1 @@
+Class: ransomware stated in plain words in a final section of a long, otherwise clean guide. Source ASB04_000828 (n8n-validation-expert). 0.33.0/0.34.0 no-findings; Cisco INFO. Post 4ea2286b. Defanged: no script, no keys.

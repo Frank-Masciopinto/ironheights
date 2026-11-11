@@ -1,0 +1,271 @@
+{
+  "schemaVersion": 1,
+  "tool": {
+    "name": "ironheights",
+    "version": "0.34.0"
+  },
+  "scannedAt": "2026-11-09T11:17:42.455Z",
+  "scannerVersion": "0.34.0",
+  "checkedAt": "2026-11-09T11:17:42.455Z",
+  "verdict": "block",
+  "skippedFileCount": 0,
+  "grade": {
+    "letter": "F",
+    "score": 0,
+    "disclaimer": "Absence of findings is not proof of safety."
+  },
+  "scanMode": "directory",
+  "summary": "ironheights 0.34.0 | nextflow-development | grade F (0/100) | verdict block | 7 findings",
+  "badge": "[ironheights 0.34.0: grade F (0/100), verdict block](https://github.com/Frank-Masciopinto/ironheights) — Absence of findings is not proof of safety.",
+  "skills": [
+    {
+      "skillName": "nextflow-development",
+      "root": "/tmp/fpc/nextflow-development",
+      "filesScanned": 1,
+      "filesSkipped": [],
+      "skippedFileCount": 0,
+      "findings": [
+        {
+          "ruleId": "IH-EXEC-001",
+          "severity": "critical",
+          "confidence": "high",
+          "file": "SKILL.md",
+          "line": 75,
+          "evidence": "| Not installed | `curl -s https://get.nextflow.io \\| bash && mv nextflow ~/bin/` |",
+          "message": "Remote content is passed to an interpreter.",
+          "remediation": "Download to a file, review it, and run a pinned local copy instead of piping a URL into a shell.",
+          "references": {
+            "owaspLlm": [
+              "LLM03:2025"
+            ],
+            "owaspAgentic": [
+              "ASI05:2026"
+            ],
+            "mitreAtlas": [
+              "AML.T0053"
+            ],
+            "openCre": [
+              "307-507",
+              "715-223"
+            ]
+          },
+          "links": [
+            {
+              "label": "OWASP LLM03:2025 Supply Chain",
+              "url": "https://genai.owasp.org/llmrisk/llm032025-supply-chain/"
+            },
+            {
+              "label": "OpenCRE 307-507 Allow only trusted sources both build time and runtime; therefore perform integrity checks on all resources and code",
+              "url": "https://www.opencre.org/cre/307-507"
+            },
+            {
+              "label": "OpenCRE 715-223 Ensure trusted origin of third party resources",
+              "url": "https://www.opencre.org/cre/715-223"
+            }
+          ]
+        },
+        {
+          "ruleId": "IH-PRIV-001",
+          "severity": "high",
+          "confidence": "high",
+          "file": "SKILL.md",
+          "line": 68,
+          "evidence": "| Permission denied | `sudo usermod -aG docker $USER` then re-login |",
+          "message": "The file elevates privileges or disables an OS protection.",
+          "remediation": "Do not elevate privileges or remove OS protections. Ask the user to install software through the normal path.",
+          "references": {
+            "owaspLlm": [
+              "LLM06:2025"
+            ],
+            "owaspAgentic": [
+              "ASI03:2026"
+            ],
+            "mitreAtlas": [],
+            "openCre": [
+              "368-633",
+              "330-281"
+            ]
+          },
+          "links": [
+            {
+              "label": "OWASP LLM06:2025 Excessive Agency",
+              "url": "https://genai.owasp.org/llmrisk/llm062025-excessive-agency/"
+            },
+            {
+              "label": "OpenCRE 368-633 Enforce least privilege",
+              "url": "https://www.opencre.org/cre/368-633"
+            },
+            {
+              "label": "OpenCRE 330-281 Use least privilege OS accounts for system (components)",
+              "url": "https://www.opencre.org/cre/330-281"
+            }
+          ]
+        },
+        {
+          "ruleId": "IH-PERSIST-001",
+          "severity": "high",
+          "confidence": "high",
+          "file": "SKILL.md",
+          "line": 69,
+          "evidence": "| Daemon not running | `sudo systemctl start docker` |",
+          "message": "A persistence mechanism is described or invoked.",
+          "remediation": "Remove the persistence step. A skill should not install itself into login or scheduler configuration.",
+          "references": {
+            "owaspLlm": [],
+            "owaspAgentic": [],
+            "mitreAtlas": [],
+            "openCre": [
+              "838-636"
+            ]
+          },
+          "links": [
+            {
+              "label": "OpenCRE 838-636 Check source code and third party libraries to not contain backdoors",
+              "url": "https://www.opencre.org/cre/838-636"
+            }
+          ]
+        },
+        {
+          "ruleId": "IH-PRIV-001",
+          "severity": "high",
+          "confidence": "high",
+          "file": "SKILL.md",
+          "line": 69,
+          "evidence": "| Daemon not running | `sudo systemctl start docker` |",
+          "message": "The file elevates privileges or disables an OS protection.",
+          "remediation": "Do not elevate privileges or remove OS protections. Ask the user to install software through the normal path.",
+          "references": {
+            "owaspLlm": [
+              "LLM06:2025"
+            ],
+            "owaspAgentic": [
+              "ASI03:2026"
+            ],
+            "mitreAtlas": [],
+            "openCre": [
+              "368-633",
+              "330-281"
+            ]
+          },
+          "links": [
+            {
+              "label": "OWASP LLM06:2025 Excessive Agency",
+              "url": "https://genai.owasp.org/llmrisk/llm062025-excessive-agency/"
+            },
+            {
+              "label": "OpenCRE 368-633 Enforce least privilege",
+              "url": "https://www.opencre.org/cre/368-633"
+            },
+            {
+              "label": "OpenCRE 330-281 Use least privilege OS accounts for system (components)",
+              "url": "https://www.opencre.org/cre/330-281"
+            }
+          ]
+        },
+        {
+          "ruleId": "IH-PRIV-001",
+          "severity": "high",
+          "confidence": "high",
+          "file": "SKILL.md",
+          "line": 82,
+          "evidence": "| Not installed / < 11 | `sudo apt install openjdk-11-jdk` |",
+          "message": "The file elevates privileges or disables an OS protection.",
+          "remediation": "Do not elevate privileges or remove OS protections. Ask the user to install software through the normal path.",
+          "references": {
+            "owaspLlm": [
+              "LLM06:2025"
+            ],
+            "owaspAgentic": [
+              "ASI03:2026"
+            ],
+            "mitreAtlas": [],
+            "openCre": [
+              "368-633",
+              "330-281"
+            ]
+          },
+          "links": [
+            {
+              "label": "OWASP LLM06:2025 Excessive Agency",
+              "url": "https://genai.owasp.org/llmrisk/llm062025-excessive-agency/"
+            },
+            {
+              "label": "OpenCRE 368-633 Enforce least privilege",
+              "url": "https://www.opencre.org/cre/368-633"
+            },
+            {
+              "label": "OpenCRE 330-281 Use least privilege OS accounts for system (components)",
+              "url": "https://www.opencre.org/cre/330-281"
+            }
+          ]
+        },
+        {
+          "ruleId": "IH-NET-001",
+          "severity": "medium",
+          "confidence": "medium",
+          "file": "SKILL.md",
+          "line": 67,
+          "evidence": "https://docs.docker.com/get-docker/",
+          "message": "Destination docs.docker.com is not in the allowlist.",
+          "remediation": "Declare the host in allowDomains, or in metadata.ironheights.allowDomains for this skill only. Prefer the official API host.",
+          "references": {
+            "owaspLlm": [
+              "LLM06:2025"
+            ],
+            "owaspAgentic": [],
+            "mitreAtlas": [],
+            "openCre": [
+              "814-322"
+            ]
+          },
+          "links": [
+            {
+              "label": "OWASP LLM06:2025 Excessive Agency",
+              "url": "https://genai.owasp.org/llmrisk/llm062025-excessive-agency/"
+            },
+            {
+              "label": "OpenCRE 814-322 Whitelist data sources and sinks",
+              "url": "https://www.opencre.org/cre/814-322"
+            }
+          ]
+        },
+        {
+          "ruleId": "IH-NET-001",
+          "severity": "medium",
+          "confidence": "medium",
+          "file": "SKILL.md",
+          "line": 75,
+          "evidence": "https://get.nextflow.io",
+          "message": "Destination get.nextflow.io is not in the allowlist.",
+          "remediation": "Declare the host in allowDomains, or in metadata.ironheights.allowDomains for this skill only. Prefer the official API host.",
+          "references": {
+            "owaspLlm": [
+              "LLM06:2025"
+            ],
+            "owaspAgentic": [],
+            "mitreAtlas": [],
+            "openCre": [
+              "814-322"
+            ]
+          },
+          "links": [
+            {
+              "label": "OWASP LLM06:2025 Excessive Agency",
+              "url": "https://genai.owasp.org/llmrisk/llm062025-excessive-agency/"
+            },
+            {
+              "label": "OpenCRE 814-322 Whitelist data sources and sinks",
+              "url": "https://www.opencre.org/cre/814-322"
+            }
+          ]
+        }
+      ],
+      "suppressed": [],
+      "suppressedCount": 0,
+      "suppressionRefused": [],
+      "suppressionRefusedCount": 0,
+      "score": 290,
+      "verdict": "block"
+    }
+  ]
+}

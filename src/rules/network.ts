@@ -201,9 +201,10 @@ const ENV_DUMP = /\b(?:printenv|process\.env|os\.environ|env\s*\|)\b/;
 const PROSE_EXFIL =
   /\b(?:send|post|upload|exfiltrat\w*|forward|transmit)\b[^\n]{0,240}https?:\/\/\S{1,300}|https?:\/\/\S{1,300}[^\n]{0,120}\b(?:send|post|upload|exfiltrat\w*|forward|transmit)\b/i;
 
-function checkNet002(file: ScannedFile): Finding[] {
+function checkNet002(file: ScannedFile, ctx: ScanContext): Finding[] {
   const findings: Finding[] = [];
   const lines = file.text.split(/\r?\n/);
+  const declared = ctx.skillDeclaredHosts ?? [];
   for (let i = 0; i < lines.length; i += 1) {
     const line = lines[i] ?? '';
     if (line.trim() === '') continue;
@@ -211,6 +212,7 @@ function checkNet002(file: ScannedFile): Finding[] {
     const window = lines.slice(Math.max(0, i - 2), Math.min(lines.length, i + 3)).join('\n');
     if (!hasSensitiveMarker(window) && !ENV_DUMP.test(window)) continue;
     if (ownApiAuthHeader(window, file.text)) continue;
+    if (declaredProductCall(window, declared)) continue;
     pushUnique(
       findings,
       createFinding(net002, file, {
@@ -441,6 +443,38 @@ function hostLabel(host: string): string {
  * skill documents as that key's own API. Issuer (env var prefix), destination host and documented
  * API host must all match. No credential file paths, no wholesale env dumps, no high-risk hosts.
  */
+/**
+ * The skill's own named API key, sent to a host it declares (homepage or metadata),
+ * with no credential file and no wholesale environment dump. An undeclared host stays.
+ */
+function declaredProductCall(window: string, declared: readonly string[]): boolean {
+  if (declared.length === 0 || hasSensitiveMarker(window)) return false;
+  const stripped = window.replace(SPECIFIC_ENV, ' ');
+  if (ENV_DUMP.test(stripped)) return false;
+  const issuers = [...window.matchAll(NAMED_SECRET)].map((match) =>
+    (match[1] ?? '').toLowerCase().replace(/_/g, ''),
+  );
+  if (issuers.length === 0) return false;
+  const urls = extractUrls(window);
+  if (urls.length === 0) return false;
+  for (const url of urls) {
+    if (badHost(url.host, url.raw) || isIp(url.host)) return false;
+    if (!declaredHost(url.host, declared)) return false;
+    const label = hostLabel(url.host);
+    if (label.length < 3) return false;
+    if (
+      !issuers.every(
+        (issuer) =>
+          issuer === label ||
+          (issuer.length >= 4 && (label.includes(issuer) || issuer.includes(label))),
+      )
+    ) {
+      return false;
+    }
+  }
+  return true;
+}
+
 export function ownApiAuthHeader(window: string, fullText: string): boolean {
   if (hasSensitiveMarker(window)) return false;
   if (!AUTH_HEADER.test(window)) return false;

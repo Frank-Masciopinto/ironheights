@@ -1,0 +1,7 @@
+Source: github:vercel-labs/portless/skills/portless/SKILL.md (real-world gate corpus; in the 275/5655 realworld-clean blocked list of the 0.33.0 gate, batch-2026-11-03b gate-main). Re-fetched from main 2026-11-09 (blob 1ac2c0a2).
+What it is: local dev reverse proxy giving apps named https://<name>.localhost URLs; documentation only.
+ironheights 0.34.0: BLOCK F 0, 13 findings. 7x IH-PRIV-001 on prose that explains when portless elevates with sudo (ports 80/443, state dir, clean) - incl. L174, the sentence describing the --unprivileged mode that runs WITHOUT sudo; IH-NET-001 high L292 on the sample output URL of the opt-in ngrok tunnel (https://abc123.ngrok.app); IH-NET-001 medium x2 on tailscale/ngrok download pages; IH-INTENT-001 medium L51 (auto-start); IH-INTENT-002 low; META.
+Counterfactual: 'sudo' -> 'admin rights' (12 occurrences) removes all 7 PRIV findings but stays BLOCK F 20 (NET-001 high on the ngrok example URL drives it).
+Class: honest disclosure of the tool's own privilege use (and of the no-sudo alternative) scored as privilege escalation; plus documented example output URLs read as destinations.
+Harmless: SKILL.md only, no scripts. Posted m/false-positives 2026-11-09.
+Fix idea (not implemented, no PR): PRIV-001 demote when sudo appears in descriptive prose about the documented tool's own behaviour (not an imperative command), and never on negated forms ('without sudo'); NET-001 skip URLs in a commented sample-output block. Needs full benchmark + look-alike gate.

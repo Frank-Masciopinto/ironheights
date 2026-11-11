@@ -42,6 +42,30 @@ function configOnlyMarker(line: string): boolean {
   return !READ_OUT.test(line);
 }
 
+/** `cp .env.example .env` in the same tree, with no send. The opposite direction stays. */
+function templateEnvCopy(line: string): boolean {
+  if (/\b(?:curl|wget|send|upload|post|scp|rsync)\b/i.test(line)) return false;
+  if (!/\bcp\b/i.test(line)) return false;
+  return /\.env\.(?:example|sample|template)\b[^\n]{0,200}\.env\b/i.test(line);
+}
+
+/** A quoted cache glob that names .env files, with no verb that reads the file. */
+function envGlobOnly(line: string): boolean {
+  if (READ_OUT.test(line)) return false;
+  return /["'`][^"'`\n]*\*\*\/\.env[^"'`\n]*["'`]/.test(line);
+}
+
+/**
+ * The tool's own cookie file, named but not read or sent. A `cat`/`curl` of that
+ * path stays high. Another secret on the same line stays high.
+ */
+function cookieStoreOnly(line: string): boolean {
+  if (READ_OUT.test(line) || /\bhttps?:\/\//i.test(line)) return false;
+  if (!/[\\/]cookies\b|cookies\.sqlite/i.test(line)) return false;
+  const stripped = line.replace(/[\\/]cookies\b/gi, ' ').replace(/cookies\.sqlite/gi, ' ');
+  return !hasSensitiveMarker(stripped);
+}
+
 export const cred001: Rule = {
   id: 'IH-CRED-001',
   title: 'Access to a sensitive path',
@@ -80,17 +104,22 @@ export const cred001: Rule = {
     eachLine(file.text, (line, lineNumber) => {
       if (!hasSensitiveMarker(line)) return;
       if (placeholderConfigComment(line) || isDescribedRegex(line)) return;
+      if (templateEnvCopy(line)) return;
       const config = configOnlyMarker(line);
+      const quiet = envGlobOnly(line) || cookieStoreOnly(line);
       pushUnique(
         findings,
         createFinding(cred001, file, {
           line: lineNumber,
           evidence: line,
-          message: config
-            ? 'The file points the agent at a config file that can hold credentials (openclaw.json or a .env file). Check that it is only configured, not read out or sent.'
-            : 'The file references a sensitive credential or secret path.',
-          confidence: config ? 'medium' : 'high',
-          ...(config ? { severity: 'medium' as const } : {}),
+          message: quiet
+            ? "The line names a cache glob or the tool's own cookie store and does not read or send it."
+            : config
+              ? 'The file points the agent at a config file that can hold credentials (openclaw.json or a .env file). Check that it is only configured, not read out or sent.'
+              : 'The file references a sensitive credential or secret path.',
+          confidence: quiet || config ? 'medium' : 'high',
+          ...(quiet ? { severity: 'low' as const, scoreExempt: true } : {}),
+          ...(config && !quiet ? { severity: 'medium' as const } : {}),
         }),
       );
     });

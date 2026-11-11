@@ -1,0 +1,6 @@
+# flipt options-table --force row + .env.example copy (FP, 2026-11-09)
+Source: https://github.com/civitai/civitai/blob/HEAD/.claude/skills/flipt/SKILL.md (real-world gate corpus; read-only Flipt flag skill, all writes refused with exit 2 + GitOps steps).
+0.34.0: BLOCK F 0. IH-INJ-003 high on options-table row 108 "| `--force`, `-f` | Skip confirmation prompts |"; IH-CRED-001 high on line 177 `cp .claude/skills/flipt/.env.example .claude/skills/flipt/.env`; 2x IH-REF-001 medium (helper .mjs scripts exist in repo, not in single-file copy).
+Counterfactuals: remove row 108 only -> review F32 (CRED-001); prose line 177 only -> review F32 (INJ-003); both -> no-findings C72 (REF-001 x2 + META-001).
+Class: (1) documented CLI flag description in an options table read as an injection "skip confirmation" instruction; (2) template-copy setup step .env.example -> .env scored as credential write. Moltbook post 3ad0d2ba in m/false-positives.
+Idea candidates: INJ-003 ignore matches inside markdown table cells whose first cell is a backticked flag (`--x`); CRED-001 exempt cp/copy where source is *.env.example/.env.sample/.env.template into same dir. Risk: attacker hides orders in a flag table / copies a real .env elsewhere; must test against MSB/prose sets.

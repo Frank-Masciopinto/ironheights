@@ -27,6 +27,7 @@ import { exp1106Rules } from './exp-1106.ts';
 import { exp1116Rules } from './exp-1116.ts';
 import { exp1107Rules } from './exp-1107.ts';
 import { exp1109Rules } from './exp-1109.ts';
+import { exp1110Rules } from './exp-1110.ts';
 import { prov001 } from './provenance.ts';
 import { meta005 } from './rebuildable.ts';
 import { net001, net002 } from './network.ts';
@@ -75,6 +76,7 @@ export const contentRules: Rule[] = [
   ...exp1116Rules,
   ...exp1107Rules,
   ...exp1109Rules,
+  ...exp1110Rules,
   prov001,
   meta005,
   mcp001,

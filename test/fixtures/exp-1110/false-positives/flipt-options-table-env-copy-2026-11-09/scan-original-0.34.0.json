@@ -1,0 +1,164 @@
+{
+  "schemaVersion": 1,
+  "tool": {
+    "name": "ironheights",
+    "version": "0.34.0"
+  },
+  "scannedAt": "2026-11-09T13:45:21.959Z",
+  "scannerVersion": "0.34.0",
+  "checkedAt": "2026-11-09T13:45:21.959Z",
+  "verdict": "block",
+  "skippedFileCount": 0,
+  "grade": {
+    "letter": "F",
+    "score": 0,
+    "disclaimer": "Absence of findings is not proof of safety."
+  },
+  "scanMode": "directory",
+  "summary": "ironheights 0.34.0 | flipt | grade F (0/100) | verdict block | 4 findings",
+  "badge": "[ironheights 0.34.0: grade F (0/100), verdict block](https://github.com/Frank-Masciopinto/ironheights) — Absence of findings is not proof of safety.",
+  "skills": [
+    {
+      "skillName": "flipt",
+      "root": "/tmp/fpc/flipt",
+      "filesScanned": 1,
+      "filesSkipped": [],
+      "skippedFileCount": 0,
+      "findings": [
+        {
+          "ruleId": "IH-INJ-003",
+          "severity": "high",
+          "confidence": "high",
+          "file": "SKILL.md",
+          "line": 108,
+          "evidence": "| `--force`, `-f` | Skip confirmation prompts |",
+          "message": "The skill tries to weaken approvals or change agent instructions.",
+          "remediation": "Refuse the change. Agent config and other skills should be edited only by the user.",
+          "references": {
+            "owaspLlm": [
+              "LLM06:2025"
+            ],
+            "owaspAgentic": [
+              "ASI03:2026",
+              "ASI06:2026"
+            ],
+            "mitreAtlas": [],
+            "openCre": [
+              "012-625",
+              "202-604"
+            ]
+          },
+          "links": [
+            {
+              "label": "OWASP LLM06:2025 Excessive Agency",
+              "url": "https://genai.owasp.org/llmrisk/llm062025-excessive-agency/"
+            },
+            {
+              "label": "OpenCRE 012-625 Indirect prompt injection",
+              "url": "https://www.opencre.org/cre/012-625"
+            },
+            {
+              "label": "OpenCRE 202-604 Human AI oversight",
+              "url": "https://www.opencre.org/cre/202-604"
+            }
+          ]
+        },
+        {
+          "ruleId": "IH-CRED-001",
+          "severity": "high",
+          "confidence": "high",
+          "file": "SKILL.md",
+          "line": 177,
+          "evidence": "cp .claude/skills/flipt/.env.example .claude/skills/flipt/.env",
+          "message": "The file references a sensitive credential or secret path.",
+          "remediation": "Do not read these paths from a skill. Use a scoped environment variable or the platform secret store.",
+          "references": {
+            "owaspLlm": [
+              "LLM02:2025"
+            ],
+            "owaspAgentic": [],
+            "mitreAtlas": [
+              "AML.T0055"
+            ],
+            "openCre": [
+              "368-633",
+              "881-321"
+            ]
+          },
+          "links": [
+            {
+              "label": "OWASP LLM02:2025 Sensitive Information Disclosure",
+              "url": "https://genai.owasp.org/llmrisk/llm022025-sensitive-information-disclosure/"
+            },
+            {
+              "label": "OpenCRE 368-633 Enforce least privilege",
+              "url": "https://www.opencre.org/cre/368-633"
+            },
+            {
+              "label": "OpenCRE 881-321 Store credentials securely",
+              "url": "https://www.opencre.org/cre/881-321"
+            }
+          ]
+        },
+        {
+          "ruleId": "IH-REF-001",
+          "severity": "medium",
+          "confidence": "medium",
+          "file": "SKILL.md",
+          "line": 15,
+          "evidence": "node .claude/skills/flipt/flipt.mjs <command> [options]",
+          "message": "SKILL.md runs claude/skills/flipt/flipt.mjs, but the skill does not ship it.",
+          "remediation": "Ship the file in the skill, fix the path, or remove the instruction. Agents should stop and ask the user when a referenced script is missing.",
+          "references": {
+            "owaspLlm": [
+              "LLM03:2025"
+            ],
+            "owaspAgentic": [
+              "ASI04:2026"
+            ],
+            "mitreAtlas": [],
+            "openCre": []
+          },
+          "links": [
+            {
+              "label": "OWASP LLM03:2025 Supply Chain",
+              "url": "https://genai.owasp.org/llmrisk/llm032025-supply-chain/"
+            }
+          ]
+        },
+        {
+          "ruleId": "IH-REF-001",
+          "severity": "medium",
+          "confidence": "medium",
+          "file": "SKILL.md",
+          "line": 206,
+          "evidence": "node .claude/skills/dev-server/cli.mjs wt env --backup # copies skill credentials outside the repo",
+          "message": "SKILL.md runs claude/skills/dev-server/cli.mjs, but the skill does not ship it.",
+          "remediation": "Ship the file in the skill, fix the path, or remove the instruction. Agents should stop and ask the user when a referenced script is missing.",
+          "references": {
+            "owaspLlm": [
+              "LLM03:2025"
+            ],
+            "owaspAgentic": [
+              "ASI04:2026"
+            ],
+            "mitreAtlas": [],
+            "openCre": []
+          },
+          "links": [
+            {
+              "label": "OWASP LLM03:2025 Supply Chain",
+              "url": "https://genai.owasp.org/llmrisk/llm032025-supply-chain/"
+            }
+          ]
+        }
+      ],
+      "suppressed": [],
+      "suppressedCount": 0,
+      "suppressionRefused": [],
+      "suppressionRefusedCount": 0,
+      "score": 110,
+      "verdict": "block"
+    }
+  ]
+}

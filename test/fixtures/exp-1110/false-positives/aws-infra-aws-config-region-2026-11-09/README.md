@@ -1,0 +1,6 @@
+# aws-infra: read-only AWS CLI skill blocked for naming ~/.aws/config as the region/profile fallback (FP, 2026-11-09)
+Source: ClawHub aws-infra (real-world gate corpus 0.33.0 blocked list; local copy registry-scan/work/skills/S0698/aws-infra). Read-only by default, confirmation before any write, "Never reveal or log secrets".
+0.34.0 original: BLOCK F 40, 2x IH-CRED-001 high (lines 12 and 33: "Determine profile/region from environment or `~/.aws/config`" / "fall back to `~/.aws/config`"). Nothing reads, prints or sends the file.
+Variants: path -> "the AWS CLI config file" = no-findings A95; drop line 12 mention only = review F55; swap line 33 to ~/.aws/credentials = still BLOCK F35 (3 findings) -> rule treats region/profile config the same as the credentials file.
+Class (new): non-secret CLI config file path (region/profile lookup) scored as a credential file; no read/print/upload verb. Related to baoyu ssh key path-as-config-value (e1fb96b9) but here the file holds no secrets at all.
+Idea: CRED-001 split ~/.aws/config (and similar config: ~/.kube/config contexts? careful, kubeconfig can hold tokens) from ~/.aws/credentials; downgrade bare path mentions with no read/cat/upload verb or network sink. Test on MSB/prose/blind + look-alikes (real aws skills that do cat ~/.aws/credentials).
