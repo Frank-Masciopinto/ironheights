@@ -2,9 +2,9 @@
  "note": "Aggregate only. sha256 is over sorted \"id:verdict\" lines; rerun the script to reproduce it.",
  "ironheights": {
   "version": "0.34.0",
-  "detect": "36.5% (219/600)",
-  "fp": "4.7% (14/300)",
-  "sha256": "2e52268139e9074aefd70dc185ee9f39f54d713db6e43a92ecee9013084f6cd2"
+  "detect": "55.8% (335/600)",
+  "fp": "4.3% (13/300)",
+  "sha256": "db81b9128be6c391a65245e99ebecd93c4770d53791abbfd451a939057c9aab8"
  },
  "cisco": {
   "version": "2.3.2",
