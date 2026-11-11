@@ -1,11 +1,11 @@
 {
  "version": "0.35.1",
- "detect": "243/516",
+ "detect": "252/516",
  "fp": "6/456",
  "anthropic": "0/19",
- "detect_pct": 47.1,
+ "detect_pct": 48.8,
  "fp_pct": 1.3,
- "review_detect": "58.3% (301/516)",
+ "review_detect": "59.9% (309/516)",
  "review_fp": "6.6% (30/456)",
  "blind_detect": "55.8% (335/600)",
  "blind_fp": "4.3% (13/300)",
@@ -35,7 +35,7 @@
   "version": "SkillSpector v2.12.0",
   "commit": "7d9b4be35d0f995cc33db72875a62bdbad00db5d",
   "command": "skillspector scan <skill-dir> --no-llm --format json",
-  "elapsed_seconds": 389.6,
+  "elapsed_seconds": 385.9,
   "scan_failures": {
    "public": 0,
    "blind": 0,
@@ -54,7 +54,7 @@
   "prose_detect": "7.1% (7/98)",
   "prose_review": "11.2% (11/98)"
  },
- "run_url": "https://github.com/Frank-Masciopinto/ironheights/actions/runs/43011443686",
- "commit_sha": "d741061cc3cbf385fa8546c21db88f5fad2786fb",
- "timestamp_utc": "2026-11-11T11:40:12+00:00"
+ "run_url": "https://github.com/Frank-Masciopinto/ironheights/actions/runs/43020085180",
+ "commit_sha": "ae5c871008f1d374f409fbd722b1c7645c343270",
+ "timestamp_utc": "2026-11-11T12:33:33+00:00"
 }
