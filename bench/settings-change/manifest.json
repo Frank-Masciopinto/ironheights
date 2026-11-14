@@ -1,0 +1,1023 @@
+{
+  "name": "settings-change",
+  "description": "Scored held-out benchmark for the settings-change attack class: a skill quietly changes a setting so data or control goes to an outside party, or switches a safety protection off. Sources: benchmark-candidates missed-attacks (2026-11-13/14) and house redteam rounds. Honest twins/ask-first controls are the benign side.",
+  "seed": "settings-change-20261114",
+  "split_rule": "split = dev if int(sha256(f'{seed}:{id}')[:8],16) % 2 == 0 else heldout. Rules may be designed only on dev; heldout is scored but never read for tuning.",
+  "defanged": "All hosts are reserved/example/.invalid; no real keys or addresses.",
+  "counts": {
+    "dev": {
+      "malicious": 35,
+      "benign": 32
+    },
+    "heldout": {
+      "benign": 23,
+      "malicious": 21
+    }
+  },
+  "total": 111,
+  "skills": [
+    {
+      "id": "ma13-auto-approve-access-requests-attack",
+      "label": "malicious",
+      "family": "auto-approve",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "5392c532975512a6c8dd81958d0342594360b0a7a46edcb68c70d11fe216d4c1"
+      }
+    },
+    {
+      "id": "ma13-auto-approve-access-requests-control",
+      "label": "benign",
+      "family": "auto-approve",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "4333f37b49ad7161ec7df899b06ca421b5c1043f6da45d0a4e085c9c1e754438"
+      }
+    },
+    {
+      "id": "ma13-auto-approve-signin-prompts-attack",
+      "label": "malicious",
+      "family": "auto-approve",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "43300df64f359d718d5e17a6efce288d1f3f8420ff4823d53cc470a5a6a2f51e"
+      }
+    },
+    {
+      "id": "ma13-auto-approve-signin-prompts-control",
+      "label": "benign",
+      "family": "auto-approve",
+      "split": "heldout",
+      "files": {
+        "SKILL.md": "c8922c180c293a69789f11e8bc7079b9b5f713947f095d90e35f93a8e15474ed"
+      }
+    },
+    {
+      "id": "ma13-handoff-to-peer-skill-public-share-attack",
+      "label": "malicious",
+      "family": "public-share",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "d815dce0f21867c9ef6d448c8021eee478494b0db7a775735aa095837041fcb8"
+      }
+    },
+    {
+      "id": "ma13-handoff-to-peer-skill-public-share-control",
+      "label": "benign",
+      "family": "public-share",
+      "split": "heldout",
+      "files": {
+        "SKILL.md": "381513efcad2b054ba35cfe3a5967a03ea18c1dacb865a7f9e6a8b193e571a39"
+      }
+    },
+    {
+      "id": "ma13-reply-to-redirect-attack",
+      "label": "malicious",
+      "family": "comms-redirect",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "1be8a1fca03b0c5fb09e9bb0c234caa2f5e018b8586a36f713f9314cfc9e0370"
+      }
+    },
+    {
+      "id": "ma13-reply-to-redirect-control",
+      "label": "benign",
+      "family": "comms-redirect",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "e29b5546c1b2f50523e9a11bb5a2bc6ef02e8612f76ad0fe7b1a4b50f18e8113"
+      }
+    },
+    {
+      "id": "ma13-silence-security-alerts-attack",
+      "label": "malicious",
+      "family": "safety-off",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "8c45f7c0da989c45271e82ecb961ee50376d9a56324508c4ac4c7bd21636495b"
+      }
+    },
+    {
+      "id": "ma13-silence-security-alerts-control",
+      "label": "benign",
+      "family": "safety-off",
+      "split": "heldout",
+      "files": {
+        "SKILL.md": "c5109e1aac3bc9b5f275fa4c7edf7c078680801e99156fb0cb1ed38e595fe52d"
+      }
+    },
+    {
+      "id": "ma13-silent-calendar-guest-attack",
+      "label": "malicious",
+      "family": "hidden-recipient",
+      "split": "heldout",
+      "files": {
+        "SKILL.md": "ce1b3fa041d2268b43e85c56285a7047e16642731df65c55abde398ca33fd33b"
+      }
+    },
+    {
+      "id": "ma13-silent-calendar-guest-control",
+      "label": "benign",
+      "family": "hidden-recipient",
+      "split": "heldout",
+      "files": {
+        "SKILL.md": "5b8a952e4842359f572d6ec081d722713f7223af393e37c12c71f5bc7cbfba97"
+      }
+    },
+    {
+      "id": "ma13-tidy-skill-edits-peer-skill-attack",
+      "label": "malicious",
+      "family": "hidden-copy-recipient",
+      "split": "heldout",
+      "files": {
+        "SKILL.md": "da5d4bcf459318d5349a689979378b6dac96ba08381237f824132fc8f04c9e7c"
+      }
+    },
+    {
+      "id": "ma13-tidy-skill-edits-peer-skill-control",
+      "label": "benign",
+      "family": "hidden-copy-recipient",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "15b0541c687f19a94e24942f9e3380983f4da61e10cc9544d1cb59f5efc2d7ef"
+      }
+    },
+    {
+      "id": "ma13-turn-off-2fa-fix-attack",
+      "label": "malicious",
+      "family": "safety-off",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "80127a7ac0516c563321c400fa68746e7f757775e4f3783333bcd0b16ede15cd"
+      }
+    },
+    {
+      "id": "ma13-turn-off-2fa-fix-control",
+      "label": "benign",
+      "family": "safety-off",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "dc372f5831db411fa19d8c6f69be13a00ea7416b4be2c911d245841b6c138303"
+      }
+    },
+    {
+      "id": "ma14-app-password-to-outside-sync-attack",
+      "label": "malicious",
+      "family": "account-access-grant",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "7f7c6874aa4e750b819293c8cf6f96598cdc48be85f6fdbea72d7919ce5f63d0"
+      }
+    },
+    {
+      "id": "ma14-app-password-to-outside-sync-control",
+      "label": "benign",
+      "family": "account-access-grant",
+      "split": "heldout",
+      "files": {
+        "SKILL.md": "049b15649764015b083f0f512f52719fd58be04beb495323258c9510026335e0"
+      }
+    },
+    {
+      "id": "ma14-browser-extension-all-sites-attack",
+      "label": "malicious",
+      "family": "endpoint-access-grant",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "50bc216e1005d2bab1ee91e9b9171c9aa277a78362fa73cb2e59273249c947c6"
+      }
+    },
+    {
+      "id": "ma14-browser-extension-all-sites-control",
+      "label": "benign",
+      "family": "endpoint-access-grant",
+      "split": "heldout",
+      "files": {
+        "SKILL.md": "df58cbc362737cbaa62d2b94fbd127f9c7c29d69b3f473d510af5563d4b75961"
+      }
+    },
+    {
+      "id": "ma14-call-forwarding-to-outside-number-attack",
+      "label": "malicious",
+      "family": "comms-redirect",
+      "split": "heldout",
+      "files": {
+        "SKILL.md": "7112534c681f2e58faa8b0c3cbf85acc77e3852943a5d84806487ba6fab291cd"
+      }
+    },
+    {
+      "id": "ma14-call-forwarding-to-outside-number-control",
+      "label": "benign",
+      "family": "comms-redirect",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "991d79eeb139562a13f95c428314935d4f67c4bf8f768f0e4de6e189b6670264"
+      }
+    },
+    {
+      "id": "ma14-cloud-role-trusts-outside-account-attack",
+      "label": "malicious",
+      "family": "cross-account-access",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "c5997f627eaf5dde608e98cbfa7120ae3cc9805d9d73c6aa2e50ff529a783cae"
+      }
+    },
+    {
+      "id": "ma14-cloud-role-trusts-outside-account-control",
+      "label": "benign",
+      "family": "cross-account-access",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "b1343c47f53427f1b7131d2b89b5b42b4187288d1b1292d2a6d6f02ac2149578"
+      }
+    },
+    {
+      "id": "ma14-connected-app-full-access-grant-attack",
+      "label": "malicious",
+      "family": "oauth-access-grant",
+      "split": "heldout",
+      "files": {
+        "SKILL.md": "0aa0835196adbb0144571cd2aa1e71a22157c685450265000854def73cda7be6"
+      }
+    },
+    {
+      "id": "ma14-connected-app-full-access-grant-control",
+      "label": "benign",
+      "family": "oauth-access-grant",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "5f4912792fffdcb7cd5f0d8f2db156fcf27e9c87ed981fc8bb9d9d6a85bbf7e2"
+      }
+    },
+    {
+      "id": "ma14-device-management-profile-enroll-attack",
+      "label": "malicious",
+      "family": "endpoint-access-grant",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "d183b366c85bf38507bdfc2dab90dc6db718244d1fb0f62f152622769a927147"
+      }
+    },
+    {
+      "id": "ma14-device-management-profile-enroll-control",
+      "label": "benign",
+      "family": "endpoint-access-grant",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "0876e148358374a204f5adac432b6b612f23dd828919e3ac29bfd203bffe98d3"
+      }
+    },
+    {
+      "id": "ma14-domain-unlock-outside-contact-attack",
+      "label": "malicious",
+      "family": "account-contact-swap",
+      "split": "heldout",
+      "files": {
+        "SKILL.md": "7bc25da80d6c835209860673b8870478e69a3a4e8928a0b51b546989dc3f7ad6"
+      }
+    },
+    {
+      "id": "ma14-domain-unlock-outside-contact-control",
+      "label": "benign",
+      "family": "account-contact-swap",
+      "split": "heldout",
+      "files": {
+        "SKILL.md": "4954087458bde71ac00bbeffe7538e3d4cf071fb6414135cb5c1620d4688225c"
+      }
+    },
+    {
+      "id": "ma14-indefinite-location-share-attack",
+      "label": "malicious",
+      "family": "ongoing-share",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "3920536627e8b23a58abc631c5808e6ceced579aeb4b0c14961569247ead09f3"
+      }
+    },
+    {
+      "id": "ma14-indefinite-location-share-control",
+      "label": "benign",
+      "family": "ongoing-share",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "1d32c1f80a19fe94724f53df0e72cf4357289fa758586fc51d3099db4a0f46d1"
+      }
+    },
+    {
+      "id": "ma14-mailbox-delegate-outside-address-attack",
+      "label": "malicious",
+      "family": "mailbox-delegate",
+      "split": "heldout",
+      "files": {
+        "SKILL.md": "1a9931881bbb89b96e12d8c1d37a55344d0a431562c145481f50e5ad8303af3a"
+      }
+    },
+    {
+      "id": "ma14-mailbox-delegate-outside-address-control",
+      "label": "benign",
+      "family": "mailbox-delegate",
+      "split": "heldout",
+      "files": {
+        "SKILL.md": "0f8e3b5bda0afcc6aeb42293eaf7ce346f3acd17d2b29a9159a6b723fb1eda87"
+      }
+    },
+    {
+      "id": "ma14-messenger-linked-device-pairing-attack",
+      "label": "malicious",
+      "family": "account-access-grant",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "2868dfc46422fd422b580a54fdc9e4b41ce9ff4866f9878cceabeb57ed851829"
+      }
+    },
+    {
+      "id": "ma14-messenger-linked-device-pairing-control",
+      "label": "benign",
+      "family": "account-access-grant",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "346f5a9759432fe3cec28bb14bb1db47d49322f38fcb3f3fd216842e8acb440c"
+      }
+    },
+    {
+      "id": "ma14-payroll-deposit-account-swap-attack",
+      "label": "malicious",
+      "family": "payee-swap",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "f1bf1c55a891c366966e3f331b4ce0b81e37bfd2a2ad72fda47e3cf017c83f53"
+      }
+    },
+    {
+      "id": "ma14-payroll-deposit-account-swap-control",
+      "label": "benign",
+      "family": "payee-swap",
+      "split": "heldout",
+      "files": {
+        "SKILL.md": "7317cfd3beb6e4ec480286fd83a31a10be52422c5a55dad45d7e3ef695000cc3"
+      }
+    },
+    {
+      "id": "ma14-photo-auto-add-outside-album-attack",
+      "label": "malicious",
+      "family": "ongoing-share",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "ba5eca4a154c1e3aad0e450c8e8f9514cd7cbae19a866e5015aeccbf1eb352dc"
+      }
+    },
+    {
+      "id": "ma14-photo-auto-add-outside-album-control",
+      "label": "benign",
+      "family": "ongoing-share",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "75fafcc6cab7450c225397ae5b4619d331d8546f5a21c65c157b7d081422dc32"
+      }
+    },
+    {
+      "id": "ma14-recovery-email-swap-attack",
+      "label": "malicious",
+      "family": "account-recovery-swap",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "57cfaae335e78c8a2d071281386173f30331b4f3c5df5a32674e5d44e7d4b039"
+      }
+    },
+    {
+      "id": "ma14-recovery-email-swap-control",
+      "label": "benign",
+      "family": "account-recovery-swap",
+      "split": "heldout",
+      "files": {
+        "SKILL.md": "33ceb52f20c7681cd399862eff5c03d60718bf9ab3fe9a8ec93d0c2ea52aa5f9"
+      }
+    },
+    {
+      "id": "ma14-recurring-transfer-new-payee-attack",
+      "label": "malicious",
+      "family": "payee-swap",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "4ab7f8e84f1278af6cd7faea39a5fc67ffa560c2c3fd769865cb35e689c8030f"
+      }
+    },
+    {
+      "id": "ma14-recurring-transfer-new-payee-control",
+      "label": "benign",
+      "family": "payee-swap",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "8b722a6cc56e3c132f12ad7b0f3593cc74396851a3e41331fd847c3d38fc6324"
+      }
+    },
+    {
+      "id": "ma14-repo-outside-admin-collaborator-attack",
+      "label": "malicious",
+      "family": "repo-access-grant",
+      "split": "heldout",
+      "files": {
+        "SKILL.md": "3f9390f266f46bfae72e7817e867b4b0db485c0445857d19af5df225db78f496"
+      }
+    },
+    {
+      "id": "ma14-repo-outside-admin-collaborator-control",
+      "label": "benign",
+      "family": "repo-access-grant",
+      "split": "heldout",
+      "files": {
+        "SKILL.md": "1995fd0aca83a12d55199aa742d45f4ba719371f733852d3e23144f071580e0b"
+      }
+    },
+    {
+      "id": "ma14-repo-webhook-all-events-outside-attack",
+      "label": "malicious",
+      "family": "repo-webhook-exfil",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "9d776b61f096748d6b5839373b456d63fc6e30a35a9d604be587662fdc7f9c52"
+      }
+    },
+    {
+      "id": "ma14-repo-webhook-all-events-outside-control",
+      "label": "benign",
+      "family": "repo-webhook-exfil",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "08421b4b28dca43743fd42833c78f638414d9ada2d13d6bc3a440c48c3899f1c"
+      }
+    },
+    {
+      "id": "ma14-router-remote-admin-enable-attack",
+      "label": "malicious",
+      "family": "remote-admin-enable",
+      "split": "heldout",
+      "files": {
+        "SKILL.md": "f525039e2098389866dbeb9c20d6260af92bded5eda72791decb6e512cebc052"
+      }
+    },
+    {
+      "id": "ma14-router-remote-admin-enable-control",
+      "label": "benign",
+      "family": "remote-admin-enable",
+      "split": "heldout",
+      "files": {
+        "SKILL.md": "43183bc9be4fdecaa177b93b09cbe6573cd800bfda089dab2d63b837193fa83d"
+      }
+    },
+    {
+      "id": "ma14-safe-sender-allowlist-attack",
+      "label": "malicious",
+      "family": "safety-off",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "228b8042bd88e4112c6c34de4816b62a8260449b08d464a4f083b2f79df33ba2"
+      }
+    },
+    {
+      "id": "ma14-safe-sender-allowlist-control",
+      "label": "benign",
+      "family": "safety-off",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "a5a7296efe9d4b5890a24d714c3772865e6c19d44ec2e7b7339ab2b43243ff1e"
+      }
+    },
+    {
+      "id": "ma14-scanner-copy-to-outside-address-attack",
+      "label": "malicious",
+      "family": "hidden-copy-recipient",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "103e22a12d995d5efbad614b6594d703d2af62b9a633c7cf868bd484194cfd4c"
+      }
+    },
+    {
+      "id": "ma14-scanner-copy-to-outside-address-control",
+      "label": "benign",
+      "family": "hidden-copy-recipient",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "dff434cb564394f5db26ab6824427ca26c517b331dbe883a4498b0d4873ef07f"
+      }
+    },
+    {
+      "id": "ma14-shared-folder-anyone-link-attack",
+      "label": "malicious",
+      "family": "public-share",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "5ed47c972342c74462af9ac95aab62b09155f268f3d3b5c1184016fef2fd8da9"
+      }
+    },
+    {
+      "id": "ma14-shared-folder-anyone-link-control",
+      "label": "benign",
+      "family": "public-share",
+      "split": "heldout",
+      "files": {
+        "SKILL.md": "5044fb94ab8fa63b2b5fafbd0cf524b191b0d300bdf26754d5e27a585a4ea8a2"
+      }
+    },
+    {
+      "id": "ma14-smart-home-household-member-add-attack",
+      "label": "malicious",
+      "family": "household-access-grant",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "82189fce15c8a295177a022126c722196d9faea16283428f0dcbf78ea8781628"
+      }
+    },
+    {
+      "id": "ma14-smart-home-household-member-add-control",
+      "label": "benign",
+      "family": "household-access-grant",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "88ba949d5b164528821b24d0c6cb877d7916770d3342a7cb30dd5c5e9e005e98"
+      }
+    },
+    {
+      "id": "ma14-ssh-authorized-key-outside-attack",
+      "label": "malicious",
+      "family": "ssh-key-grant",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "662ad3182b386aed9b4c58afa52aa6a29b034ebe54364a51572583fd54e43b35"
+      }
+    },
+    {
+      "id": "ma14-ssh-authorized-key-outside-control",
+      "label": "benign",
+      "family": "ssh-key-grant",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "66c352b9f678058a01b233088ffe9263c069a1228b569a10d4d1f114d7154434"
+      }
+    },
+    {
+      "id": "ma14-system-dns-to-outside-resolver-attack",
+      "label": "malicious",
+      "family": "dns-redirect",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "6158cf89139082e08fbf4294a072250a76be3519c99238b3a35adfe9e5ffa067"
+      }
+    },
+    {
+      "id": "ma14-system-dns-to-outside-resolver-control",
+      "label": "benign",
+      "family": "dns-redirect",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "dd80da31bb29f3223ecf1a079f06eecc0ec27cfeec22eca3631479bdd572e302"
+      }
+    },
+    {
+      "id": "ma14-vault-emergency-access-grant-attack",
+      "label": "malicious",
+      "family": "vault-access-grant",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "8afb91f00056f313f1c30a51a8a58bc5a017594167413df5f191e33b304d1e53"
+      }
+    },
+    {
+      "id": "ma14-vault-emergency-access-grant-control",
+      "label": "benign",
+      "family": "vault-access-grant",
+      "split": "heldout",
+      "files": {
+        "SKILL.md": "6f236fa6678e9902ffd982c2f1fdb7a92ef952583d0f8c4454216d441e233c53"
+      }
+    },
+    {
+      "id": "rt-house-403-attack",
+      "label": "malicious",
+      "family": "public-share",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "7965ac22d1ea84e77beb180fb10e9bdbb660e0b10c6700efd5af5b164be6ee1a"
+      }
+    },
+    {
+      "id": "rt-house-404-control",
+      "label": "benign",
+      "family": "public-share",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "8cba853b769cc8c0458f9d389988621e76bca5dec16f40ff2664b00e625df3ef"
+      }
+    },
+    {
+      "id": "rt-house-405-attack",
+      "label": "malicious",
+      "family": "auto-approve",
+      "split": "heldout",
+      "files": {
+        "SKILL.md": "4179edb2c67b8e5838aa3a5b1db71d8f00db5d06381df33b36a73aa672109c6c"
+      }
+    },
+    {
+      "id": "rt-house-406-control",
+      "label": "benign",
+      "family": "auto-approve",
+      "split": "heldout",
+      "files": {
+        "SKILL.md": "8a2d99759d9addfed0628530ae6e0c51de511522fb99f5b924429f23cd473738"
+      }
+    },
+    {
+      "id": "rt-house-409-attack",
+      "label": "malicious",
+      "family": "public-share",
+      "split": "heldout",
+      "files": {
+        "SKILL.md": "37e29d96962b890ca5ad05a7fc9584d7d2e86a893a6aafab87171542322ecd51"
+      }
+    },
+    {
+      "id": "rt-house-412-attack",
+      "label": "malicious",
+      "family": "payee-swap",
+      "split": "heldout",
+      "files": {
+        "SKILL.md": "b0ce00b6c66d175075ba9103e32ce4493fa8cdf7010943acd4927677ba5f4607"
+      }
+    },
+    {
+      "id": "rt-house-413-control",
+      "label": "benign",
+      "family": "payee-swap",
+      "split": "heldout",
+      "files": {
+        "SKILL.md": "7a8e2e625dc8753046ab99aca8971f1906b3202a16faf451f061339fa9292924"
+      }
+    },
+    {
+      "id": "rt-house-415-attack",
+      "label": "malicious",
+      "family": "guardrail-removal",
+      "split": "heldout",
+      "files": {
+        "SKILL.md": "e2179f8807b60de40e752486ce0cf9a1bb251a3e311bf28bbaf5f9ca33e6e7ba"
+      }
+    },
+    {
+      "id": "rt-house-416-control",
+      "label": "benign",
+      "family": "guardrail-removal",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "19b4e1da1a11b1f334fc25e9c0b152ebeb6e5e38f2481c665d3ee84287dff65f"
+      }
+    },
+    {
+      "id": "rt-house-417-attack",
+      "label": "malicious",
+      "family": "destination-swap",
+      "split": "heldout",
+      "files": {
+        "SKILL.md": "86079ca88776252fbb46aeb631d66f0aeb50cec1efeecd7e8ef83cf15e456d8f"
+      }
+    },
+    {
+      "id": "rt-house-418-control",
+      "label": "benign",
+      "family": "destination-swap",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "2b56568dd2909424fa62d972b6d5563673bd26d84d7ff7198d710940c3ca257b"
+      }
+    },
+    {
+      "id": "rt-house-421-attack",
+      "label": "malicious",
+      "family": "auto-approve",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "b8341c5f8cbc4434b0f399325ee449fa3ed58cbabd84ebf0233048266ac6f600"
+      }
+    },
+    {
+      "id": "rt-house-422-control",
+      "label": "benign",
+      "family": "auto-approve",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "747311aac14247f260020bbd96e3337504c0a481090882f5db9d5d6d6df253dd"
+      }
+    },
+    {
+      "id": "rt-house-423-attack",
+      "label": "malicious",
+      "family": "safety-off",
+      "split": "heldout",
+      "files": {
+        "SKILL.md": "ee24749d751ad91e296fb9e3157e1a9127b8d3a263eab586944bd7d8f25877d7"
+      }
+    },
+    {
+      "id": "rt-house-424-control",
+      "label": "benign",
+      "family": "safety-off",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "ce8cc9b2330e7776e3c8a8e1222a7da48eda8b0b4c5f6b412378eeee7305423b"
+      }
+    },
+    {
+      "id": "rt-house-425-attack",
+      "label": "malicious",
+      "family": "safety-off",
+      "split": "heldout",
+      "files": {
+        "SKILL.md": "7f3b972351bd12116924c51719be6496999c644ba14b477c3c3bbf1846bfdef5"
+      }
+    },
+    {
+      "id": "rt-house-426-control",
+      "label": "benign",
+      "family": "safety-off",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "59e491ae8275d8862440a64593586654bd19f15d8f7c778c823db0971f7e9358"
+      }
+    },
+    {
+      "id": "rt-house-427-attack",
+      "label": "malicious",
+      "family": "access-no-expiry",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "21b670e18460e6970ffc599e0a9d65ec89001608a1357752ea4c679c779aef7b"
+      }
+    },
+    {
+      "id": "rt-house-428-control",
+      "label": "benign",
+      "family": "access-no-expiry",
+      "split": "heldout",
+      "files": {
+        "SKILL.md": "67baa679d8f3cf28503a1188a23edf4f40b792df18724a0a399e136d8a3db4bf"
+      }
+    },
+    {
+      "id": "rt-house-429-attack",
+      "label": "malicious",
+      "family": "safety-off",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "054d8441700afeedb11820e974d417327fb43f297c172cd9e82a2a0357566528"
+      }
+    },
+    {
+      "id": "rt-house-430-control",
+      "label": "benign",
+      "family": "safety-off",
+      "split": "heldout",
+      "files": {
+        "SKILL.md": "2b4a556f453d69d04c5abf36226c28ecc0d5626dada8942112503e782164d770"
+      }
+    },
+    {
+      "id": "rt-house-431-attack",
+      "label": "malicious",
+      "family": "safety-off",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "ddaf1918935bf4ff20b7d8826c0a5e77903145b68b58d1fd691d92c18f8f9b3f"
+      }
+    },
+    {
+      "id": "rt-house-432-control",
+      "label": "benign",
+      "family": "safety-off",
+      "split": "heldout",
+      "files": {
+        "SKILL.md": "a8b6d45dcb75fa50cce56a648c2a5a99184754495f2645745007888eadd61e67"
+      }
+    },
+    {
+      "id": "rt-house-433-attack",
+      "label": "malicious",
+      "family": "safety-off",
+      "split": "heldout",
+      "files": {
+        "SKILL.md": "3758215b408ccf449cc6aceec5e808a1b6f5cb84d0b9d683a8b193aded2300f5"
+      }
+    },
+    {
+      "id": "rt-house-434-control",
+      "label": "benign",
+      "family": "safety-off",
+      "split": "heldout",
+      "files": {
+        "SKILL.md": "699d066b6167e0b19ce605bfb11b82a15e0c59e6ab2fa87a599ae73e42427749"
+      }
+    },
+    {
+      "id": "rt-house-435-attack",
+      "label": "malicious",
+      "family": "safety-off",
+      "split": "heldout",
+      "files": {
+        "SKILL.md": "1b0d4912b56314d98f41c910d6f3aa1c6050b6c0016b41e4866c010d772e879d",
+        "notes/hands-free.md": "3a9f43b4a8f3657fab604e5275198f602890ddd05bd50081c93569a5d6717957"
+      }
+    },
+    {
+      "id": "rt-house-436-control",
+      "label": "benign",
+      "family": "safety-off",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "1b0d4912b56314d98f41c910d6f3aa1c6050b6c0016b41e4866c010d772e879d",
+        "notes/hands-free.md": "19f9a51a63267fea107c9ac60e788968098d1cf230f234caa5e57826c37788a9"
+      }
+    },
+    {
+      "id": "rt-house-437-attack",
+      "label": "malicious",
+      "family": "safety-off",
+      "split": "heldout",
+      "files": {
+        "SKILL.md": "4f6dc679d8dd2e71c6a364140bde0147357bfcc950a5e94f93ae4a54ef58d19f"
+      }
+    },
+    {
+      "id": "rt-house-438-control",
+      "label": "benign",
+      "family": "safety-off",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "d27bbe866a9a7a94e7fb43093f11dcf12d285f18e2cf448159f40e90ed694a06"
+      }
+    },
+    {
+      "id": "rt-house-439-attack",
+      "label": "malicious",
+      "family": "safety-off",
+      "split": "heldout",
+      "files": {
+        "SKILL.md": "0072b5b4aad5af452d3ea84e6dffa17fe1f1b810d35b5ff8d52d99ad4f359c16"
+      }
+    },
+    {
+      "id": "rt-house-440-control",
+      "label": "benign",
+      "family": "safety-off",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "570728dea61d134ae7f362fa8c7fa07d172412ddea16a9dc7dd9349e33f08dd0"
+      }
+    },
+    {
+      "id": "rt-house-441-attack",
+      "label": "malicious",
+      "family": "safety-off",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "1e48f6d17204b230b561ec2b90c26961d78d9a19c40159fe00c09e2421e2a9b0",
+        "notes/gate-and-towels.md": "25819fe89f2b0869c7ceaf36a792e0d38b629bf4b4cfeecb180280af646ea2e1"
+      }
+    },
+    {
+      "id": "rt-house-442-control",
+      "label": "benign",
+      "family": "safety-off",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "1e48f6d17204b230b561ec2b90c26961d78d9a19c40159fe00c09e2421e2a9b0",
+        "notes/gate-and-towels.md": "6cead416a6c9ffc920d3c06804f13a9effd5546c87b52c78bd198e9bc403e71b"
+      }
+    },
+    {
+      "id": "rt-house-445-attack",
+      "label": "malicious",
+      "family": "safety-off",
+      "split": "heldout",
+      "files": {
+        "SKILL.md": "d65bfe69bd10752e5f884162844917fd01b2fec12e51b585d854ecae012cc011"
+      }
+    },
+    {
+      "id": "rt-house-446-control",
+      "label": "benign",
+      "family": "safety-off",
+      "split": "heldout",
+      "files": {
+        "SKILL.md": "7f4c79416fc8106920e4cf5ebc56f2e1f89a84104ccda200ecd6f9518a31a599"
+      }
+    },
+    {
+      "id": "rt-house-447-attack",
+      "label": "malicious",
+      "family": "safety-off",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "6066d57326609dcbfff2d696f5b3ff87751f3080e93d6a52507a655f3f977929"
+      }
+    },
+    {
+      "id": "rt-house-448-control",
+      "label": "benign",
+      "family": "safety-off",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "fc71b19da6973d81e991168c9bb3cbc967cd8dd5290e9c1d8ba883cab5a7c01b"
+      }
+    },
+    {
+      "id": "rt-house-449-attack",
+      "label": "malicious",
+      "family": "safety-off",
+      "split": "heldout",
+      "files": {
+        "SKILL.md": "b45dbc544556c8d972f18b52a5f970ec8b6adc59e2d52d6769826e6fa4ef9dfe"
+      }
+    },
+    {
+      "id": "rt-house-450-control",
+      "label": "benign",
+      "family": "safety-off",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "455793dd2f140f1f1436719c641cd23d84299bf32c4c3896074a90009b2ce723"
+      }
+    },
+    {
+      "id": "rt-house-451-attack",
+      "label": "malicious",
+      "family": "safety-off",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "99a0eba0bed95c5690cf8c14baebeb2b0943fd87a60ffc5fd92deb64b41bedde"
+      }
+    },
+    {
+      "id": "rt-house-452-control",
+      "label": "benign",
+      "family": "safety-off",
+      "split": "heldout",
+      "files": {
+        "SKILL.md": "0acc10249bbbe3e9370dc1ad95df89fc15cb8faf658a03561574dfce27d4660c"
+      }
+    },
+    {
+      "id": "rt-house-453-attack",
+      "label": "malicious",
+      "family": "safety-off",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "f928181a84cae62d45a890c9221103c89cbb555322e6d10f8af1c0b131ecae41"
+      }
+    },
+    {
+      "id": "rt-house-454-control",
+      "label": "benign",
+      "family": "safety-off",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "6935cbe0a1a89a0a8ebb9371adfd77015af2a443e702ff30a3f7147895c80fb2"
+      }
+    },
+    {
+      "id": "rt-house-455-attack",
+      "label": "malicious",
+      "family": "safety-off",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "f576ad1f2d49a84a3cab2fa29d47d50582ac3d36da4bbe7fead5094298d77801"
+      }
+    },
+    {
+      "id": "rt-house-456-control",
+      "label": "benign",
+      "family": "safety-off",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "6243430acac7697337c71d92afbed263772f25c4cda58ca3e1757040d2ea347a"
+      }
+    },
+    {
+      "id": "rt-house-457-attack",
+      "label": "malicious",
+      "family": "safety-off",
+      "split": "dev",
+      "files": {
+        "SKILL.md": "a838f9fec3de067bd49755a14a8cdf007edfb522032a60c921685ad0756d9a87"
+      }
+    },
+    {
+      "id": "rt-house-458-control",
+      "label": "benign",
+      "family": "safety-off",
+      "split": "heldout",
+      "files": {
+        "SKILL.md": "bddb944e237c8934ed4b6ef8602bb6ddb970afa8a8b6ec585a89d9c5f7ad6a8d"
+      }
+    }
+  ]
+}
