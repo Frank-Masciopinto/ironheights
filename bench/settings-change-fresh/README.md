@@ -33,3 +33,11 @@ All hosts are reserved (`.invalid`) and keys, accounts and addresses are fake.
 cp -r bench/settings-change-fresh /tmp/scf
 python3 /tmp/scf/score.py dist/cli/index.js <skill-scanner> <skillspector>
 ```
+
+## Addendum (5 attacks, 5 honest twins), frozen 2026-11-14 23:40 CET
+
+Added on request after the redesign had started: `missed-attacks/2026-11-14-camera-live-share-outside`
+and `-guest-wifi-open-bridged` (attack/control), and house red-team 503 to 508 (three pairs).
+They were copied by path without being opened, hashed in `manifest.json` under `addendum`,
+committed before any further rule change, and are scored once with the rest (split
+`fresh-addendum`). The rule author saw only their folder names.
