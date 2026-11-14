@@ -22,6 +22,10 @@ export const SHADOW_CHECKS: ReadonlySet<string> = new Set<string>([
   // unpinned-spend-runtime, verdict-sync-no-fallback, preflight-receipt,
   // present-wrapper, policy-fanout). Promoted checks stay out of this set.
   // sandbox-key-spend was dropped: the same file is in the real-world clean set.
+  // 2026-11-14 settings-change checks tag findings with shadowCheck
+  // (settings-hidden-grant, settings-protection-off, settings-unasked-grant).
+  // They are listed here only if the enforce scan of the real-world set would
+  // block or review any skill. See docs/experiments/settings-change-2026-11-14/RESULTS.md.
 ]);
 
 export function shadowEnforced(): boolean {
