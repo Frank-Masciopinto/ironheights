@@ -1,0 +1,371 @@
+{
+  "attacks": 659,
+  "benign": 641,
+  "lane": null,
+  "ironheights_pr": {
+    "blocked": 168,
+    "review": 141,
+    "block_or_review": 309,
+    "missed": 350,
+    "benign_blocked": 5,
+    "benign_review": 15,
+    "benign_block_or_review": 20
+  },
+  "ironheights_main": {
+    "blocked": 144,
+    "review": 149,
+    "block_or_review": 293,
+    "missed": 366,
+    "benign_blocked": 5,
+    "benign_review": 15,
+    "benign_block_or_review": 20
+  },
+  "cisco": {
+    "blocked": 111,
+    "review": 20,
+    "block_or_review": 131,
+    "missed": 528,
+    "benign_blocked": 17,
+    "benign_review": 26,
+    "benign_block_or_review": 43
+  },
+  "skillspector": {
+    "blocked": 170,
+    "review": 138,
+    "block_or_review": 308,
+    "missed": 351,
+    "benign_blocked": 20,
+    "benign_review": 102,
+    "benign_block_or_review": 122
+  },
+  "by_lane": {
+    "L1": {
+      "attacks": 118,
+      "benign": 105,
+      "lane": "L1",
+      "ironheights_pr": {
+        "blocked": 48,
+        "review": 19,
+        "block_or_review": 67,
+        "missed": 51,
+        "benign_blocked": 0,
+        "benign_review": 9,
+        "benign_block_or_review": 9
+      },
+      "ironheights_main": {
+        "blocked": 38,
+        "review": 23,
+        "block_or_review": 61,
+        "missed": 57,
+        "benign_blocked": 0,
+        "benign_review": 9,
+        "benign_block_or_review": 9
+      },
+      "cisco": {
+        "blocked": 23,
+        "review": 2,
+        "block_or_review": 25,
+        "missed": 93,
+        "benign_blocked": 11,
+        "benign_review": 6,
+        "benign_block_or_review": 17
+      },
+      "skillspector": {
+        "blocked": 29,
+        "review": 24,
+        "block_or_review": 53,
+        "missed": 65,
+        "benign_blocked": 7,
+        "benign_review": 25,
+        "benign_block_or_review": 32
+      }
+    },
+    "L2": {
+      "attacks": 66,
+      "benign": 74,
+      "lane": "L2",
+      "ironheights_pr": {
+        "blocked": 3,
+        "review": 12,
+        "block_or_review": 15,
+        "missed": 51,
+        "benign_blocked": 0,
+        "benign_review": 4,
+        "benign_block_or_review": 4
+      },
+      "ironheights_main": {
+        "blocked": 2,
+        "review": 13,
+        "block_or_review": 15,
+        "missed": 51,
+        "benign_blocked": 0,
+        "benign_review": 4,
+        "benign_block_or_review": 4
+      },
+      "cisco": {
+        "blocked": 4,
+        "review": 5,
+        "block_or_review": 9,
+        "missed": 57,
+        "benign_blocked": 1,
+        "benign_review": 3,
+        "benign_block_or_review": 4
+      },
+      "skillspector": {
+        "blocked": 11,
+        "review": 20,
+        "block_or_review": 31,
+        "missed": 35,
+        "benign_blocked": 5,
+        "benign_review": 15,
+        "benign_block_or_review": 20
+      }
+    },
+    "L3": {
+      "attacks": 61,
+      "benign": 68,
+      "lane": "L3",
+      "ironheights_pr": {
+        "blocked": 3,
+        "review": 15,
+        "block_or_review": 18,
+        "missed": 43,
+        "benign_blocked": 0,
+        "benign_review": 0,
+        "benign_block_or_review": 0
+      },
+      "ironheights_main": {
+        "blocked": 3,
+        "review": 11,
+        "block_or_review": 14,
+        "missed": 47,
+        "benign_blocked": 0,
+        "benign_review": 0,
+        "benign_block_or_review": 0
+      },
+      "cisco": {
+        "blocked": 29,
+        "review": 0,
+        "block_or_review": 29,
+        "missed": 32,
+        "benign_blocked": 0,
+        "benign_review": 8,
+        "benign_block_or_review": 8
+      },
+      "skillspector": {
+        "blocked": 11,
+        "review": 25,
+        "block_or_review": 36,
+        "missed": 25,
+        "benign_blocked": 0,
+        "benign_review": 17,
+        "benign_block_or_review": 17
+      }
+    },
+    "L4": {
+      "attacks": 129,
+      "benign": 136,
+      "lane": "L4",
+      "ironheights_pr": {
+        "blocked": 48,
+        "review": 23,
+        "block_or_review": 71,
+        "missed": 58,
+        "benign_blocked": 0,
+        "benign_review": 0,
+        "benign_block_or_review": 0
+      },
+      "ironheights_main": {
+        "blocked": 48,
+        "review": 23,
+        "block_or_review": 71,
+        "missed": 58,
+        "benign_blocked": 0,
+        "benign_review": 0,
+        "benign_block_or_review": 0
+      },
+      "cisco": {
+        "blocked": 6,
+        "review": 3,
+        "block_or_review": 9,
+        "missed": 120,
+        "benign_blocked": 3,
+        "benign_review": 4,
+        "benign_block_or_review": 7
+      },
+      "skillspector": {
+        "blocked": 22,
+        "review": 23,
+        "block_or_review": 45,
+        "missed": 84,
+        "benign_blocked": 3,
+        "benign_review": 26,
+        "benign_block_or_review": 29
+      }
+    },
+    "L5": {
+      "attacks": 69,
+      "benign": 65,
+      "lane": "L5",
+      "ironheights_pr": {
+        "blocked": 15,
+        "review": 15,
+        "block_or_review": 30,
+        "missed": 39,
+        "benign_blocked": 0,
+        "benign_review": 0,
+        "benign_block_or_review": 0
+      },
+      "ironheights_main": {
+        "blocked": 15,
+        "review": 15,
+        "block_or_review": 30,
+        "missed": 39,
+        "benign_blocked": 0,
+        "benign_review": 0,
+        "benign_block_or_review": 0
+      },
+      "cisco": {
+        "blocked": 15,
+        "review": 6,
+        "block_or_review": 21,
+        "missed": 48,
+        "benign_blocked": 0,
+        "benign_review": 0,
+        "benign_block_or_review": 0
+      },
+      "skillspector": {
+        "blocked": 21,
+        "review": 8,
+        "block_or_review": 29,
+        "missed": 40,
+        "benign_blocked": 4,
+        "benign_review": 1,
+        "benign_block_or_review": 5
+      }
+    },
+    "L6": {
+      "attacks": 79,
+      "benign": 62,
+      "lane": "L6",
+      "ironheights_pr": {
+        "blocked": 10,
+        "review": 27,
+        "block_or_review": 37,
+        "missed": 42,
+        "benign_blocked": 0,
+        "benign_review": 2,
+        "benign_block_or_review": 2
+      },
+      "ironheights_main": {
+        "blocked": 10,
+        "review": 27,
+        "block_or_review": 37,
+        "missed": 42,
+        "benign_blocked": 0,
+        "benign_review": 2,
+        "benign_block_or_review": 2
+      },
+      "cisco": {
+        "blocked": 14,
+        "review": 0,
+        "block_or_review": 14,
+        "missed": 65,
+        "benign_blocked": 0,
+        "benign_review": 0,
+        "benign_block_or_review": 0
+      },
+      "skillspector": {
+        "blocked": 24,
+        "review": 10,
+        "block_or_review": 34,
+        "missed": 45,
+        "benign_blocked": 0,
+        "benign_review": 0,
+        "benign_block_or_review": 0
+      }
+    },
+    "L7": {
+      "attacks": 64,
+      "benign": 63,
+      "lane": "L7",
+      "ironheights_pr": {
+        "blocked": 15,
+        "review": 20,
+        "block_or_review": 35,
+        "missed": 29,
+        "benign_blocked": 5,
+        "benign_review": 0,
+        "benign_block_or_review": 5
+      },
+      "ironheights_main": {
+        "blocked": 15,
+        "review": 20,
+        "block_or_review": 35,
+        "missed": 29,
+        "benign_blocked": 5,
+        "benign_review": 0,
+        "benign_block_or_review": 5
+      },
+      "cisco": {
+        "blocked": 8,
+        "review": 2,
+        "block_or_review": 10,
+        "missed": 54,
+        "benign_blocked": 0,
+        "benign_review": 0,
+        "benign_block_or_review": 0
+      },
+      "skillspector": {
+        "blocked": 29,
+        "review": 18,
+        "block_or_review": 47,
+        "missed": 17,
+        "benign_blocked": 0,
+        "benign_review": 9,
+        "benign_block_or_review": 9
+      }
+    },
+    "L8": {
+      "attacks": 73,
+      "benign": 68,
+      "lane": "L8",
+      "ironheights_pr": {
+        "blocked": 26,
+        "review": 10,
+        "block_or_review": 36,
+        "missed": 37,
+        "benign_blocked": 0,
+        "benign_review": 0,
+        "benign_block_or_review": 0
+      },
+      "ironheights_main": {
+        "blocked": 13,
+        "review": 17,
+        "block_or_review": 30,
+        "missed": 43,
+        "benign_blocked": 0,
+        "benign_review": 0,
+        "benign_block_or_review": 0
+      },
+      "cisco": {
+        "blocked": 12,
+        "review": 2,
+        "block_or_review": 14,
+        "missed": 59,
+        "benign_blocked": 2,
+        "benign_review": 5,
+        "benign_block_or_review": 7
+      },
+      "skillspector": {
+        "blocked": 23,
+        "review": 10,
+        "block_or_review": 33,
+        "missed": 40,
+        "benign_blocked": 1,
+        "benign_review": 9,
+        "benign_block_or_review": 10
+      }
+    }
+  }
+}

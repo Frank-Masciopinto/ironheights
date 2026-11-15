@@ -114,15 +114,15 @@ def main():
     scanners = []  # (key, title, block_fn, review_fn, raw_fn)
     print("scanning Ironheights PR", args.pr, flush=True)
     ih_pr, pr_ver = scan_ironheights(args.pr)
-    scanners.append(("ironheights_pr", f"Ironheights PR ({pr_ver})",
+    scanners.append(("ironheights_pr", f"Ironheights current ({pr_ver})",
                      lambda s: ih_pr.get(s) == "block",
                      lambda s: ih_pr.get(s) in ("block", "review"),
                      lambda s: ih_pr.get(s)))
     ih_main, main_ver = {}, ""
     if args.main:
-        print("scanning Ironheights main", args.main, flush=True)
+        print("scanning Ironheights 0.36.0", args.main, flush=True)
         ih_main, main_ver = scan_ironheights(args.main)
-        scanners.append(("ironheights_main", f"Ironheights main ({main_ver})",
+        scanners.append(("ironheights_main", f"Ironheights 0.36.0 ({main_ver})",
                          lambda s, m=ih_main: m.get(s) == "block",
                          lambda s, m=ih_main: m.get(s) in ("block", "review"),
                          lambda s, m=ih_main: m.get(s)))
