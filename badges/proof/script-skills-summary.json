@@ -1,0 +1,101 @@
+{
+  "ironheights_pr": "0.36.0",
+  "ironheights_main": "",
+  "cisco": "2.3.2",
+  "skillspector": "v2.12.0",
+  "splits": {
+    "all": {
+      "attacks": 1028,
+      "benign": 1026,
+      "ironheights_pr": {
+        "blocked": 405,
+        "review": 193,
+        "block_or_review": 598,
+        "missed": 430,
+        "benign_blocked": 0,
+        "benign_review": 112,
+        "benign_block_or_review": 112
+      },
+      "cisco": {
+        "blocked": 342,
+        "review": 73,
+        "block_or_review": 415,
+        "missed": 613,
+        "benign_blocked": 231,
+        "benign_review": 57,
+        "benign_block_or_review": 288
+      },
+      "skillspector": {
+        "blocked": 295,
+        "review": 408,
+        "block_or_review": 703,
+        "missed": 325,
+        "benign_blocked": 225,
+        "benign_review": 468,
+        "benign_block_or_review": 693
+      }
+    },
+    "dev": {
+      "attacks": 489,
+      "benign": 533,
+      "ironheights_pr": {
+        "blocked": 191,
+        "review": 94,
+        "block_or_review": 285,
+        "missed": 204,
+        "benign_blocked": 0,
+        "benign_review": 57,
+        "benign_block_or_review": 57
+      },
+      "cisco": {
+        "blocked": 168,
+        "review": 31,
+        "block_or_review": 199,
+        "missed": 290,
+        "benign_blocked": 120,
+        "benign_review": 34,
+        "benign_block_or_review": 154
+      },
+      "skillspector": {
+        "blocked": 141,
+        "review": 194,
+        "block_or_review": 335,
+        "missed": 154,
+        "benign_blocked": 117,
+        "benign_review": 245,
+        "benign_block_or_review": 362
+      }
+    },
+    "heldout": {
+      "attacks": 539,
+      "benign": 493,
+      "ironheights_pr": {
+        "blocked": 214,
+        "review": 99,
+        "block_or_review": 313,
+        "missed": 226,
+        "benign_blocked": 0,
+        "benign_review": 55,
+        "benign_block_or_review": 55
+      },
+      "cisco": {
+        "blocked": 174,
+        "review": 42,
+        "block_or_review": 216,
+        "missed": 323,
+        "benign_blocked": 111,
+        "benign_review": 23,
+        "benign_block_or_review": 134
+      },
+      "skillspector": {
+        "blocked": 154,
+        "review": 214,
+        "block_or_review": 368,
+        "missed": 171,
+        "benign_blocked": 108,
+        "benign_review": 223,
+        "benign_block_or_review": 331
+      }
+    }
+  }
+}
