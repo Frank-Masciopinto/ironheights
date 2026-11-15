@@ -1,5 +1,6 @@
 import { applyShadow } from '../rules/shadow.ts';
 import { joinSkillReferences } from './skill-join.ts';
+import { extractNamedScripts, joinSkillAndScripts } from './script-extract.ts';
 import { findSkillFile, isSkillFileName } from './skill-file.ts';
 import { readdir, readFile, stat } from 'node:fs/promises';
 import { basename, join, resolve } from 'node:path';
@@ -122,10 +123,13 @@ export async function scanSkill(
     seen.add(key);
     raw.push(finding);
   };
-  for (const file of walked.files) {
+  const extracted = extractNamedScripts(walked.files);
+  const files = [...walked.files, ...extracted];
+  for (const file of files) {
     for (const finding of scanFile(file, ctx, { skipJoined: true })) add(finding);
   }
-  for (const finding of scanJoined(walked.files, ctx)) add(finding);
+  for (const finding of scanJoined(files, ctx)) add(finding);
+  for (const finding of scanScriptJoined(files, ctx)) add(finding);
   const deps = skillDependencies(walked.files, frontmatter);
   let registryCheck: SkillReport['registryCheck'];
   if (options.checkRegistry && deps.length > 0) {
@@ -413,6 +417,25 @@ function finishSkill(
     rebuildableGap: gap !== undefined,
   });
   return report;
+}
+
+/** Two-signal script rules see SKILL.md and every shipped or extracted script as one document. */
+function scanScriptJoined(files: ScannedFile[], ctx: ScanContext): Finding[] {
+  const joined = joinSkillAndScripts(files);
+  if (!joined) return [];
+  const findings: Finding[] = [];
+  for (const rule of allContentRules()) {
+    if (!rule.joinsScripts) continue;
+    const override = ctx.config.ruleOverrides[rule.id];
+    if (override?.enabled === false) continue;
+    if (!ruleApplies(rule, joined, false)) continue;
+    for (const raw of rule.check(joined, ctx)) {
+      const finding = applyShadow(raw);
+      const severity = override?.severity ?? finding.severity;
+      findings.push(severity === finding.severity ? finding : { ...finding, severity });
+    }
+  }
+  return findings;
 }
 
 /** Two-signal rules see SKILL.md and the files it names as one document. */

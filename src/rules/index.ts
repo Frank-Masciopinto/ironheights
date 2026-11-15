@@ -38,6 +38,7 @@ import { persist001 } from './persistence.ts';
 import { priv001 } from './privilege.ts';
 import { bin002, inj004 } from './remote.ts';
 import { detection80Rules } from './detection80.ts';
+import { scriptScanRules } from './script-scan.ts';
 
 export const contentRules: Rule[] = [
   exec001,
@@ -83,6 +84,7 @@ export const contentRules: Rule[] = [
   ...exp1111Rules,
   ...settingsChangeRules,
   ...detection80Rules,
+  ...scriptScanRules,
   prov001,
   meta005,
   mcp001,
