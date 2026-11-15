@@ -138,6 +138,25 @@ export function isContextOnly(finding: Finding): boolean {
   return false;
 }
 
+/**
+ * Review-tier signals escalated to block (Detection-80 experiment, 2026-11-15).
+ * Each rule here fires only on an unambiguous exfiltration structure and scores
+ * zero on the 456 safe skills, the real-world corpus and the look-alike pools,
+ * so a review it raises is treated as a block:
+ *   IH-NET-004 — two or more named secrets serialized into one payload and sent.
+ *   (IH-REF-003 was also tried but blocked 2 real-world skills, so it was dropped.)
+ */
+export const ESCALATE_TO_BLOCK: ReadonlySet<string> = new Set(['IH-NET-004']);
+
+export function escalatesToBlock(findings: Finding[]): boolean {
+  return findings.some(
+    (finding) =>
+      ESCALATE_TO_BLOCK.has(finding.ruleId) &&
+      !finding.scoreExempt &&
+      (finding.severity === 'high' || finding.severity === 'critical'),
+  );
+}
+
 export function verdictFor(
   allFindings: Finding[],
   thresholds: { block: number; review: number },
@@ -145,7 +164,11 @@ export function verdictFor(
 ): Verdict {
   const findings = allFindings.some((finding) => !isContextOnly(finding)) ? allFindings : [];
   const score = scoreFindings(findings);
-  if (findings.some((finding) => finding.severity === 'critical') || score >= thresholds.block) {
+  if (
+    findings.some((finding) => finding.severity === 'critical') ||
+    score >= thresholds.block ||
+    escalatesToBlock(findings)
+  ) {
     return 'block';
   }
   if (

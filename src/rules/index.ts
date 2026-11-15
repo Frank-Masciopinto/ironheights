@@ -37,6 +37,7 @@ import { obf001 } from './obfuscation.ts';
 import { persist001 } from './persistence.ts';
 import { priv001 } from './privilege.ts';
 import { bin002, inj004 } from './remote.ts';
+import { detection80Rules } from './detection80.ts';
 
 export const contentRules: Rule[] = [
   exec001,
@@ -81,6 +82,7 @@ export const contentRules: Rule[] = [
   ...exp1110Rules,
   ...exp1111Rules,
   ...settingsChangeRules,
+  ...detection80Rules,
   prov001,
   meta005,
   mcp001,
