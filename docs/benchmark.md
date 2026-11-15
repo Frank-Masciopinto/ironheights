@@ -30,6 +30,25 @@ Do not commit real malicious skills. On an isolated machine:
 
 Reports are written to `bench/results/latest.md` and `bench/results/latest.json`.
 
+
+## Shipped-script skills (PR #150)
+
+A 2054-skill multi-file set (`bench/script-skills`) where each sample is a `SKILL.md` plus a shipped script the doc tells the agent to run. Malice, when present, lives in the script. Composition: 2048 generated from seed `script-skills-20261115` (16 families × 16 disguises × 4 languages, each with an honest twin) and 6 real-derived fixtures from missed-attacks 2026-11-03 / 2026-11-13. Split: `dev` if `int(sha256(f"{seed}:{id}").hexdigest()[:8], 16) % 2 == 0`, else `heldout`. Held-out was scored once and was not used to write or tune rules.
+
+Ironheights 0.36.0 main (`590ac5f`) and this PR, Cisco skill-scanner 2.3.2, and NVIDIA SkillSpector v2.12.0 (`7d9b4be`, `--no-llm`) were run with the same verdict mapping as the MaliciousSkillBench table. Nothing was executed. Reproduce: `python3 bench/script-skills/score.py --pr dist/cli/index.js --main <0.36.0-cli> --cisco .venv/bin/skill-scanner --nvidia .venv/bin/skillspector` (or `npm run bench:script-skills` for the current CLI). The official MaliciousSkillBench, real-world, and look-alike figures are unchanged.
+
+| Shipped-script skills (1028 malicious, 1026 honest twins) | Ironheights main (0.36.0) | This PR | Cisco skill-scanner 2.3.2 | NVIDIA SkillSpector v2.12.0 |
+| --- | --- | --- | --- | --- |
+| Malicious skills blocked (higher is better) | 27.9% (287/1028) | 39.4% (405/1028) ✅ | 33.3% (342/1028) | 28.7% (295/1028) |
+| False positives on honest twins (lower is better) | 0/1026 | 0/1026 | 22.5% (231/1026) | 21.9% (225/1026) |
+| Malicious skills blocked or sent to review (higher is better) | 55.1% (566/1028) | 58.2% (598/1028) | 40.4% (415/1028) | 68.4% (703/1028) ✅ |
+| Honest twins blocked or sent to review (lower is better) | 10.9% (112/1026) | 10.9% (112/1026) | 28.1% (288/1026) | 67.5% (693/1026) |
+| Held-out attacks blocked (539; higher is better) | 29.5% (159/539) | 39.7% (214/539) ✅ | 32.3% (174/539) | 28.6% (154/539) |
+| Held-out honest twins blocked (493; lower is better) | 0/493 | 0/493 | 22.5% (111/493) | 21.9% (108/493) |
+
+✅ is the unique best of the four. A tie gets no check. Per-split tables and per-sample CSVs are in `bench/script-skills/results/`. The PR's +118 blocks versus main (auto-approve, secret-exfil, persist-cron, staged-loader) track on held-out (PR 39.1% of dev attacks, 39.7% of held-out attacks). Families this set still mostly misses at block include clipboard-harvest, destructive, miner-loader, tls-off, and webhook-settings.
+
+
 ## MaliciousSkillBench results (0.36.0)
 
 Run on 15 Nov 2026 against the same MaliciousSkillBench checkout as 0.35.0 (revision `d4b42ce5`): 516 malicious and 456 clean skills, plus 19 Anthropic skills. Static rules only. No `--llm`. Cisco skill-scanner 2.3.2 and NVIDIA SkillSpector v2.12.0 were not re-run; their published figures are unchanged. The official summary is [docs/experiments/detection-80-2026-11-15/benchmark-summary.json](experiments/detection-80-2026-11-15/benchmark-summary.json).

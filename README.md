@@ -94,6 +94,21 @@ Website: [www.ironheights.dev](https://www.ironheights.dev)
 
 </div>
 
+### Shipped-script skills (1028 malicious, 1026 honest twins)
+
+A second set, separate from MaliciousSkillBench above: each skill is a `SKILL.md` plus a shipped script the doc tells the agent to run. The malice (when present) is in the script, not the prompt. 2048 skills are generated from a pinned seed (16 attack families × 16 disguises × 4 languages, each with an honest twin); 6 are real-derived missed-attack fixtures. Held-out (539 attacks, 493 benign) was scored once and not used to tune rules. Official MaliciousSkillBench / real-world / look-alike numbers are unchanged. Nothing in the set is executed. Method and one-command scorer: [bench/script-skills/README.md](bench/script-skills/README.md).
+
+| Shipped-script skills | Ironheights main (0.36.0) | This PR | Cisco skill-scanner 2.3.2 | NVIDIA SkillSpector v2.12.0 |
+| --- | --- | --- | --- | --- |
+| Malicious skills blocked (higher is better) | 27.9% (287/1028) | 39.4% (405/1028) ✅ | 33.3% (342/1028) | 28.7% (295/1028) |
+| False positives on honest twins (lower is better) | 0/1026 | 0/1026 | 22.5% (231/1026) | 21.9% (225/1026) |
+| Malicious skills blocked or sent to review (higher is better) | 55.1% (566/1028) | 58.2% (598/1028) | 40.4% (415/1028) | 68.4% (703/1028) ✅ |
+| Honest twins blocked or sent to review (lower is better) | 10.9% (112/1026) | 10.9% (112/1026) | 28.1% (288/1026) | 67.5% (693/1026) |
+| Held-out attacks blocked (higher is better) | 29.5% (159/539) | 39.7% (214/539) ✅ | 32.3% (174/539) | 28.6% (154/539) |
+| Held-out honest twins blocked (lower is better) | 0/493 | 0/493 | 22.5% (111/493) | 21.9% (108/493) |
+
+Ironheights main is `590ac5f` (0.36.0). This PR is the script-scan experiment on top of that. ✅ is the unique best of the four on that row; a tie gets no check. Cisco and SkillSpector scoring matches [docs/benchmark-proof.md](docs/benchmark-proof.md) (static only, no LLM). Held-out block rates track the dev split (PR 39.1% on dev, 39.7% on held-out), so the gain is not an overfit to generated wording.
+
 Ironheights scans any skill folder with a `SKILL.md`, whichever agent it is for, and adds an integrity monitor and runtime guard for [OpenClaw](https://docs.openclaw.ai). To check a Claude or Grok Bot skill, run `npx ironheights scan ./path/to/skill` before you upload or install it. Auto-discovery of installed skills, baselines, the guard, `audit-config` and `safe-install` are OpenClaw/ClawHub-only for now. It reads skill files as data, looks for risky patterns with fixed rules, and compares skill and agent files with a baseline you save on the same machine.
 
 It does not send telemetry, and `scan` does not run the files it scans. Only `sandbox run` runs a skill, and only when you ask, inside a throwaway container with no network. Scans are fully local. The only network call made without a flag is a version check against npm and ClawHub, at most once every 6 hours; it only reports new versions, never installs anything, and can be turned off (see [Updates](#updates)). Other network use happens only when you run `fetch`, `safe-install`, `advisories update`, `--online`, `scan --llm`, `scan --check-registry`, or `review`.

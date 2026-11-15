@@ -294,7 +294,7 @@
       "family": "authorized-keys",
       "split": "heldout",
       "source": "generated",
-      "notes": "Generated honest twin of mal-authorized-keys-log-rotate-js. Same SKILL.md and disguise; the script talks to logs.example.invalid or writes only inside the project."
+      "notes": "Generated honest twin of mal-authorized-keys-log-rotate-js. Same SKILL.md and disguise; the script talks to api.datadoghq.com or writes only inside the project."
     },
     {
       "path": "samples/ben-authorized-keys-log-rotate-ps1",
@@ -302,7 +302,7 @@
       "family": "authorized-keys",
       "split": "dev",
       "source": "generated",
-      "notes": "Generated honest twin of mal-authorized-keys-log-rotate-ps1. Same SKILL.md and disguise; the script talks to logs.example.invalid or writes only inside the project."
+      "notes": "Generated honest twin of mal-authorized-keys-log-rotate-ps1. Same SKILL.md and disguise; the script talks to api.datadoghq.com or writes only inside the project."
     },
     {
       "path": "samples/ben-authorized-keys-log-rotate-py",
@@ -310,7 +310,7 @@
       "family": "authorized-keys",
       "split": "dev",
       "source": "generated",
-      "notes": "Generated honest twin of mal-authorized-keys-log-rotate-py. Same SKILL.md and disguise; the script talks to logs.example.invalid or writes only inside the project."
+      "notes": "Generated honest twin of mal-authorized-keys-log-rotate-py. Same SKILL.md and disguise; the script talks to api.datadoghq.com or writes only inside the project."
     },
     {
       "path": "samples/ben-authorized-keys-log-rotate-sh",
@@ -318,7 +318,7 @@
       "family": "authorized-keys",
       "split": "dev",
       "source": "generated",
-      "notes": "Generated honest twin of mal-authorized-keys-log-rotate-sh. Same SKILL.md and disguise; the script talks to logs.example.invalid or writes only inside the project."
+      "notes": "Generated honest twin of mal-authorized-keys-log-rotate-sh. Same SKILL.md and disguise; the script talks to api.datadoghq.com or writes only inside the project."
     },
     {
       "path": "samples/ben-authorized-keys-notes-export-js",
@@ -806,7 +806,7 @@
       "family": "auto-approve",
       "split": "dev",
       "source": "generated",
-      "notes": "Generated honest twin of mal-auto-approve-log-rotate-js. Same SKILL.md and disguise; the script talks to logs.example.invalid or writes only inside the project."
+      "notes": "Generated honest twin of mal-auto-approve-log-rotate-js. Same SKILL.md and disguise; the script talks to api.datadoghq.com or writes only inside the project."
     },
     {
       "path": "samples/ben-auto-approve-log-rotate-ps1",
@@ -814,7 +814,7 @@
       "family": "auto-approve",
       "split": "dev",
       "source": "generated",
-      "notes": "Generated honest twin of mal-auto-approve-log-rotate-ps1. Same SKILL.md and disguise; the script talks to logs.example.invalid or writes only inside the project."
+      "notes": "Generated honest twin of mal-auto-approve-log-rotate-ps1. Same SKILL.md and disguise; the script talks to api.datadoghq.com or writes only inside the project."
     },
     {
       "path": "samples/ben-auto-approve-log-rotate-py",
@@ -822,7 +822,7 @@
       "family": "auto-approve",
       "split": "heldout",
       "source": "generated",
-      "notes": "Generated honest twin of mal-auto-approve-log-rotate-py. Same SKILL.md and disguise; the script talks to logs.example.invalid or writes only inside the project."
+      "notes": "Generated honest twin of mal-auto-approve-log-rotate-py. Same SKILL.md and disguise; the script talks to api.datadoghq.com or writes only inside the project."
     },
     {
       "path": "samples/ben-auto-approve-log-rotate-sh",
@@ -830,7 +830,7 @@
       "family": "auto-approve",
       "split": "dev",
       "source": "generated",
-      "notes": "Generated honest twin of mal-auto-approve-log-rotate-sh. Same SKILL.md and disguise; the script talks to logs.example.invalid or writes only inside the project."
+      "notes": "Generated honest twin of mal-auto-approve-log-rotate-sh. Same SKILL.md and disguise; the script talks to api.datadoghq.com or writes only inside the project."
     },
     {
       "path": "samples/ben-auto-approve-notes-export-js",
@@ -1318,7 +1318,7 @@
       "family": "clipboard-harvest",
       "split": "dev",
       "source": "generated",
-      "notes": "Generated honest twin of mal-clipboard-harvest-log-rotate-js. Same SKILL.md and disguise; the script talks to logs.example.invalid or writes only inside the project."
+      "notes": "Generated honest twin of mal-clipboard-harvest-log-rotate-js. Same SKILL.md and disguise; the script talks to api.datadoghq.com or writes only inside the project."
     },
     {
       "path": "samples/ben-clipboard-harvest-log-rotate-ps1",
@@ -1326,7 +1326,7 @@
       "family": "clipboard-harvest",
       "split": "heldout",
       "source": "generated",
-      "notes": "Generated honest twin of mal-clipboard-harvest-log-rotate-ps1. Same SKILL.md and disguise; the script talks to logs.example.invalid or writes only inside the project."
+      "notes": "Generated honest twin of mal-clipboard-harvest-log-rotate-ps1. Same SKILL.md and disguise; the script talks to api.datadoghq.com or writes only inside the project."
     },
     {
       "path": "samples/ben-clipboard-harvest-log-rotate-py",
@@ -1334,7 +1334,7 @@
       "family": "clipboard-harvest",
       "split": "dev",
       "source": "generated",
-      "notes": "Generated honest twin of mal-clipboard-harvest-log-rotate-py. Same SKILL.md and disguise; the script talks to logs.example.invalid or writes only inside the project."
+      "notes": "Generated honest twin of mal-clipboard-harvest-log-rotate-py. Same SKILL.md and disguise; the script talks to api.datadoghq.com or writes only inside the project."
     },
     {
       "path": "samples/ben-clipboard-harvest-log-rotate-sh",
@@ -1342,7 +1342,7 @@
       "family": "clipboard-harvest",
       "split": "dev",
       "source": "generated",
-      "notes": "Generated honest twin of mal-clipboard-harvest-log-rotate-sh. Same SKILL.md and disguise; the script talks to logs.example.invalid or writes only inside the project."
+      "notes": "Generated honest twin of mal-clipboard-harvest-log-rotate-sh. Same SKILL.md and disguise; the script talks to api.datadoghq.com or writes only inside the project."
     },
     {
       "path": "samples/ben-clipboard-harvest-notes-export-js",
@@ -1830,7 +1830,7 @@
       "family": "credential-harvest",
       "split": "heldout",
       "source": "generated",
-      "notes": "Generated honest twin of mal-credential-harvest-log-rotate-js. Same SKILL.md and disguise; the script talks to logs.example.invalid or writes only inside the project."
+      "notes": "Generated honest twin of mal-credential-harvest-log-rotate-js. Same SKILL.md and disguise; the script talks to api.datadoghq.com or writes only inside the project."
     },
     {
       "path": "samples/ben-credential-harvest-log-rotate-ps1",
@@ -1838,7 +1838,7 @@
       "family": "credential-harvest",
       "split": "heldout",
       "source": "generated",
-      "notes": "Generated honest twin of mal-credential-harvest-log-rotate-ps1. Same SKILL.md and disguise; the script talks to logs.example.invalid or writes only inside the project."
+      "notes": "Generated honest twin of mal-credential-harvest-log-rotate-ps1. Same SKILL.md and disguise; the script talks to api.datadoghq.com or writes only inside the project."
     },
     {
       "path": "samples/ben-credential-harvest-log-rotate-py",
@@ -1846,7 +1846,7 @@
       "family": "credential-harvest",
       "split": "heldout",
       "source": "generated",
-      "notes": "Generated honest twin of mal-credential-harvest-log-rotate-py. Same SKILL.md and disguise; the script talks to logs.example.invalid or writes only inside the project."
+      "notes": "Generated honest twin of mal-credential-harvest-log-rotate-py. Same SKILL.md and disguise; the script talks to api.datadoghq.com or writes only inside the project."
     },
     {
       "path": "samples/ben-credential-harvest-log-rotate-sh",
@@ -1854,7 +1854,7 @@
       "family": "credential-harvest",
       "split": "dev",
       "source": "generated",
-      "notes": "Generated honest twin of mal-credential-harvest-log-rotate-sh. Same SKILL.md and disguise; the script talks to logs.example.invalid or writes only inside the project."
+      "notes": "Generated honest twin of mal-credential-harvest-log-rotate-sh. Same SKILL.md and disguise; the script talks to api.datadoghq.com or writes only inside the project."
     },
     {
       "path": "samples/ben-credential-harvest-notes-export-js",
@@ -2342,7 +2342,7 @@
       "family": "destructive",
       "split": "dev",
       "source": "generated",
-      "notes": "Generated honest twin of mal-destructive-log-rotate-js. Same SKILL.md and disguise; the script talks to logs.example.invalid or writes only inside the project."
+      "notes": "Generated honest twin of mal-destructive-log-rotate-js. Same SKILL.md and disguise; the script talks to api.datadoghq.com or writes only inside the project."
     },
     {
       "path": "samples/ben-destructive-log-rotate-ps1",
@@ -2350,7 +2350,7 @@
       "family": "destructive",
       "split": "dev",
       "source": "generated",
-      "notes": "Generated honest twin of mal-destructive-log-rotate-ps1. Same SKILL.md and disguise; the script talks to logs.example.invalid or writes only inside the project."
+      "notes": "Generated honest twin of mal-destructive-log-rotate-ps1. Same SKILL.md and disguise; the script talks to api.datadoghq.com or writes only inside the project."
     },
     {
       "path": "samples/ben-destructive-log-rotate-py",
@@ -2358,7 +2358,7 @@
       "family": "destructive",
       "split": "heldout",
       "source": "generated",
-      "notes": "Generated honest twin of mal-destructive-log-rotate-py. Same SKILL.md and disguise; the script talks to logs.example.invalid or writes only inside the project."
+      "notes": "Generated honest twin of mal-destructive-log-rotate-py. Same SKILL.md and disguise; the script talks to api.datadoghq.com or writes only inside the project."
     },
     {
       "path": "samples/ben-destructive-log-rotate-sh",
@@ -2366,7 +2366,7 @@
       "family": "destructive",
       "split": "dev",
       "source": "generated",
-      "notes": "Generated honest twin of mal-destructive-log-rotate-sh. Same SKILL.md and disguise; the script talks to logs.example.invalid or writes only inside the project."
+      "notes": "Generated honest twin of mal-destructive-log-rotate-sh. Same SKILL.md and disguise; the script talks to api.datadoghq.com or writes only inside the project."
     },
     {
       "path": "samples/ben-destructive-notes-export-js",
@@ -2854,7 +2854,7 @@
       "family": "env-dump",
       "split": "dev",
       "source": "generated",
-      "notes": "Generated honest twin of mal-env-dump-log-rotate-js. Same SKILL.md and disguise; the script talks to logs.example.invalid or writes only inside the project."
+      "notes": "Generated honest twin of mal-env-dump-log-rotate-js. Same SKILL.md and disguise; the script talks to api.datadoghq.com or writes only inside the project."
     },
     {
       "path": "samples/ben-env-dump-log-rotate-ps1",
@@ -2862,7 +2862,7 @@
       "family": "env-dump",
       "split": "dev",
       "source": "generated",
-      "notes": "Generated honest twin of mal-env-dump-log-rotate-ps1. Same SKILL.md and disguise; the script talks to logs.example.invalid or writes only inside the project."
+      "notes": "Generated honest twin of mal-env-dump-log-rotate-ps1. Same SKILL.md and disguise; the script talks to api.datadoghq.com or writes only inside the project."
     },
     {
       "path": "samples/ben-env-dump-log-rotate-py",
@@ -2870,7 +2870,7 @@
       "family": "env-dump",
       "split": "dev",
       "source": "generated",
-      "notes": "Generated honest twin of mal-env-dump-log-rotate-py. Same SKILL.md and disguise; the script talks to logs.example.invalid or writes only inside the project."
+      "notes": "Generated honest twin of mal-env-dump-log-rotate-py. Same SKILL.md and disguise; the script talks to api.datadoghq.com or writes only inside the project."
     },
     {
       "path": "samples/ben-env-dump-log-rotate-sh",
@@ -2878,7 +2878,7 @@
       "family": "env-dump",
       "split": "dev",
       "source": "generated",
-      "notes": "Generated honest twin of mal-env-dump-log-rotate-sh. Same SKILL.md and disguise; the script talks to logs.example.invalid or writes only inside the project."
+      "notes": "Generated honest twin of mal-env-dump-log-rotate-sh. Same SKILL.md and disguise; the script talks to api.datadoghq.com or writes only inside the project."
     },
     {
       "path": "samples/ben-env-dump-notes-export-js",
@@ -3366,7 +3366,7 @@
       "family": "miner-loader",
       "split": "dev",
       "source": "generated",
-      "notes": "Generated honest twin of mal-miner-loader-log-rotate-js. Same SKILL.md and disguise; the script talks to logs.example.invalid or writes only inside the project."
+      "notes": "Generated honest twin of mal-miner-loader-log-rotate-js. Same SKILL.md and disguise; the script talks to api.datadoghq.com or writes only inside the project."
     },
     {
       "path": "samples/ben-miner-loader-log-rotate-ps1",
@@ -3374,7 +3374,7 @@
       "family": "miner-loader",
       "split": "heldout",
       "source": "generated",
-      "notes": "Generated honest twin of mal-miner-loader-log-rotate-ps1. Same SKILL.md and disguise; the script talks to logs.example.invalid or writes only inside the project."
+      "notes": "Generated honest twin of mal-miner-loader-log-rotate-ps1. Same SKILL.md and disguise; the script talks to api.datadoghq.com or writes only inside the project."
     },
     {
       "path": "samples/ben-miner-loader-log-rotate-py",
@@ -3382,7 +3382,7 @@
       "family": "miner-loader",
       "split": "dev",
       "source": "generated",
-      "notes": "Generated honest twin of mal-miner-loader-log-rotate-py. Same SKILL.md and disguise; the script talks to logs.example.invalid or writes only inside the project."
+      "notes": "Generated honest twin of mal-miner-loader-log-rotate-py. Same SKILL.md and disguise; the script talks to api.datadoghq.com or writes only inside the project."
     },
     {
       "path": "samples/ben-miner-loader-log-rotate-sh",
@@ -3390,7 +3390,7 @@
       "family": "miner-loader",
       "split": "heldout",
       "source": "generated",
-      "notes": "Generated honest twin of mal-miner-loader-log-rotate-sh. Same SKILL.md and disguise; the script talks to logs.example.invalid or writes only inside the project."
+      "notes": "Generated honest twin of mal-miner-loader-log-rotate-sh. Same SKILL.md and disguise; the script talks to api.datadoghq.com or writes only inside the project."
     },
     {
       "path": "samples/ben-miner-loader-notes-export-js",
@@ -3878,7 +3878,7 @@
       "family": "obfuscated-exfil",
       "split": "dev",
       "source": "generated",
-      "notes": "Generated honest twin of mal-obfuscated-exfil-log-rotate-js. Same SKILL.md and disguise; the script talks to logs.example.invalid or writes only inside the project."
+      "notes": "Generated honest twin of mal-obfuscated-exfil-log-rotate-js. Same SKILL.md and disguise; the script talks to api.datadoghq.com or writes only inside the project."
     },
     {
       "path": "samples/ben-obfuscated-exfil-log-rotate-ps1",
@@ -3886,7 +3886,7 @@
       "family": "obfuscated-exfil",
       "split": "heldout",
       "source": "generated",
-      "notes": "Generated honest twin of mal-obfuscated-exfil-log-rotate-ps1. Same SKILL.md and disguise; the script talks to logs.example.invalid or writes only inside the project."
+      "notes": "Generated honest twin of mal-obfuscated-exfil-log-rotate-ps1. Same SKILL.md and disguise; the script talks to api.datadoghq.com or writes only inside the project."
     },
     {
       "path": "samples/ben-obfuscated-exfil-log-rotate-py",
@@ -3894,7 +3894,7 @@
       "family": "obfuscated-exfil",
       "split": "heldout",
       "source": "generated",
-      "notes": "Generated honest twin of mal-obfuscated-exfil-log-rotate-py. Same SKILL.md and disguise; the script talks to logs.example.invalid or writes only inside the project."
+      "notes": "Generated honest twin of mal-obfuscated-exfil-log-rotate-py. Same SKILL.md and disguise; the script talks to api.datadoghq.com or writes only inside the project."
     },
     {
       "path": "samples/ben-obfuscated-exfil-log-rotate-sh",
@@ -3902,7 +3902,7 @@
       "family": "obfuscated-exfil",
       "split": "dev",
       "source": "generated",
-      "notes": "Generated honest twin of mal-obfuscated-exfil-log-rotate-sh. Same SKILL.md and disguise; the script talks to logs.example.invalid or writes only inside the project."
+      "notes": "Generated honest twin of mal-obfuscated-exfil-log-rotate-sh. Same SKILL.md and disguise; the script talks to api.datadoghq.com or writes only inside the project."
     },
     {
       "path": "samples/ben-obfuscated-exfil-notes-export-js",
@@ -4390,7 +4390,7 @@
       "family": "persist-cron",
       "split": "dev",
       "source": "generated",
-      "notes": "Generated honest twin of mal-persist-cron-log-rotate-js. Same SKILL.md and disguise; the script talks to logs.example.invalid or writes only inside the project."
+      "notes": "Generated honest twin of mal-persist-cron-log-rotate-js. Same SKILL.md and disguise; the script talks to api.datadoghq.com or writes only inside the project."
     },
     {
       "path": "samples/ben-persist-cron-log-rotate-ps1",
@@ -4398,7 +4398,7 @@
       "family": "persist-cron",
       "split": "heldout",
       "source": "generated",
-      "notes": "Generated honest twin of mal-persist-cron-log-rotate-ps1. Same SKILL.md and disguise; the script talks to logs.example.invalid or writes only inside the project."
+      "notes": "Generated honest twin of mal-persist-cron-log-rotate-ps1. Same SKILL.md and disguise; the script talks to api.datadoghq.com or writes only inside the project."
     },
     {
       "path": "samples/ben-persist-cron-log-rotate-py",
@@ -4406,7 +4406,7 @@
       "family": "persist-cron",
       "split": "dev",
       "source": "generated",
-      "notes": "Generated honest twin of mal-persist-cron-log-rotate-py. Same SKILL.md and disguise; the script talks to logs.example.invalid or writes only inside the project."
+      "notes": "Generated honest twin of mal-persist-cron-log-rotate-py. Same SKILL.md and disguise; the script talks to api.datadoghq.com or writes only inside the project."
     },
     {
       "path": "samples/ben-persist-cron-log-rotate-sh",
@@ -4414,7 +4414,7 @@
       "family": "persist-cron",
       "split": "heldout",
       "source": "generated",
-      "notes": "Generated honest twin of mal-persist-cron-log-rotate-sh. Same SKILL.md and disguise; the script talks to logs.example.invalid or writes only inside the project."
+      "notes": "Generated honest twin of mal-persist-cron-log-rotate-sh. Same SKILL.md and disguise; the script talks to api.datadoghq.com or writes only inside the project."
     },
     {
       "path": "samples/ben-persist-cron-notes-export-js",
@@ -4902,7 +4902,7 @@
       "family": "persist-rc",
       "split": "dev",
       "source": "generated",
-      "notes": "Generated honest twin of mal-persist-rc-log-rotate-js. Same SKILL.md and disguise; the script talks to logs.example.invalid or writes only inside the project."
+      "notes": "Generated honest twin of mal-persist-rc-log-rotate-js. Same SKILL.md and disguise; the script talks to api.datadoghq.com or writes only inside the project."
     },
     {
       "path": "samples/ben-persist-rc-log-rotate-ps1",
@@ -4910,7 +4910,7 @@
       "family": "persist-rc",
       "split": "dev",
       "source": "generated",
-      "notes": "Generated honest twin of mal-persist-rc-log-rotate-ps1. Same SKILL.md and disguise; the script talks to logs.example.invalid or writes only inside the project."
+      "notes": "Generated honest twin of mal-persist-rc-log-rotate-ps1. Same SKILL.md and disguise; the script talks to api.datadoghq.com or writes only inside the project."
     },
     {
       "path": "samples/ben-persist-rc-log-rotate-py",
@@ -4918,7 +4918,7 @@
       "family": "persist-rc",
       "split": "dev",
       "source": "generated",
-      "notes": "Generated honest twin of mal-persist-rc-log-rotate-py. Same SKILL.md and disguise; the script talks to logs.example.invalid or writes only inside the project."
+      "notes": "Generated honest twin of mal-persist-rc-log-rotate-py. Same SKILL.md and disguise; the script talks to api.datadoghq.com or writes only inside the project."
     },
     {
       "path": "samples/ben-persist-rc-log-rotate-sh",
@@ -4926,7 +4926,7 @@
       "family": "persist-rc",
       "split": "dev",
       "source": "generated",
-      "notes": "Generated honest twin of mal-persist-rc-log-rotate-sh. Same SKILL.md and disguise; the script talks to logs.example.invalid or writes only inside the project."
+      "notes": "Generated honest twin of mal-persist-rc-log-rotate-sh. Same SKILL.md and disguise; the script talks to api.datadoghq.com or writes only inside the project."
     },
     {
       "path": "samples/ben-persist-rc-notes-export-js",
@@ -5414,7 +5414,7 @@
       "family": "reverse-shell",
       "split": "heldout",
       "source": "generated",
-      "notes": "Generated honest twin of mal-reverse-shell-log-rotate-js. Same SKILL.md and disguise; the script talks to logs.example.invalid or writes only inside the project."
+      "notes": "Generated honest twin of mal-reverse-shell-log-rotate-js. Same SKILL.md and disguise; the script talks to api.datadoghq.com or writes only inside the project."
     },
     {
       "path": "samples/ben-reverse-shell-log-rotate-ps1",
@@ -5422,7 +5422,7 @@
       "family": "reverse-shell",
       "split": "heldout",
       "source": "generated",
-      "notes": "Generated honest twin of mal-reverse-shell-log-rotate-ps1. Same SKILL.md and disguise; the script talks to logs.example.invalid or writes only inside the project."
+      "notes": "Generated honest twin of mal-reverse-shell-log-rotate-ps1. Same SKILL.md and disguise; the script talks to api.datadoghq.com or writes only inside the project."
     },
     {
       "path": "samples/ben-reverse-shell-log-rotate-py",
@@ -5430,7 +5430,7 @@
       "family": "reverse-shell",
       "split": "heldout",
       "source": "generated",
-      "notes": "Generated honest twin of mal-reverse-shell-log-rotate-py. Same SKILL.md and disguise; the script talks to logs.example.invalid or writes only inside the project."
+      "notes": "Generated honest twin of mal-reverse-shell-log-rotate-py. Same SKILL.md and disguise; the script talks to api.datadoghq.com or writes only inside the project."
     },
     {
       "path": "samples/ben-reverse-shell-log-rotate-sh",
@@ -5438,7 +5438,7 @@
       "family": "reverse-shell",
       "split": "dev",
       "source": "generated",
-      "notes": "Generated honest twin of mal-reverse-shell-log-rotate-sh. Same SKILL.md and disguise; the script talks to logs.example.invalid or writes only inside the project."
+      "notes": "Generated honest twin of mal-reverse-shell-log-rotate-sh. Same SKILL.md and disguise; the script talks to api.datadoghq.com or writes only inside the project."
     },
     {
       "path": "samples/ben-reverse-shell-notes-export-js",
@@ -5926,7 +5926,7 @@
       "family": "secret-exfil",
       "split": "heldout",
       "source": "generated",
-      "notes": "Generated honest twin of mal-secret-exfil-log-rotate-js. Same SKILL.md and disguise; the script talks to logs.example.invalid or writes only inside the project."
+      "notes": "Generated honest twin of mal-secret-exfil-log-rotate-js. Same SKILL.md and disguise; the script talks to api.datadoghq.com or writes only inside the project."
     },
     {
       "path": "samples/ben-secret-exfil-log-rotate-ps1",
@@ -5934,7 +5934,7 @@
       "family": "secret-exfil",
       "split": "heldout",
       "source": "generated",
-      "notes": "Generated honest twin of mal-secret-exfil-log-rotate-ps1. Same SKILL.md and disguise; the script talks to logs.example.invalid or writes only inside the project."
+      "notes": "Generated honest twin of mal-secret-exfil-log-rotate-ps1. Same SKILL.md and disguise; the script talks to api.datadoghq.com or writes only inside the project."
     },
     {
       "path": "samples/ben-secret-exfil-log-rotate-py",
@@ -5942,7 +5942,7 @@
       "family": "secret-exfil",
       "split": "dev",
       "source": "generated",
-      "notes": "Generated honest twin of mal-secret-exfil-log-rotate-py. Same SKILL.md and disguise; the script talks to logs.example.invalid or writes only inside the project."
+      "notes": "Generated honest twin of mal-secret-exfil-log-rotate-py. Same SKILL.md and disguise; the script talks to api.datadoghq.com or writes only inside the project."
     },
     {
       "path": "samples/ben-secret-exfil-log-rotate-sh",
@@ -5950,7 +5950,7 @@
       "family": "secret-exfil",
       "split": "dev",
       "source": "generated",
-      "notes": "Generated honest twin of mal-secret-exfil-log-rotate-sh. Same SKILL.md and disguise; the script talks to logs.example.invalid or writes only inside the project."
+      "notes": "Generated honest twin of mal-secret-exfil-log-rotate-sh. Same SKILL.md and disguise; the script talks to api.datadoghq.com or writes only inside the project."
     },
     {
       "path": "samples/ben-secret-exfil-notes-export-js",
@@ -6438,7 +6438,7 @@
       "family": "staged-loader",
       "split": "heldout",
       "source": "generated",
-      "notes": "Generated honest twin of mal-staged-loader-log-rotate-js. Same SKILL.md and disguise; the script talks to logs.example.invalid or writes only inside the project."
+      "notes": "Generated honest twin of mal-staged-loader-log-rotate-js. Same SKILL.md and disguise; the script talks to api.datadoghq.com or writes only inside the project."
     },
     {
       "path": "samples/ben-staged-loader-log-rotate-ps1",
@@ -6446,7 +6446,7 @@
       "family": "staged-loader",
       "split": "dev",
       "source": "generated",
-      "notes": "Generated honest twin of mal-staged-loader-log-rotate-ps1. Same SKILL.md and disguise; the script talks to logs.example.invalid or writes only inside the project."
+      "notes": "Generated honest twin of mal-staged-loader-log-rotate-ps1. Same SKILL.md and disguise; the script talks to api.datadoghq.com or writes only inside the project."
     },
     {
       "path": "samples/ben-staged-loader-log-rotate-py",
@@ -6454,7 +6454,7 @@
       "family": "staged-loader",
       "split": "dev",
       "source": "generated",
-      "notes": "Generated honest twin of mal-staged-loader-log-rotate-py. Same SKILL.md and disguise; the script talks to logs.example.invalid or writes only inside the project."
+      "notes": "Generated honest twin of mal-staged-loader-log-rotate-py. Same SKILL.md and disguise; the script talks to api.datadoghq.com or writes only inside the project."
     },
     {
       "path": "samples/ben-staged-loader-log-rotate-sh",
@@ -6462,7 +6462,7 @@
       "family": "staged-loader",
       "split": "heldout",
       "source": "generated",
-      "notes": "Generated honest twin of mal-staged-loader-log-rotate-sh. Same SKILL.md and disguise; the script talks to logs.example.invalid or writes only inside the project."
+      "notes": "Generated honest twin of mal-staged-loader-log-rotate-sh. Same SKILL.md and disguise; the script talks to api.datadoghq.com or writes only inside the project."
     },
     {
       "path": "samples/ben-staged-loader-notes-export-js",
@@ -6950,7 +6950,7 @@
       "family": "tls-off",
       "split": "heldout",
       "source": "generated",
-      "notes": "Generated honest twin of mal-tls-off-log-rotate-js. Same SKILL.md and disguise; the script talks to logs.example.invalid or writes only inside the project."
+      "notes": "Generated honest twin of mal-tls-off-log-rotate-js. Same SKILL.md and disguise; the script talks to api.datadoghq.com or writes only inside the project."
     },
     {
       "path": "samples/ben-tls-off-log-rotate-ps1",
@@ -6958,7 +6958,7 @@
       "family": "tls-off",
       "split": "dev",
       "source": "generated",
-      "notes": "Generated honest twin of mal-tls-off-log-rotate-ps1. Same SKILL.md and disguise; the script talks to logs.example.invalid or writes only inside the project."
+      "notes": "Generated honest twin of mal-tls-off-log-rotate-ps1. Same SKILL.md and disguise; the script talks to api.datadoghq.com or writes only inside the project."
     },
     {
       "path": "samples/ben-tls-off-log-rotate-py",
@@ -6966,7 +6966,7 @@
       "family": "tls-off",
       "split": "dev",
       "source": "generated",
-      "notes": "Generated honest twin of mal-tls-off-log-rotate-py. Same SKILL.md and disguise; the script talks to logs.example.invalid or writes only inside the project."
+      "notes": "Generated honest twin of mal-tls-off-log-rotate-py. Same SKILL.md and disguise; the script talks to api.datadoghq.com or writes only inside the project."
     },
     {
       "path": "samples/ben-tls-off-log-rotate-sh",
@@ -6974,7 +6974,7 @@
       "family": "tls-off",
       "split": "heldout",
       "source": "generated",
-      "notes": "Generated honest twin of mal-tls-off-log-rotate-sh. Same SKILL.md and disguise; the script talks to logs.example.invalid or writes only inside the project."
+      "notes": "Generated honest twin of mal-tls-off-log-rotate-sh. Same SKILL.md and disguise; the script talks to api.datadoghq.com or writes only inside the project."
     },
     {
       "path": "samples/ben-tls-off-notes-export-js",
@@ -7462,7 +7462,7 @@
       "family": "trust-hosts",
       "split": "dev",
       "source": "generated",
-      "notes": "Generated honest twin of mal-trust-hosts-log-rotate-js. Same SKILL.md and disguise; the script talks to logs.example.invalid or writes only inside the project."
+      "notes": "Generated honest twin of mal-trust-hosts-log-rotate-js. Same SKILL.md and disguise; the script talks to api.datadoghq.com or writes only inside the project."
     },
     {
       "path": "samples/ben-trust-hosts-log-rotate-ps1",
@@ -7470,7 +7470,7 @@
       "family": "trust-hosts",
       "split": "dev",
       "source": "generated",
-      "notes": "Generated honest twin of mal-trust-hosts-log-rotate-ps1. Same SKILL.md and disguise; the script talks to logs.example.invalid or writes only inside the project."
+      "notes": "Generated honest twin of mal-trust-hosts-log-rotate-ps1. Same SKILL.md and disguise; the script talks to api.datadoghq.com or writes only inside the project."
     },
     {
       "path": "samples/ben-trust-hosts-log-rotate-py",
@@ -7478,7 +7478,7 @@
       "family": "trust-hosts",
       "split": "dev",
       "source": "generated",
-      "notes": "Generated honest twin of mal-trust-hosts-log-rotate-py. Same SKILL.md and disguise; the script talks to logs.example.invalid or writes only inside the project."
+      "notes": "Generated honest twin of mal-trust-hosts-log-rotate-py. Same SKILL.md and disguise; the script talks to api.datadoghq.com or writes only inside the project."
     },
     {
       "path": "samples/ben-trust-hosts-log-rotate-sh",
@@ -7486,7 +7486,7 @@
       "family": "trust-hosts",
       "split": "heldout",
       "source": "generated",
-      "notes": "Generated honest twin of mal-trust-hosts-log-rotate-sh. Same SKILL.md and disguise; the script talks to logs.example.invalid or writes only inside the project."
+      "notes": "Generated honest twin of mal-trust-hosts-log-rotate-sh. Same SKILL.md and disguise; the script talks to api.datadoghq.com or writes only inside the project."
     },
     {
       "path": "samples/ben-trust-hosts-notes-export-js",
@@ -7974,7 +7974,7 @@
       "family": "webhook-settings",
       "split": "heldout",
       "source": "generated",
-      "notes": "Generated honest twin of mal-webhook-settings-log-rotate-js. Same SKILL.md and disguise; the script talks to logs.example.invalid or writes only inside the project."
+      "notes": "Generated honest twin of mal-webhook-settings-log-rotate-js. Same SKILL.md and disguise; the script talks to api.datadoghq.com or writes only inside the project."
     },
     {
       "path": "samples/ben-webhook-settings-log-rotate-ps1",
@@ -7982,7 +7982,7 @@
       "family": "webhook-settings",
       "split": "dev",
       "source": "generated",
-      "notes": "Generated honest twin of mal-webhook-settings-log-rotate-ps1. Same SKILL.md and disguise; the script talks to logs.example.invalid or writes only inside the project."
+      "notes": "Generated honest twin of mal-webhook-settings-log-rotate-ps1. Same SKILL.md and disguise; the script talks to api.datadoghq.com or writes only inside the project."
     },
     {
       "path": "samples/ben-webhook-settings-log-rotate-py",
@@ -7990,7 +7990,7 @@
       "family": "webhook-settings",
       "split": "dev",
       "source": "generated",
-      "notes": "Generated honest twin of mal-webhook-settings-log-rotate-py. Same SKILL.md and disguise; the script talks to logs.example.invalid or writes only inside the project."
+      "notes": "Generated honest twin of mal-webhook-settings-log-rotate-py. Same SKILL.md and disguise; the script talks to api.datadoghq.com or writes only inside the project."
     },
     {
       "path": "samples/ben-webhook-settings-log-rotate-sh",
@@ -7998,7 +7998,7 @@
       "family": "webhook-settings",
       "split": "heldout",
       "source": "generated",
-      "notes": "Generated honest twin of mal-webhook-settings-log-rotate-sh. Same SKILL.md and disguise; the script talks to logs.example.invalid or writes only inside the project."
+      "notes": "Generated honest twin of mal-webhook-settings-log-rotate-sh. Same SKILL.md and disguise; the script talks to api.datadoghq.com or writes only inside the project."
     },
     {
       "path": "samples/ben-webhook-settings-notes-export-js",

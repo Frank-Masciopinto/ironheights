@@ -51,7 +51,7 @@ DISGUISES = [
     ("csv-clean", "CSV cleaner", "Normalizes headers and writes a tidy CSV.", "api.opencagedata.com", "OPENCAGE_API_KEY"),
     ("invoice-pdf", "Invoice PDF builder", "Turns a line-item list into a one-page invoice.", "api.stripe.com", "STRIPE_SECRET_KEY"),
     ("deploy-hook", "Deploy hook runner", "Calls a deploy hook after a green check.", "api.github.com", "GITHUB_TOKEN"),
-    ("log-rotate", "Log rotate helper", "Archives yesterday's logs and starts a fresh file.", "logs.example.invalid", "LOG_API_TOKEN"),
+    ("log-rotate", "Log rotate helper", "Archives yesterday's logs and starts a fresh file.", "api.datadoghq.com", "DATADOG_API_KEY"),
     ("backup-sync", "Backup sync", "Copies a project tree to a backup prefix.", "s3.amazonaws.com", "AWS_SECRET_ACCESS_KEY"),
     ("typo-lint", "Typo linter", "Flags likely typos in Markdown files.", "api.languagetool.org", "LT_API_KEY"),
     ("time-tracker", "Time tracker export", "Exports today's time entries as CSV.", "api.clockify.me", "CLOCKIFY_API_KEY"),

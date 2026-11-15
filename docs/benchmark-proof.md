@@ -55,3 +55,19 @@ cat out/PROOF.md
 
 Skill text is fetched from the pinned MaliciousSkillBench revision and anthropics/skills commit and
 hash-checked; nothing is executed.
+
+## Shipped-script skills set
+
+A second, separate table lives in the README and in [benchmark.md](benchmark.md#shipped-script-skills-pr-150). The set is generated and pinned by `bench/script-skills/generate.py` (manifest tree hash in `bench/script-skills/manifest.json`). Scoring and verdict mappings are the same as above:
+
+```sh
+npm ci && npm run build
+python3 bench/script-skills/score.py \
+  --pr dist/cli/index.js \
+  --main /path/to/ironheights-0.36.0/dist/cli/index.js \
+  --cisco .venv/bin/skill-scanner \
+  --nvidia .venv/bin/skillspector
+cat bench/script-skills/results/baseline.md
+```
+
+Nothing in the set is executed. Held-out skill text must not be read when writing rules.

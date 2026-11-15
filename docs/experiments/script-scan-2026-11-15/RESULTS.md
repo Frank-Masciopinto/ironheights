@@ -118,3 +118,30 @@ blind official gate: PASS vs live main (232/452 and 335/600, 13/300). In-repo
 `baseline.json` is still the older 0.33.0 snapshot (275/474, 217/15); the gate
 compares against that file and still passes, but the numbers to read are the
 live main column above.
+
+## Shipped-script skills set (added on this PR, for the README table on merge)
+
+Kaleb asked for a ≥1000-sample test of skills whose malice lives in shipped scripts, scored against main, this PR, Cisco 2.3.2, and SkillSpector v2.12.0, and added to the public table so it appears when this PR merges.
+
+The set is `bench/script-skills` (seed `script-skills-20261115`, tree `64730fbcf1c894dbe12ec6fc77b426a150725aa3975f6498853b95b9133e8b43`):
+
+- 1028 malicious + 1026 honest twins (2054 total).
+- 2048 generated (16 families × 16 disguises × 4 languages, each with an honest twin). SKILL.md is an honest how-to that runs `scripts/*.{py,sh,js,ps1}`; malice is only in the script.
+- 6 real-derived fixtures from missed-attacks 2026-11-03 (serpent env-dump, spider decode-then-exec) and 2026-11-13 (reverse-shell python/node helpers), with the two honest twins that shipped with those attacks.
+- Official MSB, the monthly ClawHub crawl, and the 173k look-alikes are SKILL.md-only, so they could not supply a thousand real multi-file samples. That is called out in the set README.
+- Held-out split is hash-based (1022 dev / 1032 held-out). **Rules were not tuned on this set.** Held-out block rates track dev (PR 39.1% vs 39.7%).
+
+A first pass used `logs.example.invalid` as the "official" API for the log-rotate honest twins. That is a reserved `.invalid` host, which IH-SCR-001 correctly treats as an exfil sink, and it produced 14 false block FPs (all log-rotate twins). The official host for that disguise was changed to `api.datadoghq.com` in the generator — a dataset fix, not a rule change — and the set was re-scored. Block FPs on honest twins are 0 for both main and this PR.
+
+| Shipped-script skills (1028 / 1026) | Ironheights main (590ac5f) | This PR | Cisco 2.3.2 | SkillSpector v2.12.0 |
+|---|---|---|---|---|
+| Attacks blocked | 287/1028 (27.9%) | **405/1028 (39.4%)** | 342/1028 | 295/1028 |
+| Attacks block-or-review | 566/1028 (55.1%) | **598/1028 (58.2%)** | 415/1028 | 703/1028 |
+| Honest twins wrongly blocked | **0/1026** | **0/1026** | 231/1026 | 225/1026 |
+| Honest twins block-or-review | 112/1026 | 112/1026 | 288/1026 | 693/1026 |
+| Held-out attacks blocked | 159/539 | **214/539 (39.7%)** | 174/539 | 154/539 |
+| Held-out honest twins blocked | 0/493 | 0/493 | 111/493 | 108/493 |
+
+The +118 blocks versus main are all generated, in auto-approve (48), secret-exfil (31), persist-cron (24), and staged-loader (15), and they split 63 dev / 55 held-out. Families this set still mostly misses at block include clipboard-harvest, destructive, miner-loader, tls-off, and webhook-settings. Official MSB / real-world / look-alike / safe-456 figures are unchanged (0 new FPs there). 874 + 1 new manifest test passed.
+
+Reproduce: `npm run bench:script-skills` (add `--main`, `--cisco`, `--nvidia` as in `bench/script-skills/README.md`).
