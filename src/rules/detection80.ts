@@ -41,8 +41,7 @@ function segments(file: ScannedFile): { start: number; lines: string[] }[] {
   return out;
 }
 
-
-const GUARD_DOC =
+export const GUARD_DOC =
   /\b(?:scanner|vett?(?:ing|er)|red flags?|detect(?:s|ion|or)?|suspicious|jailbreak\w*|prompt injection|attack patterns?|threat model|ctf|owasp|mitre|ransomware|incident|forensic)\b/i;
 
 function hostOf(raw: string): string | undefined {
@@ -51,7 +50,7 @@ function hostOf(raw: string): string | undefined {
 }
 
 /** Official package registries / API hosts a skill may legitimately point at. */
-const OFFICIAL_HOST =
+export const OFFICIAL_HOST =
   /(?:^|\.)(?:npmjs\.(?:org|com)|registry\.npmjs\.org|yarnpkg\.com|pypi\.org|files\.pythonhosted\.org|rubygems\.org|crates\.io|packagist\.org|nuget\.org|pkg\.go\.dev|proxy\.golang\.org|maven\.org|repo1\.maven\.org|gradle\.org|github\.com|githubusercontent\.com|gitlab\.com|bitbucket\.org|dev\.azure\.com|sourceforge\.net|hf\.co|huggingface\.co|openai\.com|anthropic\.com|googleapis\.com|cloudflare\.com)$/i;
 
 function declaredHosts(ctx: ScanContext | undefined): string[] {
@@ -276,8 +275,7 @@ export const net012 = build({
 
 const FETCH_LINE = /\b(?:curl|wget|Invoke-WebRequest|iwr|Invoke-RestMethod)\b/i;
 /** The file a fetch writes to, whichever side of the URL the flag sits. */
-const OUTFILE =
-  /(?:-o|-O|--output|-OutFile)\s+([^\s"'`;|&]+)|>\s*([^\s"'`;|&>]+)/i;
+const OUTFILE = /(?:-o|-O|--output|-OutFile)\s+([^\s"'`;|&]+)|>\s*([^\s"'`;|&>]+)/i;
 const EXEC_SAVED =
   /\b(?:exec|bash|sh|zsh|python3?|node|pwsh|powershell|\.\/|source|chmod\s+\+x)\b|\bexecute\b/i;
 
@@ -316,14 +314,16 @@ export const exec016 = build({
         const esc = target.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         // The downloaded file is a runnable program (NOT a data/config extension like
         // json/yaml/conf, which honest skills fetch as data to read or ingest).
-        const execExt = /\.(?:py|sh|bash|zsh|js|mjs|cjs|ts|rb|pl|php|exe|bat|ps1|cmd|bin|so|dll)$/i.test(
-          target,
-        );
+        const execExt =
+          /\.(?:py|sh|bash|zsh|js|mjs|cjs|ts|rb|pl|php|exe|bat|ps1|cmd|bin|so|dll)$/i.test(target);
         // The saved file is the direct target of an interpreter / ./file / exec, at a
         // command boundary — not merely passed as an argument to some other script.
         const directRun =
           !!target &&
-          (new RegExp(`(?:^|[;&|]|\\n)\\s*(?:exec|bash|sh|zsh|python3?|node|pwsh|powershell|source)\\s+(?:["'\`]?\\S*\\/)?${esc}\\b`, 'i').test(body) ||
+          (new RegExp(
+            `(?:^|[;&|]|\\n)\\s*(?:exec|bash|sh|zsh|python3?|node|pwsh|powershell|source)\\s+(?:["'\`]?\\S*\\/)?${esc}\\b`,
+            'i',
+          ).test(body) ||
             new RegExp(`(?:^|[;&|\\s])\\.\\/${esc}\\b`, 'i').test(body) ||
             new RegExp(`\\bchmod\\s+\\+x\\s+(?:["'\`]?\\S*\\/)?${esc}\\b`, 'i').test(body) ||
             (/\.(?:exe|bin|so|dll|ps1|bat|cmd)$/i.test(target) && EXEC_SAVED.test(body)));
@@ -390,7 +390,6 @@ export const priv005 = build({
   },
 });
 
-
 // ---------------------------------------------------------------------------
 // d/g. IH-NET-013 — TLS trust anchored to a certificate the skill ships itself
 // ---------------------------------------------------------------------------
@@ -405,7 +404,7 @@ const SYSTEM_STORE =
   /\bsystem (?:certificate |cert )?store\b|\bsystem keychain\b|\bkeychain\b|update-ca-certificates|security\s+add-trusted-cert|\/etc\/(?:ssl|pki)|\/usr\/local\/share\/ca-certificates|\/etc\/kubernetes|\/Library\/|\/System\//i;
 
 /** True when a file with this basename is shipped inside the skill directory. */
-function shippedInSkill(root: string, relOrName: string): boolean {
+export function shippedInSkill(root: string, relOrName: string): boolean {
   if (!root || root.startsWith('(')) return false; // text-scan mode: no package on disk
   const clean = relOrName.replace(/^['"`]|['"`]$/g, '').replace(/\\/g, '/');
   const base = clean.split('/').pop() ?? clean;

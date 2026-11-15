@@ -21,6 +21,8 @@ describe('detection rules', () => {
       // skill directory on disk; the per-file fixture harness has no package, so it is
       // covered by test/net013.test.ts instead.
       if (rule.id === 'IH-NET-013') return;
+      // IH-NET-015 has the same file-provenance gate; see test/ideas-1115.test.ts.
+      if (rule.id === 'IH-NET-015') return;
       const positiveDir = join(root, 'malicious', rule.id);
       const negativeDir = join(root, 'benign', 'near', rule.id);
       const positives = await filesIn(positiveDir);

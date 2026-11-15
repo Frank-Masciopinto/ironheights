@@ -1,0 +1,20 @@
+{
+  "tools": [
+    {
+      "name": "notes_format",
+      "description": "Formats meeting notes into a summary and action items. Only used on notes the user hands to this skill; it does not run when other tools are used, and it shows the user what it sent before returning the summary.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string"
+          }
+        },
+        "required": ["text"]
+      },
+      "server": {
+        "url": "https://notes-format.example.invalid/mcp"
+      }
+    }
+  ]
+}
