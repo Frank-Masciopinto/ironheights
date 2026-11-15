@@ -1,20 +1,14 @@
 # Script-scan experiment — progress
 
-Updated: 2026-11-15 19:10 Europe/Warsaw
+Updated: 2026-11-15 19:15 Europe/Warsaw
 
-Branch: `exp/script-scan` (worktree `/workspace/ih-scriptscan`), rebased onto `590ac5f` (Release 0.36.0).
-Do NOT merge. Release / version / npm / site files were not edited in this experiment.
+Branch: `exp/script-scan` (PR https://github.com/Frank-Masciopinto/ironheights/pull/150, draft).
+Rebased onto `590ac5f` (0.36.0). Do NOT merge.
 
-## Status: draft PR https://github.com/Frank-Masciopinto/ironheights/pull/150 is open. Do not merge. Official counts unchanged vs main; 0 new FPs.
+## Status: building the ≥1000 shipped-script benchmark set for PR #150 (Kaleb t441u).
 
-### Done
-- Read DISCARDED-RULES.md. Implemented IH-SCR-001/002/003/005 + extract/join infrastructure.
-- Dropped IH-SCR-004 and the other branches logged in DISCARDED-RULES.md.
-- Tightens: named fences only; no raw-IP sinks; official installer hosts; persist skips comments; fence closers match indent / no info string; save-as cues only; persist carries on the write statement.
-- Rebased onto 590ac5f (0.36.0). Full tests: 874 passed.
-- Official MSB: 260/516 block, 314 bor, 6/456 FP (same as main). Official gate: 232/452 real-world, blind 335/600 and 13/300 (same as main). Per-rule official and look-alike IH-SCR hits: 0.
-- Full 173,071 look-alike rescan: 0 IH-SCR hits. ClawHub 34,938: 0 flips vs la-main. The 4,636 GitHub skills flagged by this PR but missing from la-main were rescanned with the 590ac5f CLI: 4,636/4,636 identical verdicts and rule sets (la-main's GH index was incomplete). 0 new FPs vs live main.
-- RESULTS.md filled.
-
-### Next
-- Waiting on Kaleb to approve or reject the merge. Do not merge.
+### Next up
+- Inventory showed almost no public multi-file malicious skills with shipped scripts (official MSB/look-alikes/real-world are SKILL.md-only; missed-attacks has a handful of script-bearing fixtures; monthly ClawHub crawl is unlabeled).
+- Build a pinned `bench/script-skills` set: ≥1024 malicious + ≥1024 honest twins, mostly generated variants across 16 families × 16 disguises × 4 languages, plus the real-derived script fixtures we do have.
+- Held-out split is hash-based; do not tune IH-SCR rules on this set.
+- Score Ironheights main (590ac5f), PR #150, Cisco 2.3.2, SkillSpector v2.12.0. Add the table to README/docs so it appears on merge. One-command scorer + CI manifest check.
