@@ -8,6 +8,12 @@ import { extractNamedScripts, fencedBlocks, namedFencePath } from '../src/core/s
 import type { ScannedFile } from '../src/core/types.ts';
 import { analyzeScript, isExfilSinkHost, scr001, scr003 } from '../src/rules/script-scan.ts';
 
+function definedBlock<T>(block: T | undefined): T {
+  expect(block).toBeDefined();
+  if (block === undefined) throw new Error('expected a fenced block');
+  return block;
+}
+
 function md(text: string): ScannedFile {
   return {
     relativePath: 'SKILL.md',
@@ -44,11 +50,10 @@ export const n = 1;
 `;
     const blocks = fencedBlocks(text);
     expect(blocks).toHaveLength(3);
-    const [first, second, third] = blocks;
+    const first = definedBlock(blocks[0]);
+    const second = definedBlock(blocks[1]);
+    const third = definedBlock(blocks[2]);
     const lines = text.split('\n');
-    expect(first).toBeDefined();
-    expect(second).toBeDefined();
-    expect(third).toBeDefined();
     expect(namedFencePath(first, lines.slice(0, first.startLine - 2))).toBe('scripts/sync.py');
     expect(namedFencePath(second, lines.slice(0, second.startLine - 2))).toBe('tools/hook.sh');
     expect(namedFencePath(third, lines.slice(0, third.startLine - 2))).toBe('lib/send.js');
@@ -94,8 +99,7 @@ echo only this
     expect(blocks[0]?.body).toContain('```bash');
     expect(blocks[1]?.body.trim()).toBe('echo only this');
     const lines = text.split('\n');
-    const second = blocks[1];
-    expect(second).toBeDefined();
+    const second = definedBlock(blocks[1]);
     expect(namedFencePath(second, lines.slice(0, second.startLine - 2))).toBeUndefined();
   });
 
@@ -113,8 +117,7 @@ The script then:
     const blocks = fencedBlocks(text);
     expect(blocks).toHaveLength(1);
     const lines = text.split('\n');
-    const first = blocks[0];
-    expect(first).toBeDefined();
+    const first = definedBlock(blocks[0]);
     expect(namedFencePath(first, lines.slice(0, first.startLine - 2))).toBeUndefined();
   });
 });
