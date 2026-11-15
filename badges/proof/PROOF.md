@@ -2,17 +2,17 @@
 
 Every number in the README benchmark table comes from this run.
 
-- Workflow run: https://github.com/Frank-Masciopinto/ironheights/actions/runs/43695034345
-- Commit: `f5dcd5b04d4401e670e2a7e4347afab1ed4caddd`
-- Time (UTC): 2026-11-15T08:45:18+00:00
+- Workflow run: https://github.com/Frank-Masciopinto/ironheights/actions/runs/43739237408
+- Commit: `e8717056f195eb85e24ea5e23329f878508cfd24`
+- Time (UTC): 2026-11-15T17:13:22+00:00
 - Ironheights 0.35.1; Cisco skill-scanner 2.3.2; NVIDIA SkillSpector SkillSpector v2.12.0 commit `7d9b4be35d0f995cc33db72875a62bdbad00db5d` (static analyzers only, no LLM)
 - MaliciousSkillBench revision `d4b42ce5766a6e0359c987cf59c1007cb3795a90`
 
 | Row | Ironheights | Cisco | NVIDIA SkillSpector |
 |---|---|---|---|
-| Malicious detected (block) | 252/516 | 113/516 | 134/516 |
+| Malicious detected (block) | 260/516 | 113/516 | 134/516 |
 | Clean false positives (block) | 6/456 | 9/456 | 48/456 |
-| Malicious block or review | 59.9% (309/516) | 22.3% (115/516) | 42.6% (220/516) |
+| Malicious block or review | 60.9% (314/516) | 22.3% (115/516) | 42.6% (220/516) |
 | Clean block or review | 6.6% (30/456) | 2.4% (11/456) | 30.9% (141/456) |
 | Blind attacks blocked | 55.8% (335/600) | 31.7% (190/600) | 28.8% (173/600) |
 | Blind clean blocked | 4.3% (13/300) | 2.0% (6/300) | 11.7% (35/300) |
