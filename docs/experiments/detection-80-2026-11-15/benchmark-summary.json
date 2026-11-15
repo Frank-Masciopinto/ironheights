@@ -1,0 +1,60 @@
+{
+ "version": "0.35.1",
+ "detect": "260/516",
+ "fp": "6/456",
+ "anthropic": "0/19",
+ "detect_pct": 50.4,
+ "fp_pct": 1.3,
+ "review_detect": "60.9% (314/516)",
+ "review_fp": "6.6% (30/456)",
+ "blind_detect": "55.8% (335/600)",
+ "blind_fp": "4.3% (13/300)",
+ "prose_detect": "40.8% (40/98)",
+ "prose_review": "56.1% (55/98)",
+ "msb_revision": "d4b42ce5766a6e0359c987cf59c1007cb3795a90",
+ "anthropic_commit": "ca45fc496a3436251f191354091d557da31c15b5",
+ "llm": {
+  "status": "not-run",
+  "note": "Model opinion is a separate column. This command does not call a model, so it has no detection or false-positive count. It never changes the verdicts in this file."
+ },
+ "cisco": {
+  "version": "2.3.2",
+  "detect": "113/516",
+  "fp": "9/456",
+  "anthropic": "1/19",
+  "detect_pct": 21.9,
+  "fp_pct": 2.0,
+  "review_detect": "22.3% (115/516)",
+  "review_fp": "2.4% (11/456)",
+  "blind_detect": "31.7% (190/600)",
+  "blind_fp": "2.0% (6/300)",
+  "prose_detect": "5.1% (5/98)",
+  "prose_review": "5.1% (5/98)"
+ },
+ "nvidia": {
+  "version": "SkillSpector v2.12.0",
+  "commit": "7d9b4be35d0f995cc33db72875a62bdbad00db5d",
+  "command": "skillspector scan <skill-dir> --no-llm --format json",
+  "elapsed_seconds": 241.6,
+  "scan_failures": {
+   "public": 0,
+   "blind": 0,
+   "public_ids": [],
+   "counted": "not blocked and not review; still in the denominator"
+  },
+  "detect": "134/516",
+  "fp": "48/456",
+  "anthropic": "4/19",
+  "detect_pct": 26.0,
+  "fp_pct": 10.5,
+  "review_detect": "42.6% (220/516)",
+  "review_fp": "30.9% (141/456)",
+  "blind_detect": "28.8% (173/600)",
+  "blind_fp": "11.7% (35/300)",
+  "prose_detect": "7.1% (7/98)",
+  "prose_review": "11.2% (11/98)"
+ },
+ "run_url": "local run",
+ "commit_sha": "289e65dc0e89f6f3ddeeb3f82bd716645f445deb",
+ "timestamp_utc": "2026-11-15T15:19:44+00:00"
+}
