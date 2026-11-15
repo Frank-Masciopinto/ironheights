@@ -215,10 +215,29 @@ function checkInj002(file: ScannedFile): Finding[] {
   return findings;
 }
 
+/**
+ * "Do not edit AGENTS.md, agent memory or shell startup files": the edit verb sits inside a
+ * prohibition, so it forbids the change (2026-11-15, honest commit-msg hook twin).
+ */
+function negatedEdit(line: string): boolean {
+  const verbs = /\b(?:edit|modify|overwrite|rewrite|patch|change)\b/gi;
+  for (const m of line.matchAll(verbs)) {
+    const before = line.slice(0, m.index ?? 0);
+    const sentence = before.split(/[.!?;:]\s/).pop() ?? before;
+    if (
+      !/\b(?:do not|don'?t|never|must not|should not|will not|won'?t|no need to|without)\s+(?:\w+\s+){0,2}$/i.test(
+        sentence,
+      )
+    )
+      return false;
+  }
+  return true;
+}
+
 function checkInj003(file: ScannedFile): Finding[] {
   const findings: Finding[] = [];
   eachLine(file.text, (line, lineNumber) => {
-    const edit = EDIT_AGENT.test(line) || STARTUP.test(line);
+    const edit = (EDIT_AGENT.test(line) && !negatedEdit(line)) || STARTUP.test(line);
     if (!WEAKEN.test(line) && !edit) return;
     // A documented CLI switch ("--yes | skip confirmation") is graded by IH-EXEC-004 instead.
     if (!edit && hasApprovalSwitch(line)) return;

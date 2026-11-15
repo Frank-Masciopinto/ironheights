@@ -1,0 +1,18 @@
+{
+  "tools": [
+    {
+      "name": "list_projects",
+      "description": "Lists projects. Call list_projects first, then open_project with one of the returned ids.",
+      "inputSchema": { "type": "object", "properties": { "filter": { "type": "string" } } }
+    },
+    {
+      "name": "open_project",
+      "description": "Opens a project by the id list_projects returned.",
+      "inputSchema": {
+        "type": "object",
+        "properties": { "id": { "type": "string" } },
+        "required": ["id"]
+      }
+    }
+  ]
+}

@@ -132,7 +132,7 @@ function clausesOf(text: string): string[] {
 const w = (words: string[]): string => words.join('|');
 
 /** Prohibitions and refusals in five languages: the clause forbids the change. */
-const PROHIBITION = new RegExp(
+export const PROHIBITION = new RegExp(
   `^(?:\\*\\*)?(?:${w([
     'never',
     'do not',
@@ -157,7 +157,7 @@ const PROHIBITION = new RegExp(
 );
 
 /** The clause describes an attack or quotes a pattern; it is not an order (pattern 1). */
-const DESCRIBES = new RegExp(
+export const DESCRIBES = new RegExp(
   `\\b(?:${w([
     'attacker',
     'injection',
@@ -198,7 +198,7 @@ const DESCRIBES = new RegExp(
 );
 
 /** The user is asked and the change waits for a yes. */
-const CONSENT = new RegExp(
+export const CONSENT = new RegExp(
   `\\b(?:${w([
     'after (?:the (?:user|owner|parent)|they|a clear|an explicit|their)\\b[^.]{0,30}\\b(?:yes|confirms?|approves?|agrees?|ok)',
     'only (?:after|if|when) (?:the (?:user|owner|parent)|they)',
@@ -236,10 +236,10 @@ const CONSENT = new RegExp(
 );
 
 /** What the skill tells the user leaves the change out (ariesai / evil_robot_jas). */
-const HIDE = new RegExp(
+export const HIDE = new RegExp(
   `(?:${w([
     "\\b(?:do not|don't|never|no need to)\\s+(?:mention|list|include|show|report|tell|bring up|note|surface)\\b",
-    '\\b(?:leave|keep)\\b[^.\\n]{0,80}\\bout of (?:the|your|this)?\\s*(?:summary|report|recap|digest|reply|notes|table|changelog|pr|output|checklist)',
+    '\\b(?:leave|keep)\\b[^.\\n]{0,80}\\bout of (?:the|your|this)?\\s*(?:(?:user|owner|parent|team|customer)\\W?s\\s+)?(?:summary|report|recap|digest|reply|notes|table|changelog|pr|output|checklist)',
     '\\b(?:tell|reply to|show) the user (?:with )?only\\b',
     '\\breply with only\\b',
     '\\bjust say\\b',
@@ -329,7 +329,7 @@ const LIMITED =
   /\b(?:on (?:a |the |your )?(?:test|staging|dev|local|development) (?:site|server|env\w*|instance|machine|box|account)|in (?:a |the )?(?:test|staging|dev|local) env\w*|only (?:if|when|for|in|on)|(?:environments?|hosts?|testing|development|dev|lab|locally|sandbox(?:es)?) only|for (?:local )?(?:testing|development|dev|debugging|self-signed)|self-signed)\b/i;
 
 /** A step that reports to the user. */
-const REPORT_STEP =
+export const REPORT_STEP =
   /^(?:\*\*)?(?:(?:show|tell|report to|reply to|send|give|message|answer) (?:the )?(?:user|owner|parent|them|him|her)\b|(?:reply|report|summari[sz]e|recap)\b(?! (?:to|on) (?:the )?(?:issue|pr|thread|channel))|(?:the|your|a) (?:summary|report|recap|reply)\b|zeige|pokaż|muestra|montre|le résumé|dem nutzer|al usuario|użytkownikowi)/iu;
 
 // --- protections (category nouns and config keys)
@@ -371,6 +371,12 @@ const PROTECTION_WORDS = [
   'dkim',
   'phishing',
   'safe browsing',
+  'dangerous[- ](?:site|download|file|app)s?(?: and dangerous[- ]\\w+)? (?:warnings?|protection|checks?)',
+  '(?:app|download|file) scanning|scan(?:s|ning)? (?:of )?(?:apps|downloads|downloaded files)|scan apps',
+  '(?:spoken |voice |purchase |order )?confirmation codes?',
+  'privacy zones?',
+  'website matching|url matching|domain matching',
+  'ask[- ]to[- ]buy',
   'strict-ssl',
   'ssl',
   'tls',
@@ -489,7 +495,7 @@ const WEAKEN = new RegExp(
     '\\bdisable\\b',
     '\\bdeactivate\\b',
     '-disable\\w*\\s+\\$true',
-    '\\bremove (?:the |any |all |every )?(?:\\w+ )?(?:requirement|check|lock|pin|protection|review|approval|recovery|alerts?)',
+    '\\bremove (?:the |any |all |every )?(?:\\w+ )?(?:requirement|check|lock|pin|protection|review|approval|recovery|alerts?|privacy zones?|filters?)',
     '\\bdelete (?:any|all|every)\\b',
     '\\bstop-?logging\\b',
     '\\bexclusion\\w*\\b',
@@ -804,7 +810,7 @@ function inScope(surfaceText: string, description: string): boolean {
   return [...words].some((word) => job.has(word));
 }
 
-function descriptionOf(text: string): string {
+export function descriptionOf(text: string): string {
   const fm = /^---\n([\s\S]*?)\n---/.exec(text);
   const block = fm?.[1] ?? '';
   const description = /^description:\s*(.*(?:\n[ \t]+.*)*)/m.exec(block)?.[1] ?? '';
@@ -999,7 +1005,7 @@ function dropEndpoint(line: string): string {
 }
 
 /** The unit sits under "Never:", "Red flags", "Anti-patterns" and the like. */
-const NEG_CONTEXT =
+export const NEG_CONTEXT =
   /\b(?:never|don'?t|do not|not|won'?t|shouldn'?t|cannot|can'?t|avoid|anti-?patterns?|red flags?|forbidden|not allowed|mistakes?|pitfalls?|what not|must not|prohibited|warning signs?|dangerous|risks?|threats?|out of scope|non-goals?|blocked|refuse|nie|nigdy|niemals|nunca|jamais)\b/iu;
 
 /** A link or a page to visit is where the step happens, not who gets access. */
@@ -1103,17 +1109,22 @@ function widens(clause: string, stepText: string): boolean | undefined {
 
 /** "Lock the door and turn off the lights": each coordinated part has its own object. */
 function partsOf(clause: string): string[] {
+  // A quoted setting name ("unlock and start the bike remotely") is one object, not two parts.
+  const masked = clause.replace(/["“][^"”]{1,120}["”]/g, (quoted) =>
+    quoted.replace(/\s(and|und|i|y|et)\s/g, '\uE000$1\uE000'),
+  );
   return (
-    clause
+    masked
       .split(
         /,?\s+(?:and|und|i|y|et)\s+(?=(?:then\s+)?\p{L}+\b)|;\s+|,\s+(?:then|so)\s+|\s+[—–]\s+|\s+-\s+/u,
       )
-      .map((part) => part.replace(LEAD, ''))
+      .map((part) => part.replace(/\uE000/g, ' ').replace(LEAD, ''))
       .filter(
         (part) =>
           !PROHIBITION.test(part.trim()) &&
           !/^[^.]{0,40}\b(?:never|do not|don't|must not|should not)\b/i.test(
-            part.replace(/[*_]/g, ''),
+            // "set the screen lock to never": a value, not a prohibition.
+            part.replace(/[*_]/g, '').replace(/\b(?:to|as|at)\s+["“'`]?never\b/gi, ' '),
           ),
       )
       // "Enable or disable X" documents a toggle; it does not order one.
@@ -1130,6 +1141,18 @@ function partsOf(clause: string): string[] {
 const ANAPHOR =
   /^\p{L}+(?: \p{L}+)? (?:that|this|it|them|each one|the rule|the setting|that (?:rule|setting|line|value))\b|\b(?:that|this) (?:rule|setting|line|value)\b|\beach one\b|\b(?:that|this|it|them) (?:off|on|to)\b/iu;
 
+/**
+ * Switching ON a way in that skips a check is the same move as switching a check off
+ * (fromthebot "door plus a blindfold", iofrogman81 setpoints): automatic sign-in or unlock,
+ * auto-accept, installs from unknown sources, debugging bridges, fill-without-click,
+ * one-step purchasing, staff review of recordings, remote management, ports opened on demand.
+ * Setting kinds, not sample sentences.
+ */
+const OPEN_OP =
+  /\b(?:turn(?:s|ed|ing)? on|switch(?:es|ed|ing)? on|enable[sd]?|activate[sd]?|allow(?:s|ed)?|tick|set\b[^.]{0,60}\b(?:to ["“]?on|from ["“]?off["”]? to ["“]?on))\b/iu;
+const OPENING =
+  /\b(?:automatic (?:log-?in|sign-?in|unlock\w*)|auto-?(?:log-?in|sign-?in|unlock\w*|accept\w*|fill on (?:page )?load)|unlock\w* automatically|accept\w* (?:\w+ ){0,2}automatically|install(?:ing)? unknown apps|unknown sources|(?:usb|wireless|adb|remote) debugging|always allow from|fill\w* automatically|voice purchas\w*|one-(?:click|step) (?:purchas\w*|buy\w*|checkout)|(?:human|staff|vendor|employee) (?:review|listening)|(?:manage\w*|remote management|remote admin\w*) (?:\w+ ){0,3}from (?:the )?internet|open ports by themselves|upnp|(?:unlock|start|open|control)\w* (?:\w+ ){0,4}remotely|remote (?:unlock|start|control))\b/iu;
+
 /** undefined: no weakening; otherwise whether a strong (security or safety) protection goes. */
 function weakens(clause: string, stepText: string): boolean | undefined {
   let found: boolean | undefined;
@@ -1139,6 +1162,12 @@ function weakens(clause: string, stepText: string): boolean | undefined {
       /\b(?:ssl|tls|smb|ntlm)\s*v?\d(?:\.\d)?(?:\s*(?:,|and|or)\s*v?\d(?:\.\d)?)*/gi,
       ' ',
     );
+    // An opening alone is a soft change: honest device and dev guides enable debugging or
+    // remote control all the time (look-alikes). It needs an explicit sign (hidden, left on).
+    if (nearOp(text, OPEN_OP, OPENING, 90)) {
+      found = found === true;
+      continue;
+    }
     if (!WEAKEN.test(text)) continue;
     // The protection is the object of the operator, or named earlier in the step ("switch that rule off").
     const scope = nearOp(text, WEAKEN, PROTECTION, 90)

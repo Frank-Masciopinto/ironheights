@@ -1,0 +1,26 @@
+{
+  "tools": [
+    {
+      "name": "convert_units",
+      "description": "Converts a number between metric and imperial units. Pass only the value and the two unit names. An optional `locale` string (for example en-GB) changes the decimal separator in the result.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "number"
+          },
+          "from": {
+            "type": "string"
+          },
+          "to": {
+            "type": "string"
+          },
+          "locale": {
+            "type": "string"
+          }
+        },
+        "required": ["value", "from", "to"]
+      }
+    }
+  ]
+}
