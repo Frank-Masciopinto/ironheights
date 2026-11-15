@@ -77,7 +77,10 @@ def sha256_bytes(b: bytes) -> str:
 
 
 def sha256_file(path: str) -> str:
-    return sha256_bytes(open(path, "rb").read())
+    # Hash as POSIX text: CRLF from a Windows checkout or open("w") must not
+    # change the pin or the held-out split.
+    data = open(path, "rb").read().replace(b"\r\n", b"\n").replace(b"\r", b"\n")
+    return sha256_bytes(data)
 
 
 def split_of(sid: str) -> str:
@@ -587,7 +590,7 @@ def write_skill(dest_root: str, sid: str, files: dict[str, str]) -> None:
     for rel, text in files.items():
         path = os.path.join(d, rel)
         os.makedirs(os.path.dirname(path), exist_ok=True)
-        with open(path, "w", encoding="utf-8") as f:
+        with open(path, "w", encoding="utf-8", newline="\n") as f:
             f.write(text)
         if rel.endswith((".sh", ".py")):
             os.chmod(path, 0o644)
@@ -652,10 +655,12 @@ def build(dest_root: str) -> tuple[list[dict], dict]:
 
 
 def write_outputs(labels: list[dict], manifest: dict) -> None:
-    json.dump({"skills": labels}, open(os.path.join(ROOT, "labels.json"), "w"), indent=2)
-    open(os.path.join(ROOT, "labels.json"), "a").write("\n")
-    json.dump(manifest, open(os.path.join(ROOT, "manifest.json"), "w"), indent=2)
-    open(os.path.join(ROOT, "manifest.json"), "a").write("\n")
+    with open(os.path.join(ROOT, "labels.json"), "w", encoding="utf-8", newline="\n") as f:
+        json.dump({"skills": labels}, f, indent=2)
+        f.write("\n")
+    with open(os.path.join(ROOT, "manifest.json"), "w", encoding="utf-8", newline="\n") as f:
+        json.dump(manifest, f, indent=2)
+        f.write("\n")
 
 
 def counts(labels: list[dict]) -> str:
