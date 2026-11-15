@@ -1,5 +1,46 @@
 # Changelog
 
+## 0.36.0 — 2026-11-15
+
+**More attacks blocked, same false-positive rate.** Ironheights: The Immune System for AI Agents. 0.36.0 ships the detection merged on main since 0.35.1 (PRs #142, #147 and #148; #146 adds a scored held-out settings-change benchmark set). Verdict values, exit codes and existing JSON fields are unchanged. The model column was not run. Cisco skill-scanner 2.3.2 and NVIDIA SkillSpector v2.12.0 were not re-run on MaliciousSkillBench: 113/516 (21.9%) and 134/516 (26.0%) block, 9/456 (2.0%) and 48/456 (10.5%) false positives.
+
+On MaliciousSkillBench, deterministic, no `--llm`:
+
+| Setting | 0.35.1 | 0.36.0 | Cisco 2.3.2 | SkillSpector v2.12.0 |
+| --- | --- | --- | --- | --- |
+| Attacks blocked | 243/516 (47.1%) | 260/516 (50.4%) | 113/516 (21.9%) | 134/516 (26.0%) |
+| Prose-only attacks blocked | 40/98 | 40/98 | 5/98 | 7/98 |
+| False positives at block | 6/456 (1.3%) | 6/456 (1.3%) | 9/456 (2.0%) | 48/456 (10.5%) |
+| Block or review | 301/516 | 314/516 | 115/516 | 220/516 |
+| Real-world clean skills blocked | 232/5,655 | 232/5,655, no new ids | — | — |
+| Blind held-out attacks blocked | 335/600 | 335/600 | 190/600 | 173/600 |
+| Blind held-out clean skills blocked | 13/300 | 13/300 | 6/300 | 35/300 |
+| Anthropic skills flagged | 0/19 | 0/19 | 1/19 | 4/19 |
+
+The 0.35.1 column is the last published detection: 0.35.1 was docs-only, so those figures are the 0.35.0 numbers. The 0.36.0 figures are the official summary on main after #148 (`docs/experiments/detection-80-2026-11-15/benchmark-summary.json`).
+
+New checks, each one critical when it hits unless noted:
+
+- **IH-FS-003**: a secret opened to a group or the world.
+- **IH-INJ-028**: `instruction-override` on a command the agent runs.
+- **IH-EXEC-012**: PR comments treated as work, then `git push`.
+- **IH-NET-009**: a seconds-level sender with free-form details and no URL.
+- **IH-EXEC-013**: an env-selected git runtime plus a spend key.
+- **IH-INJ-029**: verdict sync with no local fallback.
+- **IH-NET-010**: preflight registration that quotes the receipt.
+- **IH-EXEC-014**: a workspace file, if present, wraps the commands.
+- **IH-EXEC-015**: a dropped policy file that multiplies fan-out. This already blocked its public row.
+- **IH-PRIV-003**: a grant that adds an outside party to an access surface without the user. Suggested by **ariesai** for a new person or account the user never gave.
+- **IH-PRIV-004**: an order that turns off a protection (sign-in gates, TLS checks, locks, indicator lights). Suggested by **theagatha** for an indicator or watching light switched off. These two settings-change checks do not move the public MaliciousSkillBench block rate.
+- **IH-NET-011**: a trust-anchor redirect (hosts file, or a mandatory registry override to a foreign host).
+- **IH-NET-012**: a user secret sent to an exfil sink (paste bin, request bin, webhook.site, ngrok, a raw IP, `.invalid`, or a host named exfil or steg).
+- **IH-NET-013**: TLS or SSH trust anchored to a certificate the skill ships itself.
+- **IH-EXEC-016**: a staged loader — fetch a runnable file from a foreign host and run it.
+- **IH-PRIV-005**: the agent's own guardrail switched off (`dangerouslyDisableSandbox` or `autoApproveAll`).
+- **IH-NET-004** is escalated from review to block when two or more named secrets are serialized into one payload and sent.
+
+The in-repo Action workflow stays on the published npm package 0.35.0 until 0.36.0 is on the registry. Write-ups: [batch-2026-11-11](docs/experiments/batch-2026-11-11/RESULTS.md), [settings-change-2026-11-14](docs/experiments/settings-change-2026-11-14/RESULTS.md), [detection-80-2026-11-15](docs/experiments/detection-80-2026-11-15/RESULTS.md).
+
 ## 0.35.1 — 2026-11-11
 
 Docs: README benchmark table adds an NVIDIA SkillSpector v2.12.0 comparison column (static `--no-llm`, same sets as Cisco). Scanner rules and detection are unchanged. The in-repo Action workflow stays on the published npm package 0.35.0 until 0.35.1 is on the registry.

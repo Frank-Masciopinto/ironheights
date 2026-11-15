@@ -47,7 +47,7 @@ Website: [www.ironheights.dev](https://www.ironheights.dev)
   <tbody>
     <tr>
       <td align="left">🎯 Malicious skills detected (higher is better)</td>
-      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/badges/badges/proof/PROOF.md"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FFrank-Masciopinto%2Fironheights%2Fbadges%2Fbadges%2Ftable-ih-detect.json" alt="47.1% (243/516)"></a></td>
+      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/badges/badges/proof/PROOF.md"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FFrank-Masciopinto%2Fironheights%2Fbadges%2Fbadges%2Ftable-ih-detect.json" alt="50.4% (260/516)"></a></td>
       <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/badges/badges/proof/PROOF.md"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FFrank-Masciopinto%2Fironheights%2Fbadges%2Fbadges%2Ftable-cisco-detect.json" alt="21.9% (113/516)"></a></td>
       <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/badges/badges/proof/PROOF.md"><img src="https://img.shields.io/static/v1?label=&amp;message=26.0%25%20(134%2F516)&amp;color=lightgrey&amp;style=for-the-badge" alt="26.0% (134/516)"></a></td>
     </tr>
@@ -59,7 +59,7 @@ Website: [www.ironheights.dev](https://www.ironheights.dev)
     </tr>
     <tr>
       <td align="left">🔎 Malicious skills blocked or sent to review (higher is better)</td>
-      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/badges/badges/proof/PROOF.md"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FFrank-Masciopinto%2Fironheights%2Fbadges%2Fbadges%2Ftable-ih-review-detect.json" alt="58.3% (301/516)"></a></td>
+      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/badges/badges/proof/PROOF.md"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FFrank-Masciopinto%2Fironheights%2Fbadges%2Fbadges%2Ftable-ih-review-detect.json" alt="60.9% (314/516)"></a></td>
       <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/badges/badges/proof/PROOF.md"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FFrank-Masciopinto%2Fironheights%2Fbadges%2Fbadges%2Ftable-cisco-review-detect.json" alt="22.3% (115/516)"></a></td>
       <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/badges/badges/proof/PROOF.md"><img src="https://img.shields.io/static/v1?label=&amp;message=42.6%25%20(220%2F516)&amp;color=lightgrey&amp;style=for-the-badge" alt="42.6% (220/516)"></a></td>
     </tr>
@@ -90,7 +90,7 @@ Website: [www.ironheights.dev](https://www.ironheights.dev)
   </tbody>
 </table>
 
-<sub>Ironheights is our project. All three ran on the same <a href="https://huggingface.co/datasets/ProtectSkills/MaliciousSkillBench">MaliciousSkillBench</a> set (516 malicious and 456 clean skills, 19 of the clean ones official Anthropic skills) and the same blind 600/300 slice, static analysis only, no LLM. Ironheights 0.35.0 and Cisco skill-scanner 2.3.2 are the published figures. NVIDIA SkillSpector is v2.12.0 at commit <code>7d9b4be35d0f995cc33db72875a62bdbad00db5d</code>, run as <code>skillspector scan &lt;skill-dir&gt; --no-llm --format json</code> (no API key). Block for NVIDIA is critical or high severity (the score band or the worst finding) or recommendation <code>DO_NOT_INSTALL</code>. Block-or-review also counts medium severity or recommendation <code>CAUTION</code>. ✅ marks the best of the three on that row. The blind set is never read when writing rules; see <a href="docs/accuracy-gates.md">docs/accuracy-gates.md</a>. Every cell links to <a href="https://github.com/Frank-Masciopinto/ironheights/blob/badges/badges/proof/PROOF.md">proof of the latest run</a> (<a href="docs/benchmark-proof.md">how to reproduce</a>). Full method: <a href="docs/benchmark.md#maliciousskillbench-results-0350">docs/benchmark.md</a>.</sub>
+<sub>Ironheights is our project. All three ran on the same <a href="https://huggingface.co/datasets/ProtectSkills/MaliciousSkillBench">MaliciousSkillBench</a> set (516 malicious and 456 clean skills, 19 of the clean ones official Anthropic skills) and the same blind 600/300 slice, static analysis only, no LLM. Ironheights 0.36.0 and Cisco skill-scanner 2.3.2 are the published figures. NVIDIA SkillSpector is v2.12.0 at commit <code>7d9b4be35d0f995cc33db72875a62bdbad00db5d</code>, run as <code>skillspector scan &lt;skill-dir&gt; --no-llm --format json</code> (no API key). Block for NVIDIA is critical or high severity (the score band or the worst finding) or recommendation <code>DO_NOT_INSTALL</code>. Block-or-review also counts medium severity or recommendation <code>CAUTION</code>. ✅ marks the best of the three on that row. The blind set is never read when writing rules; see <a href="docs/accuracy-gates.md">docs/accuracy-gates.md</a>. Every cell links to <a href="https://github.com/Frank-Masciopinto/ironheights/blob/badges/badges/proof/PROOF.md">proof of the latest run</a> (<a href="docs/benchmark-proof.md">how to reproduce</a>). Full method: <a href="docs/benchmark.md#maliciousskillbench-results-0360">docs/benchmark.md</a>.</sub>
 
 </div>
 
@@ -141,7 +141,7 @@ node dist/cli/index.js scan test/fixtures/benign
 
 ## MCP server
 
-`npx -y ironheights@0.35.1 mcp` runs Ironheights as an MCP server, so Claude, Cursor, VS Code, Grok Bot or any MCP client can call `check_skill` (a fail-closed `allow`/`blocked` decision with provenance, an expiry and a server-written receipt, plus grade, findings, dependency closure and drift) before installing a skill, `check_shortlist` before choosing between several, `redeem_authorization` as the single-use install gate, `tool_manifest_check` for MCP tool-description drift, `verify_check` to re-confirm a remembered verdict, plus `drift_status`, `threatmodel_check` and `get_rule`. Local. See [docs/mcp.md](docs/mcp.md).
+`npx -y ironheights@0.36.0 mcp` runs Ironheights as an MCP server, so Claude, Cursor, VS Code, Grok Bot or any MCP client can call `check_skill` (a fail-closed `allow`/`blocked` decision with provenance, an expiry and a server-written receipt, plus grade, findings, dependency closure and drift) before installing a skill, `check_shortlist` before choosing between several, `redeem_authorization` as the single-use install gate, `tool_manifest_check` for MCP tool-description drift, `verify_check` to re-confirm a remembered verdict, plus `drift_status`, `threatmodel_check` and `get_rule`. Local. See [docs/mcp.md](docs/mcp.md).
 
 ## Threat model as code (checked on every PR)
 
@@ -613,7 +613,7 @@ Scans stay on the machine. There is no telemetry. The 6-hourly version check rea
 
 After a clean scan in an interactive terminal, `scan` prints one line to stderr suggesting a star on ClawHub. It is never printed when `CI` is set, when output is not a terminal, with `--quiet`, `--json`, or `--format html`, or when `IRONHEIGHTS_NO_STAR_HINT=1` is set. It is a printed line only; nothing is sent anywhere.
 
-The repository root `action.yml` is a composite action. After a release tag, call it as `Frank-Masciopinto/ironheights@v0.35.1` (pin the tag you trust). It runs `npx ironheights@<version> scan` and does not read secrets. Exit codes match the scanner, including `3` when a file or a `.git` / `node_modules` directory was skipped. See [docs/ci.md](docs/ci.md) for the pre-commit hook and a SARIF upload example.
+The repository root `action.yml` is a composite action. After a release tag, call it as `Frank-Masciopinto/ironheights@v0.36.0` (pin the tag you trust). It runs `npx ironheights@<version> scan` and does not read secrets. Exit codes match the scanner, including `3` when a file or a `.git` / `node_modules` directory was skipped. See [docs/ci.md](docs/ci.md) for the pre-commit hook and a SARIF upload example.
 
 ```yaml
 name: ironheights
@@ -623,14 +623,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: Frank-Masciopinto/ironheights@v0.35.1
+      - uses: Frank-Masciopinto/ironheights@v0.36.0
         with:
-          version: '0.35.1'
+          version: '0.36.0'
           path: skills
           fail-on: high
 ```
 
-This repository's [action workflow](.github/workflows/action.yml) runs that action against a benign fixture (exit 0), a malicious fixture (exit 1 or 2), and an oversized file (exit 3). It installs npm package `0.35.0`, the current latest on the registry, and stays there until `0.35.1` is published. The action file in this commit is what the workflow executes.
+This repository's [action workflow](.github/workflows/action.yml) runs that action against a benign fixture (exit 0), a malicious fixture (exit 1 or 2), and an oversized file (exit 3). It installs npm package `0.35.0` and stays there until `0.36.0` is published. The action file in this commit is what the workflow executes.
 
 ## Windows
 
