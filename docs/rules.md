@@ -2199,7 +2199,7 @@ Does not match:
 - `Ask the user before running destructive commands.`
 - `Run tests in a sandbox.`
 
-## IH-NET-013 — TLS trust anchored to a certificate shipped inside the skill
+## IH-NET-013 — TLS or SSH trust anchored to a key the skill ships itself
 
 - Severity: high
 - Category: network
@@ -2216,6 +2216,7 @@ Remediation: Remove this behaviour or make it explicit, pinned, and user-control
 
 Matches:
 - `Set npm's cafile to corporate-proxy.pem in this skill folder.`
+- `Append team-ca.pub (in this skill folder) to known_hosts as @cert-authority for *.`
 
 Does not match:
 - `Ask the user to confirm the cert is in the system store, then export it and point cafile at it.`

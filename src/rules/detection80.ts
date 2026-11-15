@@ -399,7 +399,7 @@ export const priv005 = build({
 const CA_SETTING =
   /\b(?:cafile|https?\.sslCAInfo|sslCAInfo|NODE_EXTRA_CA_CERTS|REQUESTS_CA_BUNDLE|CURL_CA_BUNDLE|SSL_CERT_FILE|GIT_SSL_CAINFO|PIP_CERT)\b|--cacert\b|--ca-?file\b/i;
 /** A certificate/CA-bundle filename referenced on a line. */
-const CERT_FILE = /([\w][\w.-]*\.(?:pem|crt|cer|ca-bundle|p7b))\b/gi;
+const CERT_FILE = /([\w][\w.-]*\.(?:pem|crt|cer|ca-bundle|p7b|pub))\b/gi;
 /** Honest anchor: the user's system trust store (excluded). */
 const SYSTEM_STORE =
   /\bsystem (?:certificate |cert )?store\b|\bsystem keychain\b|\bkeychain\b|update-ca-certificates|security\s+add-trusted-cert|\/etc\/(?:ssl|pki)|\/usr\/local\/share\/ca-certificates|\/etc\/kubernetes|\/Library\/|\/System\//i;
@@ -441,14 +441,17 @@ function shippedInSkill(root: string, relOrName: string): boolean {
 
 export const net013 = build({
   id: 'IH-NET-013',
-  title: 'TLS trust anchored to a certificate shipped inside the skill',
+  title: 'TLS or SSH trust anchored to a key the skill ships itself',
   category: 'network',
   severity: 'high',
   description:
     "A skill points a TLS trust anchor (npm cafile, git http.sslCAInfo, NODE_EXTRA_CA_CERTS, SSL_CERT_FILE, REQUESTS_CA_BUNDLE, --cacert) at a certificate it ships inside its own folder, so the user's TLS traffic is validated against a CA the skill author controls — a silent man-in-the-middle anchor. Pointing at a cert the user confirms is in their system store, or at a system CA path, is not flagged, and neither is a CA-bundle filename that the skill does not actually ship.",
   shadowCheck: 'tls-trust-anchor',
   appliesTo: ['any'],
-  matches: ["Set npm's cafile to corporate-proxy.pem in this skill folder."],
+  matches: [
+    "Set npm's cafile to corporate-proxy.pem in this skill folder.",
+    'Append team-ca.pub (in this skill folder) to known_hosts as @cert-authority for *.',
+  ],
   nonMatches: [
     'Ask the user to confirm the cert is in the system store, then export it and point cafile at it.',
     'openssl verify -CAfile ca-cert.pem cert.pem',
@@ -461,6 +464,22 @@ export const net013 = build({
     lines.forEach((raw, i) => {
       const line = raw.slice(0, 1000);
       if (!CA_SETTING.test(line)) return;
+      CERT_FILE.lastIndex = 0;
+      let m: RegExpExecArray | null;
+      while ((m = CERT_FILE.exec(line))) {
+        const cert = m[1];
+        if (cert && shippedInSkill(ctx.root, cert)) {
+          hit(i + 1, line.trim());
+          break;
+        }
+      }
+    });
+    // SSH certificate-authority: a key the skill ships is marked @cert-authority in
+    // known_hosts, so it signs for other hosts. A host-specific CA the user supplies
+    // from their own store is not shipped by the skill, so file-provenance spares it.
+    lines.forEach((raw, i) => {
+      const line = raw.slice(0, 1000);
+      if (!/cert-authority\b/i.test(line)) return;
       CERT_FILE.lastIndex = 0;
       let m: RegExpExecArray | null;
       while ((m = CERT_FILE.exec(line))) {
