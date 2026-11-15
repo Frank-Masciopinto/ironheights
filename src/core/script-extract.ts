@@ -55,10 +55,16 @@ export interface FencedBlock {
 }
 
 /** Fenced code blocks in a markdown/text file. */
+function fenceIndent(raw: string): number {
+  const m = /^[ \t]*/.exec(raw);
+  return m ? m[0].length : 0;
+}
+
 export function fencedBlocks(text: string): FencedBlock[] {
   const lines = text.split(/\r?\n/);
   const out: FencedBlock[] = [];
-  let cur: { marker: string; info: string; start: number; lines: string[] } | null = null;
+  let cur: { marker: string; info: string; start: number; indent: number; lines: string[] } | null =
+    null;
   for (let i = 0; i < lines.length; i += 1) {
     const raw = lines[i] ?? '';
     const open = FENCE_OPEN.exec(raw);
@@ -68,8 +74,18 @@ export function fencedBlocks(text: string): FencedBlock[] {
     }
     const marker = open[1] ?? '```';
     const info = (open[2] ?? '').trim();
+    const indent = fenceIndent(raw);
+    // A closer is the same marker, at the same indent, with no info string.
+    // An indented ```bash inside a column-0 markdown fence is content, not a closer —
+    // treating it as one desynchronizes the rest of the file and turns prose into a
+    // "script body".
     if (cur) {
-      if (raw.trim().startsWith(cur.marker)) {
+      if (
+        raw.trim().startsWith(cur.marker) &&
+        indent === cur.indent &&
+        info === '' &&
+        marker.length >= cur.marker.length
+      ) {
         out.push({
           info: cur.info,
           language: languageOf(cur.info),
@@ -82,7 +98,7 @@ export function fencedBlocks(text: string): FencedBlock[] {
         cur.lines.push(raw);
       }
     } else {
-      cur = { marker, info, start: i + 2, lines: [] };
+      cur = { marker, info, start: i + 2, indent, lines: [] };
     }
   }
   return out;
@@ -121,10 +137,14 @@ export function namedFencePath(
     PATH_IN_INFO.exec(block.info)?.[1] ?? SCRIPT_PATH_TOKEN.exec(block.info)?.[1],
   );
   if (fromInfo) return fromInfo;
+  // Previous lines only when they explicitly present the fence as a file
+  // ("save as scripts/foo.py"), not when a nearby command merely mentions a path.
+  const SAVE_AS =
+    /(?:save(?:\s+this)?\s+as|write(?:\s+this)?\s+to|create(?:\s+(?:the\s+)?file)?|filename\s*:)\s+[`'"']?((?:[\w.+@-]+\/)+[\w.+@-]+\.(?:py|sh|bash|zsh|js|mjs|cjs|ts|tsx|jsx|ps1|rb|pl|php|bat|cmd))\b/i;
   for (let i = previousLines.length - 1; i >= Math.max(0, previousLines.length - 3); i -= 1) {
     const line = (previousLines[i] ?? '').trim();
     if (!line) continue;
-    const fromPrev = scriptPath(SCRIPT_PATH_TOKEN.exec(line)?.[1]);
+    const fromPrev = scriptPath(SAVE_AS.exec(line)?.[1] ?? undefined);
     if (fromPrev) return fromPrev;
     break;
   }

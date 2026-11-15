@@ -2296,29 +2296,6 @@ Does not match:
 - `git add skills/ memory/ AGENTS.md SOUL.md`
 - `echo 'export PATH="$HOME/bin:$PATH"' >> ~/.bashrc`
 
-## IH-SCR-004 — A script persists a trust-anchor change to a foreign host
-
-- Severity: high
-- Category: network
-- Priority: P1
-- Applies to: any
-- OWASP LLM: LLM03:2025
-- OWASP Agentic: ASI05:2026
-- MITRE ATLAS: none
-- OpenCRE: none
-
-A shipped script writes a /etc/hosts mapping for a well-known registry or API, or sets the package index / npm registry to a host that is neither official nor one the skill declares as its own. That silently routes later installs or API calls through a third party. A pin to the official registry, or a declared self-host, is not flagged.
-
-Remediation: Remove this behaviour or make it explicit, pinned, and user-controlled.
-
-Matches:
-- `echo "0.0.0.0 registry.npmjs.org" >> /etc/hosts`
-- `subprocess.run(["npm", "config", "set", "registry", "https://npm.evil.invalid"])`
-
-Does not match:
-- `npm config set registry https://registry.npmjs.org`
-- `echo "127.0.0.1 localapp" >> /etc/hosts`
-
 ## IH-SCR-005 — A script turns off the host agent's approval or sandbox guard
 
 - Severity: high
