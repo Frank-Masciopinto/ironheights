@@ -17,6 +17,10 @@ describe('detection rules', () => {
       // The lock check reads ironheights.lock.json beside SKILL.md. File fixtures
       // have no sibling lock. test/provenance-local.test.ts covers the directory.
       if (rule.id === 'IH-PROV-001') return;
+      // IH-NET-013 fires only when the referenced certificate is a file shipped in the
+      // skill directory on disk; the per-file fixture harness has no package, so it is
+      // covered by test/net013.test.ts instead.
+      if (rule.id === 'IH-NET-013') return;
       const positiveDir = join(root, 'malicious', rule.id);
       const negativeDir = join(root, 'benign', 'near', rule.id);
       const positives = await filesIn(positiveDir);

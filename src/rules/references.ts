@@ -9,6 +9,36 @@ import type { RuleReferences } from '../core/types.ts';
  * An empty list means no mapping was defensible enough to cite.
  */
 export const RULE_REFERENCES: Record<string, RuleReferences> = {
+  'IH-NET-013': {
+    owaspLlm: ['LLM03:2025'],
+    owaspAgentic: ['ASI05:2026'],
+    mitreAtlas: [],
+    openCre: [],
+  },
+  'IH-NET-011': {
+    owaspLlm: ['LLM03:2025'],
+    owaspAgentic: ['ASI05:2026'],
+    mitreAtlas: [],
+    openCre: [],
+  },
+  'IH-NET-012': {
+    owaspLlm: ['LLM02:2025'],
+    owaspAgentic: ['ASI03:2026'],
+    mitreAtlas: [],
+    openCre: [],
+  },
+  'IH-EXEC-016': {
+    owaspLlm: ['LLM03:2025'],
+    owaspAgentic: ['ASI05:2026'],
+    mitreAtlas: [],
+    openCre: [],
+  },
+  'IH-PRIV-005': {
+    owaspLlm: ['LLM06:2025'],
+    owaspAgentic: ['ASI03:2026'],
+    mitreAtlas: [],
+    openCre: [],
+  },
   'IH-EXEC-001': {
     owaspLlm: ['LLM03:2025'],
     owaspAgentic: ['ASI05:2026'],
