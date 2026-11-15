@@ -87,10 +87,34 @@ Website: [www.ironheights.dev](https://www.ironheights.dev)
       <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/badges/badges/proof/PROOF.md"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FFrank-Masciopinto%2Fironheights%2Fbadges%2Fbadges%2Ftable-cisco-anthropic.json" alt="1/19"></a></td>
       <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/badges/badges/proof/PROOF.md"><img src="https://img.shields.io/static/v1?label=&amp;message=4%2F19&amp;color=lightgrey&amp;style=for-the-badge" alt="4/19"></a></td>
     </tr>
+    <tr>
+      <td align="left">🧩 Shipped-script malicious skills blocked (higher is better)</td>
+      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/script-skills/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=39.4%25%20%28405%2F1028%29%20%E2%9C%85&amp;color=lightgrey&amp;style=for-the-badge" alt="39.4% (405/1028) ✅"></a></td>
+      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/script-skills/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=33.3%25%20%28342%2F1028%29&amp;color=lightgrey&amp;style=for-the-badge" alt="33.3% (342/1028)"></a></td>
+      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/script-skills/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=28.7%25%20%28295%2F1028%29&amp;color=lightgrey&amp;style=for-the-badge" alt="28.7% (295/1028)"></a></td>
+    </tr>
+    <tr>
+      <td align="left">🧩 Shipped-script honest twins blocked (lower is better)</td>
+      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/script-skills/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=0%2F1026%20%E2%9C%85&amp;color=lightgrey&amp;style=for-the-badge" alt="0/1026 ✅"></a></td>
+      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/script-skills/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=22.5%25%20%28231%2F1026%29&amp;color=lightgrey&amp;style=for-the-badge" alt="22.5% (231/1026)"></a></td>
+      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/script-skills/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=21.9%25%20%28225%2F1026%29&amp;color=lightgrey&amp;style=for-the-badge" alt="21.9% (225/1026)"></a></td>
+    </tr>
+    <tr>
+      <td align="left">🧩 Shipped-script held-out attacks blocked (higher is better)</td>
+      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/script-skills/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=39.7%25%20%28214%2F539%29%20%E2%9C%85&amp;color=lightgrey&amp;style=for-the-badge" alt="39.7% (214/539) ✅"></a></td>
+      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/script-skills/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=32.3%25%20%28174%2F539%29&amp;color=lightgrey&amp;style=for-the-badge" alt="32.3% (174/539)"></a></td>
+      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/script-skills/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=28.6%25%20%28154%2F539%29&amp;color=lightgrey&amp;style=for-the-badge" alt="28.6% (154/539)"></a></td>
+    </tr>
+    <tr>
+      <td align="left">🧩 Shipped-script held-out honest twins blocked (lower is better)</td>
+      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/script-skills/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=0%2F493%20%E2%9C%85&amp;color=lightgrey&amp;style=for-the-badge" alt="0/493 ✅"></a></td>
+      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/script-skills/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=22.5%25%20%28111%2F493%29&amp;color=lightgrey&amp;style=for-the-badge" alt="22.5% (111/493)"></a></td>
+      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/script-skills/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=21.9%25%20%28108%2F493%29&amp;color=lightgrey&amp;style=for-the-badge" alt="21.9% (108/493)"></a></td>
+    </tr>
   </tbody>
 </table>
 
-<sub>Ironheights is our project. All three ran on the same <a href="https://huggingface.co/datasets/ProtectSkills/MaliciousSkillBench">MaliciousSkillBench</a> set (516 malicious and 456 clean skills, 19 of the clean ones official Anthropic skills) and the same blind 600/300 slice, static analysis only, no LLM. Ironheights 0.36.0 and Cisco skill-scanner 2.3.2 are the published figures. NVIDIA SkillSpector is v2.12.0 at commit <code>7d9b4be35d0f995cc33db72875a62bdbad00db5d</code>, run as <code>skillspector scan &lt;skill-dir&gt; --no-llm --format json</code> (no API key). Block for NVIDIA is critical or high severity (the score band or the worst finding) or recommendation <code>DO_NOT_INSTALL</code>. Block-or-review also counts medium severity or recommendation <code>CAUTION</code>. ✅ marks the best of the three on that row. The blind set is never read when writing rules; see <a href="docs/accuracy-gates.md">docs/accuracy-gates.md</a>. Every cell links to <a href="https://github.com/Frank-Masciopinto/ironheights/blob/badges/badges/proof/PROOF.md">proof of the latest run</a> (<a href="docs/benchmark-proof.md">how to reproduce</a>). Full method: <a href="docs/benchmark.md#maliciousskillbench-results-0360">docs/benchmark.md</a>.</sub>
+<sub>Ironheights is our project. The 🧩 rows are our separate <a href="bench/script-skills/README.md">shipped-script set</a> (1028 malicious skills with scripts, 1026 honest twins; generated by us from a pinned seed plus 6 real-derived fixtures), current main with script scanning (PR #150). All other rows: all three ran on the same <a href="https://huggingface.co/datasets/ProtectSkills/MaliciousSkillBench">MaliciousSkillBench</a> set (516 malicious and 456 clean skills, 19 of the clean ones official Anthropic skills) and the same blind 600/300 slice, static analysis only, no LLM. Ironheights 0.36.0 and Cisco skill-scanner 2.3.2 are the published figures. NVIDIA SkillSpector is v2.12.0 at commit <code>7d9b4be35d0f995cc33db72875a62bdbad00db5d</code>, run as <code>skillspector scan &lt;skill-dir&gt; --no-llm --format json</code> (no API key). Block for NVIDIA is critical or high severity (the score band or the worst finding) or recommendation <code>DO_NOT_INSTALL</code>. Block-or-review also counts medium severity or recommendation <code>CAUTION</code>. ✅ marks the best of the three on that row. The blind set is never read when writing rules; see <a href="docs/accuracy-gates.md">docs/accuracy-gates.md</a>. Every cell links to <a href="https://github.com/Frank-Masciopinto/ironheights/blob/badges/badges/proof/PROOF.md">proof of the latest run</a> (<a href="docs/benchmark-proof.md">how to reproduce</a>). Full method: <a href="docs/benchmark.md#maliciousskillbench-results-0360">docs/benchmark.md</a>.</sub>
 
 </div>
 
@@ -98,7 +122,7 @@ Website: [www.ironheights.dev](https://www.ironheights.dev)
 
 A second set, separate from MaliciousSkillBench above: each skill is a `SKILL.md` plus a shipped script the doc tells the agent to run. The malice (when present) is in the script, not the prompt. 2048 skills are generated from a pinned seed (16 attack families × 16 disguises × 4 languages, each with an honest twin); 6 are real-derived missed-attack fixtures. Held-out (539 attacks, 493 benign) was scored once and not used to tune rules. Official MaliciousSkillBench / real-world / look-alike numbers are unchanged. Nothing in the set is executed. Method and one-command scorer: [bench/script-skills/README.md](bench/script-skills/README.md).
 
-| Shipped-script skills | Ironheights main (0.36.0) | This PR | Cisco skill-scanner 2.3.2 | NVIDIA SkillSpector v2.12.0 |
+| Shipped-script skills | Ironheights 0.36.0 (before script scanning) | Ironheights main (script scanning, #150) | Cisco skill-scanner 2.3.2 | NVIDIA SkillSpector v2.12.0 |
 | --- | --- | --- | --- | --- |
 | Malicious skills blocked (higher is better) | 27.9% (287/1028) | 39.4% (405/1028) ✅ | 33.3% (342/1028) | 28.7% (295/1028) |
 | False positives on honest twins (lower is better) | 0/1026 | 0/1026 | 22.5% (231/1026) | 21.9% (225/1026) |
@@ -107,7 +131,7 @@ A second set, separate from MaliciousSkillBench above: each skill is a `SKILL.md
 | Held-out attacks blocked (higher is better) | 29.5% (159/539) | 39.7% (214/539) ✅ | 32.3% (174/539) | 28.6% (154/539) |
 | Held-out honest twins blocked (lower is better) | 0/493 | 0/493 | 22.5% (111/493) | 21.9% (108/493) |
 
-Ironheights main is `590ac5f` (0.36.0). This PR is the script-scan experiment on top of that. ✅ is the unique best of the four on that row; a tie gets no check. Cisco and SkillSpector scoring matches [docs/benchmark-proof.md](docs/benchmark-proof.md) (static only, no LLM). Held-out block rates track the dev split (PR 39.1% on dev, 39.7% on held-out), so the gain is not an overfit to generated wording.
+The before column is 0.36.0 (`590ac5f`). The main column adds script scanning from [PR #150](https://github.com/Frank-Masciopinto/ironheights/pull/150) (`717de52`). ✅ is the unique best of the four on that row; a tie gets no check. Cisco and SkillSpector scoring matches [docs/benchmark-proof.md](docs/benchmark-proof.md) (static only, no LLM). Held-out block rates track the dev split (39.1% on dev, 39.7% on held-out), so the gain is not an overfit to generated wording.
 
 Ironheights scans any skill folder with a `SKILL.md`, whichever agent it is for, and adds an integrity monitor and runtime guard for [OpenClaw](https://docs.openclaw.ai). To check a Claude or Grok Bot skill, run `npx ironheights scan ./path/to/skill` before you upload or install it. Auto-discovery of installed skills, baselines, the guard, `audit-config` and `safe-install` are OpenClaw/ClawHub-only for now. It reads skill files as data, looks for risky patterns with fixed rules, and compares skill and agent files with a baseline you save on the same machine.
 
