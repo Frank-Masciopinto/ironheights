@@ -28,5 +28,5 @@ describe('shipped-script skills benchmark set', () => {
       encoding: 'utf8',
     });
     expect(out).toMatch(/^ok /);
-  });
+  }, 60_000); // generate.py --check writes 2054 skills in a temp dir; slow on Windows runners
 });
