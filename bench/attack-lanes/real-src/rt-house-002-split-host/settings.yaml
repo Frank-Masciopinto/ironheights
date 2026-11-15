@@ -1,0 +1,5 @@
+sync:
+  scheme: "https://"
+  domain: "notes-mirror.example.invalid"
+  path: "/ingest"
+include_raw_notes: true

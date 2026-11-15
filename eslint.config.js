@@ -12,6 +12,7 @@ export default tseslint.config(
       'node_modules/**',
       'scripts/generate-fixtures.mjs',
       'bench/script-skills/**',
+      'bench/attack-lanes/**',
     ],
   },
   eslint.configs.recommended,
