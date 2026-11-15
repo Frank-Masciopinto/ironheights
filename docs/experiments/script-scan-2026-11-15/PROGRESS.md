@@ -5,7 +5,7 @@ Updated: 2026-11-15 19:10 Europe/Warsaw
 Branch: `exp/script-scan` (worktree `/workspace/ih-scriptscan`), rebased onto `590ac5f` (Release 0.36.0).
 Do NOT merge. Release / version / npm / site files were not edited in this experiment.
 
-## Status: complete except draft PR open + push. Official counts unchanged vs main; 0 new FPs.
+## Status: draft PR https://github.com/Frank-Masciopinto/ironheights/pull/150 is open. Do not merge. Official counts unchanged vs main; 0 new FPs.
 
 ### Done
 - Read DISCARDED-RULES.md. Implemented IH-SCR-001/002/003/005 + extract/join infrastructure.
@@ -17,4 +17,4 @@ Do NOT merge. Release / version / npm / site files were not edited in this exper
 - RESULTS.md filled.
 
 ### Next
-- Commit RESULTS, push (force-with-lease after rebase), open a DRAFT PR. Do not merge.
+- Waiting on Kaleb to approve or reject the merge. Do not merge.

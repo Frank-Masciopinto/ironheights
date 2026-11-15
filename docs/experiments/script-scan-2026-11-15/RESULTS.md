@@ -1,6 +1,6 @@
 # Script-scan experiment (2026-11-15)
 
-**Draft. Do not merge without Kaleb's approval.** One experiment branch, rebased
+**Draft PR: https://github.com/Frank-Masciopinto/ironheights/pull/150 — do not merge without Kaleb's approval.** One experiment branch, rebased
 onto `main` at `590ac5f` (Release 0.36.0, which includes PR #148: 260/516 block,
 6/456 FP, block-or-review 314). Deterministic static analysis only — no model
 verdicts are mixed into any count here. Release files for 0.36.0 were not edited
