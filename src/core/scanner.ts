@@ -1,5 +1,6 @@
 import { applyShadow } from '../rules/shadow.ts';
 import { joinSkillReferences } from './skill-join.ts';
+import { extractNamedScripts, joinSkillAndScripts } from './script-extract.ts';
 import { findSkillFile, isSkillFileName } from './skill-file.ts';
 import { readdir, readFile, stat } from 'node:fs/promises';
 import { basename, join, resolve } from 'node:path';
@@ -122,10 +123,19 @@ export async function scanSkill(
     seen.add(key);
     raw.push(finding);
   };
+  const extracted = extractNamedScripts(walked.files);
   for (const file of walked.files) {
     for (const finding of scanFile(file, ctx, { skipJoined: true })) add(finding);
   }
+  // Named fenced scripts are virtual files. Only the script-scan rules see them;
+  // feeding them to every content rule would re-grade docs examples as shipped code
+  // and flip look-alike verdicts.
+  for (const file of extracted) {
+    for (const finding of scanFile(file, ctx, { skipJoined: true, scriptRulesOnly: true }))
+      add(finding);
+  }
   for (const finding of scanJoined(walked.files, ctx)) add(finding);
+  for (const finding of scanScriptJoined([...walked.files, ...extracted], ctx)) add(finding);
   const deps = skillDependencies(walked.files, frontmatter);
   let registryCheck: SkillReport['registryCheck'];
   if (options.checkRegistry && deps.length > 0) {
@@ -255,7 +265,7 @@ export async function scanText(
 export function scanFile(
   file: ScannedFile,
   ctx: ScanContext,
-  options: { textMode?: boolean; skipJoined?: boolean } = {},
+  options: { textMode?: boolean; skipJoined?: boolean; scriptRulesOnly?: boolean } = {},
 ): Finding[] {
   // Install-tool metadata is hashed for tamper checks but not graded as author content.
   if (isInstallToolMetadata(file.relativePath)) return [];
@@ -265,6 +275,7 @@ export function scanFile(
     const override = ctx.config.ruleOverrides[rule.id];
     if (override?.enabled === false) continue;
     if (options.skipJoined && rule.joinsReferences) continue;
+    if (options.scriptRulesOnly && !rule.joinsScripts) continue;
     if (!ruleApplies(rule, file, options.textMode === true)) continue;
     for (const raw of rule.check(file, ctx)) {
       let finding = raw;
@@ -413,6 +424,25 @@ function finishSkill(
     rebuildableGap: gap !== undefined,
   });
   return report;
+}
+
+/** Two-signal script rules see SKILL.md and every shipped or extracted script as one document. */
+function scanScriptJoined(files: ScannedFile[], ctx: ScanContext): Finding[] {
+  const joined = joinSkillAndScripts(files);
+  if (!joined) return [];
+  const findings: Finding[] = [];
+  for (const rule of allContentRules()) {
+    if (!rule.joinsScripts) continue;
+    const override = ctx.config.ruleOverrides[rule.id];
+    if (override?.enabled === false) continue;
+    if (!ruleApplies(rule, joined, false)) continue;
+    for (const raw of rule.check(joined, ctx)) {
+      const finding = applyShadow(raw);
+      const severity = override?.severity ?? finding.severity;
+      findings.push(severity === finding.severity ? finding : { ...finding, severity });
+    }
+  }
+  return findings;
 }
 
 /** Two-signal rules see SKILL.md and the files it names as one document. */

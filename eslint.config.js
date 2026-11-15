@@ -11,6 +11,7 @@ export default tseslint.config(
       'bench/results/**',
       'node_modules/**',
       'scripts/generate-fixtures.mjs',
+      'bench/script-skills/**',
     ],
   },
   eslint.configs.recommended,
@@ -45,11 +46,19 @@ export default tseslint.config(
       globals: {
         console: 'readonly',
         process: 'readonly',
+        require: 'readonly',
+        module: 'readonly',
+        exports: 'readonly',
+        fetch: 'readonly',
+        Buffer: 'readonly',
+        __dirname: 'readonly',
+        __filename: 'readonly',
       },
     },
     rules: {
       'no-unused-vars': 'off',
       '@typescript-eslint/no-unused-vars': 'off',
+      '@typescript-eslint/no-require-imports': 'off',
     },
   },
 );

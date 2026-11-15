@@ -46,7 +46,8 @@
     "version": "node scripts/pin-skill-version.mjs && git add skill/ironheights/SKILL.md",
     "check:skill-pin": "node scripts/pin-skill-version.mjs --check",
     "data:rules-json": "tsup scripts/generate-rules-json.ts --no-config --format esm --target node20 --out-dir dist-scripts --clean --silent && node dist-scripts/generate-rules-json.js",
-    "docs:threatmodel-schema": "tsup scripts/generate-threatmodel-schema.ts --no-config --format esm --target node20 --out-dir dist-scripts --clean --silent && node dist-scripts/generate-threatmodel-schema.js"
+    "docs:threatmodel-schema": "tsup scripts/generate-threatmodel-schema.ts --no-config --format esm --target node20 --out-dir dist-scripts --clean --silent && node dist-scripts/generate-threatmodel-schema.js",
+    "bench:script-skills": "npm run build && python3 bench/script-skills/score.py --pr dist/cli/index.js"
   },
   "dependencies": {
     "commander": "15.0.0",

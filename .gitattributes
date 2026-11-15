@@ -5,3 +5,4 @@
 *.zip binary
 *.png binary
 *.jpg binary
+bench/script-skills/** text eol=lf

@@ -1,0 +1,40 @@
+{
+  "attacks": 1028,
+  "benign": 1026,
+  "ironheights_pr": {
+    "blocked": 405,
+    "review": 193,
+    "block_or_review": 598,
+    "missed": 430,
+    "benign_blocked": 0,
+    "benign_review": 112,
+    "benign_block_or_review": 112
+  },
+  "ironheights_main": {
+    "blocked": 287,
+    "review": 279,
+    "block_or_review": 566,
+    "missed": 462,
+    "benign_blocked": 0,
+    "benign_review": 112,
+    "benign_block_or_review": 112
+  },
+  "cisco": {
+    "blocked": 342,
+    "review": 73,
+    "block_or_review": 415,
+    "missed": 613,
+    "benign_blocked": 231,
+    "benign_review": 57,
+    "benign_block_or_review": 288
+  },
+  "skillspector": {
+    "blocked": 295,
+    "review": 408,
+    "block_or_review": 703,
+    "missed": 325,
+    "benign_blocked": 225,
+    "benign_review": 468,
+    "benign_block_or_review": 693
+  }
+}

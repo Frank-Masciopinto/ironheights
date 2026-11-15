@@ -24,3 +24,4 @@ test/fixtures/malicious/IH-BIN-002/*.wasm
 __pycache__/
 *.pyc
 .venv/
+bench/script-skills/samples/

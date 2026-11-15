@@ -74,6 +74,11 @@ export interface Rule {
    * step it points at in `references/`.
    */
   joinsReferences?: boolean;
+  /**
+   * Run this rule once on SKILL.md joined with every shipped or extracted script,
+   * so a "run this file" step and the script body can be checked together.
+   */
+  joinsScripts?: boolean;
   check(file: ScannedFile, ctx: ScanContext): Finding[];
 }
 
