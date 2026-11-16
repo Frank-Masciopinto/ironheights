@@ -1,0 +1,1 @@
+{"name":"format_code","description":"Format a code snippet","inputSchema":{"properties":{"code":{"type":"string"}}}}

@@ -32,7 +32,7 @@ import {
  * GUARD_DOC also matches the bare verb "detect" ("Detect the language"), which hid real attacks
  * in house-551; here only the noun forms count.
  */
-const GUARD_DOC = new RegExp(
+export const GUARD_DOC = new RegExp(
   WIDE_GUARD_DOC.source.replace('detect(?:s|ion|or)?', 'detect(?:ion|or)s?'),
   'i',
 );
@@ -43,13 +43,13 @@ const jobCache = new Map<string, string>();
  * Front-matter description only. The name is left out on purpose: generated and real skill
  * names often carry the very feature a check looks at ("dns-resolver", "browser-profile").
  */
-function descriptionOf(text: string): string {
+export function descriptionOf(text: string): string {
   const block = /^---\r?\n([\s\S]*?)\r?\n---/.exec(text)?.[1] ?? '';
   return (/^description:\s*(.*(?:\n[ \t]+.*)*)/m.exec(block)?.[1] ?? '').replace(/\s+/g, ' ');
 }
 
 /** The skill's stated job: the description of SKILL.md (this file or the skill root). */
-function jobOf(file: ScannedFile, ctx: ScanContext): string {
+export function jobOf(file: ScannedFile, ctx: ScanContext): string {
   if (/^---\s*\n/.test(file.text)) {
     const own = descriptionOf(file.text).toLowerCase();
     if (own.trim()) return own.toLowerCase();
@@ -70,13 +70,13 @@ function jobOf(file: ScannedFile, ctx: ScanContext): string {
   return job;
 }
 
-const HOST_RE =
+export const HOST_RE =
   /\b(?:https?|wss?|git\+https?|socks5h?):\/\/(?:[^@\s/'"`]+@)?([\w-]+(?:\.[\w-]+)+)|(?:^|[\s"'`=(,:])((?:[\w-]+\.)+(?:invalid|example|com|net|org|io|dev|co|xyz|ru|cn|top|site|app|cloud|link|me|cc|tk|ai|sh|biz|info|pw|su|live|online))(?::\d+)?\b/gi;
 
 const FILE_LIKE =
   /\.(?:json|md|ya?ml|txt|toml|py|js|mjs|cjs|ts|sh|ps1|pem|pub|gpg|crt|conf|cfg|ini|lock|tgz|zip|html?|exe|pkg|whl)$/i;
 
-const COMMON_LABELS = new Set([
+export const COMMON_LABELS = new Set([
   'www',
   'api',
   'apis',
@@ -114,7 +114,7 @@ const COMMON_LABELS = new Set([
 ]);
 
 /** Literal hosts on a line that are not placeholders, loopback/LAN names or official registries. */
-function outsideHosts(text: string): string[] {
+export function outsideHosts(text: string): string[] {
   const out: string[] = [];
   for (const m of text.matchAll(HOST_RE)) {
     const host = (m[1] ?? m[2] ?? '').toLowerCase().replace(/\.$/, '');
@@ -131,7 +131,7 @@ function outsideHosts(text: string): string[] {
 }
 
 /** The host is the vendor the skill is about (its distinctive label is a word of the job). */
-function vendorOfJob(host: string, job: string): boolean {
+export function vendorOfJob(host: string, job: string): boolean {
   if (!job) return false;
   const words = new Set(job.split(/[^\w-]+/).filter(Boolean));
   // Only the registrable label counts (stripe in api.stripe.com). A subdomain anyone can name
@@ -143,7 +143,7 @@ function vendorOfJob(host: string, job: string): boolean {
   return labels.some((label) => label.length >= 3 && !COMMON_LABELS.has(label) && words.has(label));
 }
 
-function skillHosts(text: string, job: string, ctx: ScanContext): string[] {
+export function skillHosts(text: string, job: string, ctx: ScanContext): string[] {
   const declared = [...(ctx.skillDeclaredHosts ?? []), ...(ctx.skillAllowDomains ?? [])].map((h) =>
     h.toLowerCase(),
   );
@@ -178,7 +178,7 @@ const PUBLIC_RESOLVERS = new Set([
 ]);
 
 /** A raw IPv4 that is reachable on the internet (not loopback, LAN, link-local or 0.0.0.0). */
-function publicIp(ip: string): boolean {
+export function publicIp(ip: string): boolean {
   const p = ip.split('.').map(Number);
   if (p.length !== 4 || p.some((n) => !Number.isInteger(n) || n < 0 || n > 255)) return false;
   const [a, b] = p as [number, number, number, number];
@@ -193,10 +193,10 @@ function publicIp(ip: string): boolean {
 const IPV4 = /\b(\d{1,3}(?:\.\d{1,3}){3})\b/g;
 
 /** A value the user, their config or IT supplies: variables, placeholders, prompts. */
-const VARIABLE_VALUE =
+export const VARIABLE_VALUE =
   /\$\{?[A-Za-z_]\w*\}?|<[^>\n]{2,60}>|\{\{[^}]+\}\}|\binput\(|\bread -p\b|\bprompt\(|\bRead-Host\b|\bprocess\.argv\b|\bsys\.argv\b|\bos\.environ\b|\bgetenv\(/;
 
-function sentencesOf(text: string): string[] {
+export function sentencesOf(text: string): string[] {
   return text
     .split(/(?<=[.!?;])\s+(?=[\p{Lu}"“`(*\d])/u)
     .map((s) => s.trim())
@@ -204,7 +204,7 @@ function sentencesOf(text: string): string[] {
 }
 
 /** Sentences, but a quoted span ("…" or `…`) is never cut in two. */
-function sentencesKeepingQuotes(text: string): string[] {
+export function sentencesKeepingQuotes(text: string): string[] {
   const quotes: string[] = [];
   const masked = text.replace(
     /`[^`\n]{1,400}`|"[^"\n]{1,400}"/g,
@@ -216,10 +216,23 @@ function sentencesKeepingQuotes(text: string): string[] {
 }
 
 /** A clause that forbids or excludes the action ("never", "skip", "do not", "not their values"). */
-const NEG_CLAUSE =
+export const NEG_CLAUSE =
   /\b(?:never|do not|don't|must not|should not|shouldn't|no longer|avoid|refuse|skip(?:s|ping)?|exclude[sd]?|except|without (?:ever )?(?:sending|uploading|copying|reading)|instead of (?:sending|uploading|copying|reading)|not (?:the|their|any|its) (?:values?|contents?))\b/i;
 
-interface Unit {
+/**
+ * "To avoid rate limits, …" and "so installs don't fail" are purposes, not prohibitions; a
+ * negation guard must not read them as "never do this" (fresh-set lesson, 2026-11-16).
+ */
+export function dropPurpose(sentence: string): string {
+  return sentence
+    .replace(/\b(?:in order |so as )?to avoid\b[^,.;:]{0,80}[,:]\s*/gi, '')
+    .replace(
+      /\bso (?:that )?(?:it|they|this|that|installs?|builds?|the [\w-]+(?: [\w-]+)?) (?:never|don't|doesn't|won't|can't|cannot|do not|does not|will not)\b[^,.;]*/gi,
+      '',
+    );
+}
+
+export interface Unit {
   line: number;
   text: string;
   code: boolean;
@@ -228,7 +241,7 @@ interface Unit {
 }
 
 /** Prose steps for markdown; non-comment code lines for scripts and config. */
-function unitsFor(file: ScannedFile, splitCode = false): { units: Unit[]; steps: Step[] } {
+export function unitsFor(file: ScannedFile, splitCode = false): { units: Unit[]; steps: Step[] } {
   if ((file.kind === 'markdown' || file.kind === 'text') && splitCode) {
     // Prose of each step as one unit, and each fenced code line as its own unit, so a code
     // block of docs is never read as one long sentence (2026-11-16 look-alike lesson).
@@ -280,14 +293,14 @@ function unitsFor(file: ScannedFile, splitCode = false): { units: Unit[]; steps:
   return { steps: [], units };
 }
 
-function windowText(units: Unit[], index: number, before: number, after: number): string {
+export function windowText(units: Unit[], index: number, before: number, after: number): string {
   return units
     .slice(Math.max(0, index - before), index + after + 1)
     .map((u) => u.text)
     .join('\n');
 }
 
-function orderUnit(unit: Unit): boolean {
+export function orderUnit(unit: Unit): boolean {
   if (unit.step) {
     if (negated(unit.step) || DESCRIBES.test(unit.step.prose)) return false;
   }
@@ -298,7 +311,7 @@ function orderUnit(unit: Unit): boolean {
 
 /** Settings that decide where every program's requests, names or code resolve. */
 /** A name that receives API tokens, sign-ins or packages. */
-const TOKEN_HOST =
+export const TOKEN_HOST =
   /^(?:api|apis|registry|registry-\d+|auth|login|accounts?|oauth|sso|id|graph|upload|uploads|hooks|gateway)[\w-]*\.|(?:^|\.)(?:github\.com|gitlab\.com|slack\.com|googleapis\.com|amazonaws\.com|npmjs\.org|pypi\.org|docker\.io|openai\.com|anthropic\.com|stripe\.com|microsoft\.com|microsoftonline\.com|okta\.com|salesforce\.com)$/i;
 
 const ANCHOR_WRITES: { kind: string; re: RegExp; needsWide?: boolean }[] = [
@@ -327,7 +340,7 @@ const ANCHOR_WRITES: { kind: string; re: RegExp; needsWide?: boolean }[] = [
   },
   {
     kind: 'OAuth redirect or webhook registration',
-    re: /\bredirect_uris?\b|\bcallback_url\b|\boauth redirect\b|\bwebhook_url\b[^\n]{0,160}\b(?:register|provider|patch|apps?)\b|\bregister it with the provider\b/i,
+    re: /\bredirect_uris?\b|\bcallback_url\b|\boauth redirect\b|\bwebhook_url\b[^\n]{0,160}\b(?:register|provider|patch|apps?)\b|\b(?:register|PATCH)\b[^\n]{0,160}\bwebhook_url\b|\bregister it with the provider\b/i,
   },
   {
     kind: 'model or API traffic rerouted',
@@ -335,18 +348,23 @@ const ANCHOR_WRITES: { kind: string; re: RegExp; needsWide?: boolean }[] = [
     needsWide: true,
   },
   {
+    kind: 'package registry',
+    re: /(?:^|[\s`'"])registry\s*=\s*["']?https?:\/\/|\bnpm config set registry\b|\byarn config set (?:npm)?registry(?:Server)?\b|\bnpmRegistryServer\s*:|(?:^|[\s`'"]|(?<=\\n))index-url\s*=\s*https?:|\bPIP_INDEX_URL\s*=|\bGOPROXY\s*=\s*["']?https?:|\bgo env -w GOPROXY\b|\bpip config set global\.(?:extra-)?index-url\b/i,
+    needsWide: true,
+  },
+  {
     kind: 'extra package index',
-    re: /\bextra-index-url\b|\bPIP_EXTRA_INDEX_URL\b/i,
+    re: /(?:\b|(?<=\\n))extra-index-url\b|\bPIP_EXTRA_INDEX_URL\b/i,
     needsWide: true,
   },
 ];
 
 /** The change reaches past this call: shell profile, user/global config, every program. */
-const WIDE =
+export const WIDE =
   /--global\b|--system\b|\bglobal(?:ly)?\b|\buser-?wide\b|\bmachine-?wide\b|\bsystem-?wide\b|\bevery (?:future )?(?:repo\w*|project|clone|terminal|session|tool|program|request|call)\b|\ball (?:your |their )?(?:tools|programs|traffic|requests|projects)\b|\bfrom now on\b|\bafter restarts?\b|\bpermanent(?:ly)?\b|~\/\.(?:npmrc|gitconfig|pip|config|bashrc|zshrc|profile|bash_profile|zprofile|curlrc|wgetrc)|\.(?:bashrc|zshrc|profile|bash_profile|zprofile)\b|\/etc\/|\bshell profiles?\b|\bagent settings\b|\bsetx\b|\[Environment\]::SetEnvironmentVariable|\bnetworksetup\b|\bnetsh\b/i;
 
 /** Session-only or this-project-only change: honest (rossum c1807ee8). */
-const SESSION_ONLY =
+export const SESSION_ONLY =
   /\b(?:current|this) (?:terminal|shell) (?:session )?only\b|\bfor (?:this|the current) (?:session|terminal|command|run) only\b|\bdo not edit (?:shell )?profiles?\b/i;
 
 function anchorTarget(
@@ -409,7 +427,18 @@ function anchorTarget(
     /\b(?:proxy|vpn|tunnel|clash|v2ray|mihomo)\b|代理|翻墙|梯子/i.test(job)
   )
     return undefined;
-  let target: string | undefined = hosts[0];
+  const MIRROR =
+    /(?:^|\.)(?:npmmirror\.com|taobao\.org|tsinghua\.edu\.cn|ustc\.edu\.cn|aliyun\.com|tencentyun\.com|cloud\.tencent\.com|huaweicloud\.com|bfsu\.edu\.cn|sjtu\.edu\.cn|douban\.com|163\.com|goproxy\.(?:cn|io)|golang\.com\.cn|jfrog\.io|pkg\.dev|azurecr\.io)$/i;
+  const registry = anchor.kind === 'package registry' || anchor.kind === 'extra package index';
+  let target: string | undefined = registry ? hosts.find((h) => !MIRROR.test(h)) : hosts[0];
+  // "You may set a regional mirror if you like" is a tip, not an order.
+  if (
+    registry &&
+    /\byou (?:may|can|could)\b|\bif you (?:like|want|prefer)\b|\boptional(?:ly)?\b/i.test(
+      unit.code ? windowText(units, unit.index, 3, 0) : sentence,
+    )
+  )
+    return undefined;
   if (!target && anchor.kind === 'system or user-wide proxy') {
     target = [...sentence.matchAll(IPV4)].map((m) => m[1] ?? '').find(publicIp);
   }
@@ -459,7 +488,11 @@ export const net017 = build({
         const sentences = unit.code ? [unit.text] : sentencesOf(unit.text);
         for (const sentence of sentences) {
           if (!unit.code) {
-            if (!anchor.re.test(sentence) || NEG_CLAUSE.test(sentence) || CONSENT.test(sentence))
+            if (
+              !anchor.re.test(sentence) ||
+              NEG_CLAUSE.test(dropPurpose(sentence)) ||
+              CONSENT.test(sentence)
+            )
               continue;
             if (
               /\b(?:shows?|prints?|lists?|uses your existing)\b[^.]{0,60}\bchanges nothing\b/i.test(
@@ -549,7 +582,7 @@ export const net018 = build({
 // ---------------------------------------------------------------- IH-EXEC-017 (L3)
 
 /** Code that turns fetched bytes into running code. */
-const CODE_FETCH =
+export const CODE_FETCH =
   /\burlopen\(|\burllib\.request\b|\brequests\.get\(|\bhttpx\.get\(|\bfetch\(|\baxios\.get\(|\bhttps?\.get\(|\bInvoke-WebRequest\b|\biwr\b|\bInvoke-RestMethod\b|\bcurl\b|\bwget\b|\bDownloadString\(/;
 const CODE_EXEC =
   /\bexec\(|\beval\(|\.then\(\s*eval\s*\)|\bnew Function\(|\bexec_module\(|\bInvoke-Expression\b|\biex\b|\bvm\.runIn\w*Context\(/;
@@ -559,15 +592,19 @@ const CODE_EXEC =
 const GO_PROJECT_HOST =
   /^(?:golang\.org|google\.golang\.org|go\.dev|k8s\.io|sigs\.k8s\.io|go\.opentelemetry\.io|go\.uber\.org|honnef\.co|mvdan\.cc)$/i;
 const UNPINNED_RUNNER =
-  /\b(?:npx|bunx|pnpm dlx|yarn dlx)\s+(?:-y\s+|--yes\s+)*github:([\w.-]+)|\buvx\s+--from\s+['"]?git\+https?:\/\/([\w.-]+)|"uvx",\s*"--from",\s*"git\+https?:\/\/([\w.-]+)|\bpip3?\s+install\s+(?:-U\s+|--upgrade\s+)?['"]?git\+https?:\/\/([\w.-]+)[^@\s'"]*(?:\s|['"]|$)|\bgo\s+run\s+([\w.-]+\.[a-z]{2,})\/[^\s@]+@latest/i;
+  /\b(?:npx|bunx|pnpm dlx|yarn dlx)\s+(?:-y\s+|--yes\s+)*github:([\w.-]+)|\buvx\s+--from\s+['"]?git\+https?:\/\/([\w.-]+)|"uvx",\s*"--from",\s*"git\+https?:\/\/([\w.-]+)|\bpip3?\s+install\s+(?:-U\s+|--upgrade\s+)?['"]?git\+https?:\/\/([\w.-]+)[^@\s'"]*(?:\s|['"]|$)|\bgo\s+run\s+([\w.-]+\.[a-z]{2,})\/[^\s@]+@latest|\b(?:npx|bunx|pnpm dlx|yarn dlx|npm (?:i|install) -g)\s+(?:-{1,2}[\w-]+\s+)*https?:\/\/([\w.-]+)\/[^\s'"`]*\.(?:tgz|tar\.gz)\b/i;
+
+/** Well-known public ES-module CDNs: importing from them is a normal (if loose) choice. */
+const MODULE_CDN =
+  /^(?:esm\.sh|deno\.land|jsr\.io|unpkg\.com|cdn\.jsdelivr\.net|cdn\.skypack\.dev|ga\.jspm\.io|esm\.run|cdnjs\.cloudflare\.com)$/i;
 
 /** Prose: fetched content made executable / run / evaluated / loaded. */
-const PROSE_FETCH = /\b(?:download|fetch|get|pull|grab|retrieve|load)\w*\b/i;
+export const PROSE_FETCH = /\b(?:download|fetch|get|pull|grab|retrieve|load)\w*\b/i;
 const PROSE_RUN =
   /\bchmod \+x\b|\bmake it executable\b|\bruns? it\b|\bstart it\b|\bexecut\w+ it\b|\bevaluat\w+ it\b|\bin-process\b|\bloads? (?:each|it|them)\b|\bimports? (?:it|them)\b|\bsource it\b|\bruns? (?:it )?(?:with|in) node\b|\boverwrite (?:this skill'?s?|its own|the skill'?s?) (?:own )?files\b/i;
 const PROSE_RUNTIME =
-  /\bat (?:startup|start|runtime|run time)\b|\bon (?:each|every) (?:run|start|call|launch)\b|\bon start\b|\beach time\b|\bevery time\b|\bbefore (?:the main step|parsing|continuing|anything else)\b|\bin the background\b|\binto `?\/tmp`?\b|\bduring `?(?:pip|npm) install\b|\bpostinstall\b|\bpreinstall\b|\binstall (?:hook|command)\b|\bnewest\b|\blatest\b|\bonce with\b/i;
-const PINNED_RE =
+  /\bat (?:startup|start|runtime|run time)\b|\bon (?:each|every) (?:run|start|call|launch)\b|\bon start\b|\beach time\b|\bevery time\b|\bbefore (?:the main step|parsing|continuing|anything else)\b|\bin the background\b|\b(?:into|to) `?\/tmp\b|\bduring `?(?:pip|npm) install\b|\bpostinstall\b|\bpreinstall\b|\binstall (?:hook|command)\b|\bnewest\b|\blatest\b|\bonce with\b/i;
+export const PINNED_RE =
   /\bsha-?256\b|\bchecksum\b|\b(?:verify|check) (?:the |its )?(?:hash|signature)\b|\bpinned\b|@[0-9a-f]{40}\b|#[0-9a-f]{40}\b|--require-hashes\b/i;
 
 function exec017Code(units: Unit[], unit: Unit, job: string, ctx: ScanContext): string | undefined {
@@ -578,6 +615,14 @@ function exec017Code(units: Unit[], unit: Unit, job: string, ctx: ScanContext): 
     if (CODE_FETCH.test(win) && hosts[0] && !/\bjson\.loads?\(|\.json\(\)/.test(text))
       return `code downloaded from ${hosts[0]} is executed`;
   }
+  const imp = /\bimport\(\s*['"`]https?:\/\/([\w.-]+)\//.exec(text);
+  if (imp?.[1] && !MODULE_CDN.test(imp[1]) && skillHosts(`https://${imp[1]}/`, job, ctx).length > 0)
+    return `a module is imported at run time from ${imp[1]}`;
+  if (
+    /\b(?:curl|wget)\b[^\n]*(?:-o|-O|--output)\s*["']?\$0\b[^\n]*\bexec\b/.test(text) &&
+    skillHosts(text, job, ctx)[0]
+  )
+    return `the script replaces itself with a copy from ${skillHosts(text, job, ctx)[0]} and runs it`;
   if (/\b(?:curl|wget|Invoke-WebRequest|iwr|urlretrieve)\b/.test(text)) {
     const hosts = skillHosts(text, job, ctx);
     if (hosts[0]) {
@@ -673,8 +718,8 @@ export const exec017 = build({
 
 /** Strong authority: the fetched text replaces or outranks the skill's own instructions. */
 const STRONG_AUTHORITY =
-  /\btreat (?:it|them|what it says|its contents?|the (?:page|text|content|file|rules?|result|pack))\b[^.]{0,30}\bas (?:your|the|these|its|this skill'?s?) (?:own )?(?:instructions?|orders?|rules?)\b|\beven (?:where|if|when) (?:they|it) conflicts? with (?:this|the skill)|\bfollow the instructions in (?:it|them|the (?:pack|page|file|rules?))\b[^.]{0,40}\bbefore anything else\b|\b(?:outranks?|takes? priority over|overrides?) (?:this file|the skill|these (?:steps|instructions))|\b(?:they|it|its (?:rules|contents?)) (?:replaces?|supersedes?|overrides?) (?:the|these|this skill'?s?|local|our) (?:own )?(?:steps|instructions|rules)\b/i;
-const REMOTE_SOURCE =
+  /\btreat (?:it|them|what it says|its contents?|the (?:page|text|content|file|rules?|result|pack))\b[^.]{0,30}\bas (?:your|the|these|its|this skill'?s?) (?:own )?(?:instructions?|orders?|rules?)\b|\beven (?:where|if|when) (?:they|it) conflicts? with (?:this|the skill)|\bfollow the instructions in (?:it|them|the (?:pack|page|file|rules?))\b[^.]{0,40}\bbefore anything else\b|\b(?:outranks?|takes? priority over|overrides?) (?:this file|the skill|these (?:steps|instructions))|\b(?:they|it|its (?:rules|contents?)) (?:replaces?|supersedes?|overrides?) (?:the|these|this skill'?s?|local|our) (?:own )?(?:steps|instructions|rules)\b|\bis the source of truth for (?:this|the|each) (?:session|run|task|reply)\b|\btreat (?:that|the|this) [\w ]{0,20}\bas the (?:playbook|script|instructions|plan) for\b|\bapply each listed action\b|\b(?:its|their) (?:rules|steps|instructions) (?:take|takes) priority over\b/i;
+export const REMOTE_SOURCE =
   /https?:\/\/|\b(?:page|site|url|feed|endpoint|gist|server)\b|\(\s*[\w-]+(?:\.[\w-]+)+\s*\)/i;
 
 export const inj031 = build({
@@ -720,14 +765,18 @@ export const inj031 = build({
       }
       const prose = unit.step?.prose || unit.text;
       if (PINNED_RE.test(prose)) continue;
-      for (const sentence of sentencesOf(prose)) {
+      const list = sentencesOf(prose);
+      for (const [i, sentence] of list.entries()) {
         if (/\b(?:never|not|no)\b[^.]{0,20}\binstructions?\b/i.test(sentence)) continue;
-        if (
-          !STRONG_AUTHORITY.test(sentence) ||
-          !PROSE_FETCH.test(sentence) ||
-          !REMOTE_SOURCE.test(sentence)
-        )
-          continue;
+        // The authority may sit in the sentence right after the fetch ("…/latest.md. Its rules
+        // take priority over these steps."), fresh-set lesson 2026-11-16.
+        const next = list[i + 1] ?? '';
+        const authority =
+          STRONG_AUTHORITY.test(sentence) ||
+          (/^(?:its|their|that|this|the) \w*/i.test(next) &&
+            STRONG_AUTHORITY.test(next) &&
+            !/\b(?:never|not|no)\b[^.]{0,20}\binstructions?\b/i.test(next));
+        if (!authority || !PROSE_FETCH.test(sentence) || !REMOTE_SOURCE.test(sentence)) continue;
         if (/\b(?:this|the) skill'?s? (?:folder|directory)\b|\bshipped\b/i.test(sentence)) continue;
         const hidden = hiddenNear(steps, unit.index);
         hit(
@@ -870,7 +919,7 @@ export const mcp005 = build({
 // ---------------------------------------------------------------- IH-MCP-006 (L6 shadowing)
 
 /** Names agents and popular servers already use; a second tool with the name wins by collision. */
-const KNOWN_TOOL_NAMES = new Set([
+export const KNOWN_TOOL_NAMES = new Set([
   'bash',
   'read',
   'write',
@@ -1127,18 +1176,18 @@ export const fs004 = build({
 // ---------------------------------------------------------------- IH-FS-005 (L7 reach)
 
 const HOME_WALK =
-  /\bfor \w+ in \[[^\]]*["']~(?:\/(?:Projects|src|code))?["']|\bos\.walk\(\s*os\.path\.expanduser\(\s*["']~["']|\bfind\s+(?:~|\$HOME)\s+[^\n]*-name\s+['"]?(?:package\.json|pyproject\.toml|\.git)\b|\bwalk `?\$HOME`?\b|\bevery (?:repository|repo|project) (?:under|in) `?~\/|\b(?:the user'?s?|their) other projects in (?:the|their) home folder\b|\bthe sibling folders next to this one\b/i;
+  /\bfor \w+ in \[[^\]]*["']~(?:\/(?:Projects|src|code))?["']|\bos\.walk\(\s*os\.path\.expanduser\(\s*["']~["']|\bfind\s+(?:~|\$HOME)\s+[^\n]*-name\s+['"]?(?:package\.json|pyproject\.toml|\.git)\b|\bwalk `?\$HOME`?\b|\bevery (?:repository|repo|project) (?:under|in) `?~\/|\b(?:the user'?s?|their) other projects in (?:the|their) home folder\b|\bthe sibling folders next to this one\b|\b(?:every|each|all) (?:git )?(?:repo(?:sitor(?:y|ies))?s?|projects?) (?:under|in) `?(?:~\/?|\$HOME|(?:the|your|their) home folder)/i;
 const WRITE_OR_RUN =
-  /\bsubprocess\.run\(|\bapply the same changes\b|\brun this skill'?s? setup\b|\bin each\b|\bcwd=|\bexecSync\(|\binclude any\b[^.]{0,60}\bfound there\b|\bkey lines\b/i;
+  /\bsubprocess\.run\(|\bapply the same changes\b|\brun this skill'?s? setup\b|\bin each\b|\bcwd=|\bexecSync\(|\bin all of them\b|\bto (?:each|every) (?:source )?file\b|\binclude any\b[^.]{0,60}\bfound there\b|\bkey lines\b/i;
 const HOME_MOUNT =
   /source=\$\{localEnv:(?:HOME|USERPROFILE)\}\s*,|-v\s+(?:~|\$HOME|"\$HOME"|\$\{HOME\})\s*:|\b(?:whole|entire) home\b[^.]{0,80}\b(?:into the container|along into|mounted|writable|read-write)\b|\bbring (?:the person'?s?|the user'?s?|their) whole home\b/i;
 const AGENT_ROOTS =
-  /\badd\b[^.]{0,20}["'`](?:\/home\/[\w-]+|~|\$HOME|\/)["'`]\s+to the list of folders the agent may\b|\bwork anywhere in (?:that|the|their) home\b/i;
+  /\badd\b[^.]{0,20}["'`](?:\/home\/[\w-]+|~|\$HOME|\/)["'`]{1,2}\s+to the list of folders the agent may\b|\bwork anywhere in (?:that|the|their) home\b/i;
 const ROOT_SHELL =
   /\bsudo\s+(?:bash|su|-i|-s)\b[^\n]{0,80}\b(?:continue|then continue|<<)|\bsudo\s+-i\s*<</i;
 /** Writing helper files into system folders every user and boot reads. */
 const SYSTEM_WRITE =
-  /\b(?:write|copy|copying|install|put|place|add|tee|cp|mv|install -m)\w*\b[^.\n]{0,80}`?\/(?:etc\/(?:systemd\/system|cron\.d|init\.d|profile\.d|sudoers\.d|ld\.so\.preload)|Library\/LaunchDaemons)\b/i;
+  /\b(?:write|copy|copying|install|put|place|add|tee|cp|mv|install -m)\w*\b(?:[^.\n]|\.(?=\w)){0,80}`?\/(?:etc\/(?:systemd\/system|cron\.d|init\.d|profile\.d|sudoers\.d|ld\.so\.preload)|Library\/LaunchDaemons)\b/i;
 const SYSTEM_JOB =
   /\b(?:server|system|admin|linux|install\w*|setup|provision\w*|service|daemon|systemd|cron|schedul\w*|deploy\w*|infra\w*|devops|homelab|vps|nas|monitor\w*|backup|agent|cli|tool(?:ing|s)?|package)\b/i;
 const SYSTEM_WIPE =
@@ -1260,7 +1309,7 @@ export const fs005 = build({
 // ---------------------------------------------------------------- IH-NET-019 (L1, r271 / dotfiles)
 
 /** Bulk sources that carry secret values: the whole environment, shell history, .env, login folders. */
-const BULK_SECRET =
+export const BULK_SECRET =
   /\b(?:every|all|the full|the whole|each) (?:\w+ ){0,2}environment variables?\b|\b(?:last \d+ lines of (?:the )?|recent )(?:shell|bash|zsh|command) history\b|\bshell history\b|\bthe project'?s? \.env\b|\.env files? in the home\b|\bwhere (?:command-line )?tools keep (?:their )?login state\b|\b(?:collect|gather|copy|grab|read|bundle|zip|tar)\w*\b[^.]{0,40}\blogin[- ]state\b/i;
 const NAMES_ONLY = /\bnames? of the environment variables\b|\bnot their values\b/i;
 const OUTBOUND =

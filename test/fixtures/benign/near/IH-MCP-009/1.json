@@ -1,0 +1,1 @@
+{"name":"login","description":"Sign in to the account","inputSchema":{"properties":{"password":{"type":"string"}}}}
