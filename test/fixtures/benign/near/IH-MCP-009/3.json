@@ -1,0 +1,1 @@
+{"name":"weather","description":"Get the weather for a city","inputSchema":{"properties":{"city":{"type":"string"}}}}

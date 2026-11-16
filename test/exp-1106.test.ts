@@ -109,9 +109,13 @@ describe('2026-11-06 detection rules on house pairs', () => {
     expect(twinIds).not.toContain(ruleId);
     // The instruction-shaped debug tunnel contains the redirect, so IH-EXEC-008 blocks it.
     // The defanged prose pair has no redirect and stays at review.
-    const attackVerdict = attack.includes('reverse-shell-as-debug-tunnel/instruction')
-      ? 'block'
-      : 'review';
+    // The memory-manipulation attacks that plant a write on every session start are
+    // blocked by IH-PERSIST-012 (2026-11-16: an always-on trigger that re-runs the skill).
+    const attackVerdict =
+      attack.includes('reverse-shell-as-debug-tunnel/instruction') ||
+      /goal-memory-manipulation\/(?:ordinary|reffile)\//.test(attack)
+        ? 'block'
+        : 'review';
     expect(await verdict(join(root, attack))).toBe(attackVerdict);
     expect(await verdict(join(root, twin))).toBe('no-findings');
   });

@@ -41,6 +41,7 @@ import { detection80Rules } from './detection80.ts';
 import { scriptScanRules } from './script-scan.ts';
 import { ideas1115Rules } from './ideas-1115.ts';
 import { weakLanesRules } from './weak-lanes.ts';
+import { ideas1116Rules } from './ideas-1116.ts';
 
 export const contentRules: Rule[] = [
   exec001,
@@ -89,6 +90,7 @@ export const contentRules: Rule[] = [
   ...scriptScanRules,
   ...ideas1115Rules,
   ...weakLanesRules,
+  ...ideas1116Rules,
   prov001,
   meta005,
   mcp001,

@@ -9,6 +9,84 @@ import type { RuleReferences } from '../core/types.ts';
  * An empty list means no mapping was defensible enough to cite.
  */
 export const RULE_REFERENCES: Record<string, RuleReferences> = {
+  'IH-PRIV-010': {
+    owaspLlm: ['LLM06:2025'],
+    owaspAgentic: ['ASI03:2026'],
+    mitreAtlas: [],
+    openCre: [],
+  },
+  'IH-PRIV-011': {
+    owaspLlm: ['LLM06:2025'],
+    owaspAgentic: ['ASI10:2026'],
+    mitreAtlas: [],
+    openCre: [],
+  },
+  'IH-NET-021': {
+    owaspLlm: ['LLM02:2025'],
+    owaspAgentic: ['ASI03:2026'],
+    mitreAtlas: [],
+    openCre: [],
+  },
+  'IH-NET-022': {
+    owaspLlm: ['LLM02:2025'],
+    owaspAgentic: ['ASI02:2026'],
+    mitreAtlas: [],
+    openCre: [],
+  },
+  'IH-PERSIST-012': {
+    owaspLlm: ['LLM06:2025'],
+    owaspAgentic: ['ASI06:2026'],
+    mitreAtlas: [],
+    openCre: [],
+  },
+  'IH-EXEC-018': {
+    owaspLlm: ['LLM03:2025'],
+    owaspAgentic: ['ASI04:2026'],
+    mitreAtlas: [],
+    openCre: [],
+  },
+  'IH-NET-023': {
+    owaspLlm: ['LLM03:2025'],
+    owaspAgentic: ['ASI04:2026'],
+    mitreAtlas: [],
+    openCre: [],
+  },
+  'IH-MCP-007': {
+    owaspLlm: ['LLM03:2025'],
+    owaspAgentic: ['ASI04:2026'],
+    mitreAtlas: [],
+    openCre: [],
+  },
+  'IH-MCP-008': {
+    owaspLlm: ['LLM03:2025'],
+    owaspAgentic: ['ASI04:2026'],
+    mitreAtlas: [],
+    openCre: [],
+  },
+  'IH-MCP-009': {
+    owaspLlm: ['LLM02:2025'],
+    owaspAgentic: ['ASI02:2026'],
+    mitreAtlas: [],
+    openCre: [],
+  },
+  'IH-OBF-003': {
+    owaspLlm: ['LLM01:2025'],
+    owaspAgentic: ['ASI01:2026'],
+    mitreAtlas: [],
+    openCre: [],
+  },
+  'IH-FS-006': {
+    owaspLlm: ['LLM06:2025'],
+    owaspAgentic: ['ASI02:2026'],
+    mitreAtlas: [],
+    openCre: [],
+  },
+  'IH-FS-007': {
+    owaspLlm: ['LLM02:2025'],
+    owaspAgentic: ['ASI02:2026'],
+    mitreAtlas: [],
+    openCre: [],
+  },
   'IH-NET-017': {
     owaspLlm: ['LLM03:2025'],
     owaspAgentic: ['ASI05:2026'],
