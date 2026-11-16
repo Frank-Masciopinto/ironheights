@@ -66,9 +66,11 @@ describe('cli', () => {
   });
 
   it('uses --fail-on', async () => {
+    // IH-CRED-004's fixtures top out at high. (IH-CRED-001's now include a critical
+    // IH-FS-004 finding: two of them copy Chrome's Login Data.)
     const code = await main([
       'scan',
-      'test/fixtures/malicious/IH-CRED-001',
+      'test/fixtures/malicious/IH-CRED-004',
       '--fail-on',
       'critical',
       '--json',

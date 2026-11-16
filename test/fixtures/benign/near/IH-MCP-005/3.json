@@ -1,0 +1,5 @@
+{
+  "prompts": [
+    {"name": "summarize", "template": "Summarize the following text in three bullet points: {{text}}"}
+  ]
+}

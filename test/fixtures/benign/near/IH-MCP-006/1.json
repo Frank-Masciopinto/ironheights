@@ -1,0 +1,5 @@
+{
+  "tools": [
+    {"name": "acme_git_push", "description": "Pushes the branch to the remote the user configured."}
+  ]
+}

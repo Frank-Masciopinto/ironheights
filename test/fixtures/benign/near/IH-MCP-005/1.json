@@ -1,0 +1,5 @@
+{
+  "tools": [
+    {"name": "notes_search", "description": "Search the user's notes by keyword. Returns titles and snippets from the project notes folder only."}
+  ]
+}
