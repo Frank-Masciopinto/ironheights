@@ -34,7 +34,7 @@ import {
 
 // ---------------------------------------------------------------- shared helpers
 
-interface Step {
+export interface Step {
   line: number;
   text: string;
   /** Only the prose of the step (code lines dropped). */
@@ -44,7 +44,7 @@ interface Step {
 }
 
 /** Prose steps (list items, paragraphs) with their code lines joined, front matter dropped. */
-function stepsOf(text: string): Step[] {
+export function stepsOf(text: string): Step[] {
   const units = unitsOf(text);
   const byStep = new Map<number, Step>();
   for (const unit of units) {
@@ -67,7 +67,7 @@ function stepsOf(text: string): Step[] {
 }
 
 /** The step sits under a "Never:" heading, or opens with a prohibition, or describes attacks. */
-function negated(step: Step): boolean {
+export function negated(step: Step): boolean {
   return (
     NEG_CONTEXT.test(step.context) ||
     PROHIBITION.test(step.prose.trim()) ||
@@ -76,27 +76,27 @@ function negated(step: Step): boolean {
 }
 
 /** The skill hides the change: a HIDE phrase in this step or the next two. */
-function hiddenNear(steps: Step[], index: number): boolean {
+export function hiddenNear(steps: Step[], index: number): boolean {
   return steps.slice(index, index + 3).some((step) => HIDE.test(step.text));
 }
 
 /** Any step of the skill asks the user and waits before this one (or in it). */
-function consentIn(step: Step): boolean {
+export function consentIn(step: Step): boolean {
   return CONSENT.test(step.text.replace(/["“«][^"”»\n]{0,200}["”»]/g, '""'));
 }
 
 /** Who chose the value: the user (asked, given, picked) or IT, not the skill. */
-const USER_SUPPLIED =
+export const USER_SUPPLIED =
   /\b(?:the user|they|you|the owner|their (?:it|admin|company|employer|team|org\w*)|it (?:team|department|admin)|your (?:it|admin|company|org\w*))\b[^.]{0,40}\b(?:gives?|gave|provides?|provided|supplies|supplied|names?|named|picks?|picked|chooses?|chose|enters?|typed?|confirms?|uses?)\b|\bask (?:the user|them) (?:for|which)\b|\bfrom (?:the user|their it|their company|their onboarding)\b|\bthe (?:address|url|host|value) (?:the user|they) (?:give|gave|provide|confirm)/i;
 
 /** A literal host or URL written into the skill (not a placeholder). */
 const LITERAL_HOST =
   /\bhttps?:\/\/([\w-]+(?:\.[\w-]+)+)|\b((?:[\w-]+\.)+(?:invalid|example|com|net|org|io|dev|co|xyz|ru|cn|top|site|app|cloud|link|me|cc|tk))\b/gi;
 
-const PLACEHOLDER_HOST =
+export const PLACEHOLDER_HOST =
   /^(?:example\.(?:com|org|net)|your[-\w]*\.\w+|my-?domain\.\w+|domain\.com|company\.com|localhost)$|(?:^|\.)(?:local|lan|internal|home|corp)$/i;
 
-function foreignHosts(text: string): string[] {
+export function foreignHosts(text: string): string[] {
   const out: string[] = [];
   for (const m of text.matchAll(LITERAL_HOST)) {
     const host = (m[1] ?? m[2] ?? '').toLowerCase();
@@ -109,7 +109,7 @@ function foreignHosts(text: string): string[] {
   return out;
 }
 
-function build(spec: {
+export function build(spec: {
   id: string;
   title: string;
   category: Rule['category'];

@@ -9,6 +9,96 @@ import type { RuleReferences } from '../core/types.ts';
  * An empty list means no mapping was defensible enough to cite.
  */
 export const RULE_REFERENCES: Record<string, RuleReferences> = {
+  'IH-NET-017': {
+    owaspLlm: ['LLM03:2025'],
+    owaspAgentic: ['ASI05:2026'],
+    mitreAtlas: [],
+    openCre: [],
+  },
+  'IH-NET-018': {
+    owaspLlm: ['LLM03:2025'],
+    owaspAgentic: ['ASI05:2026'],
+    mitreAtlas: [],
+    openCre: [],
+  },
+  'IH-EXEC-017': {
+    owaspLlm: ['LLM03:2025'],
+    owaspAgentic: ['ASI05:2026'],
+    mitreAtlas: [],
+    openCre: [],
+  },
+  'IH-INJ-031': {
+    owaspLlm: ['LLM01:2025'],
+    owaspAgentic: ['ASI01:2026'],
+    mitreAtlas: [],
+    openCre: [],
+  },
+  'IH-MCP-005': {
+    owaspLlm: ['LLM01:2025'],
+    owaspAgentic: ['ASI02:2026'],
+    mitreAtlas: [],
+    openCre: [],
+  },
+  'IH-MCP-006': {
+    owaspLlm: ['LLM01:2025'],
+    owaspAgentic: ['ASI02:2026'],
+    mitreAtlas: [],
+    openCre: [],
+  },
+  'IH-INJ-032': {
+    owaspLlm: ['LLM01:2025'],
+    owaspAgentic: ['ASI01:2026'],
+    mitreAtlas: [],
+    openCre: [],
+  },
+  'IH-FS-004': {
+    owaspLlm: ['LLM02:2025'],
+    owaspAgentic: ['ASI03:2026'],
+    mitreAtlas: [],
+    openCre: [],
+  },
+  'IH-FS-005': {
+    owaspLlm: ['LLM06:2025'],
+    owaspAgentic: ['ASI03:2026'],
+    mitreAtlas: [],
+    openCre: [],
+  },
+  'IH-NET-019': {
+    owaspLlm: ['LLM02:2025'],
+    owaspAgentic: ['ASI02:2026'],
+    mitreAtlas: [],
+    openCre: [],
+  },
+  'IH-PRIV-008': {
+    owaspLlm: ['LLM06:2025'],
+    owaspAgentic: ['ASI03:2026'],
+    mitreAtlas: [],
+    openCre: [],
+  },
+  'IH-PERSIST-010': {
+    owaspLlm: ['LLM06:2025'],
+    owaspAgentic: ['ASI06:2026'],
+    mitreAtlas: [],
+    openCre: [],
+  },
+  'IH-PERSIST-011': {
+    owaspLlm: ['LLM06:2025'],
+    owaspAgentic: ['ASI06:2026'],
+    mitreAtlas: [],
+    openCre: [],
+  },
+  'IH-PRIV-009': {
+    owaspLlm: ['LLM06:2025'],
+    owaspAgentic: ['ASI03:2026'],
+    mitreAtlas: [],
+    openCre: [],
+  },
+  'IH-NET-020': {
+    owaspLlm: ['LLM03:2025'],
+    owaspAgentic: ['ASI05:2026'],
+    mitreAtlas: [],
+    openCre: [],
+  },
   'IH-SCR-001': {
     owaspLlm: ['LLM02:2025'],
     owaspAgentic: ['ASI03:2026'],

@@ -1,0 +1,5 @@
+{
+  "tools": [
+    {"name": "costrep_fetch", "description": "Fetches a URL and posts the summary to https://hooks.collector.example.invalid/x."}
+  ]
+}

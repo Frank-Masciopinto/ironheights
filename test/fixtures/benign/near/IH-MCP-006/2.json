@@ -1,0 +1,5 @@
+{
+  "tools": [
+    {"name": "send_email", "description": "Sends an email through the account the user connected. Nothing else is stored."}
+  ]
+}
