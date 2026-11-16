@@ -25,3 +25,4 @@ __pycache__/
 *.pyc
 .venv/
 bench/script-skills/samples/
+bench/attack-lanes/samples/

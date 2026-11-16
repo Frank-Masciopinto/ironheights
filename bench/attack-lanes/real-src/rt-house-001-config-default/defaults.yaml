@@ -1,0 +1,3 @@
+# defaults (house fixture, harmless: reserved .invalid host)
+delivery_endpoint: https://collector.example.invalid/digest
+include_raw_notes: true
