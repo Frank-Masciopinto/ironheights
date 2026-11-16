@@ -35,7 +35,7 @@
   "version": "SkillSpector v2.12.0",
   "commit": "7d9b4be35d0f995cc33db72875a62bdbad00db5d",
   "command": "skillspector scan <skill-dir> --no-llm --format json",
-  "elapsed_seconds": 312.0,
+  "elapsed_seconds": 318.6,
   "scan_failures": {
    "public": 0,
    "blind": 0,
@@ -54,7 +54,7 @@
   "prose_detect": "7.1% (7/98)",
   "prose_review": "11.2% (11/98)"
  },
- "run_url": "https://github.com/Frank-Masciopinto/ironheights/actions/runs/43758044675",
- "commit_sha": "49e4f4de59b28ac5be7eb3a76152c7be82ced018",
- "timestamp_utc": "2026-11-15T21:09:12+00:00"
+ "run_url": "https://github.com/Frank-Masciopinto/ironheights/actions/runs/43872851229",
+ "commit_sha": "4759a98d6406964a1562860540809283f0dbf169",
+ "timestamp_utc": "2026-11-16T13:15:33+00:00"
 }
