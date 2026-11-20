@@ -1,5 +1,7 @@
 # Attack-lanes scored results
 
+**Rescored 2026-11-20** on the same tree (`509414a9`) with main `107fdbe` (after #157): 956/1335 blocked, 11/1250 twins; held-out 456/659, 5/641. Cisco and SkillSpector reran with identical counts. Current numbers: `results/summary.json`. The 2026-11-15 baseline below is kept as history.
+
 Scored 2026-11-15 (Europe/Warsaw) after freeze commit `d8ad571`.
 No rule changes. Templates were written without reading rule internals.
 
