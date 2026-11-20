@@ -47,49 +47,49 @@ Website: [www.ironheights.dev](https://www.ironheights.dev)
   <tbody>
     <tr>
       <td align="left">🎯 Malicious skills detected (higher is better)</td>
-      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/badges/badges/proof/PROOF.md"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FFrank-Masciopinto%2Fironheights%2Fbadges%2Fbadges%2Ftable-ih-detect.json" alt="50.4% (260/516)"></a></td>
+      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/badges/badges/proof/PROOF.md"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FFrank-Masciopinto%2Fironheights%2Fbadges%2Fbadges%2Ftable-ih-detect.json" alt="51.0% (263/516) ✅"></a></td>
       <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/badges/badges/proof/PROOF.md"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FFrank-Masciopinto%2Fironheights%2Fbadges%2Fbadges%2Ftable-cisco-detect.json" alt="21.9% (113/516)"></a></td>
       <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/badges/badges/proof/PROOF.md"><img src="https://img.shields.io/static/v1?label=&amp;message=26.0%25%20(134%2F516)&amp;color=lightgrey&amp;style=for-the-badge" alt="26.0% (134/516)"></a></td>
     </tr>
     <tr>
       <td align="left">⚠️ False positives on clean skills (lower is better)</td>
-      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/badges/badges/proof/PROOF.md"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FFrank-Masciopinto%2Fironheights%2Fbadges%2Fbadges%2Ftable-ih-fp.json" alt="1.3% (6/456)"></a></td>
+      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/badges/badges/proof/PROOF.md"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FFrank-Masciopinto%2Fironheights%2Fbadges%2Fbadges%2Ftable-ih-fp.json" alt="1.3% (6/456) ✅"></a></td>
       <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/badges/badges/proof/PROOF.md"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FFrank-Masciopinto%2Fironheights%2Fbadges%2Fbadges%2Ftable-cisco-fp.json" alt="2.0% (9/456)"></a></td>
       <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/badges/badges/proof/PROOF.md"><img src="https://img.shields.io/static/v1?label=&amp;message=10.5%25%20(48%2F456)&amp;color=lightgrey&amp;style=for-the-badge" alt="10.5% (48/456)"></a></td>
     </tr>
     <tr>
       <td align="left">🔎 Malicious skills blocked or sent to review (higher is better)</td>
-      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/badges/badges/proof/PROOF.md"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FFrank-Masciopinto%2Fironheights%2Fbadges%2Fbadges%2Ftable-ih-review-detect.json" alt="60.9% (314/516)"></a></td>
+      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/badges/badges/proof/PROOF.md"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FFrank-Masciopinto%2Fironheights%2Fbadges%2Fbadges%2Ftable-ih-review-detect.json" alt="61.0% (315/516) ✅"></a></td>
       <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/badges/badges/proof/PROOF.md"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FFrank-Masciopinto%2Fironheights%2Fbadges%2Fbadges%2Ftable-cisco-review-detect.json" alt="22.3% (115/516)"></a></td>
       <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/badges/badges/proof/PROOF.md"><img src="https://img.shields.io/static/v1?label=&amp;message=42.6%25%20(220%2F516)&amp;color=lightgrey&amp;style=for-the-badge" alt="42.6% (220/516)"></a></td>
     </tr>
     <tr>
       <td align="left">🔎 Clean skills blocked or sent to review (lower is better)</td>
       <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/badges/badges/proof/PROOF.md"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FFrank-Masciopinto%2Fironheights%2Fbadges%2Fbadges%2Ftable-ih-review-fp.json" alt="6.6% (30/456)"></a></td>
-      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/badges/badges/proof/PROOF.md"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FFrank-Masciopinto%2Fironheights%2Fbadges%2Fbadges%2Ftable-cisco-review-fp.json" alt="2.4% (11/456)"></a></td>
+      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/badges/badges/proof/PROOF.md"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FFrank-Masciopinto%2Fironheights%2Fbadges%2Fbadges%2Ftable-cisco-review-fp.json" alt="2.4% (11/456) ✅"></a></td>
       <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/badges/badges/proof/PROOF.md"><img src="https://img.shields.io/static/v1?label=&amp;message=30.9%25%20(141%2F456)&amp;color=lightgrey&amp;style=for-the-badge" alt="30.9% (141/456)"></a></td>
     </tr>
     <tr>
       <td align="left">🙈 Blind held-out attacks blocked (higher is better)</td>
-      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/badges/badges/proof/PROOF.md"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FFrank-Masciopinto%2Fironheights%2Fbadges%2Fbadges%2Ftable-ih-blind-detect.json" alt="55.8% (335/600)"></a></td>
+      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/badges/badges/proof/PROOF.md"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FFrank-Masciopinto%2Fironheights%2Fbadges%2Fbadges%2Ftable-ih-blind-detect.json" alt="56.7% (340/600) ✅"></a></td>
       <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/badges/badges/proof/PROOF.md"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FFrank-Masciopinto%2Fironheights%2Fbadges%2Fbadges%2Ftable-cisco-blind-detect.json" alt="31.7% (190/600)"></a></td>
       <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/badges/badges/proof/PROOF.md"><img src="https://img.shields.io/static/v1?label=&amp;message=28.8%25%20(173%2F600)&amp;color=lightgrey&amp;style=for-the-badge" alt="28.8% (173/600)"></a></td>
     </tr>
     <tr>
       <td align="left">🙈 Blind held-out clean skills blocked (lower is better)</td>
       <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/badges/badges/proof/PROOF.md"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FFrank-Masciopinto%2Fironheights%2Fbadges%2Fbadges%2Ftable-ih-blind-fp.json" alt="4.3% (13/300)"></a></td>
-      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/badges/badges/proof/PROOF.md"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FFrank-Masciopinto%2Fironheights%2Fbadges%2Fbadges%2Ftable-cisco-blind-fp.json" alt="2.0% (6/300)"></a></td>
+      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/badges/badges/proof/PROOF.md"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FFrank-Masciopinto%2Fironheights%2Fbadges%2Fbadges%2Ftable-cisco-blind-fp.json" alt="2.0% (6/300) ✅"></a></td>
       <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/badges/badges/proof/PROOF.md"><img src="https://img.shields.io/static/v1?label=&amp;message=11.7%25%20(35%2F300)&amp;color=lightgrey&amp;style=for-the-badge" alt="11.7% (35/300)"></a></td>
     </tr>
     <tr>
       <td align="left">📦 Official Anthropic skills flagged (lower is better)</td>
-      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/badges/badges/proof/PROOF.md"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FFrank-Masciopinto%2Fironheights%2Fbadges%2Fbadges%2Ftable-ih-anthropic.json" alt="0/19"></a></td>
+      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/badges/badges/proof/PROOF.md"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FFrank-Masciopinto%2Fironheights%2Fbadges%2Fbadges%2Ftable-ih-anthropic.json" alt="0/19 ✅"></a></td>
       <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/badges/badges/proof/PROOF.md"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FFrank-Masciopinto%2Fironheights%2Fbadges%2Fbadges%2Ftable-cisco-anthropic.json" alt="1/19"></a></td>
       <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/badges/badges/proof/PROOF.md"><img src="https://img.shields.io/static/v1?label=&amp;message=4%2F19&amp;color=lightgrey&amp;style=for-the-badge" alt="4/19"></a></td>
     </tr>
     <tr>
       <td align="left">🧩 Shipped-script malicious skills blocked (higher is better)</td>
-      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/script-skills/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=39.4%25%20%28405%2F1028%29%20%E2%9C%85&amp;color=brightgreen&amp;style=for-the-badge" alt="39.4% (405/1028) ✅"></a></td>
+      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/script-skills/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=51.8%25%20%28533%2F1028%29%20%E2%9C%85&amp;color=brightgreen&amp;style=for-the-badge" alt="51.8% (533/1028) ✅"></a></td>
       <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/script-skills/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=33.3%25%20%28342%2F1028%29&amp;color=lightgrey&amp;style=for-the-badge" alt="33.3% (342/1028)"></a></td>
       <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/script-skills/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=28.7%25%20%28295%2F1028%29&amp;color=lightgrey&amp;style=for-the-badge" alt="28.7% (295/1028)"></a></td>
     </tr>
@@ -101,7 +101,7 @@ Website: [www.ironheights.dev](https://www.ironheights.dev)
     </tr>
     <tr>
       <td align="left">🧩 Shipped-script held-out attacks blocked (higher is better)</td>
-      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/script-skills/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=39.7%25%20%28214%2F539%29%20%E2%9C%85&amp;color=brightgreen&amp;style=for-the-badge" alt="39.7% (214/539) ✅"></a></td>
+      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/script-skills/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=54.0%25%20%28291%2F539%29%20%E2%9C%85&amp;color=brightgreen&amp;style=for-the-badge" alt="54.0% (291/539) ✅"></a></td>
       <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/script-skills/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=32.3%25%20%28174%2F539%29&amp;color=lightgrey&amp;style=for-the-badge" alt="32.3% (174/539)"></a></td>
       <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/script-skills/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=28.6%25%20%28154%2F539%29&amp;color=lightgrey&amp;style=for-the-badge" alt="28.6% (154/539)"></a></td>
     </tr>
@@ -113,9 +113,9 @@ Website: [www.ironheights.dev](https://www.ironheights.dev)
     </tr>
     <tr>
       <td align="left">🎯 Attack-lanes malicious skills blocked (higher is better)</td>
-      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/attack-lanes/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=25.8%25%20%28345%2F1335%29&amp;color=lightgrey&amp;style=for-the-badge" alt="25.8% (345/1335)"></a></td>
+      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/attack-lanes/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=71.6%25%20%28956%2F1335%29%20%E2%9C%85&amp;color=brightgreen&amp;style=for-the-badge" alt="71.6% (956/1335) ✅"></a></td>
       <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/attack-lanes/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=16.9%25%20%28226%2F1335%29&amp;color=lightgrey&amp;style=for-the-badge" alt="16.9% (226/1335)"></a></td>
-      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/attack-lanes/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=28.0%25%20%28374%2F1335%29%20%E2%9C%85&amp;color=brightgreen&amp;style=for-the-badge" alt="28.0% (374/1335) ✅"></a></td>
+      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/attack-lanes/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=28.0%25%20%28374%2F1335%29&amp;color=lightgrey&amp;style=for-the-badge" alt="28.0% (374/1335)"></a></td>
     </tr>
     <tr>
       <td align="left">🎯 Attack-lanes honest twins blocked (lower is better)</td>
@@ -125,9 +125,9 @@ Website: [www.ironheights.dev](https://www.ironheights.dev)
     </tr>
     <tr>
       <td align="left">🎯 Attack-lanes held-out attacks blocked (higher is better)</td>
-      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/attack-lanes/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=25.5%25%20%28168%2F659%29&amp;color=lightgrey&amp;style=for-the-badge" alt="25.5% (168/659)"></a></td>
+      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/attack-lanes/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=69.2%25%20%28456%2F659%29%20%E2%9C%85&amp;color=brightgreen&amp;style=for-the-badge" alt="69.2% (456/659) ✅"></a></td>
       <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/attack-lanes/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=16.8%25%20%28111%2F659%29&amp;color=lightgrey&amp;style=for-the-badge" alt="16.8% (111/659)"></a></td>
-      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/attack-lanes/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=25.8%25%20%28170%2F659%29%20%E2%9C%85&amp;color=brightgreen&amp;style=for-the-badge" alt="25.8% (170/659) ✅"></a></td>
+      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/attack-lanes/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=25.8%25%20%28170%2F659%29&amp;color=lightgrey&amp;style=for-the-badge" alt="25.8% (170/659)"></a></td>
     </tr>
     <tr>
       <td align="left">🎯 Attack-lanes held-out honest twins blocked (lower is better)</td>
@@ -138,7 +138,7 @@ Website: [www.ironheights.dev](https://www.ironheights.dev)
   </tbody>
 </table>
 
-<sub>Ironheights is our project. The 🧩 rows are our separate <a href="bench/script-skills/README.md">shipped-script set</a>; the 🎯 rows are our separate <a href="bench/attack-lanes/README.md">attack-lanes set</a> (DETECTION-80 L1–L8; generated by us from a pinned seed plus real-derived missed-attacks, redteam, and settings-change fixtures) (1028 malicious skills with scripts, 1026 honest twins; generated by us from a pinned seed plus 6 real-derived fixtures), current main with script scanning (PR #150). All other rows: all three ran on the same <a href="https://huggingface.co/datasets/ProtectSkills/MaliciousSkillBench">MaliciousSkillBench</a> set (516 malicious and 456 clean skills, 19 of the clean ones official Anthropic skills) and the same blind 600/300 slice, static analysis only, no LLM. Ironheights 0.36.0 and Cisco skill-scanner 2.3.2 are the published figures. NVIDIA SkillSpector is v2.12.0 at commit <code>7d9b4be35d0f995cc33db72875a62bdbad00db5d</code>, run as <code>skillspector scan &lt;skill-dir&gt; --no-llm --format json</code> (no API key). Block for NVIDIA is critical or high severity (the score band or the worst finding) or recommendation <code>DO_NOT_INSTALL</code>. Block-or-review also counts medium severity or recommendation <code>CAUTION</code>. ✅ marks the best of the three on that row. The blind set is never read when writing rules; see <a href="docs/accuracy-gates.md">docs/accuracy-gates.md</a>. Every cell links to <a href="https://github.com/Frank-Masciopinto/ironheights/blob/badges/badges/proof/PROOF.md">proof of the latest run</a> (<a href="docs/benchmark-proof.md">how to reproduce</a>). Full method: <a href="docs/benchmark.md#maliciousskillbench-results-0360">docs/benchmark.md</a>.</sub>
+<sub>Ironheights is our project. Every Ironheights cell is current main (commit <code>107fdbe</code>, package version 0.36.0), and on every row all three tools ran on the same set. The 🧩 rows are our separate <a href="bench/script-skills/README.md">shipped-script set</a> (1028 malicious skills with scripts, 1026 honest twins; generated by us from a pinned seed plus 6 real-derived fixtures; tree <code>64730fbc</code>). The 🎯 rows are our separate <a href="bench/attack-lanes/README.md">attack-lanes set</a> (DETECTION-80 L1–L8, 1335 attacks and 1250 honest twins; generated by us from a pinned seed plus real-derived missed-attacks, redteam, and settings-change fixtures; tree <code>509414a9</code>). Both were rescored on 2026-11-20; held-out halves were scored, never tuned on. All other rows: all three ran on the same <a href="https://huggingface.co/datasets/ProtectSkills/MaliciousSkillBench">MaliciousSkillBench</a> set (516 malicious and 456 clean skills, 19 of the clean ones official Anthropic skills) and the same blind 600/300 slice, static analysis only, no LLM. Those rows are rebuilt by the benchmark workflow on every push to main; Cisco skill-scanner is 2.3.2. NVIDIA SkillSpector is v2.12.0 at commit <code>7d9b4be35d0f995cc33db72875a62bdbad00db5d</code>, run as <code>skillspector scan &lt;skill-dir&gt; --no-llm --format json</code> (no API key). Block for NVIDIA is critical or high severity (the score band or the worst finding) or recommendation <code>DO_NOT_INSTALL</code>. Block-or-review also counts medium severity or recommendation <code>CAUTION</code>. ✅ marks the best of the three on that row. The blind set is never read when writing rules; see <a href="docs/accuracy-gates.md">docs/accuracy-gates.md</a>. Every cell links to <a href="https://github.com/Frank-Masciopinto/ironheights/blob/badges/badges/proof/PROOF.md">proof of the latest run</a> (<a href="docs/benchmark-proof.md">how to reproduce</a>). Full method: <a href="docs/benchmark.md#maliciousskillbench-results-0360">docs/benchmark.md</a>.</sub>
 
 </div>
 
