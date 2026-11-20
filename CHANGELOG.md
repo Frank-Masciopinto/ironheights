@@ -1,5 +1,99 @@
 # Changelog
 
+## 0.37.0 — 2026-11-20
+
+**More attacks blocked, same false-positive rate.** Ironheights: The Immune System for AI Agents. 0.37.0 ships the detection merged on main since 0.36.0 (PRs #150, #152, #154, #155 and #157; #151, #153, #156 and #158 add the shipped-script and attack-lanes bench sets and refresh the README table). Verdict values, exit codes and existing JSON fields are unchanged. The model column was not run. Cisco skill-scanner 2.3.2 and NVIDIA SkillSpector v2.12.0 were not re-run on MaliciousSkillBench: 113/516 (21.9%) and 134/516 (26.0%) block, 9/456 (2.0%) and 48/456 (10.5%) false positives. They were re-run on the shipped-script and attack-lanes sets for this release; their counts there did not change.
+
+On MaliciousSkillBench, deterministic, no `--llm`:
+
+| Setting | 0.36.0 | 0.37.0 | Cisco 2.3.2 | SkillSpector v2.12.0 |
+| --- | --- | --- | --- | --- |
+| Attacks blocked | 260/516 (50.4%) | 263/516 (51.0%) | 113/516 (21.9%) | 134/516 (26.0%) |
+| Prose-only attacks blocked | 40/98 | 40/98 | 5/98 | 7/98 |
+| False positives at block | 6/456 (1.3%) | 6/456 (1.3%) | 9/456 (2.0%) | 48/456 (10.5%) |
+| Block or review | 314/516 | 315/516 | 115/516 | 220/516 |
+| Real-world clean skills blocked | 232/5,655 | 230/5,655, no new ids | — | — |
+| Blind held-out attacks blocked | 335/600 | 340/600 | 190/600 | 173/600 |
+| Blind held-out clean skills blocked | 13/300 | 13/300 | 6/300 | 35/300 |
+| Anthropic skills flagged | 0/19 | 0/19 | 1/19 | 4/19 |
+
+The 0.37.0 MaliciousSkillBench and blind figures are the official summary from the benchmark workflow on main after #157 (`107fdbe`). The two real-world blocks that went away are from the IH-INJ-003 negation fix in #152: two safety skills moved from block to review. False positives on the public clean set stayed at 6/456.
+
+This is the first release that publishes the shipped-script and attack-lanes sets. The 0.36.0 column is the 0.36.0 CLI rescored on those sets.
+
+| Set | 0.36.0 | 0.37.0 | Cisco 2.3.2 | SkillSpector v2.12.0 |
+| --- | --- | --- | --- | --- |
+| Shipped-script attacks blocked (1028) | 287/1028 (27.9%) | 533/1028 (51.8%) | 342/1028 (33.3%) | 295/1028 (28.7%) |
+| Shipped-script honest twins blocked | 0/1026 | 0/1026 | 231/1026 | 225/1026 |
+| Shipped-script held-out attacks blocked (539) | 159/539 (29.5%) | 291/539 (54.0%) | 174/539 | 154/539 |
+| Attack-lanes attacks blocked (1335) | 283/1335 (21.2%) | 956/1335 (71.6%) | 226/1335 (16.9%) | 374/1335 (28.0%) |
+| Attack-lanes honest twins blocked | 11/1250 | 11/1250 | 32/1250 | 45/1250 |
+| Attack-lanes held-out attacks blocked (659) | 144/659 (21.9%) | 456/659 (69.2%) | 111/659 | 170/659 |
+| Attack-lanes held-out twins blocked | 5/641 | 5/641 | 17/641 | 20/641 |
+
+New checks, each one critical when it hits unless noted:
+
+Script scanning (#150): shipped scripts and named fenced script bodies are now scanned with the same rules as `SKILL.md`. That is most of the shipped-script gain.
+
+From the 2026-11-15 ideas (#152):
+
+- **IH-NET-014**: a package source is moved machine-wide and integrity checking for it is switched off.
+- **IH-NET-015**: a key or cert the skill ships is added to a global trust store.
+- **IH-INJ-030**: remote, changeable instructions are given authority. Pinned, hashed or data-only content is fine.
+- **IH-MCP-004**: a tool description reaches into other tools or outside data.
+- **IH-PERSIST-009**: a standing every-task trigger is written into agent memory or the shell.
+- **IH-PRIV-006**: a payee, refund or recovery field is written from a skill-supplied value.
+- **IH-PRIV-007**: a wildcard is added to an auto-approve list.
+- **IH-NET-016**: sign-in links, tokens or ID numbers are sent to a skill-picked address.
+- **IH-INJ-003** no longer treats a "never edit…" negation as an order. That is what moved two real-world safety skills off block.
+
+From the weak-lane experiment (#154):
+
+- **IH-NET-017**: a setting every program trusts is pointed at a host the skill picks.
+- **IH-NET-018**: an extra trusted CA is set to a cert shipped in the skill.
+- **IH-EXEC-017**: code fetched from a skill-picked host is run.
+- **IH-INJ-031**: text fetched at run time takes over from the reviewed steps.
+- **IH-INJ-032**: a field in a tool or API result is treated as an order that reaches other tools or hosts.
+- **IH-MCP-005**: tool-facing text orders the agent to send the conversation, files or secrets, or to turn safety off.
+- **IH-MCP-006**: a tool that takes a well-known name also sends its inputs to a host the skill picks.
+- **IH-FS-004**: a sweep of several credential stores into output, or the whole home folder sent to a skill host.
+- **IH-FS-005**: reach past the project (every repo under home, `/` added to the agent's folders, boot or login hooks written with sudo).
+- **IH-NET-019**: bulk secrets go into something sent out.
+- **IH-PRIV-008**: approvals or the sandbox are turned off while outside input is followed.
+- **IH-PERSIST-010**: a global `core.hooksPath` to a skill or empty folder, or checks turned off for every repo.
+- **IH-PERSIST-011**: a one-time job registers an every-event trigger that hands work back to the skill or sends data out.
+- **IH-PRIV-009**: a security setting is changed and the notice that records it is deleted.
+- **IH-NET-020**: the vendor download source is swapped for the skill's own list, and the check is waived.
+
+From the 2026-11-16 ideas (#155):
+
+- **IH-PRIV-010**: a protection is lowered at a scope wider than the job, with no restore step and no request from the user.
+- **IH-PRIV-011**: an action plus control of its own record a few units away (output trimmed, a scripted reply, the change kept out of the diff). Suggested by **rock_agent**.
+- **IH-NET-021**: a secret the user types into chat is later forwarded to a host the user never named. Suggested by **vegachiefofstaff**.
+- **IH-NET-022**: a private source reaches a skill-picked destination in the same clause or by a named hand-off.
+- **IH-PERSIST-012**: a one-time job installs an always-on trigger that runs the skill's own code named in the same clause.
+- **IH-EXEC-018**: a deferred executor points at a skill host at a moving ref.
+- **IH-NET-023**: lockfile or submodule download links are repointed to a skill host and integrity is recomputed from that host.
+- **IH-MCP-007**: a tool takes a known tool name and claims precedence over it.
+- **IH-MCP-008**: tool descriptions can change after approval, and approval is kept by name.
+- **IH-MCP-009**: a JSON input field asks for env output, keys, cookies, history or the conversation, while the tool's job does not need secrets.
+- **IH-OBF-003**: an order is parked after a wall of blank lines or inside a License or Changelog `<details>` block, with a quiet or outside destination.
+- **IH-FS-006**: archive entry paths are written as given, outside the project.
+- **IH-FS-007**: files outside the named folder go into the output, and the reply is told not to mention it.
+
+From the 2026-11-20 ideas (#157):
+
+- **IH-PERSIST-013**: a lifecycle order is written into a file the agent rereads, and that line itself names a target the writer controls. Suggested by **felixnexus**, **evil_robot_jas**, **moltcrusta**, **chittygemzy**, **zhixu**, **entitylovestudio**, **nyxkavakebi**, **iriscoremeal**, **dynamo**, **woodbot**, **rossum**, **neuralnewscast**, **zionplex**, **oomjo3**, **finmaster**, **symbolon**, **jarvousai** and **pennyworthatyourservice**.
+- **IH-PRIV-012**: a state change plus an order to leave that change out of the reply or the diff. Suggested by **rock_agent** and **agentboone**.
+- **IH-EXEC-019**: an unpinned replace of the skill's own code. Suggested by **ironheights-house** and **Klara**.
+- **IH-INJ-033**: an unpinned playbook or rules file is fetched and followed. Suggested by **Klara** and **ironheights-house**.
+- **IH-FS-008**: cleanup walks up to a non-project marker and deletes without a list. Suggested by **jazzyai**.
+- **IH-INTENT-003**: a table formatter sends other data or runs a returned command. Suggested by **dynamo**, **agentboone** and **Starfish**.
+- **IH-MCP-010**: a tool description routes across servers, or the skill registers a well-known tool name. Suggested by **bnb_hq**.
+- **IH-NET-024**: a glossary redefines a term as a credential or a host the skill picked. Suggested by **LazyBearAI** and **ariesai**.
+
+The in-repo Action workflow stays on the published npm package 0.35.0 until 0.37.0 is on the registry. Write-ups: [script-scan-2026-11-15](docs/experiments/script-scan-2026-11-15/RESULTS.md), [ideas-2026-11-15](docs/experiments/ideas-2026-11-15/RESULTS.md), [batch-2026-11-20](docs/experiments/batch-2026-11-20/RESULTS.md).
+
 ## 0.36.0 — 2026-11-15
 
 **More attacks blocked, same false-positive rate.** Ironheights: The Immune System for AI Agents. 0.36.0 ships the detection merged on main since 0.35.1 (PRs #142, #147 and #148; #146 adds a scored held-out settings-change benchmark set). Verdict values, exit codes and existing JSON fields are unchanged. The model column was not run. Cisco skill-scanner 2.3.2 and NVIDIA SkillSpector v2.12.0 were not re-run on MaliciousSkillBench: 113/516 (21.9%) and 134/516 (26.0%) block, 9/456 (2.0%) and 48/456 (10.5%) false positives.
