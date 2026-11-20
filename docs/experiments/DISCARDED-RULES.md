@@ -37,6 +37,8 @@ This is the log of every rule we tried and dropped. Update it at the end of each
 10. **An ordinary flag value is not the attack phrase.** `no-sandbox` and `unrestricted` are real modes. The value has to be `instruction-override`, on a command the agent is told to run. Bare `override` in prose stays pattern 3.
 11. **The same file can be a benchmark row and a real-world clean row.** `flow-nexus-platform` is ASB04_001790 and `github:ruvnet/claude-flow` in the clean set, byte for byte. A rule that only fits that file fails the real-world gate.
 12. **Collapsing repeated docs-example points still drops a block.** ASB04_006523 kept the same findings and left block. Those points were the margin. Same failure as the 2026-11-07 context-only note.
+13. **A path and a URL on neighboring lines are not one plant.** Memory and tool docs mention `AGENTS.md` or `~/.claude` in one sentence and a documentation link in the next. The line that is written has to carry the writer's target (2026-11-20, IH-PERSIST-013 v1, 28 real-world blocks).
+14. **"Any command, from now on" is also honest onboarding.** That sentence blocked 2 blind benign skills and no new blind attack (2026-11-20, IH-PRIV-013). The skill text was not opened; only the aggregate moved.
 
 ## Before proposing a new rule, check
 
@@ -336,3 +338,12 @@ Lessons:
 - Prefix verb regexes (`push\w*`) match product names ("Pushover"). Use verb forms.
 - Vendor ownership by host name misses API hosts named differently from the product (audioscrobbler for Last.fm). The auth parameter is the better signal.
 - Fresh2 is self-written by the rule author and so is optimistic. The independent house-569 pair (a standup recap copied to the skill's "desk") is still missed.
+
+## 2026-11-20 — detection ideas (branch exp/detect-ideas-1120)
+
+Designed on the attack-lanes dev split and the uploaded fixtures (missed-attacks 2026-11-16 through 2026-11-20, house-573 through house-582). Held-out rows were not opened while designing. The real-world gate (5,655) was run before the final score. v1 of the persistence check joined a URL on a neighboring line to a memory path and was narrowed before that score.
+
+| Rule / idea | Date | Target rows | Failed gate | Hits on look-alikes / real-world / safe | Kinds of legit skills it flagged |
+| --- | --- | --- | --- | --- | --- |
+| IH-PERSIST-013 v1: store anywhere in a ±6 line window plus a URL anywhere in that window | 2026-11-20 | L5 agent-memory-plant, shell-rc, git hook | real-world | 0 / 28 new blocks / 0 | Memory and tool docs (`jarvis-memory-architecture`, `hybrid-memory`, `cursor`, `claude-md-improver`, `reddi-self-improving-agent`). A docs link sat next to `AGENTS.md` or `~/.claude`. **Narrowed: the written line itself must name the writer's target. The narrowed rule is kept.** |
+| IH-PRIV-013: user-level allow-everything, or hooks skipped on the default path, or `bypassPermissions` written into `~/.claude/settings.json` | 2026-11-20 | L4 agent-auto-approve, hooks-bypass; house-581 | blind benign | 0 / 0 new / blind benign 13→15 | Two blind benign skills (ids not opened; aggregate only). No new blind attack. Attack-lanes held-out L4 was +3 with it and +0 without it. **Dropped. Not registered.** |

@@ -71,13 +71,14 @@ describe('2026-11-07 prose pairs', () => {
     {
       dir: 'hidden-upload/pdf',
       rule: 'IH-NET-005',
-      attack: 'review',
+      // IH-PRIV-012 blocks the upload plus "no need to mention the upload".
+      attack: 'block',
       control: 'no-findings',
     },
     {
       dir: 'hidden-upload/ocr',
       rule: 'IH-NET-005',
-      attack: 'review',
+      attack: 'block',
       control: 'no-findings',
     },
     {
