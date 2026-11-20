@@ -89,25 +89,25 @@ Website: [www.ironheights.dev](https://www.ironheights.dev)
     </tr>
     <tr>
       <td align="left">🧩 Shipped-script malicious skills blocked (higher is better)</td>
-      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/script-skills/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=39.4%25%20%28405%2F1028%29%20%E2%9C%85&amp;color=lightgrey&amp;style=for-the-badge" alt="39.4% (405/1028) ✅"></a></td>
+      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/script-skills/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=39.4%25%20%28405%2F1028%29%20%E2%9C%85&amp;color=brightgreen&amp;style=for-the-badge" alt="39.4% (405/1028) ✅"></a></td>
       <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/script-skills/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=33.3%25%20%28342%2F1028%29&amp;color=lightgrey&amp;style=for-the-badge" alt="33.3% (342/1028)"></a></td>
       <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/script-skills/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=28.7%25%20%28295%2F1028%29&amp;color=lightgrey&amp;style=for-the-badge" alt="28.7% (295/1028)"></a></td>
     </tr>
     <tr>
       <td align="left">🧩 Shipped-script honest twins blocked (lower is better)</td>
-      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/script-skills/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=0%2F1026%20%E2%9C%85&amp;color=lightgrey&amp;style=for-the-badge" alt="0/1026 ✅"></a></td>
+      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/script-skills/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=0%2F1026%20%E2%9C%85&amp;color=brightgreen&amp;style=for-the-badge" alt="0/1026 ✅"></a></td>
       <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/script-skills/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=22.5%25%20%28231%2F1026%29&amp;color=lightgrey&amp;style=for-the-badge" alt="22.5% (231/1026)"></a></td>
       <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/script-skills/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=21.9%25%20%28225%2F1026%29&amp;color=lightgrey&amp;style=for-the-badge" alt="21.9% (225/1026)"></a></td>
     </tr>
     <tr>
       <td align="left">🧩 Shipped-script held-out attacks blocked (higher is better)</td>
-      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/script-skills/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=39.7%25%20%28214%2F539%29%20%E2%9C%85&amp;color=lightgrey&amp;style=for-the-badge" alt="39.7% (214/539) ✅"></a></td>
+      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/script-skills/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=39.7%25%20%28214%2F539%29%20%E2%9C%85&amp;color=brightgreen&amp;style=for-the-badge" alt="39.7% (214/539) ✅"></a></td>
       <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/script-skills/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=32.3%25%20%28174%2F539%29&amp;color=lightgrey&amp;style=for-the-badge" alt="32.3% (174/539)"></a></td>
       <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/script-skills/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=28.6%25%20%28154%2F539%29&amp;color=lightgrey&amp;style=for-the-badge" alt="28.6% (154/539)"></a></td>
     </tr>
     <tr>
       <td align="left">🧩 Shipped-script held-out honest twins blocked (lower is better)</td>
-      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/script-skills/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=0%2F493%20%E2%9C%85&amp;color=lightgrey&amp;style=for-the-badge" alt="0/493 ✅"></a></td>
+      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/script-skills/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=0%2F493%20%E2%9C%85&amp;color=brightgreen&amp;style=for-the-badge" alt="0/493 ✅"></a></td>
       <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/script-skills/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=22.5%25%20%28111%2F493%29&amp;color=lightgrey&amp;style=for-the-badge" alt="22.5% (111/493)"></a></td>
       <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/script-skills/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=21.9%25%20%28108%2F493%29&amp;color=lightgrey&amp;style=for-the-badge" alt="21.9% (108/493)"></a></td>
     </tr>
@@ -115,11 +115,11 @@ Website: [www.ironheights.dev](https://www.ironheights.dev)
       <td align="left">🎯 Attack-lanes malicious skills blocked (higher is better)</td>
       <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/attack-lanes/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=25.8%25%20%28345%2F1335%29&amp;color=lightgrey&amp;style=for-the-badge" alt="25.8% (345/1335)"></a></td>
       <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/attack-lanes/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=16.9%25%20%28226%2F1335%29&amp;color=lightgrey&amp;style=for-the-badge" alt="16.9% (226/1335)"></a></td>
-      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/attack-lanes/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=28.0%25%20%28374%2F1335%29%20%E2%9C%85&amp;color=lightgrey&amp;style=for-the-badge" alt="28.0% (374/1335) ✅"></a></td>
+      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/attack-lanes/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=28.0%25%20%28374%2F1335%29%20%E2%9C%85&amp;color=brightgreen&amp;style=for-the-badge" alt="28.0% (374/1335) ✅"></a></td>
     </tr>
     <tr>
       <td align="left">🎯 Attack-lanes honest twins blocked (lower is better)</td>
-      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/attack-lanes/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=0.9%25%20%2811%2F1250%29%20%E2%9C%85&amp;color=lightgrey&amp;style=for-the-badge" alt="0.9% (11/1250) ✅"></a></td>
+      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/attack-lanes/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=0.9%25%20%2811%2F1250%29%20%E2%9C%85&amp;color=brightgreen&amp;style=for-the-badge" alt="0.9% (11/1250) ✅"></a></td>
       <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/attack-lanes/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=2.6%25%20%2832%2F1250%29&amp;color=lightgrey&amp;style=for-the-badge" alt="2.6% (32/1250)"></a></td>
       <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/attack-lanes/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=3.6%25%20%2845%2F1250%29&amp;color=lightgrey&amp;style=for-the-badge" alt="3.6% (45/1250)"></a></td>
     </tr>
@@ -127,11 +127,11 @@ Website: [www.ironheights.dev](https://www.ironheights.dev)
       <td align="left">🎯 Attack-lanes held-out attacks blocked (higher is better)</td>
       <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/attack-lanes/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=25.5%25%20%28168%2F659%29&amp;color=lightgrey&amp;style=for-the-badge" alt="25.5% (168/659)"></a></td>
       <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/attack-lanes/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=16.8%25%20%28111%2F659%29&amp;color=lightgrey&amp;style=for-the-badge" alt="16.8% (111/659)"></a></td>
-      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/attack-lanes/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=25.8%25%20%28170%2F659%29%20%E2%9C%85&amp;color=lightgrey&amp;style=for-the-badge" alt="25.8% (170/659) ✅"></a></td>
+      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/attack-lanes/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=25.8%25%20%28170%2F659%29%20%E2%9C%85&amp;color=brightgreen&amp;style=for-the-badge" alt="25.8% (170/659) ✅"></a></td>
     </tr>
     <tr>
       <td align="left">🎯 Attack-lanes held-out honest twins blocked (lower is better)</td>
-      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/attack-lanes/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=0.8%25%20%285%2F641%29%20%E2%9C%85&amp;color=lightgrey&amp;style=for-the-badge" alt="0.8% (5/641) ✅"></a></td>
+      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/attack-lanes/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=0.8%25%20%285%2F641%29%20%E2%9C%85&amp;color=brightgreen&amp;style=for-the-badge" alt="0.8% (5/641) ✅"></a></td>
       <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/attack-lanes/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=2.7%25%20%2817%2F641%29&amp;color=lightgrey&amp;style=for-the-badge" alt="2.7% (17/641)"></a></td>
       <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/attack-lanes/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=3.1%25%20%2820%2F641%29&amp;color=lightgrey&amp;style=for-the-badge" alt="3.1% (20/641)"></a></td>
     </tr>
