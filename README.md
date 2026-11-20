@@ -89,25 +89,25 @@ Website: [www.ironheights.dev](https://www.ironheights.dev)
     </tr>
     <tr>
       <td align="left">🧩 Shipped-script malicious skills blocked (higher is better)</td>
-      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/script-skills/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=39.4%25%20%28405%2F1028%29%20%E2%9C%85&amp;color=lightgrey&amp;style=for-the-badge" alt="39.4% (405/1028) ✅"></a></td>
+      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/script-skills/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=39.4%25%20%28405%2F1028%29%20%E2%9C%85&amp;color=brightgreen&amp;style=for-the-badge" alt="39.4% (405/1028) ✅"></a></td>
       <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/script-skills/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=33.3%25%20%28342%2F1028%29&amp;color=lightgrey&amp;style=for-the-badge" alt="33.3% (342/1028)"></a></td>
       <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/script-skills/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=28.7%25%20%28295%2F1028%29&amp;color=lightgrey&amp;style=for-the-badge" alt="28.7% (295/1028)"></a></td>
     </tr>
     <tr>
       <td align="left">🧩 Shipped-script honest twins blocked (lower is better)</td>
-      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/script-skills/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=0%2F1026%20%E2%9C%85&amp;color=lightgrey&amp;style=for-the-badge" alt="0/1026 ✅"></a></td>
+      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/script-skills/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=0%2F1026%20%E2%9C%85&amp;color=brightgreen&amp;style=for-the-badge" alt="0/1026 ✅"></a></td>
       <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/script-skills/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=22.5%25%20%28231%2F1026%29&amp;color=lightgrey&amp;style=for-the-badge" alt="22.5% (231/1026)"></a></td>
       <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/script-skills/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=21.9%25%20%28225%2F1026%29&amp;color=lightgrey&amp;style=for-the-badge" alt="21.9% (225/1026)"></a></td>
     </tr>
     <tr>
       <td align="left">🧩 Shipped-script held-out attacks blocked (higher is better)</td>
-      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/script-skills/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=39.7%25%20%28214%2F539%29%20%E2%9C%85&amp;color=lightgrey&amp;style=for-the-badge" alt="39.7% (214/539) ✅"></a></td>
+      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/script-skills/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=39.7%25%20%28214%2F539%29%20%E2%9C%85&amp;color=brightgreen&amp;style=for-the-badge" alt="39.7% (214/539) ✅"></a></td>
       <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/script-skills/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=32.3%25%20%28174%2F539%29&amp;color=lightgrey&amp;style=for-the-badge" alt="32.3% (174/539)"></a></td>
       <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/script-skills/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=28.6%25%20%28154%2F539%29&amp;color=lightgrey&amp;style=for-the-badge" alt="28.6% (154/539)"></a></td>
     </tr>
     <tr>
       <td align="left">🧩 Shipped-script held-out honest twins blocked (lower is better)</td>
-      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/script-skills/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=0%2F493%20%E2%9C%85&amp;color=lightgrey&amp;style=for-the-badge" alt="0/493 ✅"></a></td>
+      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/script-skills/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=0%2F493%20%E2%9C%85&amp;color=brightgreen&amp;style=for-the-badge" alt="0/493 ✅"></a></td>
       <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/script-skills/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=22.5%25%20%28111%2F493%29&amp;color=lightgrey&amp;style=for-the-badge" alt="22.5% (111/493)"></a></td>
       <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/script-skills/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=21.9%25%20%28108%2F493%29&amp;color=lightgrey&amp;style=for-the-badge" alt="21.9% (108/493)"></a></td>
     </tr>
@@ -115,11 +115,11 @@ Website: [www.ironheights.dev](https://www.ironheights.dev)
       <td align="left">🎯 Attack-lanes malicious skills blocked (higher is better)</td>
       <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/attack-lanes/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=25.8%25%20%28345%2F1335%29&amp;color=lightgrey&amp;style=for-the-badge" alt="25.8% (345/1335)"></a></td>
       <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/attack-lanes/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=16.9%25%20%28226%2F1335%29&amp;color=lightgrey&amp;style=for-the-badge" alt="16.9% (226/1335)"></a></td>
-      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/attack-lanes/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=28.0%25%20%28374%2F1335%29%20%E2%9C%85&amp;color=lightgrey&amp;style=for-the-badge" alt="28.0% (374/1335) ✅"></a></td>
+      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/attack-lanes/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=28.0%25%20%28374%2F1335%29%20%E2%9C%85&amp;color=brightgreen&amp;style=for-the-badge" alt="28.0% (374/1335) ✅"></a></td>
     </tr>
     <tr>
       <td align="left">🎯 Attack-lanes honest twins blocked (lower is better)</td>
-      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/attack-lanes/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=0.9%25%20%2811%2F1250%29%20%E2%9C%85&amp;color=lightgrey&amp;style=for-the-badge" alt="0.9% (11/1250) ✅"></a></td>
+      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/attack-lanes/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=0.9%25%20%2811%2F1250%29%20%E2%9C%85&amp;color=brightgreen&amp;style=for-the-badge" alt="0.9% (11/1250) ✅"></a></td>
       <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/attack-lanes/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=2.6%25%20%2832%2F1250%29&amp;color=lightgrey&amp;style=for-the-badge" alt="2.6% (32/1250)"></a></td>
       <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/attack-lanes/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=3.6%25%20%2845%2F1250%29&amp;color=lightgrey&amp;style=for-the-badge" alt="3.6% (45/1250)"></a></td>
     </tr>
@@ -127,11 +127,11 @@ Website: [www.ironheights.dev](https://www.ironheights.dev)
       <td align="left">🎯 Attack-lanes held-out attacks blocked (higher is better)</td>
       <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/attack-lanes/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=25.5%25%20%28168%2F659%29&amp;color=lightgrey&amp;style=for-the-badge" alt="25.5% (168/659)"></a></td>
       <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/attack-lanes/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=16.8%25%20%28111%2F659%29&amp;color=lightgrey&amp;style=for-the-badge" alt="16.8% (111/659)"></a></td>
-      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/attack-lanes/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=25.8%25%20%28170%2F659%29%20%E2%9C%85&amp;color=lightgrey&amp;style=for-the-badge" alt="25.8% (170/659) ✅"></a></td>
+      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/attack-lanes/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=25.8%25%20%28170%2F659%29%20%E2%9C%85&amp;color=brightgreen&amp;style=for-the-badge" alt="25.8% (170/659) ✅"></a></td>
     </tr>
     <tr>
       <td align="left">🎯 Attack-lanes held-out honest twins blocked (lower is better)</td>
-      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/attack-lanes/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=0.8%25%20%285%2F641%29%20%E2%9C%85&amp;color=lightgrey&amp;style=for-the-badge" alt="0.8% (5/641) ✅"></a></td>
+      <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/attack-lanes/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=0.8%25%20%285%2F641%29%20%E2%9C%85&amp;color=brightgreen&amp;style=for-the-badge" alt="0.8% (5/641) ✅"></a></td>
       <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/attack-lanes/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=2.7%25%20%2817%2F641%29&amp;color=lightgrey&amp;style=for-the-badge" alt="2.7% (17/641)"></a></td>
       <td align="center"><a href="https://github.com/Frank-Masciopinto/ironheights/blob/main/bench/attack-lanes/README.md"><img src="https://img.shields.io/static/v1?label=&amp;message=3.1%25%20%2820%2F641%29&amp;color=lightgrey&amp;style=for-the-badge" alt="3.1% (20/641)"></a></td>
     </tr>
@@ -141,51 +141,6 @@ Website: [www.ironheights.dev](https://www.ironheights.dev)
 <sub>Ironheights is our project. The 🧩 rows are our separate <a href="bench/script-skills/README.md">shipped-script set</a>; the 🎯 rows are our separate <a href="bench/attack-lanes/README.md">attack-lanes set</a> (DETECTION-80 L1–L8; generated by us from a pinned seed plus real-derived missed-attacks, redteam, and settings-change fixtures) (1028 malicious skills with scripts, 1026 honest twins; generated by us from a pinned seed plus 6 real-derived fixtures), current main with script scanning (PR #150). All other rows: all three ran on the same <a href="https://huggingface.co/datasets/ProtectSkills/MaliciousSkillBench">MaliciousSkillBench</a> set (516 malicious and 456 clean skills, 19 of the clean ones official Anthropic skills) and the same blind 600/300 slice, static analysis only, no LLM. Ironheights 0.36.0 and Cisco skill-scanner 2.3.2 are the published figures. NVIDIA SkillSpector is v2.12.0 at commit <code>7d9b4be35d0f995cc33db72875a62bdbad00db5d</code>, run as <code>skillspector scan &lt;skill-dir&gt; --no-llm --format json</code> (no API key). Block for NVIDIA is critical or high severity (the score band or the worst finding) or recommendation <code>DO_NOT_INSTALL</code>. Block-or-review also counts medium severity or recommendation <code>CAUTION</code>. ✅ marks the best of the three on that row. The blind set is never read when writing rules; see <a href="docs/accuracy-gates.md">docs/accuracy-gates.md</a>. Every cell links to <a href="https://github.com/Frank-Masciopinto/ironheights/blob/badges/badges/proof/PROOF.md">proof of the latest run</a> (<a href="docs/benchmark-proof.md">how to reproduce</a>). Full method: <a href="docs/benchmark.md#maliciousskillbench-results-0360">docs/benchmark.md</a>.</sub>
 
 </div>
-
-### Shipped-script skills (1028 malicious, 1026 honest twins)
-
-A second set, separate from MaliciousSkillBench above: each skill is a `SKILL.md` plus a shipped script the doc tells the agent to run. The malice (when present) is in the script, not the prompt. 2048 skills are generated from a pinned seed (16 attack families × 16 disguises × 4 languages, each with an honest twin); 6 are real-derived missed-attack fixtures. Held-out (539 attacks, 493 benign) was scored once and not used to tune rules. Official MaliciousSkillBench / real-world / look-alike numbers are unchanged. Nothing in the set is executed. Method and one-command scorer: [bench/script-skills/README.md](bench/script-skills/README.md).
-
-| Shipped-script skills | Ironheights 0.36.0 (before script scanning) | Ironheights main (script scanning, #150) | Cisco skill-scanner 2.3.2 | NVIDIA SkillSpector v2.12.0 |
-| --- | --- | --- | --- | --- |
-| Malicious skills blocked (higher is better) | 27.9% (287/1028) | 39.4% (405/1028) ✅ | 33.3% (342/1028) | 28.7% (295/1028) |
-| False positives on honest twins (lower is better) | 0/1026 | 0/1026 | 22.5% (231/1026) | 21.9% (225/1026) |
-| Malicious skills blocked or sent to review (higher is better) | 55.1% (566/1028) | 58.2% (598/1028) | 40.4% (415/1028) | 68.4% (703/1028) ✅ |
-| Honest twins blocked or sent to review (lower is better) | 10.9% (112/1026) | 10.9% (112/1026) | 28.1% (288/1026) | 67.5% (693/1026) |
-| Held-out attacks blocked (higher is better) | 29.5% (159/539) | 39.7% (214/539) ✅ | 32.3% (174/539) | 28.6% (154/539) |
-| Held-out honest twins blocked (lower is better) | 0/493 | 0/493 | 22.5% (111/493) | 21.9% (108/493) |
-
-The before column is 0.36.0 (`590ac5f`). The main column adds script scanning from [PR #150](https://github.com/Frank-Masciopinto/ironheights/pull/150) (`717de52`). ✅ is the unique best of the four on that row; a tie gets no check. Cisco and SkillSpector scoring matches [docs/benchmark-proof.md](docs/benchmark-proof.md) (static only, no LLM). Held-out block rates track the dev split (39.1% on dev, 39.7% on held-out), so the gain is not an overfit to generated wording.
-
-### Attack-lanes (DETECTION-80 L1–L8; 1335 malicious, 1250 honest twins)
-
-A third set, separate from MaliciousSkillBench and from the shipped-script set: it covers the eight detection lanes (private-data exfil, trust-anchor redirection, staged loaders, settings/protection changes, persistence, MCP poisoning, scope escape, concealment+action). 2048 skills are generated from a pinned seed (64 attack structures × 16 disguises, with prose/script carriers and hidden/disclosed variants, each with an honest twin); 537 are real-derived from missed-attacks, redteam, and the settings-change sets. Held-out (659 attacks, 641 benign) was scored once and not used to tune rules. **This set is generated by us.** Official MaliciousSkillBench / real-world / look-alike numbers are unchanged. Nothing in the set is executed. Method and one-command scorer: [bench/attack-lanes/README.md](bench/attack-lanes/README.md) (`npm run bench:attack-lanes`).
-
-| Attack-lanes | Ironheights 0.36.0 | Ironheights main (49e4f4d) | Cisco skill-scanner 2.3.2 | NVIDIA SkillSpector v2.12.0 |
-| --- | --- | --- | --- | --- |
-| Malicious skills blocked (higher is better) | 21.2% (283/1335) | 25.8% (345/1335) | 16.9% (226/1335) | 28.0% (374/1335) ✅ |
-| False positives on honest twins (lower is better) | 0.9% (11/1250) | 0.9% (11/1250) ✅ | 2.6% (32/1250) | 3.6% (45/1250) |
-| Malicious skills blocked or sent to review (higher is better) | 45.7% (610/1335) | 48.5% (647/1335) | 19.4% (259/1335) | 49.2% (657/1335) ✅ |
-| Honest twins blocked or sent to review (lower is better) | 3.4% (43/1250) | 3.3% (41/1250) ✅ | 6.6% (83/1250) | 20.1% (251/1250) |
-| Held-out attacks blocked (higher is better) | 21.9% (144/659) | 25.5% (168/659) | 16.8% (111/659) | 25.8% (170/659) ✅ |
-| Held-out honest twins blocked (lower is better) | 0.8% (5/641) | 0.8% (5/641) ✅ | 2.7% (17/641) | 3.1% (20/641) |
-
-Per-lane blocks on the full set (main / 0.36.0 / Cisco / SkillSpector):
-
-| Lane | main 49e4f4d | 0.36.0 | Cisco | SkillSpector |
-| --- | --- | --- | --- | --- |
-| L1 private data out | 91/244 | 69/244 | 44/244 | 54/244 |
-| L2 trust-anchor redirect | 12/149 | 9/149 | 7/149 | 32/149 |
-| L3 staged loader | 13/134 | 11/134 | 63/134 | 32/134 |
-| L4 settings / protection off | 104/265 | 97/265 | 11/265 | 52/265 |
-| L5 persistence / trigger | 34/136 | 33/136 | 35/136 | 43/136 |
-| L6 MCP / tool poisoning | 13/129 | 13/129 | 25/129 | 52/129 |
-| L7 scope escape | 27/129 | 27/129 | 16/129 | 63/129 |
-| L8 concealment + action | 51/149 | 24/149 | 25/149 | 46/149 |
-
-Main gains +62 blocks over 0.36.0 (mostly L1 and L8 from script scanning and the ideas-1115 rules), with the same 11 twin false positives. Lanes Ironheights still misses most at block: **L2, L3, L6, L7**. Held-out tracks the overall gain (21.9% → 25.5%). ✅ is the unique best of the four on that row.
-
-
 
 Ironheights scans any skill folder with a `SKILL.md`, whichever agent it is for, and adds an integrity monitor and runtime guard for [OpenClaw](https://docs.openclaw.ai). To check a Claude or Grok Bot skill, run `npx ironheights scan ./path/to/skill` before you upload or install it. Auto-discovery of installed skills, baselines, the guard, `audit-config` and `safe-install` are OpenClaw/ClawHub-only for now. It reads skill files as data, looks for risky patterns with fixed rules, and compares skill and agent files with a baseline you save on the same machine.
 
