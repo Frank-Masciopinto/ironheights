@@ -2,9 +2,9 @@
 
 Every number in the README benchmark table comes from this run.
 
-- Workflow run: https://github.com/Frank-Masciopinto/ironheights/actions/runs/44729007037
-- Commit: `107fdbe771dcae6c0653b1db0898172dcb48dcda`
-- Time (UTC): 2026-11-20T11:46:00+00:00
+- Workflow run: https://github.com/Frank-Masciopinto/ironheights/actions/runs/44740347965
+- Commit: `fb122989df374ac5c09de8fcae9573f11e7aca1b`
+- Time (UTC): 2026-11-20T13:06:44+00:00
 - Ironheights 0.36.0; Cisco skill-scanner 2.3.2; NVIDIA SkillSpector SkillSpector v2.12.0 commit `7d9b4be35d0f995cc33db72875a62bdbad00db5d` (static analyzers only, no LLM)
 - MaliciousSkillBench revision `d4b42ce5766a6e0359c987cf59c1007cb3795a90`
 
