@@ -23,6 +23,9 @@ describe('detection rules', () => {
       if (rule.id === 'IH-NET-013') return;
       // IH-NET-015 has the same file-provenance gate; see test/ideas-1115.test.ts.
       if (rule.id === 'IH-NET-015') return;
+      // IH-NET-024 reads glossary.md beside SKILL.md. The per-file harness has no
+      // package directory; test/ideas-1120.test.ts covers it.
+      if (rule.id === 'IH-NET-024') return;
       const positiveDir = join(root, 'malicious', rule.id);
       const negativeDir = join(root, 'benign', 'near', rule.id);
       const positives = await filesIn(positiveDir);
