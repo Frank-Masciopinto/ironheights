@@ -1,7 +1,7 @@
 {
  "note": "Aggregate only. sha256 is over sorted \"id:verdict\" lines; rerun the script to reproduce it.",
  "ironheights": {
-  "version": "0.36.0",
+  "version": "0.37.0",
   "detect": "56.7% (340/600)",
   "fp": "4.3% (13/300)",
   "sha256": "e34a01a60fd261cfc89865175fb44ac25bf9609749eb748c8a07b8f5f338e564"
