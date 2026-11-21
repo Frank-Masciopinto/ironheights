@@ -34,6 +34,32 @@ function hasHiddenChars(line: string): boolean {
 const HTML_COMMENT = /<!--[\s\S]{0,4000}?-->/g;
 const LONG_BASE64 = /(?:^|[^A-Za-z0-9+/])([A-Za-z0-9+/]{200,2000}={0,2})(?:[^A-Za-z0-9+/=]|$)/;
 
+/**
+ * A formatter or linter pragma. "ignore" in `prettier-ignore` is the tool's name.
+ * A maintainer TODO with no agent action is the same kind of note.
+ */
+const TOOLING_PRAGMA =
+  /^(?:prettier-ignore(?:-start|-end)?|markdownlint-(?:disable|enable|capture|restore|configure-file)(?:-line|-file)?(?:\s+[\w-]+)*|eslint-disable(?:-next-line|-line)?(?:\s+[\w-/., ]+)?|eslint-enable(?:\s+[\w-/., ]+)?|stylelint-disable(?:-line)?(?:\s+[\w-]+)*|stylelint-enable(?:\s+[\w-]+)*|cspell:disable-line|@?ts-(?:ignore|nocheck|check)|#?(?:end)?region\b.*)$/i;
+
+function htmlCommentIsTooling(body: string): boolean {
+  const inner = body
+    .replace(/^<!--\s*/, '')
+    .replace(/\s*-->$/, '')
+    .trim();
+  if (!inner) return true;
+  const lines = inner
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+  return lines.every((line) => {
+    if (TOOLING_PRAGMA.test(line)) return true;
+    return (
+      /^TODO\b/i.test(line) &&
+      !/\b(?:assistant|agent|credential|\.env|upload|paste|send|secret)\b/i.test(line)
+    );
+  });
+}
+
 const WEAKEN =
   /\b(?:disable|skip|bypass|turn off)\b[^\n]{0,60}\b(?:confirmation|confirmations|approval|approvals)\b/i;
 
@@ -202,6 +228,9 @@ function checkInj002(file: ScannedFile): Finding[] {
   });
   for (const match of file.text.matchAll(HTML_COMMENT)) {
     const body = match[0] ?? '';
+    // prettier-ignore and markdownlint pragmas contain "ignore" or sit next to it.
+    // They are notes to a formatter, not instructions to the agent.
+    if (htmlCommentIsTooling(body)) continue;
     if (!/\b(?:ignore|instruction|system prompt|do not tell|secret)\b/i.test(body)) continue;
     pushUnique(
       findings,
