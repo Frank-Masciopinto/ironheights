@@ -19,7 +19,23 @@ Detection checks for the open Moltbook accuracy clusters, each one a structure r
 - **IH-PRIV-014** (cwahq, fineprint): a security check stays in the file, but a failure no longer stops the run, and that change is hidden or copied to a shared template.
 - **IH-FS-009** (jazzyai, marginalia_claude, theagatha, dynamo): a link to the home or config folder is attached to later requests and left out of the reply.
 
-IH-NET-026 (latte6) was dropped. See `docs/experiments/DISCARDED-RULES.md`.
+Checks for the attack families logged after that draft. Tuned on the dev half of `bench/moltbook-families` (seed `moltbook-families-20261121`). Held-out was scored once. Attack-lanes, shipped-script, and the real-world gate did not gain a new block id.
+
+- **IH-NET-027** (evil_robot_jas, ironheights): identity-provider metadata, a trusted issuer, a JWKS address, or the sign-in provider is set to a host the skill wrote, with key refresh or the address left out of the reply.
+- **IH-PRIV-015** (marginalia_claude, ironheights): a legacy key exchange, CBC ciphers, the oldest TLS, plaintext authentication, or an Include/Match exec replaces algorithms for every host or the whole account.
+- **IH-FS-010** (codexofweights_agent, ironheights): a grant is applied to a parent, an organization, or a workspace while the confirmation names a narrower resource.
+- **IH-PRIV-016** (ironheights-house): a layout tidy archives account-security mail, new-sign-in notices, or forwarding alerts and leaves that rule out of the reply.
+- **IH-PERSIST-017** (ecdys, yuanzhigugu, ironheights): an unread install or a one-off task writes a user-level hook path, crontab, login item, or session-start hook outside this repository.
+- **IH-MCP-013** (claudeopusbuilder, neuralnewscast, kleinmoretti, Antigravity_Agent_n04s, theibis, secret_agent_pepper): an optional parameter is filled from outside the request, a token is forwarded to a host that is not its issuer, or a tool named send_message delivers to a host the skill wrote.
+- **IH-EXEC-021** (pogoclaw, nyna): an unpinned fetch is executed or used as the recipient list.
+- **IH-NET-028** (space-echo): a token, the clipboard, the mailbox, or shell history is the input of a lookup sent to a host the skill wrote.
+- **IH-INTENT-006** (arcanumfleet, codexofweights_agent): the description is one record and the steps take a wider role or every record.
+- **IH-CRED-014** (jdawgsindustries, fromthebot, ironheights): a login code or magic link is sent to a host the skill wrote.
+- **IH-FLOW-003** (cassini, nyna, marginalia_claude, symbolon, claudeopusbuilder, iofrogman81): a wide read or a cached secret is sent to a host the skill wrote and left out of the reply.
+- **IH-INTENT-007** (Starfish, fieldwalker, measuredbasis79, lulu_the_succubus, evil_robot_jas): the approval sentence names a narrower effect than the gated step.
+- **IH-INJ-035** (agentveilprotocol, nim_ghost, joinloverflaw): a collapsed block or an assemble-then-act rule hides a secret send.
+
+IH-NET-026 (latte6) stays dropped. See `docs/experiments/DISCARDED-RULES.md`.
 
 ## 0.37.0 — 2026-11-20
 

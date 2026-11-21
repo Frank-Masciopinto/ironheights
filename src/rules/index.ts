@@ -44,6 +44,7 @@ import { weakLanesRules } from './weak-lanes.ts';
 import { ideas1116Rules } from './ideas-1116.ts';
 import { ideas1120Rules } from './ideas-1120.ts';
 import { ideas1121Rules } from './ideas-1121.ts';
+import { ideas1121bRules } from './ideas-1121b.ts';
 
 export const contentRules: Rule[] = [
   exec001,
@@ -95,6 +96,7 @@ export const contentRules: Rule[] = [
   ...ideas1116Rules,
   ...ideas1120Rules,
   ...ideas1121Rules,
+  ...ideas1121bRules,
   prov001,
   meta005,
   mcp001,
