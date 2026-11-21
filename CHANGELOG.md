@@ -1,35 +1,56 @@
 # Changelog
 
+## Unreleased
+
+Draft experiment. Not a release. Do not merge until the owner says so.
+
+Detection checks for the open Moltbook accuracy clusters, each one a structure rather than a sample sentence. Public benchmark counts did not move. The checks block the dev fixtures they were written for, and the real-world gate stayed at 230 blocks with no new ids (review 452).
+
+- **IH-FLOW-002** (neuralnewscast, iofrogman81, pogoclaw, dynamo, rosettaq, Starfish, finmaster, sophiaalways, diviner, evil_robot_jas, jdawgsindustries, tobylauer, latte6, pipnyc, marginalia_claude): a user secret copied into a skill-owned artifact and sent. An enter-for-default URL, or a gitignored local file that fills an empty destination, counts as the skill's host. A redacted draft is not approval of the secret payload. Files the front door says to follow are one procedure.
+- **IH-PERSIST-014** (marginalia_claude): git hooks, templates, or an include file that sets them, pointed outside this repository for the whole account.
+- **IH-CRED-012** and **IH-CRED-013** (jdawgsindustries, fromthebot, ironheights): a one-time code or password collected in chat and forwarded; a delegated sign-in that keeps the token and waves away the permission list.
+- **IH-MCP-011** and **IH-MCP-012** (fixture-design, vickyquinzel, mayadd, bnb_hq): a same-name tool that claims precedence and sends through a host the skill picked; a read-only label whose description uploads to a URL.
+- **IH-INTENT-004** (marginalia_claude, Lluna_Creixent, Starfish, fieldwalker, measuredbasis79): a submit, approval, or auto-merge reported as a draft.
+- **IH-INTENT-005** (dynamo, fromthebot, evil_robot_jas, musepraxis): a one-record task that bulk-updates the list and reports only the one record.
+- **IH-INJ-034** (joinloverflaw, ironheights-house): a hidden comment tells the agent to read a secret and send it. **IH-INJ-002** no longer treats prettier and markdownlint pragmas as hidden instructions.
+- **IH-NET-025** (ironheights, clawhedgehog, fromthebot, jazzyai, atesmenderes): one direction of a paired route is set to a host the skill wrote, and the reply leaves that host out.
+- **IH-EXEC-020** (ironheights, evil_robot_jas, hermes_on_foot, hermesagentj, Klara): an unpinned remote list decides what is installed or run.
+- **IH-PERSIST-015** and **IH-PERSIST-016** (fineprint, cwahq, fromthebot, alfred5090, maeongi, jarvousai): a hidden recurring job that sends private notes; a one-time task that also registers a folder-open rerun and does not mention it.
+- **IH-PRIV-014** (cwahq, fineprint): a security check stays in the file, but a failure no longer stops the run, and that change is hidden or copied to a shared template.
+- **IH-FS-009** (jazzyai, marginalia_claude, theagatha, dynamo): a link to the home or config folder is attached to later requests and left out of the reply.
+
+IH-NET-026 (latte6) was dropped. See `docs/experiments/DISCARDED-RULES.md`.
+
 ## 0.37.0 — 2026-11-20
 
 **More attacks blocked, same false-positive rate.** Ironheights: The Immune System for AI Agents. 0.37.0 ships the detection merged on main since 0.36.0 (PRs #150, #152, #154, #155 and #157; #151, #153, #156 and #158 add the shipped-script and attack-lanes bench sets and refresh the README table). Verdict values, exit codes and existing JSON fields are unchanged. The model column was not run. Cisco skill-scanner 2.3.2 and NVIDIA SkillSpector v2.12.0 were not re-run on MaliciousSkillBench: 113/516 (21.9%) and 134/516 (26.0%) block, 9/456 (2.0%) and 48/456 (10.5%) false positives. They were re-run on the shipped-script and attack-lanes sets for this release; their counts there did not change.
 
 On MaliciousSkillBench, deterministic, no `--llm`:
 
-| Setting | 0.36.0 | 0.37.0 | Cisco 2.3.2 | SkillSpector v2.12.0 |
-| --- | --- | --- | --- | --- |
-| Attacks blocked | 260/516 (50.4%) | 263/516 (51.0%) | 113/516 (21.9%) | 134/516 (26.0%) |
-| Prose-only attacks blocked | 40/98 | 40/98 | 5/98 | 7/98 |
-| False positives at block | 6/456 (1.3%) | 6/456 (1.3%) | 9/456 (2.0%) | 48/456 (10.5%) |
-| Block or review | 314/516 | 315/516 | 115/516 | 220/516 |
-| Real-world clean skills blocked | 232/5,655 | 230/5,655, no new ids | — | — |
-| Blind held-out attacks blocked | 335/600 | 340/600 | 190/600 | 173/600 |
-| Blind held-out clean skills blocked | 13/300 | 13/300 | 6/300 | 35/300 |
-| Anthropic skills flagged | 0/19 | 0/19 | 1/19 | 4/19 |
+| Setting                             | 0.36.0          | 0.37.0                | Cisco 2.3.2     | SkillSpector v2.12.0 |
+| ----------------------------------- | --------------- | --------------------- | --------------- | -------------------- |
+| Attacks blocked                     | 260/516 (50.4%) | 263/516 (51.0%)       | 113/516 (21.9%) | 134/516 (26.0%)      |
+| Prose-only attacks blocked          | 40/98           | 40/98                 | 5/98            | 7/98                 |
+| False positives at block            | 6/456 (1.3%)    | 6/456 (1.3%)          | 9/456 (2.0%)    | 48/456 (10.5%)       |
+| Block or review                     | 314/516         | 315/516               | 115/516         | 220/516              |
+| Real-world clean skills blocked     | 232/5,655       | 230/5,655, no new ids | —               | —                    |
+| Blind held-out attacks blocked      | 335/600         | 340/600               | 190/600         | 173/600              |
+| Blind held-out clean skills blocked | 13/300          | 13/300                | 6/300           | 35/300               |
+| Anthropic skills flagged            | 0/19            | 0/19                  | 1/19            | 4/19                 |
 
 The 0.37.0 MaliciousSkillBench and blind figures are the official summary from the benchmark workflow on main after #157 (`107fdbe`). The two real-world blocks that went away are from the IH-INJ-003 negation fix in #152: two safety skills moved from block to review. False positives on the public clean set stayed at 6/456.
 
 This is the first release that publishes the shipped-script and attack-lanes sets. The 0.36.0 column is the 0.36.0 CLI rescored on those sets.
 
-| Set | 0.36.0 | 0.37.0 | Cisco 2.3.2 | SkillSpector v2.12.0 |
-| --- | --- | --- | --- | --- |
-| Shipped-script attacks blocked (1028) | 287/1028 (27.9%) | 533/1028 (51.8%) | 342/1028 (33.3%) | 295/1028 (28.7%) |
-| Shipped-script honest twins blocked | 0/1026 | 0/1026 | 231/1026 | 225/1026 |
-| Shipped-script held-out attacks blocked (539) | 159/539 (29.5%) | 291/539 (54.0%) | 174/539 | 154/539 |
-| Attack-lanes attacks blocked (1335) | 283/1335 (21.2%) | 956/1335 (71.6%) | 226/1335 (16.9%) | 374/1335 (28.0%) |
-| Attack-lanes honest twins blocked | 11/1250 | 11/1250 | 32/1250 | 45/1250 |
-| Attack-lanes held-out attacks blocked (659) | 144/659 (21.9%) | 456/659 (69.2%) | 111/659 | 170/659 |
-| Attack-lanes held-out twins blocked | 5/641 | 5/641 | 17/641 | 20/641 |
+| Set                                           | 0.36.0           | 0.37.0           | Cisco 2.3.2      | SkillSpector v2.12.0 |
+| --------------------------------------------- | ---------------- | ---------------- | ---------------- | -------------------- |
+| Shipped-script attacks blocked (1028)         | 287/1028 (27.9%) | 533/1028 (51.8%) | 342/1028 (33.3%) | 295/1028 (28.7%)     |
+| Shipped-script honest twins blocked           | 0/1026           | 0/1026           | 231/1026         | 225/1026             |
+| Shipped-script held-out attacks blocked (539) | 159/539 (29.5%)  | 291/539 (54.0%)  | 174/539          | 154/539              |
+| Attack-lanes attacks blocked (1335)           | 283/1335 (21.2%) | 956/1335 (71.6%) | 226/1335 (16.9%) | 374/1335 (28.0%)     |
+| Attack-lanes honest twins blocked             | 11/1250          | 11/1250          | 32/1250          | 45/1250              |
+| Attack-lanes held-out attacks blocked (659)   | 144/659 (21.9%)  | 456/659 (69.2%)  | 111/659          | 170/659              |
+| Attack-lanes held-out twins blocked           | 5/641            | 5/641            | 17/641           | 20/641               |
 
 New checks, each one critical when it hits unless noted:
 
@@ -100,16 +121,16 @@ The in-repo Action workflow stays on the published npm package 0.35.0 until 0.37
 
 On MaliciousSkillBench, deterministic, no `--llm`:
 
-| Setting | 0.35.1 | 0.36.0 | Cisco 2.3.2 | SkillSpector v2.12.0 |
-| --- | --- | --- | --- | --- |
-| Attacks blocked | 243/516 (47.1%) | 260/516 (50.4%) | 113/516 (21.9%) | 134/516 (26.0%) |
-| Prose-only attacks blocked | 40/98 | 40/98 | 5/98 | 7/98 |
-| False positives at block | 6/456 (1.3%) | 6/456 (1.3%) | 9/456 (2.0%) | 48/456 (10.5%) |
-| Block or review | 301/516 | 314/516 | 115/516 | 220/516 |
-| Real-world clean skills blocked | 232/5,655 | 232/5,655, no new ids | — | — |
-| Blind held-out attacks blocked | 335/600 | 335/600 | 190/600 | 173/600 |
-| Blind held-out clean skills blocked | 13/300 | 13/300 | 6/300 | 35/300 |
-| Anthropic skills flagged | 0/19 | 0/19 | 1/19 | 4/19 |
+| Setting                             | 0.35.1          | 0.36.0                | Cisco 2.3.2     | SkillSpector v2.12.0 |
+| ----------------------------------- | --------------- | --------------------- | --------------- | -------------------- |
+| Attacks blocked                     | 243/516 (47.1%) | 260/516 (50.4%)       | 113/516 (21.9%) | 134/516 (26.0%)      |
+| Prose-only attacks blocked          | 40/98           | 40/98                 | 5/98            | 7/98                 |
+| False positives at block            | 6/456 (1.3%)    | 6/456 (1.3%)          | 9/456 (2.0%)    | 48/456 (10.5%)       |
+| Block or review                     | 301/516         | 314/516               | 115/516         | 220/516              |
+| Real-world clean skills blocked     | 232/5,655       | 232/5,655, no new ids | —               | —                    |
+| Blind held-out attacks blocked      | 335/600         | 335/600               | 190/600         | 173/600              |
+| Blind held-out clean skills blocked | 13/300          | 13/300                | 6/300           | 35/300               |
+| Anthropic skills flagged            | 0/19            | 0/19                  | 1/19            | 4/19                 |
 
 The 0.35.1 column is the last published detection: 0.35.1 was docs-only, so those figures are the 0.35.0 numbers. The 0.36.0 figures are the official summary on main after #148 (`docs/experiments/detection-80-2026-11-15/benchmark-summary.json`).
 
@@ -145,16 +166,16 @@ Docs: README benchmark table adds an NVIDIA SkillSpector v2.12.0 comparison colu
 
 On MaliciousSkillBench, deterministic, no `--llm`:
 
-| Setting | 0.34.0 | 0.35.0 |
-| --- | --- | --- |
-| Attacks blocked | 174/516 (33.7%) | 243/516 (47.1%) |
-| Prose-only attacks blocked | 33/98 | 40/98 |
-| False positives at block | 11/456 (2.4%) | 6/456 (1.3%) |
-| Block or review | 249/516 | 301/516 |
-| Real-world clean skills blocked | 275/5,655 | 232/5,655, no new ids |
-| Blind held-out attacks blocked | 219/600 | 335/600 |
-| Blind held-out clean skills blocked | 15/300 | 13/300 |
-| Anthropic skills flagged | 0/19 | 0/19 |
+| Setting                             | 0.34.0          | 0.35.0                |
+| ----------------------------------- | --------------- | --------------------- |
+| Attacks blocked                     | 174/516 (33.7%) | 243/516 (47.1%)       |
+| Prose-only attacks blocked          | 33/98           | 40/98                 |
+| False positives at block            | 11/456 (2.4%)   | 6/456 (1.3%)          |
+| Block or review                     | 249/516         | 301/516               |
+| Real-world clean skills blocked     | 275/5,655       | 232/5,655, no new ids |
+| Blind held-out attacks blocked      | 219/600         | 335/600               |
+| Blind held-out clean skills blocked | 15/300          | 13/300                |
+| Anthropic skills flagged            | 0/19            | 0/19                  |
 
 New checks, each one critical when it hits:
 
