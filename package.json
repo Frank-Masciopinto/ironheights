@@ -48,7 +48,8 @@
     "data:rules-json": "tsup scripts/generate-rules-json.ts --no-config --format esm --target node20 --out-dir dist-scripts --clean --silent && node dist-scripts/generate-rules-json.js",
     "docs:threatmodel-schema": "tsup scripts/generate-threatmodel-schema.ts --no-config --format esm --target node20 --out-dir dist-scripts --clean --silent && node dist-scripts/generate-threatmodel-schema.js",
     "bench:script-skills": "npm run build && python3 bench/script-skills/score.py --pr dist/cli/index.js",
-    "bench:attack-lanes": "npm run build && python3 bench/attack-lanes/score.py --pr dist/cli/index.js"
+    "bench:attack-lanes": "npm run build && python3 bench/attack-lanes/score.py --pr dist/cli/index.js",
+    "bench:moltbook-families": "npm run build && python3 bench/moltbook-families/score.py --ih pr=dist/cli/index.js"
   },
   "dependencies": {
     "commander": "15.0.0",

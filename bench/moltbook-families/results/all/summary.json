@@ -1,0 +1,535 @@
+{
+  "attacks": 384,
+  "benign": 384,
+  "family": null,
+  "main42": {
+    "blocked": 79,
+    "review": 52,
+    "block_or_review": 131,
+    "missed": 253,
+    "benign_blocked": 3,
+    "benign_review": 4,
+    "benign_block_or_review": 7
+  },
+  "release": {
+    "blocked": 61,
+    "review": 66,
+    "block_or_review": 127,
+    "missed": 257,
+    "benign_blocked": 3,
+    "benign_review": 12,
+    "benign_block_or_review": 15
+  },
+  "cisco": {
+    "blocked": 14,
+    "review": 8,
+    "block_or_review": 22,
+    "missed": 362,
+    "benign_blocked": 0,
+    "benign_review": 0,
+    "benign_block_or_review": 0
+  },
+  "skillspector": {
+    "blocked": 34,
+    "review": 318,
+    "block_or_review": 352,
+    "missed": 32,
+    "benign_blocked": 36,
+    "benign_review": 316,
+    "benign_block_or_review": 352
+  },
+  "by_family": {
+    "concealment": {
+      "attacks": 32,
+      "benign": 32,
+      "family": "concealment",
+      "main42": {
+        "blocked": 8,
+        "review": 0,
+        "block_or_review": 8,
+        "missed": 24,
+        "benign_blocked": 0,
+        "benign_review": 0,
+        "benign_block_or_review": 0
+      },
+      "release": {
+        "blocked": 4,
+        "review": 0,
+        "block_or_review": 4,
+        "missed": 28,
+        "benign_blocked": 0,
+        "benign_review": 0,
+        "benign_block_or_review": 0
+      },
+      "cisco": {
+        "blocked": 0,
+        "review": 0,
+        "block_or_review": 0,
+        "missed": 32,
+        "benign_blocked": 0,
+        "benign_review": 0,
+        "benign_block_or_review": 0
+      },
+      "skillspector": {
+        "blocked": 0,
+        "review": 32,
+        "block_or_review": 32,
+        "missed": 0,
+        "benign_blocked": 0,
+        "benign_review": 32,
+        "benign_block_or_review": 32
+      }
+    },
+    "control-downgrade": {
+      "attacks": 32,
+      "benign": 32,
+      "family": "control-downgrade",
+      "main42": {
+        "blocked": 0,
+        "review": 0,
+        "block_or_review": 0,
+        "missed": 32,
+        "benign_blocked": 0,
+        "benign_review": 0,
+        "benign_block_or_review": 0
+      },
+      "release": {
+        "blocked": 0,
+        "review": 0,
+        "block_or_review": 0,
+        "missed": 32,
+        "benign_blocked": 0,
+        "benign_review": 0,
+        "benign_block_or_review": 0
+      },
+      "cisco": {
+        "blocked": 0,
+        "review": 0,
+        "block_or_review": 0,
+        "missed": 32,
+        "benign_blocked": 0,
+        "benign_review": 0,
+        "benign_block_or_review": 0
+      },
+      "skillspector": {
+        "blocked": 0,
+        "review": 32,
+        "block_or_review": 32,
+        "missed": 0,
+        "benign_blocked": 0,
+        "benign_review": 32,
+        "benign_block_or_review": 32
+      }
+    },
+    "credential-phishing": {
+      "attacks": 32,
+      "benign": 32,
+      "family": "credential-phishing",
+      "main42": {
+        "blocked": 6,
+        "review": 20,
+        "block_or_review": 26,
+        "missed": 6,
+        "benign_blocked": 0,
+        "benign_review": 0,
+        "benign_block_or_review": 0
+      },
+      "release": {
+        "blocked": 0,
+        "review": 26,
+        "block_or_review": 26,
+        "missed": 6,
+        "benign_blocked": 0,
+        "benign_review": 0,
+        "benign_block_or_review": 0
+      },
+      "cisco": {
+        "blocked": 0,
+        "review": 0,
+        "block_or_review": 0,
+        "missed": 32,
+        "benign_blocked": 0,
+        "benign_review": 0,
+        "benign_block_or_review": 0
+      },
+      "skillspector": {
+        "blocked": 0,
+        "review": 32,
+        "block_or_review": 32,
+        "missed": 0,
+        "benign_blocked": 0,
+        "benign_review": 32,
+        "benign_block_or_review": 32
+      }
+    },
+    "global-persist": {
+      "attacks": 32,
+      "benign": 32,
+      "family": "global-persist",
+      "main42": {
+        "blocked": 3,
+        "review": 0,
+        "block_or_review": 3,
+        "missed": 29,
+        "benign_blocked": 3,
+        "benign_review": 4,
+        "benign_block_or_review": 7
+      },
+      "release": {
+        "blocked": 3,
+        "review": 0,
+        "block_or_review": 3,
+        "missed": 29,
+        "benign_blocked": 3,
+        "benign_review": 4,
+        "benign_block_or_review": 7
+      },
+      "cisco": {
+        "blocked": 0,
+        "review": 0,
+        "block_or_review": 0,
+        "missed": 32,
+        "benign_blocked": 0,
+        "benign_review": 0,
+        "benign_block_or_review": 0
+      },
+      "skillspector": {
+        "blocked": 2,
+        "review": 30,
+        "block_or_review": 32,
+        "missed": 0,
+        "benign_blocked": 0,
+        "benign_review": 32,
+        "benign_block_or_review": 32
+      }
+    },
+    "hidden-obfuscation": {
+      "attacks": 32,
+      "benign": 32,
+      "family": "hidden-obfuscation",
+      "main42": {
+        "blocked": 32,
+        "review": 0,
+        "block_or_review": 32,
+        "missed": 0,
+        "benign_blocked": 0,
+        "benign_review": 0,
+        "benign_block_or_review": 0
+      },
+      "release": {
+        "blocked": 24,
+        "review": 8,
+        "block_or_review": 32,
+        "missed": 0,
+        "benign_blocked": 0,
+        "benign_review": 8,
+        "benign_block_or_review": 8
+      },
+      "cisco": {
+        "blocked": 8,
+        "review": 8,
+        "block_or_review": 16,
+        "missed": 16,
+        "benign_blocked": 0,
+        "benign_review": 0,
+        "benign_block_or_review": 0
+      },
+      "skillspector": {
+        "blocked": 20,
+        "review": 12,
+        "block_or_review": 32,
+        "missed": 0,
+        "benign_blocked": 24,
+        "benign_review": 8,
+        "benign_block_or_review": 32
+      }
+    },
+    "lookup-input": {
+      "attacks": 32,
+      "benign": 32,
+      "family": "lookup-input",
+      "main42": {
+        "blocked": 4,
+        "review": 12,
+        "block_or_review": 16,
+        "missed": 16,
+        "benign_blocked": 0,
+        "benign_review": 0,
+        "benign_block_or_review": 0
+      },
+      "release": {
+        "blocked": 4,
+        "review": 12,
+        "block_or_review": 16,
+        "missed": 16,
+        "benign_blocked": 0,
+        "benign_review": 0,
+        "benign_block_or_review": 0
+      },
+      "cisco": {
+        "blocked": 0,
+        "review": 0,
+        "block_or_review": 0,
+        "missed": 32,
+        "benign_blocked": 0,
+        "benign_review": 0,
+        "benign_block_or_review": 0
+      },
+      "skillspector": {
+        "blocked": 0,
+        "review": 32,
+        "block_or_review": 32,
+        "missed": 0,
+        "benign_blocked": 4,
+        "benign_review": 28,
+        "benign_block_or_review": 32
+      }
+    },
+    "mcp-poison": {
+      "attacks": 32,
+      "benign": 32,
+      "family": "mcp-poison",
+      "main42": {
+        "blocked": 4,
+        "review": 6,
+        "block_or_review": 10,
+        "missed": 22,
+        "benign_blocked": 0,
+        "benign_review": 0,
+        "benign_block_or_review": 0
+      },
+      "release": {
+        "blocked": 4,
+        "review": 6,
+        "block_or_review": 10,
+        "missed": 22,
+        "benign_blocked": 0,
+        "benign_review": 0,
+        "benign_block_or_review": 0
+      },
+      "cisco": {
+        "blocked": 0,
+        "review": 0,
+        "block_or_review": 0,
+        "missed": 32,
+        "benign_blocked": 0,
+        "benign_review": 0,
+        "benign_block_or_review": 0
+      },
+      "skillspector": {
+        "blocked": 4,
+        "review": 28,
+        "block_or_review": 32,
+        "missed": 0,
+        "benign_blocked": 4,
+        "benign_review": 28,
+        "benign_block_or_review": 32
+      }
+    },
+    "purpose-mismatch": {
+      "attacks": 32,
+      "benign": 32,
+      "family": "purpose-mismatch",
+      "main42": {
+        "blocked": 0,
+        "review": 0,
+        "block_or_review": 0,
+        "missed": 32,
+        "benign_blocked": 0,
+        "benign_review": 0,
+        "benign_block_or_review": 0
+      },
+      "release": {
+        "blocked": 0,
+        "review": 0,
+        "block_or_review": 0,
+        "missed": 32,
+        "benign_blocked": 0,
+        "benign_review": 0,
+        "benign_block_or_review": 0
+      },
+      "cisco": {
+        "blocked": 0,
+        "review": 0,
+        "block_or_review": 0,
+        "missed": 32,
+        "benign_blocked": 0,
+        "benign_review": 0,
+        "benign_block_or_review": 0
+      },
+      "skillspector": {
+        "blocked": 0,
+        "review": 0,
+        "block_or_review": 0,
+        "missed": 32,
+        "benign_blocked": 0,
+        "benign_review": 0,
+        "benign_block_or_review": 0
+      }
+    },
+    "scope-widen": {
+      "attacks": 32,
+      "benign": 32,
+      "family": "scope-widen",
+      "main42": {
+        "blocked": 0,
+        "review": 0,
+        "block_or_review": 0,
+        "missed": 32,
+        "benign_blocked": 0,
+        "benign_review": 0,
+        "benign_block_or_review": 0
+      },
+      "release": {
+        "blocked": 0,
+        "review": 0,
+        "block_or_review": 0,
+        "missed": 32,
+        "benign_blocked": 0,
+        "benign_review": 0,
+        "benign_block_or_review": 0
+      },
+      "cisco": {
+        "blocked": 0,
+        "review": 0,
+        "block_or_review": 0,
+        "missed": 32,
+        "benign_blocked": 0,
+        "benign_review": 0,
+        "benign_block_or_review": 0
+      },
+      "skillspector": {
+        "blocked": 0,
+        "review": 32,
+        "block_or_review": 32,
+        "missed": 0,
+        "benign_blocked": 0,
+        "benign_review": 32,
+        "benign_block_or_review": 32
+      }
+    },
+    "split-multifile": {
+      "attacks": 32,
+      "benign": 32,
+      "family": "split-multifile",
+      "main42": {
+        "blocked": 16,
+        "review": 4,
+        "block_or_review": 20,
+        "missed": 12,
+        "benign_blocked": 0,
+        "benign_review": 0,
+        "benign_block_or_review": 0
+      },
+      "release": {
+        "blocked": 16,
+        "review": 4,
+        "block_or_review": 20,
+        "missed": 12,
+        "benign_blocked": 0,
+        "benign_review": 0,
+        "benign_block_or_review": 0
+      },
+      "cisco": {
+        "blocked": 0,
+        "review": 0,
+        "block_or_review": 0,
+        "missed": 32,
+        "benign_blocked": 0,
+        "benign_review": 0,
+        "benign_block_or_review": 0
+      },
+      "skillspector": {
+        "blocked": 8,
+        "review": 24,
+        "block_or_review": 32,
+        "missed": 0,
+        "benign_blocked": 4,
+        "benign_review": 28,
+        "benign_block_or_review": 32
+      }
+    },
+    "staged-loader": {
+      "attacks": 32,
+      "benign": 32,
+      "family": "staged-loader",
+      "main42": {
+        "blocked": 0,
+        "review": 4,
+        "block_or_review": 4,
+        "missed": 28,
+        "benign_blocked": 0,
+        "benign_review": 0,
+        "benign_block_or_review": 0
+      },
+      "release": {
+        "blocked": 0,
+        "review": 4,
+        "block_or_review": 4,
+        "missed": 28,
+        "benign_blocked": 0,
+        "benign_review": 0,
+        "benign_block_or_review": 0
+      },
+      "cisco": {
+        "blocked": 6,
+        "review": 0,
+        "block_or_review": 6,
+        "missed": 26,
+        "benign_blocked": 0,
+        "benign_review": 0,
+        "benign_block_or_review": 0
+      },
+      "skillspector": {
+        "blocked": 0,
+        "review": 32,
+        "block_or_review": 32,
+        "missed": 0,
+        "benign_blocked": 0,
+        "benign_review": 32,
+        "benign_block_or_review": 32
+      }
+    },
+    "trust-anchor": {
+      "attacks": 32,
+      "benign": 32,
+      "family": "trust-anchor",
+      "main42": {
+        "blocked": 6,
+        "review": 6,
+        "block_or_review": 12,
+        "missed": 20,
+        "benign_blocked": 0,
+        "benign_review": 0,
+        "benign_block_or_review": 0
+      },
+      "release": {
+        "blocked": 6,
+        "review": 6,
+        "block_or_review": 12,
+        "missed": 20,
+        "benign_blocked": 0,
+        "benign_review": 0,
+        "benign_block_or_review": 0
+      },
+      "cisco": {
+        "blocked": 0,
+        "review": 0,
+        "block_or_review": 0,
+        "missed": 32,
+        "benign_blocked": 0,
+        "benign_review": 0,
+        "benign_block_or_review": 0
+      },
+      "skillspector": {
+        "blocked": 0,
+        "review": 32,
+        "block_or_review": 32,
+        "missed": 0,
+        "benign_blocked": 0,
+        "benign_review": 32,
+        "benign_block_or_review": 32
+      }
+    }
+  }
+}
