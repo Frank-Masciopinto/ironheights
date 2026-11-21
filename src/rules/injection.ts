@@ -44,7 +44,7 @@ const TOOLING_PRAGMA =
 function htmlCommentIsTooling(body: string): boolean {
   const inner = body
     .replace(/^<!--\s*/, '')
-    .replace(/\s*-->$/, '')
+    .replace(/\s*--!?>$/, '')
     .trim();
   if (!inner) return true;
   const lines = inner
