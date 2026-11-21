@@ -68,3 +68,17 @@ IH-NET-027, IH-PRIV-015, IH-FS-010, IH-PRIV-016, IH-PERSIST-017, IH-MCP-013, IH-
 ## Dropped
 
 None. Three first cuts were narrowed after they blocked a real skill. See `docs/experiments/DISCARDED-RULES.md`. IH-NET-026 stays dropped.
+
+## External real fixtures (scored after the rules were frozen)
+
+Branch `exp/all-ideas-1121b` adds IH-AUDIT-001, IH-NET-029, IH-INTENT-008, and IH-FLOW-004. The rules were committed at `477ada8` before these fixtures were unpacked. The set is the real 21 Nov missed-attacks plus house-601 through house-622: 53 attacks (stepped, core, and prose variants) and 39 twins. Nothing in it was used to change a rule.
+
+| Scanner                         | Attacks blocked | Twins blocked |
+| ------------------------------- | --------------- | ------------- |
+| main 42d06986                   | 22/53           | 0/39          |
+| #162 (`be5d467`)                | 24/53           | 0/39          |
+| this branch                     | 25/53           | 0/39          |
+| Cisco 2.3.2                     | 4/53            | 0/39          |
+| SkillSpector v2.12.0 `--no-llm` | 5/53            | 3/39          |
+
+The generated moltbook-families held-out is 199/199 on #162 and on this branch. That number is not repeated here as an independent result. On the real fixtures the same checks block 25 of 53 attacks. The extra check on this branch is one attack beyond #162. Twin blocks stayed at zero.
