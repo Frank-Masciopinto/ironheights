@@ -74,8 +74,7 @@ function takeoverWithStanding(text: string): boolean {
   const PROHIBIT =
     /\b(?:do not|don't|never|avoid|without)\s+(?:\w+\s+){0,2}(?:register|change|set|make|associate|add|edit|plant|put|install|run|forward|shim)\b/i;
   const cs = clauses(text);
-  for (let i = 0; i < cs.length; i += 1) {
-    const clause = cs[i]!;
+  for (const [i, clause] of cs.entries()) {
     if (!TAKEOVER.test(clause) || PROHIBIT.test(clause)) continue;
     const window = `${clause} ${cs[i + 1] ?? ''}`;
     if (STANDING.test(window)) return true;
