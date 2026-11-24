@@ -15,6 +15,7 @@
 [![License](https://img.shields.io/npm/l/ironheights)](LICENSE)
 [![Node](https://img.shields.io/node/v/ironheights?logo=node.js)](package.json)
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6?logo=typescript&logoColor=white)](tsconfig.json)
+[![Frank-Masciopinto/ironheights MCP server](https://glama.ai/mcp/servers/Frank-Masciopinto/ironheights/badges/score.svg)](https://glama.ai/mcp/servers/Frank-Masciopinto/ironheights)
 
 [![Install MCP server in Cursor](https://img.shields.io/badge/Cursor-Install%20MCP%20server-000000?logo=cursor)](https://cursor.com/en/install-mcp?name=ironheights&config=eyJjb21tYW5kIjogIm5weCIsICJhcmdzIjogWyIteSIsICJpcm9uaGVpZ2h0cyIsICJtY3AiXX0=)
 [![Install MCP server in VS Code](https://img.shields.io/badge/VS%20Code-Install%20MCP%20server-0098FF?logo=visualstudiocode&logoColor=white)](https://insiders.vscode.dev/redirect/mcp/install?name=ironheights&config=%7B%22type%22%3A%22stdio%22%2C%22command%22%3A%22npx%22%2C%22args%22%3A%5B%22-y%22%2C%22ironheights%22%2C%22mcp%22%5D%7D)
