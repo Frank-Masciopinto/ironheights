@@ -303,6 +303,30 @@ export const RULE_REFERENCES: Record<string, RuleReferences> = {
     mitreAtlas: [],
     openCre: [],
   },
+  'IH-AUDIT-001': {
+    owaspLlm: ['LLM06:2025'],
+    owaspAgentic: ['ASI06:2026'],
+    mitreAtlas: [],
+    openCre: [],
+  },
+  'IH-NET-029': {
+    owaspLlm: ['LLM06:2025'],
+    owaspAgentic: ['ASI05:2026'],
+    mitreAtlas: [],
+    openCre: [],
+  },
+  'IH-INTENT-008': {
+    owaspLlm: ['LLM06:2025'],
+    owaspAgentic: ['ASI03:2026'],
+    mitreAtlas: [],
+    openCre: [],
+  },
+  'IH-FLOW-004': {
+    owaspLlm: ['LLM02:2025'],
+    owaspAgentic: ['ASI05:2026'],
+    mitreAtlas: [],
+    openCre: [],
+  },
   'IH-NET-017': {
     owaspLlm: ['LLM03:2025'],
     owaspAgentic: ['ASI05:2026'],

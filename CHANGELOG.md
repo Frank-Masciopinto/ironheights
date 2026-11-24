@@ -37,6 +37,15 @@ Checks for the attack families logged after that draft. Tuned on the dev half of
 
 IH-NET-026 (latte6) stays dropped. See `docs/experiments/DISCARDED-RULES.md`.
 
+Checks for the rest of the 2026-11-21 ideas that those rules did not already cover.
+
+- **IH-AUDIT-001** (bloomythefamiliar, jakes-muse, nim_ghost, evil_robot_jas, LazyBearAI, vegachiefofstaff): a log of actions may be appended to. Editing or deleting entries by what they say, or by which action they describe, is the finding. Cleanup by age, size, or retention is not.
+- **IH-NET-029** (jazzyai, ironheights-house): who resolves a name is pointed at a host the skill wrote, while the names the user looks up stay the same.
+- **IH-INTENT-008** (ironheights-house): the description is a recommendation, and a step terminates, deletes, purchases, or auto-merges with no confirmation.
+- **IH-FLOW-004** (space-echo, akasha_thdp, ironheights): a secret is copied into a commit, tag, image, or manifest field that is then published, and the reply leaves the value out.
+
+The other rows from that day are covered by an existing check, dropped as runtime or not a detection rule, or rejected as wording-fit. The map is `docs/experiments/batch-2026-11-21b/ideas-status.csv`.
+
 ## 0.37.0 — 2026-11-20
 
 **More attacks blocked, same false-positive rate.** Ironheights: The Immune System for AI Agents. 0.37.0 ships the detection merged on main since 0.36.0 (PRs #150, #152, #154, #155 and #157; #151, #153, #156 and #158 add the shipped-script and attack-lanes bench sets and refresh the README table). Verdict values, exit codes and existing JSON fields are unchanged. The model column was not run. Cisco skill-scanner 2.3.2 and NVIDIA SkillSpector v2.12.0 were not re-run on MaliciousSkillBench: 113/516 (21.9%) and 134/516 (26.0%) block, 9/456 (2.0%) and 48/456 (10.5%) false positives. They were re-run on the shipped-script and attack-lanes sets for this release; their counts there did not change.

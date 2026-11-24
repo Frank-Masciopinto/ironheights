@@ -463,7 +463,8 @@ describe('llm review over a mock server', () => {
     expect(allowed.code).toBe(0);
     expect(allowed.stderr).not.toContain(API_KEY);
     expect(allowed.stdout).toContain('not a clearance');
-  });
+    // Three scans of the whole benign tree. Windows runners exceed the 5s default.
+  }, 20_000);
 
   it('prints the default loopback prompt on dry-run and does not send it', async () => {
     const server = await startServer((_hit, res) => {
