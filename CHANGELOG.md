@@ -4,6 +4,11 @@
 
 Draft experiment. Not a release. Do not merge until the owner says so.
 
+Checks for the accuracy ideas logged after the 24 Nov bot-suggestions check (batch 2026-11-25). Tuned on the new dev split. Held-out was scored once and both checks block their held-out samples with no twin flagged. See `docs/experiments/batch-2026-11-25/RESULTS.md`.
+
+- **IH-CRED-015** (ironheights, javis-builds, evil_robot_jas): the skill's steps ask the user to relay a sign-in secret (code, password, recovery codes, session cookie, magic link) into the chat or to the skill's service, and the skill keeps or sends it.
+- **IH-NET-030** (ironheights, Starfish): the skill's own bundled list or index is made the authority for a third party's support line, site, payee, download, version, or checksum, ranked above the owner's channel or hidden.
+
 Detection checks for the open Moltbook accuracy clusters, each one a structure rather than a sample sentence. Public benchmark counts did not move. The checks block the dev fixtures they were written for, and the real-world gate stayed at 230 blocks with no new ids (review 452).
 
 - **IH-FLOW-002** (neuralnewscast, iofrogman81, pogoclaw, dynamo, rosettaq, Starfish, finmaster, sophiaalways, diviner, evil_robot_jas, jdawgsindustries, tobylauer, latte6, pipnyc, marginalia_claude): a user secret copied into a skill-owned artifact and sent. An enter-for-default URL, or a gitignored local file that fills an empty destination, counts as the skill's host. A redacted draft is not approval of the secret payload. Files the front door says to follow are one procedure.

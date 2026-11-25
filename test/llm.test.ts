@@ -1,6 +1,6 @@
 import { createServer, type ServerResponse } from 'node:http';
 import type { AddressInfo, Socket } from 'node:net';
-import { mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { copyFile, mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import AjvDraft04 from 'ajv-draft-04';
@@ -249,13 +249,17 @@ describe('llm review over a mock server', () => {
         ),
       );
     });
-    // Raise the prompt cap so SKILL.md fits whatever order the OS lists the near-miss fixtures in.
+    // Scan only the benign SKILL.md. The full fixture tree is larger than the prompt
+    // cap, and Windows lists near/ before SKILL.md, so the note's file would be cut.
     const cfgDir = await mkdtemp(join(tmpdir(), 'ih-llm-cfg-'));
     cleanups.push(() => rm(cfgDir, { recursive: true, force: true }));
+    const skillDir = join(cfgDir, 'benign-skill');
+    await mkdir(skillDir);
+    await copyFile(join(BENIGN, 'SKILL.md'), join(skillDir, 'SKILL.md'));
     const config = join(cfgDir, 'ironheights.config.json');
     await writeFile(config, '{"llm":{"maxInputChars":100000}}\n');
     const result = await run({
-      paths: [BENIGN],
+      paths: [skillDir],
       llm: true,
       llmUrl: server.origin,
       failOn: 'info',
@@ -271,9 +275,7 @@ describe('llm review over a mock server', () => {
     expect(result.stdout).toContain('[info] IH-LLM-001');
     expect(result.stdout).toContain('Model confidence: low');
     expect(result.stdout).toContain('Verdict: no-findings');
-    expect(result.stdout).toContain(
-      'do not change the grade, the verdict, or the exit code',
-    );
+    expect(result.stdout).toContain('do not change the grade, the verdict, or the exit code');
     const verdicts = result.stdout.split('\n').filter((line) => line.startsWith('Verdict:'));
     expect(verdicts).toEqual(['Verdict: no-findings']);
   });
