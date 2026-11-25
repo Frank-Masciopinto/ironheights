@@ -21,26 +21,29 @@ Only three families have samples in both halves: credential relay, trust-anchor 
 
 ## Rules dropped
 
-None. Both rules block their dev targets, their held-out same-family samples, and no twin. Nothing was added to `DISCARDED-RULES.md` because no rule was built and then cut.
+None. Both rules block their dev targets, their held-out same-family samples, and no twin. No rule was built and then cut. `DISCARDED-RULES.md` has a 2026-11-25 section listing the shapes considered and not built, and why.
 
 ## Before and after
 
 Block count, with block-or-review in brackets. Cisco skill-scanner 2.3.2 and NVIDIA SkillSpector v2.12.0 (`7d9b4be`, `--no-llm`) were run on the same bytes with the existing competitor mapping (block = HIGH or CRITICAL, or DO_NOT_INSTALL). The 24 Nov split had no competitor scores before this run.
 
-| Set                               | npm 0.37.0 | main 474a55d | This PR     | Cisco 2.3.2 | SkillSpector v2.12.0 | Winner          |
-| --------------------------------- | ---------- | ------------ | ----------- | ----------- | -------------------- | --------------- |
-| 25 Nov dev attacks (20)           | 2 (2)      | 2 (2)        | **6 (6)**   | 1 (1)       | 0 (4)                | This PR         |
-| 25 Nov dev twins (12), lower wins | 0 (0)      | 0 (0)        | 0 (0)       | 0 (0)       | 0 (2)                | Tie (IH, Cisco) |
-| 25 Nov held-out attacks (13)      | 3 (4)      | 4 (5)        | **6 (7)**   | 2 (2)       | 1 (2)                | This PR         |
-| 25 Nov held-out twins (10)        | 0 (0)      | 0 (0)        | 0 (0)       | 0 (0)       | 0 (1)                | Tie (IH, Cisco) |
-| 24 Nov dev attacks (105)          | 17 (29)    | 25 (35)      | **26 (36)** | 4 (4)       | 18 (34)              | This PR         |
-| 24 Nov dev twins (51)             | 0 (1)      | 0 (1)        | 0 (1)       | 0 (1)       | 3 (7)                | Tie (IH, Cisco) |
-| 24 Nov held-out attacks (96)      | 22 (31)    | 24 (33)      | 24 (33)     | 13 (16)     | 14 (23)              | main = This PR  |
-| 24 Nov held-out twins (50)        | 0 (0)      | 0 (0)        | 0 (0)       | 1 (1)       | 1 (2)                | IH (all three)  |
+| Set                               | npm 0.37.0              | main 474a55d | This PR               | Cisco 2.3.2 | SkillSpector v2.12.0 | Winner                  |
+| --------------------------------- | ----------------------- | ------------ | --------------------- | ----------- | -------------------- | ----------------------- |
+| 25 Nov dev attacks (20)           | 2 (2)                   | 2 (2)        | **6 (6)**             | 1 (1)       | 0 (4)                | This PR                 |
+| 25 Nov dev twins (12), lower wins | 0 (0)                   | 0 (0)        | 0 (0)                 | 0 (0)       | 0 (2)                | Tie (IH, Cisco)         |
+| 25 Nov held-out attacks (13)      | 3 (4)                   | 4 (5)        | **6 (7)**             | 2 (2)       | 1 (2)                | This PR                 |
+| 25 Nov held-out twins (10)        | 0 (0)                   | 0 (0)        | 0 (0)                 | 0 (0)       | 0 (1)                | Tie (IH, Cisco)         |
+| 24 Nov dev attacks (105)          | 17 (29)                 | 25 (35)      | **26 (36)**           | 4 (4)       | 18 (34)              | This PR                 |
+| 24 Nov dev twins (51)             | 0 (1)                   | 0 (1)        | 0 (1)                 | 0 (1)       | 3 (7)                | Tie (IH, Cisco)         |
+| 24 Nov held-out attacks (96)      | 22 (31)                 | 24 (33)      | 24 (33)               | 13 (16)     | 14 (23)              | main = This PR          |
+| 24 Nov held-out twins (50)        | 0 (0)                   | 0 (0)        | 0 (0)                 | 1 (1)       | 1 (2)                | IH (all three)          |
+| Blind attacks (600)               | 340/600                 | 340/600      | 340/600               | 190/600     | 173/600              | Ironheights (all three) |
+| Blind benign (300), lower wins    | 13/300                  | 13/300       | 13/300                | 6/300       | 35/300               | Cisco                   |
+| Real-world clean (5,655)          | 230 block / ~453 review | 230 / 452    | 230 / 452, no new ids | not run     | not run              | no new ids              |
 
 Across the 24 Nov sets (302 skills), the only verdict that changed between main and this PR is the house-704 plain-wording attack (no findings → block). No twin changed.
 
-Real-world (5,655) and blind (600/300): see the CI accuracy-gate job on this PR. The published MaliciousSkillBench, attack-lanes, script-skills, and prose-only cells are not affected by these two rules except where that gate shows.
+Real-world and blind come from the CI accuracy-gate job on this PR (run 45605669408). IH-CRED-015 and IH-NET-030 fire on 0 of the 5,655 real-world skills, so main and this PR block the same 230 and review the same 452. Blind stays at 340/600 and 13/300. Blind cells for Cisco and SkillSpector are the published 2026-11-21b figures, and neither tool was run on real-world. Main and 0.37.0 MaliciousSkillBench, attack-lanes, script-skills, and prose-only cells are unchanged from the 2026-11-21b table.
 
 These are deterministic findings only. No model-based verdicts are in this table.
 
