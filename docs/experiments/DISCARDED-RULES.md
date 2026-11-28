@@ -39,6 +39,7 @@ This is the log of every rule we tried and dropped. Update it at the end of each
 12. **Collapsing repeated docs-example points still drops a block.** ASB04_006523 kept the same findings and left block. Those points were the margin. Same failure as the 2026-11-07 context-only note.
 13. **A path and a URL on neighboring lines are not one plant.** Memory and tool docs mention `AGENTS.md` or `~/.claude` in one sentence and a documentation link in the next. The line that is written has to carry the writer's target (2026-11-20, IH-PERSIST-013 v1, 28 real-world blocks).
 14. **"Any command, from now on" is also honest onboarding.** That sentence blocked 2 blind benign skills and no new blind attack (2026-11-20, IH-PRIV-013). The skill text was not opened; only the aggregate moved.
+15. **A safety line next to a normal send is not concealment.** "Upload the file. Never include secrets." and "POST this endpoint. Do not include that header." are honest instructions. Pairing any outbound verb with a sentence that opens "do not include" blocked 3 real-world skills (2026-11-27, IH-FLOW-006). The hide has to be the skill showing the user less than it sends, and even that shape did not move a public dev block count.
 
 ## Before proposing a new rule, check
 
@@ -405,3 +406,13 @@ Designed on `newdev1125` (20 attacks, 12 twins). `newheld1125` was scored once a
 | L5 one-shot task writes agent memory; shim named like a system command      | 2026-11-25 | house-730, speedup-shim                    | not built            | —                                       | Dev only in this split.                                                                            |
 
 Common pattern added by this run: a family with samples in only one half of the split cannot ship under the dev-and-held-out rule. Add fixtures to the other half first, then write the rule.
+
+## 2026-11-27: write-the-rule candidates (branch exp/wtr-candidates-1127)
+
+Tuned on the dev fixtures and the dev splits of attack-lanes and script-skills. The even-byte half of MaliciousSkillBench was scored while tuning. Held-out text was not opened. Real-world (5,655) was the false-positive gate.
+
+| Rule / idea | Date | Target rows | Failed gate | Hits | Kinds of legit skills it flagged |
+| --- | --- | --- | --- | --- | --- |
+| IH-FLOW-006 (PV3): an outbound step plus a hiding order that opens the same sentence or the next one. "Only show" must name the user. Failure descriptions, ask-before-sending, CLI flag docs, and colon labels are excluded. Credited to vibejamhank, with dikabot's framing. | 2026-11-27 | dev fixtures for a send that shows the user less than it sends (bug ticket, pull request, invite) | real-world block, and no public dev block gain | real-world blocks 230→233 (3 new, all this rule). Attack-lanes dev verdicts unchanged (1 already-blocked hit). Script-skills dev 0 hits. MaliciousSkillBench even-byte half 0 hits. | A web publisher ("upload … Never include secrets in published files"), a cleanup skill ("send only the section … Do not include secrets"), and an API client ("POST … Do not include the Content-Type header"). **Dropped. Not registered.** |
+
+Common pattern added by this run: "do not include" next to a normal upload, send, or POST is a safety line. It is the same failure as pattern 15. IH-PRIV-017, the code write into user persistent config, is the check that stayed.

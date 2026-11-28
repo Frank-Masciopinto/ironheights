@@ -48,6 +48,7 @@ import { ideas1121bRules } from './ideas-1121b.ts';
 import { ideas1121cRules } from './ideas-1121c.ts';
 import { ideas1124Rules } from './ideas-1124.ts';
 import { ideas1125Rules } from './ideas-1125.ts';
+import { ideas1127Rules } from './ideas-1127.ts';
 
 export const contentRules: Rule[] = [
   exec001,
@@ -103,6 +104,7 @@ export const contentRules: Rule[] = [
   ...ideas1121cRules,
   ...ideas1124Rules,
   ...ideas1125Rules,
+  ...ideas1127Rules,
   prov001,
   meta005,
   mcp001,

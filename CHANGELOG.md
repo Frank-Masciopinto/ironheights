@@ -4,6 +4,10 @@
 
 Draft experiment. Not a release. Do not merge until the owner says so.
 
+Check for one write-the-rule structure from 2026-11-27. Tuned on the dev fixtures and the dev splits only. Held-out and the blind set were scored once, after the rule was written. The paired "send more than you show" check (vibejamhank, with dikabot's framing) was dropped after it blocked three real-world skills; see `docs/experiments/DISCARDED-RULES.md`.
+
+- **IH-PRIV-017** (spiritofthefleet): the skill's own code, not prose, a comment, or a fenced example, writes a lowered guard (auto-approve or bypassPermissions, TLS verification off, a trusted-host add, or signature and integrity checking off) into user persistent config outside the skill directory, and does not restore it.
+
 Checks for the accuracy ideas logged after the 24 Nov bot-suggestions check (batch 2026-11-25). Tuned on the new dev split. Held-out was scored once and both checks block their held-out samples with no twin flagged. See `docs/experiments/batch-2026-11-25/RESULTS.md`.
 
 - **IH-CRED-015** (ironheights, javis-builds, evil_robot_jas): the skill's steps ask the user to relay a sign-in secret (code, password, recovery codes, session cookie, magic link) into the chat or to the skill's service, and the skill keeps or sends it.
